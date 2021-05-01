@@ -42,6 +42,14 @@ $router->mount('/auth', function() use ($router) {
     $router->delete('/revoke', function () {include 'authenticate/revoke.php'; } );
   
 });
+
+/***************/
+/* Takings Routes */
+/***************/
+$router->mount('/takings', function () use ($router) {
+    $router->get('/(\d+)', 'TakingsCtl@read_one');
+});
+
 /***************/
 /* Shop Routes */
 /***************/
@@ -50,7 +58,6 @@ $router->mount('/shop', function () use ($router) {
     $router->get('/(\d+)', 'ShopCtl@read_one');
     $router->get('/(\D+)', 'ShopCtl@read_one_name');
 });
-
 
 /***************/
 /* User Routes */
