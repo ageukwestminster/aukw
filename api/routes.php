@@ -47,6 +47,9 @@ $router->mount('/auth', function() use ($router) {
 /* Takings Routes */
 /***************/
 $router->mount('/takings', function () use ($router) {
+    $router->post('/', 'TakingsCtl@create');
+    $router->put('/(\d+)', 'TakingsCtl@update');
+    $router->delete('/(\d+)', 'TakingsCtl@delete');
     $router->get('/(\d+)', 'TakingsCtl@read_one');
 });
 
