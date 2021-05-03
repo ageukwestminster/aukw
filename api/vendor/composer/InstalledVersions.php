@@ -25,24 +25,24 @@ class InstalledVersions
 private static $installed = array (
   'root' => 
   array (
-    'pretty_version' => '1.0.0+no-version-set',
-    'version' => '1.0.0.0',
+    'pretty_version' => 'dev-master',
+    'version' => 'dev-master',
     'aliases' => 
     array (
     ),
-    'reference' => NULL,
+    'reference' => '70923b844fe0c37541321d1b26c31ed9516bac5c',
     'name' => '__root__',
   ),
   'versions' => 
   array (
     '__root__' => 
     array (
-      'pretty_version' => '1.0.0+no-version-set',
-      'version' => '1.0.0.0',
+      'pretty_version' => 'dev-master',
+      'version' => 'dev-master',
       'aliases' => 
       array (
       ),
-      'reference' => NULL,
+      'reference' => '70923b844fe0c37541321d1b26c31ed9516bac5c',
     ),
     'bramus/router' => 
     array (
@@ -70,6 +70,15 @@ private static $installed = array (
       array (
       ),
       'reference' => '71cf170102c8371ccd933fa4df6252086d144de6',
+    ),
+    'quickbooks/v3-php-sdk' => 
+    array (
+      'pretty_version' => '6.0.0',
+      'version' => '6.0.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '73c395d7243fa4dc63027a94cda20180c8b3b5cb',
     ),
   ),
 );

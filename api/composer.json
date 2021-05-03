@@ -1,6 +1,7 @@
 {
     "require": {
         "bramus/router": "^1.5",
-        "lcobucci/jwt": "^4.1"
+        "lcobucci/jwt": "^4.1",
+        "quickbooks/v3-php-sdk": "^6.0"
     }
 }
