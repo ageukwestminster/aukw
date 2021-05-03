@@ -766,7 +766,7 @@ class DataService
           if ($this->isCreditCardPaymentTxn($entity)) {
             $uri = str_replace("creditcardpaymenttxn", "creditcardpayment", $uri);
           }
-          $requestParameters = new RequestParameters($uri, 'GET', CoreConstants::CONTENTTYPE_APPLICATIONXML, null);
+          $requestParameters = new RequestParameters($uri, 'GET', CoreConstants::CONTENTTYPE_APPLICATIONJSON, null);
           $restRequestHandler = $this->getRestHandler();
           list($responseCode, $responseBody) = $restRequestHandler->sendRequest($requestParameters, null, null, $this->isThrownExceptionOnError());
           $faultHandler = $restRequestHandler->getFaultHandler();

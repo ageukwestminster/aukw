@@ -62,6 +62,13 @@ $router->mount('/shop', function () use ($router) {
     $router->get('/(\D+)', 'ShopCtl@read_one_name');
 });
 
+/*********************/
+/* Quickbooks Routes */
+/*********************/
+$router->mount('/qb', function () use ($router) {
+    $router->get('/journal/(\w+)', 'QuickbooksCtl@read_journal');
+});
+
 /***************/
 /* User Routes */
 /***************/

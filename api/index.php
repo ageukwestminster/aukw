@@ -18,6 +18,7 @@ include_once 'models/jwt.php';
 include_once 'models/takings.php';
 include_once 'models/user.php';
 include_once 'models/usertoken.php';
+include_once 'controllers/quickbooks.controller.php';
 include_once 'controllers/shop.controller.php';
 include_once 'controllers/takings.controller.php';
 include_once 'controllers/user.controller.php';
