@@ -163,7 +163,7 @@ class QuickbooksToken{
         }
     }
 
-    function deleteAll($iduser){
+    function delete(){
         $query = "DELETE FROM " . $this->table_name . " WHERE iduser = ?";
 
         $stmt = $this->conn->prepare($query);

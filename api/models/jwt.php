@@ -29,7 +29,7 @@ class JWTWrapper{
     private $usertoken;
 
     // object properties
-    public $id =1;
+    public $id;
     public $user;
     public $isAdmin;
     public $role;

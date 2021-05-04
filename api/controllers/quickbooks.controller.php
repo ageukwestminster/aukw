@@ -66,16 +66,22 @@ class QuickbooksCtl{
 
   public static function oauth2_callback(){
 
-    $dataService = DataService::Configure(QuickbooksCtl::config());
+    $config = QuickbooksCtl::config();
+    $dataService = DataService::Configure($config);
     $OAuth2LoginHelper = $dataService->getOAuth2LoginHelper();
 
     $code = $_GET['code'];
     $state = $_GET['state'];
     $realmId = $_GET['realmId'];
 
-    $accessTokenObj = $OAuth2LoginHelper->exchangeAuthorizationCodeForToken($code, $realmId);
+    if ($state != $config['state']) {
+      http_response_code(422);  
+      echo json_encode(
+        array("message" => "Unable to proceed with QB callback: 'state' does not match initial value.")
+      );
+    }
 
-    //file_put_contents('php://stderr', print_r($accessTokenObj, TRUE));
+    $accessTokenObj = $OAuth2LoginHelper->exchangeAuthorizationCodeForToken($code, $realmId);
 
     $dataService->updateOAuth2Token($accessTokenObj);
 
@@ -86,18 +92,44 @@ class QuickbooksCtl{
 
   public static function oauth2_refresh(){
 
-    $config = QuickbooksCtl::config();
+    $dataService = DataService::Configure(QuickbooksCtl::config());
+    $OAuth2LoginHelper = $dataService->getOAuth2LoginHelper();
+
+    $model = new QuickbooksToken();
+  
+    $model->read();
+    $accessTokenObj = $OAuth2LoginHelper->
+                refreshAccessTokenWithRefreshToken($model->refreshtoken);
+
+    $dataService->updateOAuth2Token($accessTokenObj);                
+    QuickbooksCtl::store_tokens($model, $accessTokenObj);
+  }
+
+  public static function oauth2_revoke(){
 
     $dataService = DataService::Configure(QuickbooksCtl::config());
     $OAuth2LoginHelper = $dataService->getOAuth2LoginHelper();
 
     $model = new QuickbooksToken();
     $model->read();
-    $accessTokenObj = $oauth2LoginHelper->
-                refreshAccessTokenWithRefreshToken($model->refreshtoken);
+    
+    $result = $OAuth2LoginHelper->revokeToken($model->accesstoken);
 
-    $dataService->updateOAuth2Token($accessTokenObj);                
-    QuickbooksCtl::store_tokens($model, $accessTokenObj);
+    if ($result) {
+      $model->delete();
+      echo json_encode(
+        array(
+          "message" => "All QB tokens revoked."
+        )
+      , JSON_NUMERIC_CHECK);
+    } else {
+      http_response_code(422);  
+      echo json_encode(
+        array("message" => "Unable to revoke QB tokens.")
+      );
+    }
+    
+    
   }
 
   private static function store_tokens($model, $accessTokenObj){
