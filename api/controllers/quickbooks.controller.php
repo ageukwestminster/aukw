@@ -6,6 +6,8 @@ use QuickBooksOnline\API\DataService\DataService;
 use QuickBooksOnline\API\Core\OAuth\OAuth2\OAuth2LoginHelper;
 use QuickBooksOnline\API\Facades\JournalEntry;
 use Models\QuickbooksToken;
+use DateTime;
+use DateTimeZone;
 
 class QuickbooksCtl{
 
@@ -86,6 +88,7 @@ class QuickbooksCtl{
     $dataService->updateOAuth2Token($accessTokenObj);
 
     $model = new QuickbooksToken();
+    $model->iduser=11;
     $model->read();
     QuickbooksCtl::store_tokens($model, $accessTokenObj);
   }
@@ -142,8 +145,19 @@ class QuickbooksCtl{
 
     $model->accesstoken = $accessTokenObj->getAccessToken();
     $model->refreshtoken = $accessTokenObj->getRefreshToken();
-    $model->accesstokenexpiry = $accessTokenObj->getAccessTokenExpiresAt();
-    $model->refreshtokenexpiry = $accessTokenObj->getRefreshTokenExpiresAt();
+
+    // Expiries in the QB world are in UTC. Convert to local time
+    // before saving to the database. Otherwise during BST the time
+    // will be wrong by 1 hour
+    $expiry = $accessTokenObj->getAccessTokenExpiresAt();
+    $displayDate = new DateTime($expiry, new DateTimeZone('UTC'));
+    $displayDate->setTimezone(new DateTimeZone('Europe/London'));
+    $model->accesstokenexpiry = $displayDate->format('Y-m-d H:i:s');
+
+    $expiry = $accessTokenObj->getRefreshTokenExpiresAt();
+    $displayDate = new DateTime($expiry, new DateTimeZone('UTC'));
+    $displayDate->setTimezone(new DateTimeZone('Europe/London'));
+    $model->refreshtokenexpiry = $displayDate->format('Y-m-d H:i:s');
 
     if ($isUpdate) {
       return $model->update();
