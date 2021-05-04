@@ -24,11 +24,25 @@ CREATE TABLE `usertoken` (
 `secondaryKey` VARCHAR(36) NOT NULL , 
 `status` TINYINT(1) NOT NULL DEFAULT '0' COMMENT 'When 0 token is invalid', 
 `issuedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , 
-`expiresAt` DATETIME NOT NULL ) ENGINE = InnoDB COMMENT = 'Store of access/refresh token pairs';
+`expiresAt` DATETIME NOT NULL ) ENGINE = InnoDB CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT = 'Store of access/refresh token pairs';
 
 ALTER TABLE usertoken
     ADD CONSTRAINT fk_usertoken_user_idx
     FOREIGN KEY (iduser)
     REFERENCES user(id);
+
+CREATE TABLE `qbtoken` ( 
+	`iduser` INT NOT NULL , 
+    `accesstoken` VARCHAR(1000) NOT NULL , 
+    `accesstokenexpiry` DATETIME NOT NULL , 
+    `refreshtoken` VARCHAR(100) NOT NULL , 
+    `refreshtokenexpiry` DATETIME NOT NULL) ENGINE = InnoDB CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT = 'Quickbooks SDK Tokens';
+    
+ALTER TABLE qbtoken
+    ADD CONSTRAINT fk_qbtoken_user_idx
+    FOREIGN KEY (iduser)
+    REFERENCES user(id);
+ALTER TABLE `qbtoken` 
+	ADD UNIQUE `AK_qbtoken_iduser` (`iduser`);
     
 COMMIT;

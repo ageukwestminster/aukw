@@ -7,10 +7,6 @@
 
     Regex cheat sheet: https://courses.cs.washington.edu/courses/cse154/15sp/cheat-sheets/php-regex-cheat-sheet.pdf
 
-    I'm using three different ways of handinling routes:
-        1. Pure funciton call. See _>before in 'pre_routes.php'
-        2. Whole file like the post route for auth
-        3. Method call like read_all for Bank Account
 
 */
 
@@ -67,6 +63,9 @@ $router->mount('/shop', function () use ($router) {
 /*********************/
 $router->mount('/qb', function () use ($router) {
     $router->get('/journal/(\w+)', 'QuickbooksCtl@read_journal');
+    $router->get('/auth', 'QuickbooksCtl@oauth2_begin');
+    $router->get('/callback', 'QuickbooksCtl@oauth2_callback');
+    $router->get('/refresh', 'QuickbooksCtl@oauth2_refresh');
 });
 
 /***************/

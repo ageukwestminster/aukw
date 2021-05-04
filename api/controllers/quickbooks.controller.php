@@ -3,19 +3,23 @@
 namespace Controllers;
 
 use QuickBooksOnline\API\DataService\DataService;
-use QuickBooksOnline\API\Core\Http\Serialization\XmlObjectSerializer;
+use QuickBooksOnline\API\Core\OAuth\OAuth2\OAuth2LoginHelper;
 use QuickBooksOnline\API\Facades\JournalEntry;
+use Models\QuickbooksToken;
 
 class QuickbooksCtl{
 
   private static function config() {
       return array(
+        'auth_mode' => 'oauth2',
         'authorizationRequestUrl' => 'https://appcenter.intuit.com/connect/oauth2',
         'tokenEndPointUrl' => 'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer',
-        'client_id' => 'ABfKBoCDvYwfccfV7X48SxjS9DewKuKXSujBMjSHB7X9BUcoyi',
-        'client_secret' => '11wbu5o2Zr6uXkVQH9jc290sig7pqeernTSHUba9',
-        'oauth_scope' => 'com.intuit.quickbooks.accounting',
-        'oauth_redirect_uri' => 'http://localhost:3000/callback.php',
+        'ClientID' => 'ABfKBoCDvYwfccfV7X48SxjS9DewKuKXSujBMjSHB7X9BUcoyi',
+        'ClientSecret' => '11wbu5o2Zr6uXkVQH9jc290sig7pqeernTSHUba9',
+        'scope' => 'com.intuit.quickbooks.accounting',
+        'redirectURI' => 'https://dac5f5462132.ngrok.io/api/qb/callback',
+        'response_type' => 'code',
+        'state' => 'TEKP56'
       );
   }
 
@@ -51,4 +55,68 @@ class QuickbooksCtl{
     }
   }
 
+
+  public static function oauth2_begin(){
+    $dataService = DataService::Configure(QuickbooksCtl::config());
+    $OAuth2LoginHelper = $dataService->getOAuth2LoginHelper();
+    $authorizationCodeUrl = $OAuth2LoginHelper->getAuthorizationCodeURL();
+    header('Location: '. $authorizationCodeUrl);
+    exit(0);
+  }
+
+  public static function oauth2_callback(){
+
+    $dataService = DataService::Configure(QuickbooksCtl::config());
+    $OAuth2LoginHelper = $dataService->getOAuth2LoginHelper();
+
+    $code = $_GET['code'];
+    $state = $_GET['state'];
+    $realmId = $_GET['realmId'];
+
+    $accessTokenObj = $OAuth2LoginHelper->exchangeAuthorizationCodeForToken($code, $realmId);
+
+    //file_put_contents('php://stderr', print_r($accessTokenObj, TRUE));
+
+    $dataService->updateOAuth2Token($accessTokenObj);
+
+    $model = new QuickbooksToken();
+    $model->read();
+    QuickbooksCtl::store_tokens($model, $accessTokenObj);
+  }
+
+  public static function oauth2_refresh(){
+
+    $config = QuickbooksCtl::config();
+
+    $dataService = DataService::Configure(QuickbooksCtl::config());
+    $OAuth2LoginHelper = $dataService->getOAuth2LoginHelper();
+
+    $model = new QuickbooksToken();
+    $model->read();
+    $accessTokenObj = $oauth2LoginHelper->
+                refreshAccessTokenWithRefreshToken($model->refreshtoken);
+
+    $dataService->updateOAuth2Token($accessTokenObj);                
+    QuickbooksCtl::store_tokens($model, $accessTokenObj);
+  }
+
+  private static function store_tokens($model, $accessTokenObj){
+
+    if ($model->accesstoken) {
+      $isUpdate = true;
+    } else {
+      $isUpdate = false;
+    }
+
+    $model->accesstoken = $accessTokenObj->getAccessToken();
+    $model->refreshtoken = $accessTokenObj->getRefreshToken();
+    $model->accesstokenexpiry = $accessTokenObj->getAccessTokenExpiresAt();
+    $model->refreshtokenexpiry = $accessTokenObj->getRefreshTokenExpiresAt();
+
+    if ($isUpdate) {
+      return $model->update();
+    } else {
+      return $model->insert();
+    }
+  }
 }
