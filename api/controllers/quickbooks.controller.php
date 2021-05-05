@@ -392,128 +392,15 @@ file_put_contents('php://stderr', print_r($theResourceObj, TRUE));*/
     }
   }
 
-/*
-  public static function oauth2_begin(){
-    $dataService = DataService::Configure(QuickbooksCtl::config());
-    $OAuth2LoginHelper = $dataService->getOAuth2LoginHelper();
-    $authorizationCodeUrl = $OAuth2LoginHelper->getAuthorizationCodeURL();
-    header('Location: '. $authorizationCodeUrl);
-    return;
-  }
-  
-    public static function oauth2_callback(){
-
-    $config = QuickbooksCtl::config();
-    $dataService = DataService::Configure($config);
-    $OAuth2LoginHelper = $dataService->getOAuth2LoginHelper();
-
-    $code = $_GET['code'];
-    $state = $_GET['state'];
-    $realmId = $_GET['realmId'];
-
-    if ($state != $config['state']) {
-      http_response_code(400);  
-      echo json_encode(
-        array("message" => "Unable to proceed with QB callback: 'state' does not match initial value.")
-      );
-      return;
-    }
-
-    $accessTokenObj = $OAuth2LoginHelper->exchangeAuthorizationCodeForToken($code, $realmId);
-
-    $dataService->updateOAuth2Token($accessTokenObj);
-
-    $model = new QuickbooksToken();
-    $model->iduser=11;
-    $model->read();
-    QuickbooksCtl::store_tokens($model, $accessTokenObj);
-
-    echo json_encode(
-      array("message" => "QB Tokens stored")
-    );
-  }
-
-  public static function oauth2_refresh(){
-
-    $dataService = DataService::Configure(QuickbooksCtl::config());
-    $OAuth2LoginHelper = $dataService->getOAuth2LoginHelper();
-
-    $model = new QuickbooksToken();
-  
-    $model->read();
-    $accessTokenObj = $OAuth2LoginHelper->
-                refreshAccessTokenWithRefreshToken($model->refreshtoken);
-
-    $dataService->updateOAuth2Token($accessTokenObj);                
-    QuickbooksCtl::store_tokens($model, $accessTokenObj);
-
-    echo json_encode(
-      array("message" => "QB Tokens refreshed")
-    );
-  }
-
-  public static function oauth2_revoke(){
-
-    $dataService = DataService::Configure(QuickbooksCtl::config());
-    $OAuth2LoginHelper = $dataService->getOAuth2LoginHelper();
-
-    $model = new QuickbooksToken();
-    $model->read();
-    
-    $result = $OAuth2LoginHelper->revokeToken($model->accesstoken);
-
-    if ($result) {
-      $model->delete();
-      echo json_encode(
-        array(
-          "message" => "All QB tokens revoked."
-        )
-      , JSON_NUMERIC_CHECK);
-    } else {
-      http_response_code(400);  
-      echo json_encode(
-        array("message" => "Unable to revoke QB tokens.")
-      );
-    }
-    
-    
-  }
-
-  private static function store_tokens($model, $accessTokenObj){
-
-    if ($model->accesstoken) {
-      $isUpdate = true;
-    } else {
-      $isUpdate = false;
-    }
-
-    $model->accesstoken = $accessTokenObj->getAccessToken();
-    $model->refreshtoken = $accessTokenObj->getRefreshToken();
-
-    // Expiries in the QB world are in UTC. Convert to local time
-    // before saving to the database. Otherwise during BST the time
-    // will be wrong by 1 hour
-    $expiry = $accessTokenObj->getAccessTokenExpiresAt();
-    $displayDate = new DateTime($expiry, new DateTimeZone('UTC'));
-    $displayDate->setTimezone(new DateTimeZone('Europe/London'));
-    $model->accesstokenexpiry = $displayDate->format('Y-m-d H:i:s');
-
-    $expiry = $accessTokenObj->getRefreshTokenExpiresAt();
-    $displayDate = new DateTime($expiry, new DateTimeZone('UTC'));
-    $displayDate->setTimezone(new DateTimeZone('Europe/London'));
-    $model->refreshtokenexpiry = $displayDate->format('Y-m-d H:i:s');
-
-    if ($isUpdate) {
-      return $model->update();
-    } else {
-      return $model->insert();
-    }
-  }
-  */
 
   public static function oauth2_begin(){
     $model = new QuickbooksAuth();
-    $model->begin();
+    if (!$model->begin()){
+      http_response_code(400);
+      echo json_encode(
+        array("message" => "Unable to locate ClientID")
+      );
+    }
   }
 
 public static function oauth2_callback(){

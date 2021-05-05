@@ -26,7 +26,7 @@ include_once 'controllers/takings.controller.php';
 include_once 'controllers/user.controller.php';
 
 // Define routes
-//require 'pre_routes.php'; // Comment this out remove auth on API
+require 'pre_routes.php'; // Comment this out remove auth on API
 require 'routes.php';
 
 // Run it!

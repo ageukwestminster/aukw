@@ -33,8 +33,7 @@ class QuickbooksAuth{
 
         $jwt = new JWTWrapper();
         $iduser = $jwt->id;
-        $iduser = 11;
-
+        
         $user = new User();
         $user->id = $iduser;
         $user->readOne();
@@ -55,7 +54,8 @@ class QuickbooksAuth{
     }
 
     private function init(){
-        $this->dataService = DataService::Configure($this->config);        
+        $this->dataService = DataService::Configure($this->config);    
+        $this->dataService->throwExceptionOnError(false);    
 
         $this->tokenModel = new QuickbooksToken();
         $this->tokenModel->iduser = $this->config['iduser'];
@@ -63,11 +63,16 @@ class QuickbooksAuth{
     }
 
     public function begin() {
+
+        if (empty($this->config['ClientID'])) {
+            return false;
+        }
+
         $this->dataService = DataService::Configure($this->config);
         $OAuth2LoginHelper = $this->dataService->getOAuth2LoginHelper();
         $authorizationCodeUrl = $OAuth2LoginHelper->getAuthorizationCodeURL();
         header('Location: '. $authorizationCodeUrl);
-        return;
+        return true;
     }
 
     public function callback(){
@@ -117,10 +122,13 @@ class QuickbooksAuth{
     public function revoke(){
 
         $this->init();
-        $this->remove_tokens_from_database();
-        $OAuth2LoginHelper = $this->dataService->getOAuth2LoginHelper();
-        return $OAuth2LoginHelper->revokeToken($this->tokenModel->accesstoken);
-    
+        if ($this->tokenModel->accesstoken) {
+            $this->remove_tokens_from_database();
+            $OAuth2LoginHelper = $this->dataService->getOAuth2LoginHelper();
+            return $OAuth2LoginHelper->revokeToken($this->tokenModel->accesstoken);
+        } else {
+            return true;
+        }    
     }
 
     private function updateOAuthToken($accessToken){

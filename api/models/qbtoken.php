@@ -114,7 +114,7 @@ class QuickbooksToken{
         $query = "DELETE FROM " . $this->table_name . " WHERE iduser = ?";
 
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(1, $iduser, PDO::PARAM_INT);
+        $stmt->bindParam(1, $this->iduser, PDO::PARAM_INT);
 
         // execute query
         if($stmt->execute()){
