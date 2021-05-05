@@ -52,6 +52,9 @@ Config::write('token.cookiename', 'refreshToken');
 Config::write('token.cookiepath', Config::read('api.path') . 'auth');
 Config::write('token.cookiesecure', false);
 
+// Quickbooks SDKsettings
+Config::write('qb.redirecturl', 'https://a04521ee05f2.ngrok.io/api/qb/callback');
+
 // email
 /*Config::write('em.host', 'uk1.cp.netnerd.com');
 Config::write('em.port', '465');
