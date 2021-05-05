@@ -8,6 +8,7 @@ use QuickBooksOnline\API\Facades\JournalEntry;
 use QuickBooksOnline\API\Core\OAuth\OAuth2\OAuth2AccessToken;
 
 use Models\JWTWrapper;
+use Models\QuickbooksAuth;
 use Models\QuickbooksToken;
 use Models\User;
 use DateTime;
@@ -19,6 +20,7 @@ class QuickbooksCtl{
 
       $jwt = new JWTWrapper();
       $iduser = $jwt->id;
+
       $model = new User();
       $model->id = $iduser;
       $model->readOne();
@@ -169,9 +171,11 @@ class QuickbooksCtl{
     $dataService->setLogLocation("B:\\logs");
     //$dataService->throwExceptionOnError(true);
     //$dataService->forceJsonSerializers();
-    //$dataService->enableLog();
+    $dataService->enableLog();
 
-    $theResourceObj = JournalEntry::create([
+    $obj = [
+      "TxnDate" => '2021-05-04',
+      "DocNumber" => "20210504H",
       "Line" => [
       [
         "Id" => "0",
@@ -192,7 +196,7 @@ class QuickbooksCtl{
       ],
       [
         "Id" => "1",
-        "Description" => "Paid by CC",
+        "Description" => "Daily CC sales",
         "Amount" => 302.6,
         "DetailType" => "JournalEntryLineDetail",
         "JournalEntryLineDetail" => [
@@ -209,7 +213,7 @@ class QuickbooksCtl{
       ],
       [
         "Id" => "2",
-        "Description" => "Paid by Cash",
+        "Description" => "Daily cash sales",
         "Amount" => 226,
         "DetailType" => "JournalEntryLineDetail",
         "JournalEntryLineDetail" => [
@@ -226,35 +230,6 @@ class QuickbooksCtl{
       ],
       [
         "Id" => "3",
-        "Description" => "Zero-Rated Sales - Charity Shop Sales - Zero Rated",
-        "Amount" => 0,
-        "DetailType" => "JournalEntryLineDetail",
-        "JournalEntryLineDetail" => [
-          "PostingType" => "Credit",
-          "Entity" => [
-            "Type" => "Vendor",
-            "EntityRef" => [
-              "value" => 33,
-              "name" => "HMRC VAT"
-            ]
-          ],
-            "AccountRef" => [
-              "value" => 153,
-              "name" => "VAT:VAT Liability"
-            ],
-            "ClassRef" => [
-              "value" => 400000000000618070,
-              "name" => "Harrow Rd"
-            ],
-            "TaxCodeRef" => [
-              "value" => 4
-            ],
-            "TaxApplicableOn" => "Sales",
-            "TaxAmount" => 0
-        ]
-          ],
-      [
-        "Id" => "4",
         "Description" => "Zero-Rated Sales - Charity Shop Sales - Zero Rated",
         "Amount" => 528.8,
         "DetailType" => "JournalEntryLineDetail",
@@ -281,6 +256,88 @@ class QuickbooksCtl{
             "TaxApplicableOn" => "Sales",
             "TaxAmount" => 0
         ]
+      ]
+    ],
+    "TxnTaxDetail"=> [
+      "TaxLine" => [
+              "Amount" => 0,
+              "DetailType" => "TaxLineDetail",
+              "TaxLineDetail" => [
+                  "TaxRateRef" => [
+                      "value" => 7
+                  ],
+                  "PercentBased" => true,
+                  "TaxPercent" => 0,
+                  "NetAmountTaxable" => -528.8
+              ]
+      ]
+    ]
+                ];
+                file_put_contents('php://stderr', print_r($obj, TRUE));
+
+    $theResourceObj = JournalEntry::create([
+      "TxnDate" => '2021-05-04',
+      "DocNumber" => "20210504H",
+      "Line" => [
+      [
+        "Id" => "0",
+        "Description" => "Overage/Underage",
+        "Amount" => 0.2,
+        "DetailType" => "JournalEntryLineDetail",
+        "JournalEntryLineDetail" => [
+          "PostingType" => "Debit",
+          "AccountRef" => [
+            "value" => 93,
+            "name" => "Office Expense:Cash Discrepancies"
+          ],
+          "ClassRef" => [
+            "value" => 400000000000618070,
+            "name" => "Harrow Rd"
+          ]
+       ]
+      ],
+      [
+        "Id" => "1",
+        "Description" => "Zero-Rated Sales",
+        "Amount" => 528.8,
+        "DetailType" => "JournalEntryLineDetail",
+        "JournalEntryLineDetail" => [
+          "PostingType" => "Credit",
+          "Entity" => [
+            "Type" => "Vendor",
+            "EntityRef" => [
+              "value" => 33,
+              "name" => "HMRC VAT"
+            ]
+          ],
+            "AccountRef" => [
+              "value" => 94,
+              "name" => "Sales-Zero Rated"
+            ],
+            "ClassRef" => [
+              "value" => 400000000000618070,
+              "name" => "Harrow Rd"
+            ],
+            "TaxCodeRef" => [
+              "value" => 4
+            ],
+            "TaxApplicableOn" => "Sales",
+            "TaxAmount" => 0
+        ]
+      ]
+    ],
+    "TxnTaxDetail"=> [
+      "TaxLine" => [
+              "Amount" => 0,
+              "DetailType" => "TaxLineDetail",
+              "TaxLineDetail" => [
+                  "TaxRateRef" => [
+                      "value" => 7
+                  ],
+                  "PercentBased" => true,
+                  "TaxPercent" => 0,
+                  "NetAmountTaxable" => -528.8
+              ]
       ]
     ]
   ]);
@@ -335,16 +392,16 @@ file_put_contents('php://stderr', print_r($theResourceObj, TRUE));*/
     }
   }
 
-
+/*
   public static function oauth2_begin(){
     $dataService = DataService::Configure(QuickbooksCtl::config());
     $OAuth2LoginHelper = $dataService->getOAuth2LoginHelper();
     $authorizationCodeUrl = $OAuth2LoginHelper->getAuthorizationCodeURL();
     header('Location: '. $authorizationCodeUrl);
-    exit(0);
+    return;
   }
-
-  public static function oauth2_callback(){
+  
+    public static function oauth2_callback(){
 
     $config = QuickbooksCtl::config();
     $dataService = DataService::Configure($config);
@@ -359,6 +416,7 @@ file_put_contents('php://stderr', print_r($theResourceObj, TRUE));*/
       echo json_encode(
         array("message" => "Unable to proceed with QB callback: 'state' does not match initial value.")
       );
+      return;
     }
 
     $accessTokenObj = $OAuth2LoginHelper->exchangeAuthorizationCodeForToken($code, $realmId);
@@ -369,6 +427,10 @@ file_put_contents('php://stderr', print_r($theResourceObj, TRUE));*/
     $model->iduser=11;
     $model->read();
     QuickbooksCtl::store_tokens($model, $accessTokenObj);
+
+    echo json_encode(
+      array("message" => "QB Tokens stored")
+    );
   }
 
   public static function oauth2_refresh(){
@@ -384,6 +446,10 @@ file_put_contents('php://stderr', print_r($theResourceObj, TRUE));*/
 
     $dataService->updateOAuth2Token($accessTokenObj);                
     QuickbooksCtl::store_tokens($model, $accessTokenObj);
+
+    echo json_encode(
+      array("message" => "QB Tokens refreshed")
+    );
   }
 
   public static function oauth2_revoke(){
@@ -443,4 +509,48 @@ file_put_contents('php://stderr', print_r($theResourceObj, TRUE));*/
       return $model->insert();
     }
   }
+  */
+
+  public static function oauth2_begin(){
+    $model = new QuickbooksAuth();
+    $model->begin();
+  }
+
+public static function oauth2_callback(){
+  $model = new QuickbooksAuth();
+  $model->callback();
+  echo json_encode(
+    array("message" => "The connection to Quickbooks is now online. You may close this window.")
+  );
+}
+
+public static function oauth2_revoke(){
+  $model = new QuickbooksAuth();
+  if ($model->revoke()) {
+    echo json_encode(
+      array("message" => "Your Quickbooks tokens have been revoked.")
+    );
+  } else {
+    http_response_code(400);
+    echo json_encode(
+      array("message" => "Unable to revoke Quickbooks tokens.")
+    );
+  }
+  
+}
+
+public static function oauth2_refresh(){
+  $model = new QuickbooksAuth();
+  if ($model->refresh()) {
+    echo json_encode(
+      array("message" => "Quickbooks Tokens refreshed.")
+    );
+  } else {
+    http_response_code(400);
+    echo json_encode(
+      array("message" => "Unable to refresh Quickbooks Tokens.")
+    );
+  }
+}
+  
 }

@@ -26,7 +26,7 @@ class User{
     public $shopid;
     public $title;
     public $failedloginattempts;
-    public $cliendid;
+    public $clientid;
     public $clientsecret;
 
     // used by select drop-down list

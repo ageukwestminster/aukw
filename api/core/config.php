@@ -55,6 +55,7 @@ Config::write('token.cookiesecure', false);
 // Quickbooks SDKsettings
 Config::write('qb.redirecturl', 'https://a04521ee05f2.ngrok.io/api/qb/callback');
 Config::write('qb.realmid', '9130350604308576');
+Config::write('qb.loglocation', 'B:\\logs');
 
 // email
 /*Config::write('em.host', 'uk1.cp.netnerd.com');

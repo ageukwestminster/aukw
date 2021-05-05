@@ -13,9 +13,9 @@ class QuickbooksToken{
     public function __construct(){
         $this->conn = \Core\Database::getInstance()->conn;
 
-        $jwt = new JWTWrapper();
+        //$jwt = new JWTWrapper();
 
-        $this->iduser = $jwt->id;
+        //$this->iduser = $jwt->id;
     }
 
     public $iduser;
@@ -107,59 +107,6 @@ class QuickbooksToken{
             $this->accesstokenexpiry = $row['accesstokenexpiry'];
             $this->refreshtoken = $row['refreshtoken'];
             $this->refreshtokenexpiry = $row['refreshtokenexpiry'];
-        }
-    }
-
-    function getAccessToken($iduser){
-        $query = "SELECT `accesstoken` FROM
-                    " . $this->table_name . "
-                 WHERE
-                    iduser=:id";
-        
-        // prepare query
-        $stmt = $this->conn->prepare($query);
-
-        // bind values        
-        $stmt->bindParam(":id", $iduser, PDO::PARAM_INT);    
-
-        // execute query
-        $stmt->execute();
-        
-        // get retrieved row
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        // set values to object properties
-        if ( !empty($row) ) {
-            return $row['status'] == 0 ? false : true;
-        } else {
-            return false;
-        }
-    }
-
-    function getRefreshToken($iduser){
-        $query = "SELECT status FROM
-                    " . $this->table_name . "
-                 WHERE
-                    iduser=:id AND secondaryKey=:secondaryKey";
-        
-        // prepare query
-        $stmt = $this->conn->prepare($query);
-
-        // bind values        
-        $stmt->bindParam(":id", $iduser, PDO::PARAM_INT);    
-        $stmt->bindParam(":secondaryKey", $key);    
-
-        // execute query
-        $stmt->execute();
-        
-        // get retrieved row
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        // set values to object properties
-        if ( !empty($row) ) {
-            return $row['status'] == 0 ? false : true;
-        } else {
-            return false;
         }
     }
 
