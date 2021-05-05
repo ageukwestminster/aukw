@@ -21,7 +21,7 @@ class DatesHelper
                 return array($start, $enddate); 
             }
             else {
-                http_response_code(422);  
+                http_response_code(400);  
                 echo json_encode(
                     array("message" => "Enddate is in the wrong format.")
                 );
@@ -32,7 +32,7 @@ class DatesHelper
                 return array($startdate, $end); 
             }
             else {
-                http_response_code(422);  
+                http_response_code(400);  
                 echo json_encode(
                     array("message" => "Startdate is in the wrong format.")
                 );
@@ -40,13 +40,13 @@ class DatesHelper
             }
         } else {
             if (!DatesHelper::validateDate($startdate)) {
-                http_response_code(422);  
+                http_response_code(400);  
                 echo json_encode(
                     array("message" => "Startdate is in the wrong format.")
                 );
                 exit(1);
             } else if (!DatesHelper::validateDate($enddate)) {
-                http_response_code(422);  
+                http_response_code(400);  
                 echo json_encode(
                     array("message" => "Enddate is in the wrong format.")
                 );

@@ -28,7 +28,7 @@ class TakingsCtl{
       , JSON_NUMERIC_CHECK);
     } else{
       // if unable to create the model, tell the admin
-        http_response_code(422);  
+        http_response_code(400);  
         echo json_encode(
           array("message" => "Unable to INSERT row.")
         );
@@ -52,7 +52,7 @@ class TakingsCtl{
             , JSON_NUMERIC_CHECK);
     }
     else{
-        http_response_code(422); 
+        http_response_code(400); 
         echo json_encode(
             array("message" => "Unable to UPDATE takings.")
         );
@@ -71,7 +71,7 @@ class TakingsCtl{
             "id" => $model->id)
             , JSON_NUMERIC_CHECK);
       } else{
-          http_response_code(422);  
+          http_response_code(400);  
           echo json_encode(
             array(
               "message" => "Unable to DELETE row.",

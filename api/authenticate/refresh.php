@@ -13,7 +13,7 @@ if ($token && $token['id']) {
     $user->id = $token['id'];
     $user->readOne();
     if (empty($user->username) ) {
-        http_response_code(422);   
+        http_response_code(400);   
         echo json_encode(
             array("message" => "No User found with id = " . $user->id)
         );
