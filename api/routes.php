@@ -62,12 +62,12 @@ $router->mount('/shop', function () use ($router) {
 /* Quickbooks Routes */
 /*********************/
 $router->mount('/qb', function () use ($router) {
-    $router->get('/journal/(\w+)', 'QuickbooksCtl@read_journal');
-    $router->post('/journal', 'QuickbooksCtl@add_journal');
+    $router->get('/journal/(\w+)', 'JournalCtl@read_one');
+    $router->post('/journal', 'JournalCtl@create');
     $router->get('/auth', 'QuickbooksCtl@oauth2_begin');
     $router->get('/callback', 'QuickbooksCtl@oauth2_callback');
     $router->get('/refresh', 'QuickbooksCtl@oauth2_refresh');
-    $router->get('/revoke', 'QuickbooksCtl@oauth2_revoke');
+    $router->delete('/', 'QuickbooksCtl@oauth2_revoke');
 });
 
 /***************/

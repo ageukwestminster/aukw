@@ -94,7 +94,7 @@ class QuickbooksAuth{
         $OAuth2LoginHelper = $this->dataService->getOAuth2LoginHelper();
         $accessTokenObj = $OAuth2LoginHelper->exchangeAuthorizationCodeForToken($code, $realmId);
     
-        $this->updateOAuthToken($accessTokenObj);
+        $this->dataService->updateOAuth2Token($accessTokenObj);
 
         $this->store_tokens_in_database($accessTokenObj);
     
@@ -108,7 +108,7 @@ class QuickbooksAuth{
         $OAuth2LoginHelper = $this->dataService->getOAuth2LoginHelper();
         $accessTokenObj = $OAuth2LoginHelper->refreshAccessTokenWithRefreshToken($this->tokenModel->refreshtoken);
 
-        $this->updateOAuthToken($accessTokenObj);                
+        $this->dataService->updateOAuth2Token($accessTokenObj);              
 
         $this->store_tokens_in_database($accessTokenObj);
 
@@ -117,7 +117,6 @@ class QuickbooksAuth{
 
     /**
      * Break the link between this app and Quickbooks.
-     *
      */
     public function revoke(){
 
@@ -131,20 +130,63 @@ class QuickbooksAuth{
         }    
     }
 
-    private function updateOAuthToken($accessToken){
-        $this->dataService->updateOAuth2Token($accessToken);
-        $error = $this->dataService->getLastError();
-        if ($error) {
+    /**
+     * Prepare the dataService object for API calls
+     */
+    public function prepare(){
+
+        $this->tokenModel = new QuickbooksToken();
+        $this->tokenModel->iduser = $this->config['iduser'];
+        $this->tokenModel->read();
+
+        // Is the refresh token still valid?
+        $refreshtokenexpiry = $this->tokenModel->refreshtokenexpiry;
+        $refreshtokenexpiry = new DateTime($refreshtokenexpiry, new DateTimeZone('Europe/London'));
+        $now = new DateTime();
+
+        if($refreshtokenexpiry < $now) {
+            # Uh ooh, the refresh token has expired
             http_response_code(400);  
             echo json_encode(
-                array(
-                    "message" => "Unable to handle callback in QB OAuth2 process.",
-                    "oauth_error" => $error->getOAuthHelperError(),
-                    "response_body" => $error->getResponseBody()
-                    )
+                array("message" => "refresh token has expired")
             );
-            exit(0);
+            return;
         }
+ 
+        $this->dataService = DataService::Configure(array(
+            'auth_mode' => 'oauth2',
+            'ClientID' => $this->config['ClientID'],
+            'ClientSecret' => $this->config['ClientSecret'],
+            'accessTokenKey' => $this->tokenModel->accesstoken,
+            'refreshTokenKey' => $this->tokenModel->refreshtoken,
+            'QBORealmID' => $this->config['QBORealmID'],
+            'baseUrl' => "Production"
+        ));
+
+        $OAuth2LoginHelper = $this->dataService->getOAuth2LoginHelper();  
+
+        $accesstokenexpiry = $this->tokenModel->accesstokenexpiry;
+        $accesstokenexpiry = new DateTime($accesstokenexpiry, new DateTimeZone('Europe/London'));
+        if($accesstokenexpiry < $now) {
+          $accessToken = $OAuth2LoginHelper->refreshToken();
+          $error = $OAuth2LoginHelper->getLastError();
+          if ($error) {
+              echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
+              echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
+              echo "The Response message is: " . $error->getResponseBody() . "\n";
+              return;
+          }
+          $this->store_tokens_in_database($accessToken);
+        } else {
+          $accessToken= new OAuth2AccessToken($this->config['ClientID'], $this->config['ClientSecret']);
+          $accessToken->updateAccessToken(3600, $this->tokenModel->refreshtoken, 
+                                                        8726400, $this->tokenModel->accesstoken);
+          $accessToken->setRealmID($this->config['QBORealmID']);
+        }
+    
+        $this->dataService->updateOAuth2Token($accessToken);
+    
+        return $this->dataService;
     }
 
     private function store_tokens_in_database($accessTokenObj){
