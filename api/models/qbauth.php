@@ -42,14 +42,14 @@ class QuickbooksAuth{
           'auth_mode' => 'oauth2',
           'authorizationRequestUrl' => 'https://appcenter.intuit.com/connect/oauth2',
           'tokenEndPointUrl' => 'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer',
-          'ClientID' => $user->clientid,
-          'ClientSecret' => $user->clientsecret,
+          'ClientID' => \Core\Config::read('qb.clientid'),
+          'ClientSecret' => \Core\Config::read('qb.clientsecret'),
           'scope' => 'com.intuit.quickbooks.accounting',
           'redirectURI' => \Core\Config::read('qb.redirecturl'),
           'QBORealmID' => \Core\Config::read('qb.realmid'),
           'response_type' => 'code',
           'state' => 'TEKP56', // A random string of chars
-          'iduser' => $user->id
+          'iduser' => $jwt->id
         );
     }
 

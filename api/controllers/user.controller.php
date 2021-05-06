@@ -45,8 +45,6 @@ class UserCtl{
         "suspended" => $model->suspended,
         "email" => $model->email,
         "title" => $model->title,
-        "clientid" => $model->clientid,
-        "clientsecret" => $model->clientsecret,
     );
 
     echo json_encode($user, JSON_NUMERIC_CHECK);

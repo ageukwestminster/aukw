@@ -4,9 +4,7 @@ START TRANSACTION;
 ALTER TABLE `user` ADD `failedloginattempts` TINYINT(1) NOT NULL DEFAULT '0' AFTER `suspended`;
 ALTER TABLE `user` ADD `email` VARCHAR(255) NULL AFTER `failedloginattempts`;
 ALTER TABLE `user` ADD `title` VARCHAR(100) NULL AFTER `email`;
-ALTER TABLE `user` ADD `clientid` VARCHAR(100) NULL AFTER `title`;
-ALTER TABLE `user` ADD `clientsecret` VARCHAR(100) NULL AFTER `clientid`;
-ALTER TABLE `user` ADD `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `clientsecret`;
+ALTER TABLE `user` ADD `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `title`;
 UPDATE `user` SET username='nsc' WHERE id = 1;
 
 ALTER DATABASE `dailytakings2` DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
@@ -20,13 +18,7 @@ SET username='test', isAdmin='0', firstname='Test',surname='User',
 	shopid=1,suspended='0', failedloginattempts='0',password='$2y$10$Annq5/qbt5w9VnaSj3qWKOElR5lj1KpjTshqKghW3v9xb5Wbbbovm';
 INSERT INTO user
 SET username='admin', isAdmin='1', firstname='Admin', surname='User', shopid=1,suspended='0', 
-	failedloginattempts='0',password='$2y$10$FJ8kSpWlrCbv18SIhVwK1.Thx9xzBEkVvqhjurlYk2n853KH9IW8G',
-    clientid='ABfKBoCDvYwfccfV7X48SxjS9DewKuKXSujBMjSHB7X9BUcoyi',
-    clientsecret='11wbu5o2Zr6uXkVQH9jc290sig7pqeernTSHUba9';
-    
-UPDATE `user` SET clientid='ABfKBoCDvYwfccfV7X48SxjS9DewKuKXSujBMjSHB7X9BUcoyi',
-    clientsecret='11wbu5o2Zr6uXkVQH9jc290sig7pqeernTSHUba9'
-WHERE id = 1;
+	failedloginattempts='0',password='$2y$10$FJ8kSpWlrCbv18SIhVwK1.Thx9xzBEkVvqhjurlYk2n853KH9IW8G';
 
 CREATE TABLE `usertoken` ( 
 `iduser` INT NOT NULL ,

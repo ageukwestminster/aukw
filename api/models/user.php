@@ -26,8 +26,6 @@ class User{
     public $shopid;
     public $title;
     public $failedloginattempts;
-    public $clientid;
-    public $clientsecret;
 
     // used by select drop-down list
     public function read(){
@@ -36,7 +34,7 @@ class User{
         $query = "SELECT
                     u.`id`, u.`username`, u.`password`, u.`shopid`,
                     u.isAdmin, u.suspended, u.`firstname`, u.failedloginattempts, 
-                    u.`email`, u.`title`, u.`surname`, u.`clientid`,u.`clientsecret`
+                    u.`email`, u.`title`, u.`surname`
                     FROM
                     " . $this->table_name . " u " . 
                     (isset($this->suspended)?'WHERE suspended = '.$this->suspended.' ':'');                    
@@ -70,9 +68,7 @@ class User{
                         "suspended" => $suspended?true:false,
                         "email" => html_entity_decode($email),
                         "title" => html_entity_decode($title),
-                        "shopid" => $shopid,
-                        "clientid" => $clientid,
-                        "clientsecret" => $clientsecret
+                        "shopid" => $shopid
                     );
         
                     // create nonindexed array
@@ -91,7 +87,7 @@ class User{
         $query = "SELECT
                     u.`id`, u.`username`, u.`password`, u.`shopid`,
                     u.isAdmin, u.suspended, u.`firstname`, u.`failedloginattempts`,
-                    u.`email`, u.`title`, u.`surname`, u.`clientid`,u.`clientsecret`
+                    u.`email`, u.`title`, u.`surname`
                     FROM
                     " . $this->table_name . " u
                     WHERE u.id = :id
@@ -123,8 +119,6 @@ class User{
             $this->role = $row['isAdmin'] ? 'Admin' : 'User';
             $this->suspended = $row['suspended']?true:false;
             $this->failedloginattempts = $row['failedloginattempts'];
-            $this->clientid = $row['clientid'];
-            $this->clientsecret = $row['clientsecret'];
         }
     }
 
@@ -161,9 +155,7 @@ class User{
                     email=:email,
                     title=:title,
                     suspended=:suspended,
-                    failedloginattempts=:failedloginattempts,
-                    clientid=:clientid,
-                    clientsecret=:clientsecret
+                    failedloginattempts=:failedloginattempts
                     " . (isset($this->password)?',password=:password ':'');
         
         // prepare query
@@ -179,9 +171,6 @@ class User{
         $this->failedloginattempts=filter_var($this->failedloginattempts, FILTER_SANITIZE_NUMBER_INT);
         $this->shopid=filter_var($this->shopid, FILTER_SANITIZE_NUMBER_INT);
 
-        $this->clientid = !empty($this->clientid) ? $this->clientid : NULL;
-        $this->clientsecret = !empty($this->clientsecret) ? $this->clientsecret : NULL;
-
         $isadmin = ($this->role=='Admin') ? 1 : 0;
         $suspended = $this->suspended ? 1 : 0;
 
@@ -196,8 +185,6 @@ class User{
         $stmt->bindParam(":title", $this->title);
         $stmt->bindParam(":failedloginattempts", $this->failedloginattempts, PDO::PARAM_INT);
         $stmt->bindParam(":password", $this->password);
-        $stmt->bindParam(":clientid", $this->clientid);
-        $stmt->bindParam(":clientsecret", $this->clientsecret);
         
         // execute query
         if($stmt->execute()){
@@ -225,9 +212,7 @@ class User{
                     surname=:surname,
                     shopid=:shopid,
                     timestamp=NULL,
-                    failedloginattempts=:failedloginattempts,
-                    clientid=:clientid,
-                    clientsecret=:clientsecret
+                    failedloginattempts=:failedloginattempts
                     " . (isset($this->password)?',new_pass=:password ':'') ."
                  WHERE
                     id=:id";
@@ -249,8 +234,6 @@ class User{
             $stmt->bindParam(":password", $this->password);
         }
         
-        $this->clientid = !empty($this->clientid) ? $this->clientid : NULL;
-        $this->clientsecret = !empty($this->clientsecret) ? $this->clientsecret : NULL;
         $this->failedloginattempts = !empty($this->failedloginattempts) ? $this->failedloginattempts : 0;
 
         $isadmin = ($this->role=='Admin') ? 1 : 0;
@@ -267,8 +250,6 @@ class User{
         $stmt->bindParam(":surname", $this->surname);
         $stmt->bindParam(":shopid", $this->shopid, PDO::PARAM_INT);   
         $stmt->bindParam(":failedloginattempts", $this->failedloginattempts, PDO::PARAM_INT); 
-        $stmt->bindParam(":clientid", $this->clientid);
-        $stmt->bindParam(":clientsecret", $this->clientsecret);    
 
         // execute query
         if($stmt->execute()){
