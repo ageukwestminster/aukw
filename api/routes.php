@@ -30,13 +30,9 @@ $router->set404(function() {
     require 'authenticate/auth.php'; 
 } );*/
 $router->mount('/auth', function() use ($router) {
-
     $router->post('/', function () {include 'authenticate/auth.php'; } );
-
     $router->get('/refresh', function () {include 'authenticate/refresh.php'; } );
-
     $router->delete('/revoke', function () {include 'authenticate/revoke.php'; } );
-  
 });
 
 /***************/
@@ -46,6 +42,7 @@ $router->mount('/takings', function () use ($router) {
     $router->post('/', 'TakingsCtl@create');
     $router->put('/(\d+)', 'TakingsCtl@update');
     $router->delete('/(\d+)', 'TakingsCtl@delete');
+    $router->get('/quickbooks/(\d+)', 'TakingsCtl@read_by_quickbooks_status');
     $router->get('/(\d+)', 'TakingsCtl@read_one');
 });
 
@@ -64,6 +61,7 @@ $router->mount('/shop', function () use ($router) {
 $router->mount('/qb', function () use ($router) {
     $router->get('/journal/(\w+)', 'JournalCtl@read_one');
     $router->post('/journal', 'JournalCtl@create');
+    $router->post('/journal/takings/(\d+)', 'JournalCtl@create_from_takings');
     $router->get('/auth', 'QuickbooksCtl@oauth2_begin');
     $router->get('/callback', 'QuickbooksCtl@oauth2_callback');
     $router->get('/refresh', 'QuickbooksCtl@oauth2_refresh');

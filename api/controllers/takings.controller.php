@@ -12,6 +12,13 @@ class TakingsCtl{
     echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
   }
 
+  public static function read_by_quickbooks_status($quickbooks){  
+
+    $model = new \Models\Takings();
+
+    echo json_encode($model->read_by_quickbooks_status($quickbooks), JSON_NUMERIC_CHECK);
+  }
+
   public static function create(){
 
     $model = new \Models\Takings();
