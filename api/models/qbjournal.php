@@ -149,4 +149,25 @@ class QuickbooksJournal{
             );
         }
     }
+
+    private function cash_discrepency_line($id, $amount, $class) {
+      $account = [
+        "value" => 93,
+        "name" => "Office Expense:Cash Discrepancies"
+      ];
+      return journal_line($id, "Overage/Underage",$amount, $account, $class);
+    }
+
+    private function journal_line($id, $description, $amount, $account, $class) {
+      return array(
+        "Description" => $description,
+        "Amount" => $amount,
+        "DetailType" => "JournalEntryLineDetail",
+        "JournalEntryLineDetail" => [
+          "PostingType" => $amount<=0?"Debit":"Credit",
+          "AccountRef" => $account,
+          "ClassRef" => $class
+       ]
+      );
+    }
 }
