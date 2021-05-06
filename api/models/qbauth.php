@@ -32,11 +32,6 @@ class QuickbooksAuth{
     public function __construct(){
 
         $jwt = new JWTWrapper();
-        $iduser = $jwt->id;
-        
-        $user = new User();
-        $user->id = $iduser;
-        $user->readOne();
   
         $this->config = array(
           'auth_mode' => 'oauth2',
