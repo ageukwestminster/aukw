@@ -121,12 +121,13 @@ class QuickbooksJournal{
             "TaxRateRef" => $this->zero_rated_taxrate,
             "PercentBased" => true,
             "TaxPercent" => 0,
-            "NetAmountTaxable" => -abs($this->sales)
+            "NetAmountTaxable" => -round(abs($this->sales),2)
           ]
         ]
       ]
     );
 
+    // This code will only add the respective line if amount != 0
     $this->journal_line($journal['Line'], "Cash Donations to Parent Charity", 
       $this->donations, $this->donations_account, $this->harrow_road_class);
     $this->journal_line($journal['Line'], "Overage / Underage", 
@@ -144,7 +145,7 @@ class QuickbooksJournal{
 
     array_push($journal['Line'], [
       "Description" => "Zero-Rated Sales - Charity Shop Sales - Zero Rated",
-      "Amount" => abs($this->sales),
+      "Amount" => round(abs($this->sales),2),
       "DetailType" => "JournalEntryLineDetail",
       "JournalEntryLineDetail" => [
         "PostingType" => $this->sales<0?"Debit":"Credit",
@@ -173,7 +174,6 @@ class QuickbooksJournal{
         echo "The Response message is: " . $error->getResponseBody() . "\n";
         return false;
     } else {      
-      //echo json_encode(   $resultingObj );   
       return array(
           "id" => $resultingObj->Id,
           "date" => $resultingObj->TxnDate,
@@ -187,7 +187,7 @@ class QuickbooksJournal{
 
     array_push($line_array, array(
       "Description" => $description,
-      "Amount" => abs($amount),
+      "Amount" => round(abs($amount),2),
       "DetailType" => "JournalEntryLineDetail",
       "JournalEntryLineDetail" => [
         "PostingType" => $amount<=0?"Debit":"Credit",
