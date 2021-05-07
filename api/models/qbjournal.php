@@ -67,7 +67,7 @@ class QuickbooksJournal{
   public $cashDiscrepency;
   public $creditCards;
   public $cash;
-  public $staffExpenses;
+  public $operatingExpenses;
   public $volunteerExpenses;
   public $sales;
   public $cashToCharity;
@@ -139,7 +139,7 @@ class QuickbooksJournal{
     $this->journal_line($journal['Line'], "Cash that will be used as petty cash by Charity",
       $this->cashToCharity, $this->cash_to_charity_account, $this->harrow_road_class);
     $this->journal_line($journal['Line'], "Minor operating expenses paid in cash.",
-      $this->staffExpenses, $this->other_expenses_account, $this->harrow_road_class);
+      $this->operatingExpenses, $this->other_expenses_account, $this->harrow_road_class);
     $this->journal_line($journal['Line'], "Volunteer expenses paid in cash.",
       $this->volunteerExpenses, $this->volunteer_expenses_account, $this->harrow_road_class);
 

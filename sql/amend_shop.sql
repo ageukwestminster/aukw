@@ -47,4 +47,5 @@ ALTER TABLE qbtoken
 ALTER TABLE `qbtoken` 
 	ADD UNIQUE `AK_qbtoken_iduser` (`iduser`);
     
+UPDATE `takings` SET quickbooks = 1 WHERE `date` <= '2021-04-30' AND `shopid` = 1 AND `date` >= '2021-04-20';
 COMMIT;
