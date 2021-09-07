@@ -71,7 +71,8 @@ class QuickbooksJournal{
   public $volunteerExpenses;
   public $sales;
   public $cashToCharity;
-  public $shopid;  
+  public $shopid; 
+  public $privatenote;  
 
   public function readOne(){
 
@@ -94,20 +95,6 @@ class QuickbooksJournal{
       }
   }
 
-/*
-  public function create_from_takings($takingsid){
-
-    $model = new \Models\Takings();
-    $model->id = $takingsid;
-    $model->readone();
-
-
-
-    $journal = array(
-      "TxnDate" => $this->date,
-      "DocNumber" => ""
-    );
-  }*/
 
   public function create(){
 
@@ -116,6 +103,7 @@ class QuickbooksJournal{
     $journal = array(
       "TxnDate" => $this->date,
       "DocNumber" => $docnumber,
+      "PrivateNote" => $this->privatenote,
       "Line" => [],
       "TxnTaxDetail"=> [
         "TaxLine" => [
@@ -136,7 +124,7 @@ class QuickbooksJournal{
       $this->donations, $this->donations_account, $this->harrow_road_class);
     $this->journal_line($journal['Line'], "Overage / Underage", 
       $this->cashDiscrepency, $this->cash_discrepencies_account, $this->harrow_road_class);
-    $this->journal_line($journal['Line'], "Credit card paymets.",
+    $this->journal_line($journal['Line'], "Credit card payments.",
       $this->creditCards, $this->credit_card_account, $this->harrow_road_class);
     $this->journal_line($journal['Line'], "Cash deposited to bank.",
       $this->cash, $this->undeposited_funds_account, $this->harrow_road_class);

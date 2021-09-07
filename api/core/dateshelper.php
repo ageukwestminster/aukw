@@ -3,6 +3,7 @@
 namespace Core;
 
 use DateTime;
+use DateTimeZone;
 
 class DatesHelper
 {
@@ -60,5 +61,11 @@ class DatesHelper
     public static function validateDate($date, $format = 'Y-m-d'){
         $d = DateTime::createFromFormat($format, $date);
         return $d && $d->format($format) === $date;
+    }
+
+    public static function currentDateTime(){
+        $now = new DateTime();
+        $now->setTimezone(new DateTimeZone('Europe/London'));
+        return $now->format('Y-m-d H:i:s');    // MySQL datetime format
     }
 }
