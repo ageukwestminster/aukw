@@ -4,6 +4,7 @@ namespace Controllers;
 
 class JournalCtl{
 
+  const NOT_IN_QUICKBOOKS = 0;
 
   public static function read_one($id){  
 
@@ -11,6 +12,27 @@ class JournalCtl{
     $model->id = $id;
 
     echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
+  }
+
+  public static function patch(){
+    $data = json_decode(file_get_contents("php://input"));
+    if(isset($data->method)){
+
+        switch (strtolower($data->method)) {
+            case 'create_all':
+              JournalCtl::create_all_from_takings();
+                break;
+            default:
+            http_response_code(422);  
+            echo json_encode(
+              array(
+                "message" => "Unknown method",
+                "method" => $data->method
+              )
+            );
+        }
+    }
+
   }
 
   public static function create(){  
@@ -50,7 +72,62 @@ class JournalCtl{
     if ($takings->quickbooks != 0) {
       http_response_code(400);
       echo json_encode(
-        array("message" => "Already entered into Quickbooks.")
+        array("message" => "ID " . $takingsid ." already entered into Quickbooks.")
+      );
+      exit(0);
+    } else if ($takings->date == null) {
+      http_response_code(400);
+      echo json_encode(
+        array("message" => "No takings found in MySQL database with that id (" . $takingsid .").")
+      );
+      exit(0);
+    } else if ($takings->id == 0) {
+      exit(0);
+    }
+
+    $model->date = $takings->date;          
+    $model->shopid = $takings->shopid;          
+    $model->donations = $takings->donations;
+    $model->cashDiscrepency = $takings->cash_difference;
+    $model->creditCards = $takings->credit_cards*-1;
+    $model->cash = $takings->cash_to_bank*-1;
+    $model->operatingExpenses = $takings->operating_expenses*-1 + $takings->other_adjustments*-1;
+    $model->volunteerExpenses = $takings->volunteer_expenses*-1;
+    $model->sales = $takings->clothing + $takings->brica + $takings->books + $takings->linens + $takings->other;
+    $model->cashToCharity = $takings->cash_to_charity*-1;  
+
+    JournalCtl::check_parameters($model);
+
+    $result = $model->create();
+    if ($result) {
+      $takings->quickbooks = 1;
+      $takings->update();
+      echo json_encode(
+            array("message" => "Journal '". $result['label']  ."' has been added for " . $result['date'] . ".",
+                "id" => $result['id'])
+          );
+    }
+  }
+
+  private static function create_all_from_takings(){  
+
+    $model = new \Models\QuickbooksJournal();
+
+    $takingsModel = new \Models\Takings();
+    $takingsArray = $takingsModel->read_by_quickbooks_status(self::NOT_IN_QUICKBOOKS);
+
+    if ( count($takingsArray) == 0) {
+      http_response_code(200);
+      echo json_encode(
+        array("message" => "No takings available to be entered into Quickbooks. Empty array returned from database.")
+      );
+      exit(0);
+    }
+
+    if ($takings->quickbooks != 0) {
+      http_response_code(400);
+      echo json_encode(
+        array("message" => "ID " . $takingsid ." already entered into Quickbooks.")
       );
       exit(0);
     } else if ($takings->date == null) {

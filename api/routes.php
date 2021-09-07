@@ -59,9 +59,19 @@ $router->mount('/shop', function () use ($router) {
 /* Quickbooks Routes */
 /*********************/
 $router->mount('/qb', function () use ($router) {
+    // The param is the Quickbooks Journal Id. This number is not exposed via the normal QB website. It
+    // is not the DocNumber which can be seen on the website.
     $router->get('/journal/(\w+)', 'JournalCtl@read_one');
+
+
     $router->post('/journal', 'JournalCtl@create');
+
+     // The param is the takingsid value in the takings table in MySQL dB
     $router->post('/journal/takings/(\d+)', 'JournalCtl@create_from_takings');
+
+    // take action on takings journal; Only 'create_all'implemented so far.
+    $router->patch('/journal/takings/', 'JournalCtl@patch');
+
     $router->get('/auth', 'QuickbooksCtl@oauth2_begin');
     $router->get('/callback', 'QuickbooksCtl@oauth2_callback');
     $router->get('/refresh', 'QuickbooksCtl@oauth2_refresh');

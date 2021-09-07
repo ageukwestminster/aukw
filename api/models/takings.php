@@ -45,6 +45,8 @@ class Takings{
     public $timestamp;
     public $quickbooks;
 
+    // Set $quickbooks = 0 to see all takings that are not in QB, set to 1 to see all takings that are in QB
+    // No other values are valid
     public function read_by_quickbooks_status($quickbooks){
         $query = "SELECT
                     takingsid as `id`, `date`, shopid, clothing_num, brica_num,
