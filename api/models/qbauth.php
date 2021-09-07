@@ -136,8 +136,15 @@ class QuickbooksAuth{
 
         // Is the refresh token still valid?
         $refreshtokenexpiry = $this->tokenModel->refreshtokenexpiry;
+        if ($refreshtokenexpiry == null) {
+            http_response_code(400);  
+            echo json_encode(
+                array("message" => "QB refresh token missing from local database. Have you authorised the app?")
+            );
+            return false;
+        }
         $refreshtokenexpiry = new DateTime($refreshtokenexpiry, new DateTimeZone('Europe/London'));
-        $now = new DateTime();
+        $now = new DateTime("now", new DateTimeZone('Europe/London'));
 
         if($refreshtokenexpiry < $now) {
             # Uh ooh, the refresh token has expired
@@ -145,7 +152,7 @@ class QuickbooksAuth{
             echo json_encode(
                 array("message" => "refresh token has expired")
             );
-            return;
+            return false;
         }
  
         $this->dataService = DataService::Configure(array(
@@ -169,7 +176,7 @@ class QuickbooksAuth{
               echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
               echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
               echo "The Response message is: " . $error->getResponseBody() . "\n";
-              return;
+              return false;
           }
           $this->store_tokens_in_database($accessToken);
         } else {

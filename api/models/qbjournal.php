@@ -77,6 +77,10 @@ class QuickbooksJournal{
 
       $auth = new QuickbooksAuth();
       $dataService = $auth->prepare();
+      if ($dataService == false) {
+        return;
+      }
+
       $dataService->forceJsonSerializers();
       $journalentry = $dataService->FindbyId('journalentry', $this->id);
       $error = $dataService->getLastError();
@@ -132,9 +136,9 @@ class QuickbooksJournal{
       $this->donations, $this->donations_account, $this->harrow_road_class);
     $this->journal_line($journal['Line'], "Overage / Underage", 
       $this->cashDiscrepency, $this->cash_discrepencies_account, $this->harrow_road_class);
-    $this->journal_line($journal['Line'], "Total of customer payments by credit card.",
+    $this->journal_line($journal['Line'], "Credit card paymets.",
       $this->creditCards, $this->credit_card_account, $this->harrow_road_class);
-    $this->journal_line($journal['Line'], "Total of customer payments in cash.",
+    $this->journal_line($journal['Line'], "Cash deposited to bank.",
       $this->cash, $this->undeposited_funds_account, $this->harrow_road_class);
     $this->journal_line($journal['Line'], "Cash that will be used as petty cash by Charity",
       $this->cashToCharity, $this->cash_to_charity_account, $this->harrow_road_class);
@@ -165,6 +169,9 @@ class QuickbooksJournal{
     
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare();
+    if ($dataService == false) {
+      return false;
+    }
     $resultingObj = $dataService->Add($theResourceObj);
 
     $error = $dataService->getLastError();

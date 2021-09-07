@@ -53,6 +53,14 @@ class JournalCtl{
         array("message" => "Already entered into Quickbooks.")
       );
       exit(0);
+    } else if ($takings->date == null) {
+      http_response_code(400);
+      echo json_encode(
+        array("message" => "No takings found in MySQL database with that id (" . $takingsid .").")
+      );
+      exit(0);
+    } else if ($takings->id == 0) {
+      exit(0);
     }
 
     $model->date = $takings->date;          
