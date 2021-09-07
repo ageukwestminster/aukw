@@ -87,6 +87,35 @@ class TakingsCtl{
       }
   }
 
+  public static function patch($id){
+    $data = json_decode(file_get_contents("php://input"));
+    if(isset($data->quickbooks)){
+
+      $model = new \Models\Takings();
+      $model->id = $id;
+      $model->quickbooks = empty($data->quickbooks)?0:$data->quickbooks;
+
+      if ($model->patch_quickbooks()) {
+        echo json_encode(
+          array(
+            "message" => "Takings with id=$model->id was patched to set Quickbooks to "
+            . $model->quickbooks .".",
+            "id" => $model->id)
+            , JSON_NUMERIC_CHECK);
+      } else {
+        http_response_code(400);  
+        echo json_encode(
+          array(
+            "message" => "Unable to PATCH takings row.",
+            "id" => $model->id,
+            "quickbooks" => $data->quickbooks)
+            , JSON_NUMERIC_CHECK);
+    }
+        
+      
+    }
+  }
+
   private static function transferParameters($data, $model)
   {
     if (isset($data->date)) {

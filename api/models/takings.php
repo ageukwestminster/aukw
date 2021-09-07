@@ -429,4 +429,26 @@ class Takings{
 
         return false;
     }
+
+    function patch_quickbooks(){
+        $query = "UPDATE
+                    " . $this->table_name . "
+                    SET 
+                    quickbooks=:quickbooks,
+                    timestamp=NULL 
+                WHERE 
+                    takingsid=:id;";
+
+        // prepare query
+        $stmt = $this->conn->prepare($query);
+
+        // sanitize
+        $this->quickbooks=htmlspecialchars(strip_tags($this->quickbooks));
+
+        // bind values
+        $stmt->bindParam(":id", $this->id);
+        $stmt->bindParam(":quickbooks", $this->quickbooks);
+        
+        return $stmt->execute();
+    }
 }
