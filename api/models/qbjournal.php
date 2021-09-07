@@ -103,7 +103,7 @@ class QuickbooksJournal{
     $journal = array(
       "TxnDate" => $this->date,
       "DocNumber" => $docnumber,
-      "PrivateNote" => $this->privatenote,
+      "PrivateNote" => $this->privatenote?$this->privatenote:"",
       "Line" => [],
       "TxnTaxDetail"=> [
         "TaxLine" => [
