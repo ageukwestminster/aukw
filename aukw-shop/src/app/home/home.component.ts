@@ -1,15 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 
-@Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
-})
+import { User } from '@app/_models';
+import {
+  AuthenticationService,
+} from '@app/_services';
+
+@Component({ templateUrl: 'home.component.html' })
 export class HomeComponent implements OnInit {
+  loading = false;
+  user: User;
 
-  constructor() { }
-
-  ngOnInit(): void {
+  constructor(
+    private authenticationService: AuthenticationService,
+  ) {
+    this.user = this.authenticationService.userValue;
   }
 
+  ngOnInit() {  }
 }
