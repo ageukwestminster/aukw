@@ -1,16 +1,17 @@
 <td>{{user.fullname}}</td>
 <td>{{user.username}}</td>
 <td>
-    <select (change)="onRoleChange($event.target.value)" (click)= "onClickEvent($event)">
+    <!-- Explicity cast target value to an Any type according to fix suggested at https://github.com/angular/angular/issues/35293#issuecomment-584293328 -->
+    <select (change)="onRoleChange($any($event.target).value)" (click)= "onClickEvent($event)">
         <option *ngFor="let role of roles" [ngValue]="role" [selected]="role===user.role">{{roles2[role]}}</option>
     </select>
 </td>
 <td class="text-center">
     <div>
-        <div (change)="onSuspendedChange($event.target.value)" (click)= "onClickEvent($event)" class="form-check" *ngIf="user.suspended">
+        <div (change)="onSuspendedChange($any($event.target).value)" (click)= "onClickEvent($event)" class="form-check" *ngIf="user.suspended">
             <input class="form-check-input" type="checkbox" id="flexCheckCheckedDisabled" checked>
         </div>
-        <div (change)="onSuspendedChange($event.target.value)" (click)= "onClickEvent($event)" class="form-check" *ngIf="!user.suspended">
+        <div (change)="onSuspendedChange($any($event.target).value)" (click)= "onClickEvent($event)" class="form-check" *ngIf="!user.suspended">
             <input class="form-check-input" type="checkbox" id="flexCheckDisabled">
         </div>
     </div>
