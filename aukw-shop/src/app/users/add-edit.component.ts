@@ -48,7 +48,8 @@ export class UserAddEditComponent implements OnInit {
 
         const formOptions: AbstractControlOptions = { validators: MustMatch('password', 'confirmPassword') };
         this.form = this.formBuilder.group({
-            fullname: ['', Validators.required],
+            firstname: ['', Validators.required],
+            surname: ['', Validators.required],
             suspended: [false],
             title: [''],
             username: ['', [Validators.required]],

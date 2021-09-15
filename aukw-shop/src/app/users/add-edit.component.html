@@ -29,10 +29,15 @@
     </div>
     <div class="form-row">
         <div class="form-group col-7">
-            <label>Full Name</label>
-            <input type="text" formControlName="fullname" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.fullname.errors }" />
-            <div *ngIf="submitted && f.fullname.errors" class="invalid-feedback">
-                <div *ngIf="f.fullname.errors.required">Full Name is required</div>
+            <label>First Name</label>
+            <input type="text" formControlName="firstname" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.firstname.errors }" />
+            <div *ngIf="submitted && f.firstname.errors" class="invalid-feedback">
+                <div *ngIf="f.firstname.errors.required">First Name is required</div>
+            </div>
+            <label>Surname</label>
+            <input type="text" formControlName="surname" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.surname.errors }" />
+            <div *ngIf="submitted && f.surname.errors" class="invalid-feedback">
+                <div *ngIf="f.surname.errors.required">Surname is required</div>
             </div>
         </div>
         <div class="form-group col">

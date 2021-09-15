@@ -5,7 +5,8 @@ export class User {
     username: string;    
     role: Role;
     suspended: boolean;
-    fullname: string;
+    firstname: string;
+    surname: string;
     password?: string;
     accessToken?: string;
     email?: string;
@@ -20,7 +21,8 @@ export class User {
         this.username = obj && obj.username || null;
         this.role = obj && obj.role || null;
         this.suspended = obj && obj.suspended;
-        this.fullname = obj && obj.fullname || null;
+        this.firstname = obj && obj.firstname || null;
+        this.surname = obj && obj.surname || null;
         this.password = obj && obj.password || null;
         this.accessToken = obj && obj.accessToken || null;
         this.email = obj && obj.email || null;
