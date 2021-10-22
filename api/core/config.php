@@ -33,7 +33,7 @@ Config::write('server', 'http://localhost:4200');
 Config::write('api.path', '/api/');
 
 // db
-Config::write('db.host', '192.168.1.22');
+Config::write('db.host', '192.168.1.26');
 Config::write('db.port', '3306');
 Config::write('db.name', 'dailytakings2');
 Config::write('db.user', 'shop');
