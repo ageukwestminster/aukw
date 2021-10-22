@@ -51,13 +51,18 @@ class Database{
 
     private function testConnection($host, $port){
         $waitTimeoutInSeconds = 1;
-        if ($fp = fsockopen($host,$port,$errCode,$errStr,$waitTimeoutInSeconds)) {
-            // It worked
-            return true;
-        } else {
-            // It didn't work
+        try {
+            if ($fp = fsockopen($host,$port,$errCode,$errStr,$waitTimeoutInSeconds)) {
+                // It worked
+                return true;
+            } else {
+                // It didn't work
+                return false;
+            }
+            fclose($fp);
+        } catch (Exception $e) {
+            echo 'Caught exception: ',  $e->getMessage(), "\n";
             return false;
         }
-        fclose($fp);
     }
 }
