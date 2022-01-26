@@ -116,7 +116,7 @@ class JournalCtl{
 
     $model = new \Models\QuickbooksJournal();
 
-    // search for al lthe takings objects that are not yet entered into Quickbooks
+    // search for all the takings objects that are not yet entered into Quickbooks
     $takingsModel = new \Models\Takings();
     $takingsArray = $takingsModel->read_by_quickbooks_status(self::NOT_IN_QUICKBOOKS);
 

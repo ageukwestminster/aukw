@@ -72,7 +72,8 @@ $router->mount('/qb', function () use ($router) {
      // The param is the takingsid value in the takings table in MySQL dB
     $router->post('/journal/takings/(\d+)', 'JournalCtl@create_from_takings');
 
-    // take action on takings journal; Only 'create_all'implemented so far.
+    // take action on takings journal; Only 'create_all' implemented so far.
+    // Create All adds to QB any takings which has Quickbooks=0 in the mariaDB
     $router->patch('/journal/takings/', 'JournalCtl@patch');
 
     $router->get('/auth', 'QuickbooksCtl@oauth2_begin');
