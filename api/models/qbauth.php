@@ -44,7 +44,9 @@ class QuickbooksAuth{
           'QBORealmID' => \Core\Config::read('qb.realmid'),
           'response_type' => 'code',
           'state' => 'TEKP56', // A random string of chars
-          'iduser' => $jwt->id
+          'iduser' => $jwt->id,
+          'enablelog' => \Core\Config::read('qb.enablelog'),
+          'loglocation' => \Core\Config::read('qb.loglocation')
         );
     }
 
@@ -165,7 +167,10 @@ class QuickbooksAuth{
             'baseUrl' => "Production"
         ));
 
-        $OAuth2LoginHelper = $this->dataService->getOAuth2LoginHelper();  
+        $OAuth2LoginHelper = $this->dataService->getOAuth2LoginHelper();
+        if ($this->config['enablelog']) {
+            $OAuth2LoginHelper->setLogForOAuthCalls(true, true, $this->config['loglocation']);
+        }
 
         $accesstokenexpiry = $this->tokenModel->accesstokenexpiry;
         $accesstokenexpiry = new DateTime($accesstokenexpiry, new DateTimeZone('Europe/London'));
