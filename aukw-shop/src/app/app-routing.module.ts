@@ -7,6 +7,7 @@ import { AuthGuard } from './_helpers';
 import { Role } from './_models';
 
 const usersModule = () => import('./users/users.module').then(x => x.UsersModule);
+const takingsModule = () => import('./takings/takings.module').then(x => x.TakingsModule);
 
 const routes: Routes = [
   {
@@ -24,6 +25,13 @@ const routes: Routes = [
       canActivate: [AuthGuard],
       data: { roles: [Role.Admin] }
   },
+
+  {
+    path: 'takings',
+    loadChildren: takingsModule,
+    canActivate: [AuthGuard]
+},
+
   // otherwise redirect to home
   { path: '**', redirectTo: '' }
 ];

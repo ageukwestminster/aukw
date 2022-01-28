@@ -45,6 +45,84 @@ class Takings{
     public $timestamp;
     public $quickbooks;
 
+    // Show takings data for the last 90 days for a given shop
+    public function read_by_shop($shopid){
+        $query = "SELECT
+                    takingsid as `id`, `date`, shopid, clothing_num, brica_num,
+                    books_num, linens_num, donations_num, other_num, rag_num, clothing,
+                    brica, books, linens, donations, other, rag, `customers_num_total`,
+                    cash_to_bank, `credit_cards`,`operating_expenses`,`volunteer_expenses`,
+                    `other_adjustments`, `cash_to_charity`, `cash_difference`,`comments`,
+                    `rags_paid_in_cash`,`timestamp`,quickbooks
+                    FROM
+                    " . $this->table_name . "
+                    WHERE shopid = :shopid AND `date` > DATE_sub(NOW(), INTERVAL 90 DAY)
+                    ORDER BY `date` DESC
+                    ";
+        
+        // prepare query statement
+        $stmt = $this->conn->prepare( $query );
+
+        // bind id of product to be updated
+        $stmt->bindParam(":shopid", $shopid, PDO::PARAM_INT);
+
+        // execute query
+        $stmt->execute();
+
+        $num = $stmt->rowCount();
+
+        $item_arr=array();
+
+        // check if more than 0 record found
+        if($num>0){
+            // retrieve our table contents
+            // fetch() is faster than fetchAll()
+            // http://stackoverflow.com/questions/2770630/pdofetchall-vs-pdofetch-in-a-loop
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                // extract row
+                // this will make $row['name'] to
+                // just $name only
+                extract($row);
+            
+                $item=array(
+                    "id" => $id,
+                    "date" => $date,
+                    "shopid" => $shopid,
+                    "clothing_num" => $clothing_num,
+                    "brica_num" => $brica_num,
+                    "books_num" => $books_num,
+                    "linens_num" => $linens_num,
+                    "donations_num" => $donations_num,
+                    "other_num" => $other_num,
+                    "rag_num" => $rag_num,
+                    "clothing" => $clothing,
+                    "brica" => $brica,
+                    "books" => $books,
+                    "linens" => $linens,
+                    "donations" => $donations,
+                    "other" => $other,
+                    "rag" => $rag,
+                    "customers_num_total" => $customers_num_total,
+                    "cash_to_bank" => $cash_to_bank,
+                    "credit_cards" => $credit_cards,
+                    "operating_expenses" => $operating_expenses,
+                    "volunteer_expenses" => $volunteer_expenses,
+                    "other_adjustments" => $other_adjustments,
+                    "cash_to_charity" => $cash_to_charity,
+                    "cash_difference" => $cash_difference,
+                    "comments" => $comments,
+                    "rags_paid_in_cash" => $rags_paid_in_cash,
+                    "quickbooks" => $quickbooks,
+                    "timestamp" => $timestamp
+                );
+
+                $item_arr[] = $item;
+            }
+        }
+
+        return $item_arr;
+    }
+
     // Set $quickbooks = 0 to see all takings that are not in QB, set to 1 to see all takings that are in QB
     // No other values are valid
     public function read_by_quickbooks_status($quickbooks){

@@ -1,0 +1,16 @@
+<th scope="row" class="d-table-cell d-sm-none">
+    {{takings.date}}
+</th>
+<td scope="row" class="d-table-cell d-sm-none">
+    {{takings.clothing | number: '1.2-2'}}
+</td>
+<td style="white-space: nowrap">
+    <button routerLink="edit/{{takings.id}}" class="btn btn-sm btn-primary mr-1" [disabled]="takings.isUpdating">
+        <span *ngIf="takings.isUpdating" class="spinner-border spinner-border-sm"></span>
+        <span *ngIf="!takings.isUpdating">Edit</span>
+    </button>
+    <button (click)="deleteTakings($event)" class="btn btn-sm btn-danger btn-delete-takings" [disabled]="takings.isDeleting">
+        <span *ngIf="takings.isDeleting" class="spinner-border spinner-border-sm"></span>
+        <span *ngIf="!takings.isDeleting">Delete</span>
+    </button>
+</td>

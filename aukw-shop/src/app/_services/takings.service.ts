@@ -10,8 +10,8 @@ const baseUrl = `${environment.apiUrl}/takings`;
 export class TakingsService {
     constructor(private http: HttpClient) { }
 
-    getAll() {
-        return this.http.get<Takings[]>(baseUrl);
+    getByShopID(shopid: number) {
+        return this.http.get<Takings[]>(`${baseUrl}/shop/${shopid}`);
     }
 
     getById(id: number) {

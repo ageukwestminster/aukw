@@ -1,0 +1,30 @@
+﻿<h1 *ngIf="isAdd">Add Daily Takings</h1>
+<h1 *ngIf="isEdit">Edit Daily Takings</h1>
+<div *ngIf="loading">
+<span class="spinner-border spinner-border-lg align-center"></span>
+</div>
+<!--'[formGroup]' is a Reactive forms property-->
+<!--The *ngIf is in place to stop errors of 'Expression has changed after it was checked.'-->
+<form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!loading">
+    <!-- Buttons -->
+  <div class="row d-flex justify-content-between mb-2">
+    <div class="col-auto">
+      <button
+        type="submit"
+        [disabled]="loading"
+        class="btn btn-primary mr-1"
+      >
+        <span
+          *ngIf="loading"
+          class="spinner-border spinner-border-sm mr-1"
+        ></span>
+        Save
+        </button>
+            <button (click)="goBack()" class="btn btn-outline-dark">
+                Close &times;
+            </button>
+        </div>
+    </div>
+    <!-- End of Buttons -->
+
+</form>

@@ -30,6 +30,9 @@ export class Takings {
     rags_paid_in_cash: Boolean;
     quickbooks: Boolean;
 
+    isDeleting: boolean = false;
+    isUpdating: boolean = false;
+
     constructor(obj?: any) {
 
         this.id = obj && obj.id || null;
