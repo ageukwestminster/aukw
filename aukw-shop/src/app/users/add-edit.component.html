@@ -4,67 +4,184 @@
 <div *ngIf="loading">
 <span class="spinner-border spinner-border-lg align-center"></span>
 </div>
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <div class="form-row">
-        <div class="form-group col-7">
-            <label>Username</label>
-            <!-- Autocomplete from https://developer.apple.com/documentation/security/password_autofill/enabling_password_autofill_on_an_html_input_element -->
-            <!-- Also see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete -->
-            <input type="text" formControlName="username" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.username.errors }" autocomplete="username"/>
+<!--'[formGroup]' is a Reactive forms property-->
+<!--The *ngIf is in place to stop errors of 'Expression has changed after it was checked.'-->
+<form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!loading">
+    <!-- Buttons -->
+  <div class="row d-flex justify-content-between mb-2">
+    <div class="col-auto">
+      <button
+        type="submit"
+        [disabled]="loading"
+        class="btn btn-primary mr-1"
+      >
+        <span
+          *ngIf="loading"
+          class="spinner-border spinner-border-sm mr-1"
+        ></span>
+        Save
+        </button>
+            <button (click)="goBack()" class="btn btn-outline-dark">
+                Close &times;
+            </button>
+        </div>
+    </div>
+    <!-- End of Buttons -->
+
+  <div class="row mb-1">
+
+    <div class="col-sm-6 mb-1">
+        <div class="input-group mb-1">
+            <span class="input-group-text col-4" id="bankpayerref-addon1"
+              >Username
+            </span>
+            <input
+              type="text"
+              class="form-control"
+              [ngClass]="{ 'is-invalid': submitted && f.username.errors }"
+              formControlName="username"
+              aria-label="Username"
+              aria-describedby="username-addon1"
+              placement="bottom"
+              autocomplete="username"
+            />
             <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
                 <div *ngIf="f.username.errors.required">Username is required</div>
             </div>
         </div>
-        <div class="form-group col">
-            <label>Role</label>
-            <select formControlName="role" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.role.errors }">
+        <div class="input-group mb-1">
+          <span class="input-group-text col-4" id="shop-label">Shop</span>
+          <div class="card p-2 col-8">
+            <select
+              formControlName="shopid"
+              id="shopSelect"
+              name="shopSelect"
+              class="form-control"
+            >
+              <option 
+                *ngFor="let shop of shops$ | async"
+                [ngValue]="shop.id">
+                {{ shop.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="input-group mb-1">
+            <span class="input-group-text col-4" id="dates-label">Role</span>
+            <div class="card p-2 col-8">
+              <select
+                formControlName="role"
+                id="roleSelect"
+                name="roleSelect"
+                class="form-control"
+                [ngClass]="{ 'is-invalid': submitted && f.role.errors }"
+              >
                 <option value=""></option>
                 <option value="User">User</option>
-                <option value="Admin" *ngIf="apiUser.isAdmin">Admin</option>
-            </select>
-            <div *ngIf="submitted && f.role.errors" class="invalid-feedback">
+                <option value="Admin" *ngIf="user.isAdmin">Admin</option>
+              </select>
+              <div *ngIf="submitted && f.role.errors" class="invalid-feedback">
                 <div *ngIf="f.role.errors.required">Role is required</div>
             </div>
+            </div>
+          </div>
         </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group col-7">
-            <label>First Name</label>
-            <input type="text" formControlName="firstname" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.firstname.errors }" />
-            <div *ngIf="submitted && f.firstname.errors" class="invalid-feedback">
+    <div class="col-sm-6 mb-1">
+        <div class="input-group mb-1">
+          <span class="input-group-text col-4" id="firstname-addon1"
+            >First Name
+          </span>
+          <input
+            type="text"
+            class="form-control"
+            [ngClass]="{ 'is-invalid': submitted && f.firstname.errors }"
+            formControlName="firstname"
+            aria-label="FirstName"
+            aria-describedby="firstname-addon1"
+            placement="bottom"
+            ngbTooltip="The user's first or given name."
+          />
+          <div *ngIf="submitted && f.firstname.errors" class="invalid-feedback">
                 <div *ngIf="f.firstname.errors.required">First Name is required</div>
             </div>
-            <label>Surname</label>
-            <input type="text" formControlName="surname" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.surname.errors }" />
+        </div>
+        <div class="input-group mb-1">
+            <span class="input-group-text col-4" id="surname-addon1"
+              >Surname
+            </span>
+            <input
+              type="text"
+              class="form-control"
+              [ngClass]="{ 'is-invalid': submitted && f.surname.errors }"
+              formControlName="surname"
+              aria-label="Surname"
+              aria-describedby="surname-addon1"
+              placement="bottom"
+              ngbTooltip="The family name of the user."
+            />
             <div *ngIf="submitted && f.surname.errors" class="invalid-feedback">
                 <div *ngIf="f.surname.errors.required">Surname is required</div>
             </div>
-        </div>
-        <div class="form-group col">
-            <div class="row justify-content-center"><label>Suspended</label></div>
-            <input type="checkbox" checked *ngIf="f.suspended.value" class="form-control" >
-            <input type="checkbox" *ngIf="!f.suspended.value" class="form-control">
-        </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group col-7">
-            <label ngbTooltip="Used in 'Reply-To' field">Email</label>
-            <input type="text" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.email.errors }"  />
-            <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
-                <div *ngIf="f.email.errors.email">Enter a valid email address</div>
+          </div>
+            <div class="input-group" *ngIf="user.isAdmin">
+              <span class="input-group-text col-4" id="status-label">Status</span>
+              <div class="card p-3 col-8">
+                <div class="form-check">
+                  <input
+                    type="checkbox"
+                    formControlName="suspended"
+                    class="form-check-input"
+                    placement="bottom"
+                    ngbTooltip="When checked the user will not be able to log in."
+                  />
+                  <label class="form-check-label" for="flexCheckChecked">
+                    Suspended User
+                  </label>
+
+                </div>
+              </div>
             </div>
-        </div>
-        <div class="form-group col">
-            <label ngbTooltip="Used in email signature">Title</label>
-            <input type="text" formControlName="title" class="form-control" />
-        </div>
+            <div class="input-group mb-1">
+                <span class="input-group-text col-4" id="email-addon1"
+                  >Email
+                </span>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="email"
+                  aria-label="Email"
+                  aria-describedby="email-addon1"
+                  placement="bottom"
+                  ngbTooltip="A valid email address. May be blank."
+                  [ngClass]="{ 'is-invalid': submitted && f.email.errors }"
+                />
+                <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                    <div *ngIf="f.email.errors.email">Enter a valid email address</div>
+                  </div>
+            </div>
+            <div class="input-group mb-1">
+                <span class="input-group-text col-4" id="title-addon1"
+                  >Title
+                </span>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="title"
+                  aria-label="Title"
+                  aria-describedby="title-addon1"
+                  placement="bottom"
+                  ngbTooltip="Job title. May be blank."
+                />
+            </div>
+      </div>
+
     </div>
     <div *ngIf="!isUserAdd">
         <h3 class="pt-3">Change Password</h3>
         <p>Leave blank to keep the same password</p>
     </div>
     <div class="form-row">
-        <div class="form-group col">
+        <div class="col-sm-6 mb-1">
             <label>Password</label>
             <input type="password" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.password.errors }" autocomplete="new-password"/>
             <div id="passwordHelpBlock" class="form-text">
@@ -75,7 +192,7 @@
                 <div *ngIf="f.password.errors.minlength">Password must be at least 8 characters</div>
             </div>
         </div>
-        <div class="form-group col">
+        <div class="col-sm-6 mb-4">
             <label>Confirm Password</label>
             <input type="password" formControlName="confirmPassword" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.confirmPassword.errors }" autocomplete="new-password"/>
             <div *ngIf="submitted && f.confirmPassword.errors" class="invalid-feedback">
@@ -83,12 +200,5 @@
                 <div *ngIf="f.confirmPassword.errors.mustMatch">Passwords must match</div>
             </div>
         </div>
-    </div>
-    <div class="form-group">
-        <button [disabled]="loading" class="btn btn-primary">
-            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
-            Save
-        </button>
-        <a (click)="onCancel()" class="btn btn-link">Cancel</a>
     </div>
 </form>

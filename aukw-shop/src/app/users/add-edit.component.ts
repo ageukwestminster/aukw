@@ -3,19 +3,21 @@ import { Location } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AbstractControlOptions, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { UserService, AlertService, AuthenticationService } from '@app/_services';
+import { Observable } from 'rxjs';
+
+import { UserService, AlertService, AuthenticationService, ShopService } from '@app/_services';
 import { MustMatch } from '@app/_helpers';
-import { User, UserFormMode } from '@app/_models';
+import { Shop, User, UserFormMode } from '@app/_models';
 
 @Component({ templateUrl: 'add-edit.component.html' })
 export class UserAddEditComponent implements OnInit {
     form!: FormGroup;
     id!: number;
-    //isAddMode!: boolean;
+    shops$!: Observable<Shop[]>;
     formMode!: UserFormMode;
     loading = false;
     submitted = false;
-    apiUser! : User;    
+    user! : User;    
 
     constructor(
         private formBuilder: FormBuilder,
@@ -24,9 +26,11 @@ export class UserAddEditComponent implements OnInit {
         private userService: UserService,
         private alertService: AlertService,
         private authenticationService: AuthenticationService,
+        private shopService: ShopService,
         private location: Location
     ) {
-        this.apiUser = this.authenticationService.userValue;
+        this.user = this.authenticationService.userValue;
+        this.shops$ = this.shopService.getAll();
     }
 
     ngOnInit() {
@@ -34,7 +38,7 @@ export class UserAddEditComponent implements OnInit {
 
         if (!this.id) {
             this.formMode = UserFormMode.Add;
-        } else if (this.id == this.apiUser.id) {
+        } else if (this.id == this.user.id) {
             this.formMode = UserFormMode.Profile;
         } else {
             this.formMode = UserFormMode.Edit;
@@ -51,9 +55,10 @@ export class UserAddEditComponent implements OnInit {
             firstname: ['', Validators.required],
             surname: ['', Validators.required],
             suspended: [false],
-            title: [''],
+            email: [null, [Validators.email]],
+            title: [null],
+            shopid: ['', Validators.required],
             username: ['', [Validators.required]],
-            email: ['', [Validators.email]],
             role: ['', Validators.required],
             password: ['', [Validators.minLength(8), (this.formMode == UserFormMode.Add) ? Validators.required : Validators.nullValidator]],
             confirmPassword: ['', (this.formMode == UserFormMode.Add) ? Validators.required : Validators.nullValidator]
@@ -93,6 +98,12 @@ export class UserAddEditComponent implements OnInit {
         }
     }
 
+    goBack()
+    {
+        // use of location object taken from https://stackoverflow.com/a/41953992/6941165
+        this.location.back(); // <-- go back to previous location on cancel
+    }
+
     get isUserAdd() { return this.formMode == UserFormMode.Add; }
     get isUserEdit() { return this.formMode == UserFormMode.Edit; }
     get isUserProfile() { return this.formMode == UserFormMode.Profile; }
@@ -116,9 +127,4 @@ export class UserAddEditComponent implements OnInit {
             .add(() => this.loading = false);
     }
 
-    onCancel()
-    {
-        // use of location object taken from https://stackoverflow.com/a/41953992/6941165
-        this.location.back(); // <-- go back to previous location on cancel
-    }
 }

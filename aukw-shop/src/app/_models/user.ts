@@ -2,6 +2,7 @@
 
 export class User {
     id: number;
+    shopid: number;
     username: string;    
     role: Role;
     suspended: boolean;
@@ -9,8 +10,6 @@ export class User {
     surname: string;
     password?: string;
     accessToken?: string;
-    email?: string;
-    title?: string;
     isDeleting: boolean = false;
     isUpdating: boolean = false;
     isAdmin: boolean = false;
@@ -18,6 +17,7 @@ export class User {
     constructor(obj?: any) {
 
         this.id = obj && obj.id || null;
+        this.shopid = obj && obj.shopid || null;
         this.username = obj && obj.username || null;
         this.role = obj && obj.role || null;
         this.suspended = obj && obj.suspended;
@@ -25,8 +25,6 @@ export class User {
         this.surname = obj && obj.surname || null;
         this.password = obj && obj.password || null;
         this.accessToken = obj && obj.accessToken || null;
-        this.email = obj && obj.email || null;
-        this.title = obj && obj.title || null;
         this.isAdmin = obj && obj.role && obj.role === Role.Admin;
     }
 }
