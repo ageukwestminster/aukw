@@ -26,6 +26,13 @@ class TakingsCtl{
     echo json_encode($model->read_by_shop($shopid), JSON_NUMERIC_CHECK);
   }
 
+  public static function summary($shopid){  
+
+    $model = new \Models\Takings();
+
+    echo json_encode($model->summary($shopid), JSON_NUMERIC_CHECK);
+  }
+
   public static function create(){
 
     $model = new \Models\Takings();

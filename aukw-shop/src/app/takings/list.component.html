@@ -9,15 +9,16 @@
 <table class="table table-striped table-responsive">
     <thead>
         <tr>
-            <th style="width: 25%">Date</th>
-            <th style="width: 25%">DoW</th>
-            <th style="width: 15%">Sales</th> 
+            <th style="width: 35%">Date</th>
+            <th style="width: 25%">Sales</th>
+            <th style="width: 15%">Actions</th> 
         </tr>
     </thead>
     <tbody>
         <tr  *ngFor="let myTakings of takingslist"
             takings-row
             [takings]="myTakings"
+            [user]="user"
             (onTakingsDeleted)="takingsWasDeleted($event)"
             routerLink="edit/{{myTakings.id}}">
         </tr>

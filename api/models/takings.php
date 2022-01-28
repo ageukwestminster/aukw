@@ -46,6 +46,75 @@ class Takings{
     public $quickbooks;
 
     // Show takings data for the last 90 days for a given shop
+    public function summary($shopid){
+        $query = "SELECT
+                    takingsid, `date`, t.shopid, s.`name` as shopname, 
+                    (clothing_num+brica_num+books_num+linens_num+donations_num+other_num+rag_num) as number_of_items_sold,
+                    `customers_num_total`,
+                    (clothing+brica+books+linens+donations+other) as sales_total,
+                    rag, (clothing+brica+books+linens+donations+other+rag) as sales_total_inc_rag,
+                    cash_to_bank, `credit_cards`, cash_difference,
+                    (operating_expenses+volunteer_expenses+other_adjustments-cash_difference) as expenses,
+                    (clothing+brica+books+linens+donations+other+rag-operating_expenses-volunteer_expenses-other_adjustments+cash_difference) as total_after_expenses,
+                    (clothing+brica+books+linens+donations+other+rag-operating_expenses-volunteer_expenses-other_adjustments+cash_difference-donations) as total_after_expenses_and_donations,
+                    `comments`, t.`quickbooks`
+                    FROM
+                    " . $this->table_name . " t
+                    LEFT JOIN shop s ON t.shopid = s.id
+                    WHERE t.shopid = :shopid AND t.`date` <= NOW()
+                    ORDER BY t.`date` DESC LIMIT 31
+                    ";
+        
+        // prepare query statement
+        $stmt = $this->conn->prepare( $query );
+
+        // bind id of product to be updated
+        $stmt->bindParam(":shopid", $shopid, PDO::PARAM_INT);
+
+        // execute query
+        $stmt->execute();
+
+        $num = $stmt->rowCount();
+
+        $item_arr=array();
+
+        // check if more than 0 record found
+        if($num>0){
+            // retrieve our table contents
+            // fetch() is faster than fetchAll()
+            // http://stackoverflow.com/questions/2770630/pdofetchall-vs-pdofetch-in-a-loop
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                // extract row
+                // this will make $row['name'] to
+                // just $name only
+                extract($row);
+            
+                $takings_item=array(
+                    "id" => $takingsid,
+                    "date" => $date,
+                    "shopid" => $shopid,
+                    "shopname" => html_entity_decode($shopname),
+                    "number_of_items_sold" => $number_of_items_sold,
+                    "customers_num_total" => $customers_num_total,
+                    "sales_total" => $sales_total,
+                    "rag" => $rag,
+                    "sales_total_inc_rag" => $sales_total_inc_rag,
+                    "expenses" => $expenses,
+                    "cash_difference" => $cash_difference,
+                    "total_after_expenses" => $total_after_expenses,
+                    "daily_net_sales" => $total_after_expenses_and_donations,
+                    "comments" => html_entity_decode($comments),
+                    "quickbooks" => $quickbooks,
+                );
+
+                $item_arr[] = $takings_item;
+            }
+        }
+
+        return $item_arr;
+    }
+
+    // Show takings data for the last 90 days for a given shop
     public function read_by_shop($shopid){
         $query = "SELECT
                     takingsid as `id`, `date`, shopid, clothing_num, brica_num,

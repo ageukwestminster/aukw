@@ -44,6 +44,7 @@ $router->mount('/takings', function () use ($router) {
     $router->delete('/(\d+)', 'TakingsCtl@delete');
     $router->get('/quickbooks/(\d+)', 'TakingsCtl@read_by_quickbooks_status');
     $router->get('/shop/(\d+)', 'TakingsCtl@read_by_shop');
+    $router->get('/summary/shop/(\d+)', 'TakingsCtl@summary');
     $router->get('/(\d+)', 'TakingsCtl@read_one');
 
     // Sample body : { "quickbooks": 0 } ... or ... { "quickbooks": 1 }

@@ -1,10 +1,10 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { AuthenticationService, TakingsService } from '@app/_services';
-import { Takings, User } from '@app/_models';
+import { TakingsSummary, User } from '@app/_models';
 
 @Component({ templateUrl: 'list.component.html' })
 export class TakingsListComponent implements OnInit {
-  takingslist!: Takings[];
+  takingslist!: TakingsSummary[];
   user!: User;
 
   constructor(
@@ -15,12 +15,12 @@ export class TakingsListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.takingsService.getByShopID(1).subscribe((takingslist) => {
+    this.takingsService.getSummary(1).subscribe((takingslist) => {
       this.takingslist = takingslist;
     });
   }
 
-  takingsWasDeleted(takings: Takings): void {
+  takingsWasDeleted(takings: TakingsSummary): void {
     this.takingslist = this.takingslist.filter((x) => x.id !== takings.id);
   }
 }

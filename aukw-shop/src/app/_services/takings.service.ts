@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { environment } from '@environments/environment';
-import { Takings } from '@app/_models';
+import { Takings, TakingsSummary } from '@app/_models';
 
 const baseUrl = `${environment.apiUrl}/takings`;
 
@@ -12,6 +12,10 @@ export class TakingsService {
 
     getByShopID(shopid: number) {
         return this.http.get<Takings[]>(`${baseUrl}/shop/${shopid}`);
+    }
+
+    getSummary(shopid: number) {
+        return this.http.get<TakingsSummary[]>(`${baseUrl}/summary/shop/${shopid}`);
     }
 
     getById(id: number) {
