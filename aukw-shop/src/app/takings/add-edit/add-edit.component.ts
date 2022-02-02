@@ -1,19 +1,19 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { Observable } from 'rxjs';
 
-import { TakingsService, AlertService, AuthenticationService, ShopService } from '@app/_services';
-import { MustMatch } from '@app/_helpers';
+import { TakingsService, DepartmentService, AlertService, AuthenticationService, ShopService } from '@app/_services';
 import { Shop, User, Takings, FormMode } from '@app/_models';
 
 @Component({ templateUrl: 'add-edit.component.html' })
 export class TakingsAddEditComponent implements OnInit {
     form!: FormGroup;
     id!: number;
-    shops$!: Observable<Shop[]>;
+    shops!: Shop[];
+    depts!: string[];
     formMode!: FormMode;
     loading = false;
     submitted = false;
@@ -27,10 +27,11 @@ export class TakingsAddEditComponent implements OnInit {
         private alertService: AlertService,
         private authenticationService: AuthenticationService,
         private shopService: ShopService,
+        private deptService: DepartmentService,
         private location: Location
     ) {
         this.user = this.authenticationService.userValue;
-        this.shops$ = this.shopService.getAll();
+        this.depts = this.deptService.getAll();
     }
 
     ngOnInit() {
@@ -45,9 +46,22 @@ export class TakingsAddEditComponent implements OnInit {
         }
 
         this.form = this.formBuilder.group({
-            date: ['', Validators.required],
-            shopid: [null, Validators.required],
-            departmentSales: new FormArray([]),
+            date: [null, Validators.required],
+            shopid: [{ value: 1, disabled: true }],
+            clothing_num: ['', Validators.required],
+            brica_num: [''],
+            books_num: [''],
+            linens_num: [''],
+            donations_num: [''],
+            other_num: [''],
+            rag_num: [''],
+            clothing: ['', Validators.required],
+            brica: [''],
+            books: [''],
+            linens: [''],
+            donations: [''],
+            other: [''],
+            rag: [''],
             customers_num_total: ['', Validators.required],
             cash_to_bank: ['', Validators.required],
             credit_cards: [''],
@@ -56,35 +70,35 @@ export class TakingsAddEditComponent implements OnInit {
             cash_difference: [''],
             comments: [''],
         });
+        
+        // Fill shop dropdown
+        this.shopService
+            .getAll()
+            .subscribe((x) => {
+            this.shops = x;
+            });
+
+        if (this.formMode === FormMode.Add) {
+            // Initialize the 'Date' field with today's date for New Takings            
+            this.form.controls['date'].setValue(
+                // From https://stackoverflow.com/a/35922073/6941165
+                new Date().toISOString().slice(0, 10)
+            );
+            }
 
         if (this.formMode != FormMode.Add) {
             this.takingsService.getById(this.id)
-                .subscribe(x => this.form.patchValue(x))
+                .subscribe(
+                    x => this.form.patchValue(x)
+                    )
                 .add(() => this.loading = false);
+        } else {
+            this.loading = false;
         }
     }
 
     // convenience getters for easy access to form fields
     get f() { return this.form.controls; }
-    get d() { return this.f.departmentSales as FormArray; }
-    get departmentSalesFormGroups() {
-        return this.d.controls as FormGroup[];
-      }
-
-    onAddDepartmentSales(number_of_sales = '', sales = '') {
-        this.d.push(
-            this.formBuilder.group({
-                number_of_sales: [number_of_sales, [Validators.required]],
-                sales: [sales, [Validators.required]],
-            })
-        );
-    }
-
-    onRemoveDepartmentSales(index: number) {
-    if (this.d.length > 1 && index) {
-        this.d.removeAt(index);
-    }
-    }
 
     onSubmit() {
         this.submitted = true;
