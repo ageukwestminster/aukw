@@ -1,7 +1,7 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AbstractControlOptions, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { Observable } from 'rxjs';
 
@@ -34,6 +34,8 @@ export class TakingsAddEditComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.loading = true;
+
         this.id = this.route.snapshot.params['id'];
 
         if (!this.id) {
@@ -42,11 +44,18 @@ export class TakingsAddEditComponent implements OnInit {
             this.formMode = FormMode.Edit;
         }
 
-        const formOptions: AbstractControlOptions = { validators: MustMatch('password', 'confirmPassword') };
         this.form = this.formBuilder.group({
             date: ['', Validators.required],
-            clothing: ['', Validators.required],
-        }, formOptions);
+            shopid: [null, Validators.required],
+            departmentSales: new FormArray([]),
+            customers_num_total: ['', Validators.required],
+            cash_to_bank: ['', Validators.required],
+            credit_cards: [''],
+            operating_expenses: [''],
+            volunteer_expenses: [''],
+            cash_difference: [''],
+            comments: [''],
+        });
 
         if (this.formMode != FormMode.Add) {
             this.takingsService.getById(this.id)
@@ -55,8 +64,27 @@ export class TakingsAddEditComponent implements OnInit {
         }
     }
 
-    // convenience getter for easy access to form fields
+    // convenience getters for easy access to form fields
     get f() { return this.form.controls; }
+    get d() { return this.f.departmentSales as FormArray; }
+    get departmentSalesFormGroups() {
+        return this.d.controls as FormGroup[];
+      }
+
+    onAddDepartmentSales(number_of_sales = '', sales = '') {
+        this.d.push(
+            this.formBuilder.group({
+                number_of_sales: [number_of_sales, [Validators.required]],
+                sales: [sales, [Validators.required]],
+            })
+        );
+    }
+
+    onRemoveDepartmentSales(index: number) {
+    if (this.d.length > 1 && index) {
+        this.d.removeAt(index);
+    }
+    }
 
     onSubmit() {
         this.submitted = true;

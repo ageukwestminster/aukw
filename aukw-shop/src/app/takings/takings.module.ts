@@ -7,9 +7,9 @@ import { TakingsRoutingModule } from './takings-routing.module';
 import { SharedModule } from '@app/shared/shared.module';
 
 import { TakingsLayoutComponent } from './layout.component';
-import { TakingsListComponent } from './list.component';
-import { TakingsAddEditComponent } from './add-edit.component';
-import { TakingsRowComponent } from './row.component';
+import { TakingsListComponent } from './list/list.component';
+import { TakingsAddEditComponent } from './add-edit/add-edit.component';
+import { TakingsRowComponent } from './list/row.component';
 
 @NgModule({
     imports: [

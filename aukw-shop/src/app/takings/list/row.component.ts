@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { TakingsSummary, User } from '../_models';
+import { TakingsSummary, User } from '../../_models';
 import { TakingsService, AlertService } from '@app/_services';
 /**
  * @TakingsRow: A component for the view of single daily Takings item

@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { TakingsLayoutComponent } from './layout.component';
-import { TakingsListComponent } from './list.component';
-import { TakingsAddEditComponent } from './add-edit.component';
+import { TakingsListComponent } from './list/list.component';
+import { TakingsAddEditComponent } from './add-edit/add-edit.component';
 
 const routes: Routes = [
     {
