@@ -1,12 +1,13 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { Observable } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import { TakingsService, DepartmentService, AlertService, AuthenticationService, ShopService } from '@app/_services';
 import { Shop, User, Takings, FormMode } from '@app/_models';
+import { Console } from 'console';
 
 @Component({ templateUrl: 'add-edit.component.html' })
 export class TakingsAddEditComponent implements OnInit {
@@ -18,6 +19,10 @@ export class TakingsAddEditComponent implements OnInit {
     loading = false;
     submitted = false;
     user! : User;    
+
+    private subscription = new Subscription();
+    onChange: any = (_: Takings) => {};
+    onTouch: any = () => {};
 
     constructor(
         private formBuilder: FormBuilder,
@@ -70,6 +75,12 @@ export class TakingsAddEditComponent implements OnInit {
             cash_difference: [''],
             comments: [''],
         });
+
+        this.subscription.add(
+            this.form.valueChanges.subscribe((value: Takings) => {
+              this.onChange(value);
+            })
+          );
         
         // Fill shop dropdown
         this.shopService
@@ -95,6 +106,35 @@ export class TakingsAddEditComponent implements OnInit {
         } else {
             this.loading = false;
         }
+    }
+
+    ngOnDestroy() {
+        this.subscription.unsubscribe();
+    }
+
+    ngOnChanges(simpleChanges: SimpleChanges) {
+        if (simpleChanges['touched'] && simpleChanges['touched'].currentValue) {
+          this.form.markAllAsTouched();
+        }
+
+        // only run when property "data" changed
+        if (simpleChanges['transactions']) {
+            //console.log(`OnChanges: Tx length: ${this.transactions?.length}`);
+        }
+      }
+    
+      writeValue(value: null | Takings): void {
+        if (value) {
+          this.form.reset(value);
+        }
+    }
+    
+    registerOnChange(fn: () => {}): void {
+        this.onChange = fn;
+    }
+    
+    registerOnTouched(fn: (_: Takings) => {}): void {
+        this.onTouch = fn;
     }
 
     // convenience getters for easy access to form fields
