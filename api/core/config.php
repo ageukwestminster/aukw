@@ -54,10 +54,10 @@ Config::write('token.cookiesecure', false);
 
 // Quickbooks SDKsettings
 Config::write('qb.clientid', 'ABfKBoCDvYwfccfV7X48SxjS9DewKuKXSujBMjSHB7X9BUcoyi');
-Config::write('qb.clientsecret', '11wbu5o2Zr6uXkVQH9jc290sig7pqeernTSHUba9');
-Config::write('qb.redirecturl', 'https://e1c4-81-159-168-212.ngrok.io/api/qb/callback');
+Config::write('qb.clientsecret', 'Cv8mgBHgP4uwkw3NlIQ0ONxHlKQaIdkalIDYDT60');
+Config::write('qb.redirecturl', 'https://7b91-81-159-168-212.ngrok.io/api/qb/callback');
 Config::write('qb.realmid', '9130350604308576');
-Config::write('qb.enablelog', false);
+Config::write('qb.enablelog', true);
 Config::write('qb.loglocation', 'B:\\logs');
 
 // email

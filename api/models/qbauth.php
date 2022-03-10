@@ -102,6 +102,10 @@ class QuickbooksAuth{
 
         $this->init();
 
+        if ($this->tokenModel === NULL || $this->tokenModel->refreshtoken === NULL) {
+            return false;
+        }
+
         $OAuth2LoginHelper = $this->dataService->getOAuth2LoginHelper();
         $accessTokenObj = $OAuth2LoginHelper->refreshAccessTokenWithRefreshToken($this->tokenModel->refreshtoken);
 
