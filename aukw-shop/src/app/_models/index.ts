@@ -3,6 +3,7 @@ export * from './date-range';
 export * from './date-range.enum';
 export * from './department.enum';
 export * from './form-mode.enum';
+export * from './qb-connection-details';
 export * from './role';
 export * from './shop';
 export * from './takings-summary';

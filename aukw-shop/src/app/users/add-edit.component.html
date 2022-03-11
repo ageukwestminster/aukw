@@ -21,9 +21,9 @@
         ></span>
         Save
         </button>
-            <button (click)="goBack()" class="btn btn-outline-dark">
+        <button (click)="goBack()" class="btn btn-outline-dark">
                 Close &times;
-            </button>
+        </button>
         </div>
     </div>
     <!-- End of Buttons -->
@@ -201,4 +201,25 @@
             </div>
         </div>
     </div>
+
+    <div class="row mb-2"></div>
+
+    <div *ngIf="!isUserAdd">
+      <h3 class="pt-3">Quickbooks Connection</h3>          
+      <p>Quickbooks is the software we use to account for our profit and loss. A connection is a link between this website and the Quickbooks online system. It must be authorised by one of the finance team and it is then used to export daily takings data to our online accounting software.</p>
+      <div *ngIf="!user.isAdmin"><p>This feature is only available to admin users. </p></div>  
+      <div *ngIf="qbconn && user.isAdmin"><p>Your connection expires on {{ qbconn.refreshExpiry }}.</p></div>
+      <div *ngIf="!qbconn && user.isAdmin"><p>At present you do not have a valid QB Connection.</p></div>
+      <button
+      (click)="refreshQBConnection()"
+      class="btn btn-sm btn-info mr-1  mb-1"
+      *ngIf="user.isAdmin"
+      >
+        <span
+          *ngIf="loading"
+          class="spinner-border spinner-border-sm mr-1"
+        ></span>
+        Refresh QB Connection
+        </button>
+  </div>
 </form>

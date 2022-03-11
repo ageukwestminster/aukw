@@ -4,16 +4,18 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { AbstractControlOptions, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { Observable } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
-import { UserService, AlertService, AuthenticationService, ShopService } from '@app/_services';
+import { UserService, AlertService, AuthenticationService, ShopService, QBConnectionDetailsService } from '@app/_services';
 import { MustMatch } from '@app/_helpers';
-import { Shop, User, UserFormMode } from '@app/_models';
+import { QBConnectionDetails, Shop, User, UserFormMode } from '@app/_models';
 
 @Component({ templateUrl: 'add-edit.component.html' })
 export class UserAddEditComponent implements OnInit {
     form!: FormGroup;
     id!: number;
     shops$!: Observable<Shop[]>;
+    qbconn?: QBConnectionDetails;
     formMode!: UserFormMode;
     loading = false;
     submitted = false;
@@ -27,6 +29,7 @@ export class UserAddEditComponent implements OnInit {
         private alertService: AlertService,
         private authenticationService: AuthenticationService,
         private shopService: ShopService,
+        private qbConnDetsService: QBConnectionDetailsService,
         private location: Location
     ) {
         this.user = this.authenticationService.userValue;
@@ -65,9 +68,23 @@ export class UserAddEditComponent implements OnInit {
         }, formOptions);
 
         if (this.formMode != UserFormMode.Add) {
-            this.userService.getById(this.id)
-                .subscribe(x => this.form.patchValue(x))
-                .add(() => this.loading = false);
+            this.userService
+                .getById(this.id)
+                .pipe(
+                    switchMap((u: User) => { 
+                        this.form.patchValue(u);
+                        return this.qbConnDetsService.getById(u.id);
+                    })
+                )
+                .subscribe((conn: any | null) => {
+                    this.qbconn = new QBConnectionDetails();
+                    if (conn && conn.refreshtokenexpiry) {
+                        const t:string[] = conn.refreshtokenexpiry.split(/[- :]/);
+                        const d = new Date(Date.UTC(+t[0], +t[1]-1, +t[2]));
+                        this.qbconn.refreshExpiry = d.toLocaleDateString("en-GB");   
+                    }                    
+                    this.loading = false;
+                });
         }
     }
 
@@ -127,4 +144,8 @@ export class UserAddEditComponent implements OnInit {
             .add(() => this.loading = false);
     }
 
+    refreshQBConnection() {
+        window.open('https://google.com','popup','width=200,height=200,');
+        return false;
+    }
 }
