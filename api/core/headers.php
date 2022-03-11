@@ -24,6 +24,7 @@ class Headers
         }
     }
 
+    // Return 'true' if the path starts with 'auth'
     public static function path_is_auth($path = '')
     {
         if (empty($path)) {
@@ -33,6 +34,7 @@ class Headers
         return preg_match('/^auth/', $path);
     }
 
+    // Return 'true' if the path starts with 'user'
     public static function path_is_user($path = '')
     {
         if (empty($path)) {
