@@ -32,7 +32,8 @@ class QuickbooksToken{
                     accesstoken=:accesstoken, 
                     accesstokenexpiry=:accesstokenexpiry,
                     refreshtoken=:refreshtoken,
-                    refreshtokenexpiry=:refreshtokenexpiry
+                    refreshtokenexpiry=:refreshtokenexpiry,
+                    `timestamp`=NULL
                     ;";
         
         // prepare query
@@ -60,7 +61,8 @@ class QuickbooksToken{
                     accesstoken=:accesstoken, 
                     accesstokenexpiry=:accesstokenexpiry,
                     refreshtoken=:refreshtoken,
-                    refreshtokenexpiry=:refreshtokenexpiry
+                    refreshtokenexpiry=:refreshtokenexpiry,
+                    `timestamp`=NULL
                     WHERE
                     iduser=:iduser;";
         
