@@ -7,7 +7,7 @@ import { Subscription } from 'rxjs';
 
 import { TakingsService, DepartmentService, AlertService, AuthenticationService, ShopService } from '@app/_services';
 import { Shop, User, Takings, FormMode } from '@app/_models';
-import { Console } from 'console';
+//import { Console } from 'console';
 
 @Component({ templateUrl: 'add-edit.component.html' })
 export class TakingsAddEditComponent implements OnInit {

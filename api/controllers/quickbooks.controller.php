@@ -18,19 +18,16 @@ class QuickbooksCtl{
 
   public static function oauth2_begin(){
     $model = new QuickbooksAuth();
-    if (!$model->begin()){
-      http_response_code(400);
-      echo json_encode(
-        array("message" => "Unable to locate ClientID")
-      );
-    }
+
+    echo json_encode($model->begin(), JSON_NUMERIC_CHECK);
   }
 
   public static function oauth2_callback(){
     $model = new QuickbooksAuth();
     $model->callback();
     echo json_encode(
-      array("message" => "The connection to Quickbooks is now online. You may close this window.")
+      array("status" => "success",
+        "message" => "The connection to Quickbooks is now online. You may close this window.")
     );
   }
 

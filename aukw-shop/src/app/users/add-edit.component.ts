@@ -2,6 +2,7 @@
 import { Location } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AbstractControlOptions, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { EventManager } from '@angular/platform-browser'
 
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -20,6 +21,7 @@ export class UserAddEditComponent implements OnInit {
     loading = false;
     submitted = false;
     user! : User;    
+    windowHandle: any = null;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -30,7 +32,8 @@ export class UserAddEditComponent implements OnInit {
         private authenticationService: AuthenticationService,
         private shopService: ShopService,
         private qbConnDetsService: QBConnectionDetailsService,
-        private location: Location
+        private location: Location,
+        private eventManager: EventManager
     ) {
         this.user = this.authenticationService.userValue;
         this.shops$ = this.shopService.getAll();
@@ -80,9 +83,12 @@ export class UserAddEditComponent implements OnInit {
                     this.qbconn = new QBConnectionDetails();
                     if (conn && conn.refreshtokenexpiry) {
                         const t:string[] = conn.refreshtokenexpiry.split(/[- :]/);
-                        const d = new Date(Date.UTC(+t[0], +t[1]-1, +t[2]));
-                        this.qbconn.refreshExpiry = d.toLocaleDateString("en-GB");   
-                    }                    
+                        const tokenExpiry = new Date(Date.UTC(+t[0], +t[1]-1, +t[2], +t[3], +t[4], +t[5]));
+                        const nowDateAndTime = new Date();
+                        if (tokenExpiry > nowDateAndTime) {
+                            this.qbconn.refreshExpiry = tokenExpiry.toLocaleDateString("en-GB");   
+                        }
+                    }              
                     this.loading = false;
                 });
         }
@@ -144,8 +150,16 @@ export class UserAddEditComponent implements OnInit {
             .add(() => this.loading = false);
     }
 
-    refreshQBConnection() {
-        window.open('https://google.com','popup','width=200,height=200,');
+    makeQBConnection() {     
+        this.qbConnDetsService
+        .getAuthUri()
+        .subscribe((uri: any | null) => {
+            const qbauthuri = new QBConnectionDetails(uri);                 
+            if (qbauthuri && qbauthuri.authUri) {
+                this.windowHandle = window.open(qbauthuri.authUri);          
+            }
+        });   
+        //this.eventManager.addEventListener('document', 'click', () => console.log(this.eventManager.getZone()));
         return false;
     }
 }

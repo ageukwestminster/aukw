@@ -33,6 +33,8 @@ $router->mount('/auth', function() use ($router) {
     $router->post('/', function () {include 'authenticate/auth.php'; } );
     $router->get('/refresh', function () {include 'authenticate/refresh.php'; } );
     $router->delete('/revoke', function () {include 'authenticate/revoke.php'; } );
+
+    $router->get('/callback', 'QuickbooksCtl@oauth2_callback');
 });
 
 /***************/
@@ -78,8 +80,7 @@ $router->mount('/qb', function () use ($router) {
     // Create All adds to QB any takings which has Quickbooks=0 in the mariaDB
     $router->patch('/journal/takings/', 'JournalCtl@patch');
 
-    $router->get('/auth', 'QuickbooksCtl@oauth2_begin');
-    $router->get('/callback', 'QuickbooksCtl@oauth2_callback');
+    $router->get('/auth', 'QuickbooksCtl@oauth2_begin');    
     $router->get('/refresh', 'QuickbooksCtl@oauth2_refresh');
     $router->delete('/', 'QuickbooksCtl@oauth2_revoke');
 

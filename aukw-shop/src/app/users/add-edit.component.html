@@ -208,18 +208,31 @@
       <h3 class="pt-3">Quickbooks Connection</h3>          
       <p>Quickbooks is the software we use to account for our profit and loss. A connection is a link between this website and the Quickbooks online system. It must be authorised by one of the finance team and it is then used to export daily takings data to our online accounting software.</p>
       <div *ngIf="!user.isAdmin"><p>This feature is only available to admin users. </p></div>  
-      <div *ngIf="qbconn && user.isAdmin"><p>Your connection expires on {{ qbconn.refreshExpiry }}.</p></div>
-      <div *ngIf="!qbconn && user.isAdmin"><p>At present you do not have a valid QB Connection.</p></div>
-      <button
-      (click)="refreshQBConnection()"
-      class="btn btn-sm btn-info mr-1  mb-1"
-      *ngIf="user.isAdmin"
-      >
-        <span
-          *ngIf="loading"
-          class="spinner-border spinner-border-sm mr-1"
-        ></span>
-        Refresh QB Connection
-        </button>
+      <div *ngIf="user.isAdmin">
+        <div *ngIf="qbconn && qbconn.refreshExpiry"><p>Your connection expires on {{ qbconn.refreshExpiry }}.</p></div>
+        <div *ngIf="!qbconn || !qbconn.refreshExpiry"><p>At present you do not have a valid QB Connection.</p></div>
+        <button
+        (click)="makeQBConnection()"
+        class="btn btn-sm btn-info mr-1  mb-1"
+        *ngIf="!qbconn || !qbconn.refreshExpiry"
+        >
+          <span
+            *ngIf="loading"
+            class="spinner-border spinner-border-sm mr-1"
+          ></span>
+          Make QB Connection
+          </button>
+          <button
+          (click)="makeQBConnection()"
+          class="btn btn-sm btn-warning mr-1  mb-1"
+          *ngIf="qbconn && qbconn.refreshExpiry"
+          >
+            <span
+              *ngIf="loading"
+              class="spinner-border spinner-border-sm mr-1"
+            ></span>
+            Force Re-Auth of QB Connection
+            </button>
+      </div>
   </div>
 </form>

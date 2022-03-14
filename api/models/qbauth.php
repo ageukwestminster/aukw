@@ -61,25 +61,40 @@ class QuickbooksAuth{
 
     public function begin() {
 
+        $authUri=array();
+
         if (empty($this->config['ClientID'])) {
-            return false;
+            return $authUri;
         }
+
+        // The callback from Intuit does not contain information about which user the access token
+        // applies to. We encode the iduser value in the 'state' object that is transmitted with
+        // the access code.
+        $this->config['state'] = $this->config['state'] . '-' . $this->config['iduser'];
 
         $this->dataService = DataService::Configure($this->config);
         $OAuth2LoginHelper = $this->dataService->getOAuth2LoginHelper();
         $authorizationCodeUrl = $OAuth2LoginHelper->getAuthorizationCodeURL();
-        header('Location: '. $authorizationCodeUrl);
-        return true;
+        return array(
+            "message" => "Open this line on a new page and follow the instructions.",
+            "authUri" => $authorizationCodeUrl
+        );
     }
 
     public function callback(){
 
         $this->init();
     
-        $code = $_GET['code'];
-        $state = $_GET['state'];
+        $code = $_GET['code'];        
         $realmId = $_GET['realmId'];
-    
+
+        // The callback from Intuit does not contain information about which user the access token
+        // applies to. We encode the iduser value in the 'state' object that is transmitted with
+        // the access code.
+        $stateArray = explode('-',$_GET['state']);
+        $state = $stateArray[0];
+        $this->config['iduser'] = $stateArray[1];
+
         if ($state != $this->config['state']) {
           http_response_code(400);  
           echo json_encode(
@@ -201,6 +216,10 @@ class QuickbooksAuth{
     }
 
     private function store_tokens_in_database($accessTokenObj){
+
+        $this->tokenModel = new QuickbooksToken();
+        $this->tokenModel->iduser = $this->config['iduser'];
+        $this->tokenModel->read();
 
         $model = $this->tokenModel;
 
