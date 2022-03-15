@@ -6,6 +6,7 @@ export * from './form-mode.enum';
 export * from './qb-connection-details';
 export * from './role';
 export * from './shop';
+export * from './summary';
 export * from './takings-summary';
 export * from './takings';
 export * from './user';

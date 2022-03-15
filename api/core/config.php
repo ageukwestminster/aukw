@@ -53,9 +53,11 @@ Config::write('token.cookiepath', Config::read('api.path') . 'auth');
 Config::write('token.cookiesecure', false);
 
 // Quickbooks SDKsettings
+//PRODUCTION COMPANY
+// Todo: move id & secret to variable in .htaccess
 Config::write('qb.clientid', 'ABfKBoCDvYwfccfV7X48SxjS9DewKuKXSujBMjSHB7X9BUcoyi');
 Config::write('qb.clientsecret', 'Cv8mgBHgP4uwkw3NlIQ0ONxHlKQaIdkalIDYDT60');
-Config::write('qb.redirecturl', 'https://7b91-81-159-168-212.ngrok.io/api/auth/callback');
+Config::write('qb.redirecturl', 'https://3c42-81-159-168-212.ngrok.io/api/auth/callback');
 Config::write('qb.realmid', '9130350604308576');
 Config::write('qb.enablelog', true);
 Config::write('qb.loglocation', 'B:\\logs');

@@ -46,8 +46,10 @@ $router->mount('/takings', function () use ($router) {
     $router->delete('/(\d+)', 'TakingsCtl@delete');
     $router->get('/quickbooks/(\d+)', 'TakingsCtl@read_by_quickbooks_status');
     $router->get('/shop/(\d+)', 'TakingsCtl@read_by_shop');
-    $router->get('/summary/shop/(\d+)', 'TakingsCtl@summary');
     $router->get('/(\d+)', 'TakingsCtl@read_one');
+
+    // Show takings data for the last 90 days for a given shop
+    $router->get('/summary/shop/(\d+)', 'TakingsCtl@summary');
 
     // Sample body : { "quickbooks": 0 } ... or ... { "quickbooks": 1 }
     $router->patch('/(\d+)', 'TakingsCtl@patch');
@@ -60,6 +62,13 @@ $router->mount('/shop', function () use ($router) {
     $router->get('/', 'ShopCtl@read_all');
     $router->get('/(\d+)', 'ShopCtl@read_one');
     $router->get('/(\D+)', 'ShopCtl@read_one_name');
+});
+
+/******************/
+/* Summary Routes */
+/******************/
+$router->mount('/summary', function () use ($router) {
+    $router->get('/', 'TakingsSummaryCtl@performanceSummary');
 });
 
 /*********************/
