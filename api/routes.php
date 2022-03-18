@@ -75,22 +75,33 @@ $router->mount('/summary', function () use ($router) {
 /* Quickbooks Routes */
 /*********************/
 $router->mount('/qb', function () use ($router) {
-    // The param is the Quickbooks Journal Id. This number is not exposed via the normal QB website. It
-    // is not the DocNumber which can be seen on the website.
+    // The param is the Quickbooks Journal Id. This number is not easily seen on 
+    // the normal QB website but it can been seen in Audit Log.
+    // It is not the DocNumber which can be seen on the website.
     $router->get('/journal/(\w+)', 'JournalCtl@read_one');
-
-
     $router->post('/journal', 'JournalCtl@create');
-
      // The param is the takingsid value in the takings table in MySQL dB
-    $router->post('/journal/takings/(\d+)', 'JournalCtl@create_from_takings');
-
-    // take action on takings journal; Only 'create_all' implemented so far.
+     $router->post('/journal/takings/(\d+)', 'JournalCtl@create_from_takings');
+         // take action on takings journal; Only 'create_all' implemented so far.
     // Create All adds to QB any takings which has Quickbooks=0 in the mariaDB
     $router->patch('/journal/takings/', 'JournalCtl@patch');
 
+    // The param is the Quickbooks Journal Id. This number is not easily seen on 
+    // the normal QB website but it can been seen in Audit Log.
+    // It is not the DocNumber which can be seen on the website.
+    $router->get('/salesreceipt/(\w+)', 'SalesReceiptCtl@read_one');
+    $router->post('/salesreceipt', 'SalesReceiptCtl@create');
+     // The param is the takingsid value in the takings table in MySQL dB
+    $router->post('/salesreceipt/takings/(\d+)', 'SalesReceiptCtl@create_from_takings');    
+    // take action on takings journal; Only 'create_all' implemented so far.
+    // Create All adds to QB any takings which has Quickbooks=0 in the mariaDB
+    $router->patch('/salesreceipt/takings/', 'SalesReceiptCtl@patch');
+
+    // Returns the uri needed to start the QBO authorisation process
     $router->get('/auth', 'QuickbooksCtl@oauth2_begin');    
+    // Exchange a refresh token for a new access toekn
     $router->get('/refresh', 'QuickbooksCtl@oauth2_refresh');
+    // Delete QBO authorisation
     $router->delete('/', 'QuickbooksCtl@oauth2_revoke');
 
     // Retrieve details of the connection to QB (if any)
