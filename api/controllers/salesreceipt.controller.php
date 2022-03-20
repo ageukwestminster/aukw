@@ -68,17 +68,24 @@ class SalesReceiptCtl{
     $model->linens = $data->linens ?? $emptySales;
     $model->ragging = $data->ragging ?? $emptySales;
     $model->cashToCharity = $data->cashToCharity ?? 0;  
-    $model->privatenote = $data->comment ?? '';  
+    $model->privatenote = $data->comments ?? '';  
 
     $model->sales = $model->clothing->sales + $model->brica->sales + 
               $model->books->sales + $model->linens->sales + $model->ragging->sales;
+    if ($model->sales < 0) {
+      http_response_code(400);
+      echo json_encode(
+        array("message" => "This transaction has a negative total amount.")
+      );
+      exit(0);
+    }              
 
     SalesReceiptCtl::check_parameters($model);
 
     $result = $model->create();
     if ($result) {
         echo json_encode(
-            array("message" => "Journal '". $result['label']  ."' has been added for " . $result['date'] . ".",
+            array("message" => "Sales Receipt '". $result['label']  ."' has been added for " . $result['date'] . ".",
                 "id" => $result['id'])
           );
     }
@@ -86,7 +93,7 @@ class SalesReceiptCtl{
 
   public static function create_from_takings($takingsid){  
 
-    $model = new \Models\QuickbooksJournal();
+    $model = new \Models\SalesReceiptJournal();
 
     $takings = new \Models\Takings();
     $takings->id = $takingsid;
@@ -110,7 +117,12 @@ class SalesReceiptCtl{
 
     $model->date = $takings->date;          
     $model->shopid = $takings->shopid;          
-    $model->donations = $takings->donations;
+    $model->clothing = (object) [ 'number' => $takings->clothing_num, 'sales' => $takings->clothing ] ;
+    $model->brica = (object) [ 'number' => $takings->brica_num, 'sales' => $takings->brica ] ;
+    $model->books = (object) [ 'number' => $takings->books_num, 'sales' => $takings->books ] ;
+    $model->linens = (object) [ 'number' => $takings->linens_num, 'sales' => $takings->linens ] ;
+    $model->donations = (object) [ 'number' => $takings->donations_num, 'sales' => $takings->donations ] ;
+    $model->ragging = (object) [ 'number' => $takings->rag_num, 'sales' => $takings->rag ] ;
     $model->cashDiscrepency = $takings->cash_difference;
     $model->creditCards = $takings->credit_cards*-1;
     $model->cash = $takings->cash_to_bank*-1;
@@ -118,16 +130,16 @@ class SalesReceiptCtl{
     $model->volunteerExpenses = $takings->volunteer_expenses*-1;
     $model->sales = $takings->clothing + $takings->brica + $takings->books + $takings->linens + $takings->other;
     $model->cashToCharity = $takings->cash_to_charity*-1; 
-    $model->privatenote = "Created at " . \Core\DatesHelper::currentDateTime() . '. ' . $takings->comments;
+    $model->privatenote = $takings->comments ?? "";
 
-    JournalCtl::check_parameters($model);
+    SalesReceiptCtl::check_parameters($model);
 
     $result = $model->create();
     if ($result) {
       $takings->quickbooks = 1;
       $takings->patch_quickbooks();
       echo json_encode(
-            array("message" => "Journal '". $result['label']  ."' has been added for " . $result['date'] . ".",
+            array("message" => "Sales Receipt '". $result['label']  ."' has been added for " . $result['date'] . ".",
                 "id" => $result['id'])
           );
     }
