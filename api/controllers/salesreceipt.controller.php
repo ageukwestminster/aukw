@@ -93,8 +93,6 @@ class SalesReceiptCtl{
 
   public static function create_from_takings($takingsid){  
 
-    $model = new \Models\SalesReceiptJournal();
-
     $takings = new \Models\Takings();
     $takings->id = $takingsid;
     $takings->readOne();
@@ -115,23 +113,8 @@ class SalesReceiptCtl{
       exit(0);
     }
 
-    $model->date = $takings->date;          
-    $model->shopid = $takings->shopid;          
-    $model->clothing = (object) [ 'number' => $takings->clothing_num, 'sales' => $takings->clothing ] ;
-    $model->brica = (object) [ 'number' => $takings->brica_num, 'sales' => $takings->brica ] ;
-    $model->books = (object) [ 'number' => $takings->books_num, 'sales' => $takings->books ] ;
-    $model->linens = (object) [ 'number' => $takings->linens_num, 'sales' => $takings->linens ] ;
-    $model->donations = (object) [ 'number' => $takings->donations_num, 'sales' => $takings->donations ] ;
-    $model->ragging = (object) [ 'number' => $takings->rag_num, 'sales' => $takings->rag ] ;
-    $model->cashDiscrepency = $takings->cash_difference;
-    $model->creditCards = $takings->credit_cards*-1;
-    $model->cash = $takings->cash_to_bank*-1;
-    $model->operatingExpenses = $takings->operating_expenses*-1 + $takings->other_adjustments*-1;
-    $model->volunteerExpenses = $takings->volunteer_expenses*-1;
-    $model->sales = $takings->clothing + $takings->brica + $takings->books + $takings->linens + $takings->other;
-    $model->cashToCharity = $takings->cash_to_charity*-1; 
-    $model->privatenote = $takings->comments ?? "";
-
+    $model = new \Models\SalesReceiptJournal();
+    SalesReceiptCtl::transfer_parameters($model, $takings);
     SalesReceiptCtl::check_parameters($model);
 
     $result = $model->create();
@@ -146,8 +129,6 @@ class SalesReceiptCtl{
   }
 
   private static function create_all_from_takings(){  
-
-    $model = new \Models\QuickbooksJournal();
 
     // search for all the takings objects that are not yet entered into Quickbooks
     $takingsModel = new \Models\Takings();
@@ -164,28 +145,21 @@ class SalesReceiptCtl{
 
     $message=array();
 
-    foreach ($takingsArray as $takings) {
-      $model = new \Models\QuickbooksJournal();
-      $model->date = $takings["date"];          
-      $model->shopid = $takings["shopid"];          
-      $model->donations = floatval($takings["donations"]);
-      $model->cashDiscrepency = floatval($takings["cash_difference"]);
-      $model->creditCards = $takings["credit_cards"]*-1;
-      $model->cash = $takings["cash_to_bank"]*-1;
-      $model->operatingExpenses = $takings["operating_expenses"]*-1 + $takings["other_adjustments"]*-1;
-      $model->volunteerExpenses = $takings["volunteer_expenses"]*-1;
-      $model->sales = floatval($takings["clothing"]) + floatval($takings["brica"]) + floatval($takings["books"])
-                           + floatval($takings["linens"]) + floatval($takings["other"]);
-      $model->cashToCharity = $takings["cash_to_charity"]*-1;
-      $model->privatenote = "Created by automated process at " . \Core\DatesHelper::currentDateTime() . '. ' . $takings["comments"];
+    foreach ($takingsArray as $takingsRow) {
 
-      JournalCtl::check_parameters($model);
+      $takings = new \Models\Takings();
+      $takings->id = $takingsRow["id"];
+      $takings->readOne();
+      
+      $model = new \Models\SalesReceiptJournal();
+
+      SalesReceiptCtl::transfer_parameters($model, $takings);
+      SalesReceiptCtl::check_parameters($model);
 
       $result = $model->create();
       if ($result) {
-        $takingsModel->id = $takings["id"];
-        $takingsModel->quickbooks = 1;
-        $takingsModel->patch_quickbooks();
+        $takings->quickbooks = 1;
+        $takings->patch_quickbooks();
         $message[] = array("message" => "Journal '". $result['label']  
                     ."' has been added for " . $result['date'] 
                     . ".", "id" => $result['id']);
@@ -199,14 +173,20 @@ class SalesReceiptCtl{
   private static function transfer_parameters($model, $takings) {
     $model->date = $takings->date;          
     $model->shopid = $takings->shopid;          
-    $model->donations = $takings->donations;
+    $model->clothing = (object) [ 'number' => $takings->clothing_num, 'sales' => $takings->clothing ] ;
+    $model->brica = (object) [ 'number' => $takings->brica_num, 'sales' => $takings->brica ] ;
+    $model->books = (object) [ 'number' => $takings->books_num, 'sales' => $takings->books ] ;
+    $model->linens = (object) [ 'number' => $takings->linens_num, 'sales' => $takings->linens ] ;
+    $model->donations = (object) [ 'number' => $takings->donations_num, 'sales' => $takings->donations ] ;
+    $model->ragging = (object) [ 'number' => $takings->rag_num, 'sales' => $takings->rag ] ;
     $model->cashDiscrepency = $takings->cash_difference;
     $model->creditCards = $takings->credit_cards*-1;
     $model->cash = $takings->cash_to_bank*-1;
     $model->operatingExpenses = $takings->operating_expenses*-1 + $takings->other_adjustments*-1;
     $model->volunteerExpenses = $takings->volunteer_expenses*-1;
     $model->sales = $takings->clothing + $takings->brica + $takings->books + $takings->linens + $takings->other;
-    $model->cashToCharity = $takings->cash_to_charity*-1;  
+    $model->cashToCharity = $takings->cash_to_charity*-1; 
+    $model->privatenote = $takings->comments ?? "";  
   }
 
   private static function check_parameters($model)

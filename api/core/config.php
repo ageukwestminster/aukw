@@ -33,7 +33,7 @@ Config::write('server', 'http://localhost:4200');
 Config::write('api.path', '/api/');
 
 // db
-Config::write('db.host', '192.168.1.38');
+Config::write('db.host', '192.168.1.44');
 Config::write('db.port', '3306');
 Config::write('db.name', 'dailytakings2');
 Config::write('db.user', 'shop');
@@ -57,7 +57,7 @@ Config::write('token.cookiesecure', false);
 // Todo: move id & secret to variable in .htaccess
 Config::write('qb.clientid', 'ABfKBoCDvYwfccfV7X48SxjS9DewKuKXSujBMjSHB7X9BUcoyi');
 Config::write('qb.clientsecret', 'Cv8mgBHgP4uwkw3NlIQ0ONxHlKQaIdkalIDYDT60');
-Config::write('qb.redirecturl', 'https://3c42-81-159-168-212.ngrok.io/api/auth/callback');
+Config::write('qb.redirecturl', 'https://1501-86-142-147-143.ngrok.io/api/auth/callback');
 Config::write('qb.realmid', '9130350604308576');
 Config::write('qb.enablelog', true);
 Config::write('qb.loglocation', 'B:\\logs');

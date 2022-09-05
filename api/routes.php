@@ -91,8 +91,9 @@ $router->mount('/qb', function () use ($router) {
     // It is not the DocNumber which can be seen on the website.
     $router->get('/salesreceipt/(\w+)', 'SalesReceiptCtl@read_one');
     $router->post('/salesreceipt', 'SalesReceiptCtl@create');
-     // The param is the takingsid value in the takings table in MySQL dB
-    $router->post('/salesreceipt/takings/(\d+)', 'SalesReceiptCtl@create_from_takings');    
+
+    // The param is the takingsid value in the takings table in MySQL dB
+    $router->post('/salesreceipt/takings/(\d+)', 'SalesReceiptCtl@create_from_takings');
     // take action on takings journal; Only 'create_all' implemented so far.
     // Create All adds to QB any takings which has Quickbooks=0 in the mariaDB
     $router->patch('/salesreceipt/takings/', 'SalesReceiptCtl@patch');
