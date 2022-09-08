@@ -1,4 +1,10 @@
-<div class="row justify-content-center">
+<div class="row">
+  <div class="col-sm-2">
+      <button routerLink="takings/add" class="btn btn-sm btn-success m-1 mt-1">
+        Add New Takings
+      </button>
+  </div>
+</div><div class="row justify-content-center">
     <div class="card mt-4 col-sm-8">
       <h4 class="card-header">Sales Summary</h4>
       <div class="card-body">
@@ -8,12 +14,16 @@
             <tr>
               <th>Period</th>
               <th>Sales</th>
+              <th># Txns</th>
+              <th>Expenses</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let item of summary">
               <th ngbTooltip="{{item.type}}">{{ item.period }}</th>
-              <td class="text-center">{{ item.net_sales }}</td>
+              <td class="text-center">{{ item.net_sales | number }}</td>
+              <td class="text-center">{{ item.customers_num_total }}</td>
+              <td class="text-center">{{ item.expenses | number }}</td>
             </tr>
             <tr *ngIf="!summary">
               <td colspan="2" class="text-center">
