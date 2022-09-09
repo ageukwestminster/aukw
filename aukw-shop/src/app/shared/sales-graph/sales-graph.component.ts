@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import * as Highcharts from 'highcharts';
-import { switchMap } from 'rxjs/operators';
-import { Chart,Summary } from '@app/_models';
+import { SalesChartData,Summary } from '@app/_models';
 import { SummaryService } from '@app/_services';
+import { from, map, reduce, switchMap } from 'rxjs';
 
 /* from https://www.highcharts.com/blog/tutorials/highcharts-and-angular-7/ */
 declare var require: any;
@@ -24,61 +24,8 @@ noData(Highcharts);
   styleUrls: ['./sales-graph.component.css']
 })
 export class SalesGraphComponent implements OnInit {
-  public options: any = {
-    chart: {
-      type: 'scatter',
-      height: 700
-    },
-    title: {
-      text: 'Sample Scatter Plot'
-    },
-    credits: {
-      enabled: false
-    },
-    tooltip: {
-      formatter: function() {
-        return '<b>x: </b>' + Highcharts.dateFormat('%e %b %y %H:%M:%S', (this as any).x) +
-          ' <br> <b>y: </b>' + (this as any).y.toFixed(2);
-      }
-    },
-    xAxis: {
-      type: 'datetime',
-      labels: {
-        formatter: function() {
-          return Highcharts.dateFormat('%e %b %y', (this as any).value);
-        }
-      }
-    },
-    series: [
-      {
-        name: 'Normal',
-        turboThreshold: 500000,
-        data: [[new Date('2018-01-25 18:38:31').getTime(), 2]]
-      },
-      {
-        name: 'Abnormal',
-        turboThreshold: 500000,
-        data: [[new Date('2018-02-05 18:38:31').getTime(), 7]]
-      }
-    ],
-
-    responsive: {
-      rules: [{
-        condition: {
-          maxWidth: 500
-        },
-        chartOptions: {
-          legend: {
-            layout: 'horizontal',
-            align: 'center',
-            verticalAlign: 'bottom'
-          }
-        }
-      }]
-    }
-  };
-
-  public options2 : any = {
+  
+  public options : any = {
 
     title: {
       text: 'Harrow Road Daily Net Sales'
@@ -105,33 +52,15 @@ export class SalesGraphComponent implements OnInit {
       verticalAlign: 'middle'
     },
   
-    plotOptions: {
-      series: {
-        label: {
-          connectorAllowed: false
-        },
-        pointStart: 0
-      }
-    },
-  
     series: [{
       name: 'Last 10 Trading Days',
-      data: [465.55,
-        400.3,
-        456.7,
-        615.05,
-        333.7,
-        543.5,
-        325.91,
-        601.5,
-        400.77,
-        563.1]
+      data: []
     }, {
       name: 'Average of Last 10 Days',
-      data: [ 470.61,470.61,470.61,470.61,470.61,470.61,470.61,470.61,470.61,470.61]
+      data: []
     }, {
       name: 'Average of Last 30 Days',
-      data: [ 424.02,424.02,424.02,424.02,424.02,424.02,424.02,424.02,424.02,424.02]
+      data: []
     }, {
       name: 'Average of Last 365 Days',
       data: []
@@ -157,7 +86,36 @@ export class SalesGraphComponent implements OnInit {
   constructor(private summaryService: SummaryService) {   }
 
   ngOnInit(): void {
-    //Highcharts.chart('container', this.options2);
+
+    const updated_sales_data: any[] = [];
+    const updated_avg10_data: any[] = [];
+    const updated_avg30_data: any[] = [];
+    const updated_avg365_data: any[] = [];
+
+    this.summaryService
+      .getChartData()
+      .pipe(
+        switchMap((x:SalesChartData[]) =>  from(x)
+          .pipe(
+            map((row: SalesChartData) => { 
+              const date = new Date(row.date).getTime();
+              updated_sales_data.push([date, row.sales]);
+              updated_avg10_data.push([date, row.avg10]);
+              updated_avg30_data.push([date, row.avg30]);
+              updated_avg365_data.push([date, row.avg365]);
+              return row;
+            })
+          )
+        ),
+        reduce((curr: SalesChartData[], next: SalesChartData) => [...curr, next], [])
+      ).subscribe( data => {
+        
+        this.options.series[0]['data'] = updated_sales_data;
+        this.options.series[1]['data'] = updated_avg10_data;
+        this.options.series[2]['data'] = updated_avg30_data;
+        this.options.series[3]['data'] = updated_avg365_data;
+        Highcharts.chart('container', this.options);
+      });
   }
 
 }

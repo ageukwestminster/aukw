@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { environment } from '@environments/environment';
 import { Summary } from '@app/_models';
-import { Chart } from '@app/_models';
+import { SalesChartData } from '@app/_models';
 
 const baseUrl = `${environment.apiUrl}/summary`;
 const chartUrl = baseUrl+`/chart`;
@@ -17,7 +17,7 @@ export class SummaryService {
     }
 
     getChartData() {
-        return this.http.get<Chart[]>(chartUrl);
+        return this.http.get<SalesChartData[]>(chartUrl);
     }
 
 }
