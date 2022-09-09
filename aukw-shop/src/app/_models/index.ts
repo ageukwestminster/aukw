@@ -1,4 +1,5 @@
 ﻿export * from './alert';
+export * from './chart';
 export * from './date-range';
 export * from './date-range.enum';
 export * from './department.enum';

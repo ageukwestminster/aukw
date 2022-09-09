@@ -69,6 +69,7 @@ $router->mount('/shop', function () use ($router) {
 /******************/
 $router->mount('/summary', function () use ($router) {
     $router->get('/', 'TakingsSummaryCtl@performanceSummary');
+    $router->get('/chart', 'TakingsSummaryCtl@salesChart');
 });
 
 /*********************/
