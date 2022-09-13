@@ -19,11 +19,11 @@ Accessibility(Highcharts);
 noData(Highcharts);
 
 @Component({
-  selector: 'sales-graph',
-  templateUrl: './sales-graph.component.html',
-  styleUrls: ['./sales-graph.component.css']
+  selector: 'sales-chart',
+  templateUrl: './sales-chart.component.html',
+  styleUrls: ['./sales-chart.component.css']
 })
-export class SalesGraphComponent implements OnInit {
+export class SalesChartComponent implements OnInit {
   
   public options : any = {
 
@@ -114,7 +114,7 @@ export class SalesGraphComponent implements OnInit {
         this.options.series[1]['data'] = updated_avg10_data;
         this.options.series[2]['data'] = updated_avg30_data;
         this.options.series[3]['data'] = updated_avg365_data;
-        Highcharts.chart('container', this.options);
+        Highcharts.chart('sales-chart', this.options);
       });
   }
 

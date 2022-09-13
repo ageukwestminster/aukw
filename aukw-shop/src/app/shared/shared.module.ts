@@ -3,17 +3,20 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AlertComponent } from './alert-component/alert.component';
-import { SalesGraphComponent } from './sales-graph/sales-graph.component';
+import { SalesChartComponent } from './sales-chart/sales-chart.component';
+import { DepartmentChartComponent } from './dept-chart/dept-chart.component';
 
 @NgModule({
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   declarations: [
     AlertComponent,
-    SalesGraphComponent,
+    DepartmentChartComponent,
+    SalesChartComponent,
   ],
   exports: [
     AlertComponent,
-    SalesGraphComponent,
+    DepartmentChartComponent,
+    SalesChartComponent,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,    
