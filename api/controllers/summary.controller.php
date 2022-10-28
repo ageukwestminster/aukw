@@ -17,7 +17,7 @@ class TakingsSummaryCtl{
 
     $model = new \Models\TakingsSummary();
 
-    echo json_encode($model->performanceSummary(1, NULL), JSON_NUMERIC_CHECK| JSON_UNESCAPED_SLASHES);
+    echo json_encode($model->performanceSummary(NULL, NULL), JSON_NUMERIC_CHECK| JSON_UNESCAPED_SLASHES);
   }
 
   public static function salesChart(){  
@@ -25,6 +25,13 @@ class TakingsSummaryCtl{
     $model = new \Models\TakingsSummary();
 
     echo json_encode($model->salesChart(1, NULL), JSON_NUMERIC_CHECK);
+  }
+
+  public static function departmentChart(){  
+
+    $model = new \Models\TakingsSummary();
+
+    echo json_encode($model->departmentChart(NULL, NULL), JSON_NUMERIC_CHECK);
   }
 
 }

@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import * as Highcharts from 'highcharts';
+import { SummaryService } from '@app/_services';
+import { DepartmentSalesChartData, SalesChartData } from '@app/_models';
 
 /* from https://www.highcharts.com/blog/tutorials/highcharts-and-angular-7/ */
 declare var require: any;
@@ -30,10 +32,13 @@ export class DepartmentChartComponent implements OnInit {
       type: 'pie'
     },
     title: {
-      text: 'Browser market shares in March, 2022'
+      text: 'Sales By Department, YTD'
     },
-    tooltip: {
-      pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    subtitle: {
+      text: 'Since Jan 1st'
+    },
+    tooltip: { //https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting
+      pointFormat: 'YTD Sales: £{point.y:,.0f} <b>({point.percentage:.1f}%)</b>'
     },
     accessibility: {
       point: {
@@ -51,37 +56,32 @@ export class DepartmentChartComponent implements OnInit {
       }
     },
     series: [{
-      name: 'Brands',
+      name: 'Depts',
       colorByPoint: true,
-      data: [{
-        name: 'Chrome',
-        y: 74.77,
-        sliced: true,
-        selected: true
-      },  {
-        name: 'Edge',
-        y: 12.82
-      },  {
-        name: 'Firefox',
-        y: 4.63
-      }, {
-        name: 'Safari',
-        y: 2.44
-      }, {
-        name: 'Internet Explorer',
-        y: 2.02
-      }, {
-        name: 'Other',
-        y: 3.28
-      }]
+      data: []
     }]
   };
 
-  constructor() {   }
+  constructor(private summaryService: SummaryService) {   }
 
   ngOnInit(): void {
 
-    Highcharts.chart('dept-chart', this.options);
+    this.summaryService
+      .getDepartmentBreakdownChartData()
+      .subscribe((x:DepartmentSalesChartData) => {
+
+        this.options.series[0]['data'].push({'name': 'Clothing', 'y': x.YTD.clothing
+                    , 'sliced': true, 'selected': true})
+        this.options.series[0]['data'].push({'name': 'Brica', 'y': x.YTD.brica})
+        this.options.series[0]['data'].push({'name': 'Books', 'y': x.YTD.books})
+        this.options.series[0]['data'].push({'name': 'Linens', 'y': x.YTD.linens})
+        this.options.series[0]['data'].push({'name': 'Other', 'y': x.YTD.other})
+
+        Highcharts.chart('dept-chart', this.options);
+      });
+
+
+    
    
   }
 

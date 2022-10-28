@@ -113,5 +113,55 @@ class TakingsSummary{
         return $chart_data;
     }
 
+    public function departmentChart($shopid,$current_date){
+
+        // MySQL stored procedure
+        $query = "CALL cumm_sales_by_dept(:shopid,:date)";
+
+        $stmt = $this->conn->prepare( $query );
+
+        // bind id of product to be updated
+        $stmt->bindParam(":shopid", $shopid, PDO::PARAM_INT);
+        $stmt->bindParam(":date", $current_date, PDO::PARAM_STR);
+
+        // execute query
+        $stmt->execute();
+        $num = $stmt->rowCount();
+
+        $department_sales=[
+            'WTD' => [],
+            'MTD' => [],
+            'YTD' => [],
+        ];
+
+        // check if more than 0 record found
+        if($num>0){
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                extract($row);
+            
+                $data_row = array();
+                $data_row["Clothing"] = $sum_clothing;
+                $data_row["Bric-a-Brac"] = $sum_brica;
+                $data_row["Books"] = $sum_books;
+                $data_row["Linens"] = $sum_linens;
+                $data_row["Other"] = $sum_other;
+                $data_row["Ragging"] = $sum_rag;
+
+                $item = array(
+                    "clothing" => $sum_clothing,
+                    "brica" => $sum_brica,
+                    "books" => $sum_books,
+                    "linens" => $sum_linens,
+                    "other" => $sum_other,
+                    "rag" => $sum_rag,
+                );
+
+                // add data
+                $department_sales[$Type] = $item;
+            }
+        }
+
+        return $department_sales;
+    }
 
 }

@@ -3,10 +3,11 @@ import { HttpClient } from '@angular/common/http';
 
 import { environment } from '@environments/environment';
 import { Summary } from '@app/_models';
-import { SalesChartData } from '@app/_models';
+import { DepartmentSalesChartData,SalesChartData } from '@app/_models';
 
 const baseUrl = `${environment.apiUrl}/summary`;
-const chartUrl = baseUrl+`/chart`;
+const salesChartUrl = baseUrl+`/sales-chart`;
+const deptChartUrl = baseUrl+`/dept-chart`;
 
 @Injectable({ providedIn: 'root' })
 export class SummaryService {
@@ -16,8 +17,12 @@ export class SummaryService {
         return this.http.get<Summary[]>(baseUrl);
     }
 
-    getChartData() {
-        return this.http.get<SalesChartData[]>(chartUrl);
+    getSalesChartData() {
+        return this.http.get<SalesChartData[]>(salesChartUrl);
+    }
+
+    getDepartmentBreakdownChartData() {
+        return this.http.get<DepartmentSalesChartData>(deptChartUrl);
     }
 
 }

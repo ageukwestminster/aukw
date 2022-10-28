@@ -93,7 +93,7 @@ export class SalesChartComponent implements OnInit {
     const updated_avg365_data: any[] = [];
 
     this.summaryService
-      .getChartData()
+      .getSalesChartData()
       .pipe(
         switchMap((x:SalesChartData[]) =>  from(x)
           .pipe(

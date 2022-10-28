@@ -1,10 +1,12 @@
+import { Takings } from "./takings";
+
 export class SalesChartData {
     date: string;   
     sales:  number;
     avg10:  number;
     avg30:  number;
     avg365:  number;
-    avgAll:  number;    
+    avgAll:  number;   
 
     constructor(obj?: any) {
 
@@ -14,5 +16,20 @@ export class SalesChartData {
         this.avg30 = obj && obj.avg30 || null;
         this.avg365 = obj && obj.avg365 || null;
         this.avgAll = obj && obj.avgAll || null;
+    }
+}
+
+
+export class DepartmentSalesChartData { 
+    WTD : Takings;
+    MTD : Takings;
+    YTD : Takings;
+    TrYTD : Takings; 
+
+    constructor(obj?: any) {
+        this.WTD = obj && obj.WTD || null;
+        this.MTD = obj && obj.MTD || null;
+        this.YTD = obj && obj.YTD || null;
+        this.TrYTD = obj && obj.TrYTD || null;
     }
 }
