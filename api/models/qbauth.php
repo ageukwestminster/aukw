@@ -77,7 +77,8 @@ class QuickbooksAuth{
         $authorizationCodeUrl = $OAuth2LoginHelper->getAuthorizationCodeURL();
         return array(
             "message" => "Open this line on a new page and follow the instructions.",
-            "authUri" => $authorizationCodeUrl
+            "authUri" => $authorizationCodeUrl,
+            "further_information" => "https://www.scpgwiki.com/trevorsqwiki/pmwiki.php/Main/AukwQBIntegration"
         );
     }
 

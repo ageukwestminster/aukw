@@ -57,7 +57,7 @@ Config::write('token.cookiesecure', false);
 // Todo: move id & secret to variable in .htaccess
 Config::write('qb.clientid', 'ABfKBoCDvYwfccfV7X48SxjS9DewKuKXSujBMjSHB7X9BUcoyi');
 Config::write('qb.clientsecret', 'Cv8mgBHgP4uwkw3NlIQ0ONxHlKQaIdkalIDYDT60');
-Config::write('qb.redirecturl', 'https://1501-86-142-147-143.ngrok.io/api/auth/callback');
+Config::write('qb.redirecturl', 'https://841a-86-142-147-138.ngrok.io/api/auth/callback');
 Config::write('qb.realmid', '9130350604308576');
 Config::write('qb.enablelog', true);
 Config::write('qb.loglocation', 'B:\\logs');
