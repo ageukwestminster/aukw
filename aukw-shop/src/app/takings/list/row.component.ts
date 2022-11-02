@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { TakingsSummary, User } from '../../_models';
+import { TakingsSummary, User } from '@app/_models';
 import { TakingsService, AlertService } from '@app/_services';
 /**
  * @TakingsRow: A component for the view of single daily Takings item
@@ -13,12 +13,14 @@ export class TakingsRowComponent {
   @Input() takings!: TakingsSummary;
   @Input() user!: User;
   @Output() onTakingsDeleted: EventEmitter<TakingsSummary>;
+  @Output() onTakingsAddedToQB: EventEmitter<TakingsSummary>;
 
   constructor(
     private takingsService: TakingsService,
     private alertService: AlertService
   ) {
     this.onTakingsDeleted = new EventEmitter();
+    this.onTakingsAddedToQB = new EventEmitter();
   }
 
   deleteTakings(e: Event) {
@@ -43,14 +45,16 @@ export class TakingsRowComponent {
     if (!this.takings || !this.takings.id) return;
 
     this.takings.isUpdating = true;
-    // this.takingsService
-    //   .delete(this.takings.id)
-    //   .subscribe(() => {
-    //     this.alertService.success('Takings deleted', {
-    //       keepAfterRouteChange: true,
-    //     });
-    //     this.onTakingsDeleted.emit(this.takings);
-    //   });
+    this.takingsService
+      .addToQuickbooks(this.takings.id)
+      .subscribe(() => {
+        this.alertService.success('Takings added to Quickbooks', {
+          keepAfterRouteChange: true,
+        });
+        this.takings.quickbooks = true; // Quickbooks is now updated
+        this.takings.isUpdating = false;        
+        this.onTakingsAddedToQB.emit(this.takings);
+      });
   }
 
   // Prevents the click event propagating back up to the table row
