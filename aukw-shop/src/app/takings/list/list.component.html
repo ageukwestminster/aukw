@@ -4,6 +4,9 @@
         <button routerLink="add" class="btn btn-sm btn-success m-1 mt-1">
           Add New Takings
         </button>
+        <button *ngIf="user.isAdmin" class="btn btn-sm btn-warning m-1 mt-1">
+            Add to QuickBooks
+        </button>
     </div>
 </div>
 <table class="table table-striped table-responsive">

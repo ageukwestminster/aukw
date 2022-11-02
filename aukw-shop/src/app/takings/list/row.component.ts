@@ -37,6 +37,22 @@ export class TakingsRowComponent {
       });
   }
 
+  addToQuickbooks(e: Event) {
+    e.stopPropagation(); // If click propagates it will open the edit member page
+
+    if (!this.takings || !this.takings.id) return;
+
+    this.takings.isUpdating = true;
+    // this.takingsService
+    //   .delete(this.takings.id)
+    //   .subscribe(() => {
+    //     this.alertService.success('Takings deleted', {
+    //       keepAfterRouteChange: true,
+    //     });
+    //     this.onTakingsDeleted.emit(this.takings);
+    //   });
+  }
+
   // Prevents the click event propagating back up to the table row
   // which would open the edit Takings view
   onClickEvent(e: Event) {

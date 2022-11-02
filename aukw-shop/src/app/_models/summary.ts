@@ -27,6 +27,8 @@ export class Summary {
     customers_num_total: number;
     sales_total: number;
     expenses: number;
+    cash_to_bank: number;
+    credit_cards: number;
 
     constructor(obj?: any) {
 
@@ -58,6 +60,9 @@ export class Summary {
         this.rag_num = obj && obj.rag_num || 0;
         this.other_num = obj && obj.other_num || 0;
         this.donations_num = obj && obj.donations_num || 0;
+
+        this.cash_to_bank = obj && obj.cash_to_bank || 0;
+        this.credit_cards = obj && obj.credit_cards || 0;
 
     }
 }

@@ -33,4 +33,8 @@ export class TakingsService {
     delete(id: number) {
         return this.http.delete(`${baseUrl}/${id}`);
     }
+
+    addToQuickbooks(id: number) {
+        return this.http.post(`${environment.apiUrl}/qb/salesreceipt/takings/${id}`, null);
+    }
 }

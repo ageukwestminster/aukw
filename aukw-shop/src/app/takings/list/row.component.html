@@ -13,4 +13,8 @@
         <span *ngIf="takings.isDeleting" class="spinner-border spinner-border-sm"></span>
         <span *ngIf="!takings.isDeleting">Delete</span>
     </button>
+    <button *ngIf="user.isAdmin&&!takings.quickbooks" (click)="deleteTakings($event)" class="btn btn-sm btn-warning btn-add-takings-to-qb" [disabled]="takings.isDeleting">
+        <span *ngIf="takings.isDeleting" class="spinner-border spinner-border-sm"></span>
+        <span *ngIf="!takings.isDeleting">Add to QB</span>
+    </button>
 </td>

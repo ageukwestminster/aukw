@@ -23,4 +23,14 @@ export class TakingsListComponent implements OnInit {
   takingsWasDeleted(takings: TakingsSummary): void {
     this.takingslist = this.takingslist.filter((x) => x.id !== takings.id);
   }
+
+  takingsWasAddedToQB(takings: TakingsSummary): void {
+    let updateItem = this.takingslist.find((x) => x.id == takings.id);
+
+    if (updateItem != null) {
+      let index = this.takingslist.indexOf(updateItem);  
+      this.takingslist[index] = takings;
+    }
+
+  }
 }
