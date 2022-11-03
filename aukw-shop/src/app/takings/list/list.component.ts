@@ -1,7 +1,9 @@
-﻿import { Component, OnInit } from '@angular/core';
-import { AuthenticationService, TakingsService } from '@app/_services';
-import { TakingsSummary, User } from '@app/_models';
-import { concatMap } from 'rxjs/operators';
+﻿import { Component, OnInit} from '@angular/core';
+import { formatDate } from '@angular/common';
+import { AlertService, AuthenticationService, TakingsService } from '@app/_services';
+import { ApiMessage, TakingsSummary, User } from '@app/_models';
+import { from, catchError, EMPTY, of, delay, Observable } from 'rxjs';
+import { map, mergeMap, scan, switchMap, concatMap } from 'rxjs/operators';
 
 @Component({ templateUrl: 'list.component.html' })
 export class TakingsListComponent implements OnInit {
@@ -11,7 +13,8 @@ export class TakingsListComponent implements OnInit {
 
   constructor(
     private takingsService: TakingsService,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private alertService: AlertService,
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -36,16 +39,37 @@ export class TakingsListComponent implements OnInit {
     }
   }
 
+  delayReply(id: number) {
+    const msg: ApiMessage = new ApiMessage();
+    msg.id = id;
+    msg.message = "Item "+id+" saved.";
+    console.log(msg.message);
+    return this.takingsService.patchQuickbooks(id, true).pipe( delay(250))
+    
+  }
+
   addAllToQuickbooks() {
     if (!this.takingslistNotInQB || !this.takingslistNotInQB.length) return;
 
-  //   this.takingslistNotInQB
-  //   .concatMap(
-  //     switchMap((u: User) => { 
-  //         this.form.patchValue(u);
-  //         return this.qbConnDetsService.getById(u.id);
-  //     })
-  // )
+    from(this.takingslistNotInQB)
+    .pipe(
+      concatMap((t:TakingsSummary) => {
+        t.isUpdating = true;
+        
+        return this.delayReply(t.id).pipe(
+          concatMap((msg:any) => {
+            t.quickbooks = true;
+            t.isUpdating = false;            
+            this.alertService.success(msg.message, {
+              keepAfterRouteChange: true,
+            });
+            return of(msg);
+          })
+        );
+
+      }),
+
+    ).subscribe();
     
   }
 }

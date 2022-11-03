@@ -124,9 +124,7 @@ class TakingsCtl{
             "id" => $model->id,
             "quickbooks" => $data->quickbooks)
             , JSON_NUMERIC_CHECK);
-    }
-        
-      
+      }            
     }
   }
 

@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { formatDate } from '@angular/common';
 import { TakingsSummary, User } from '@app/_models';
 import { TakingsService, AlertService } from '@app/_services';
 /**
@@ -39,6 +40,7 @@ export class TakingsRowComponent {
       });
   }
 
+  // Add a Sales Receipt to QB based on the taking data in the dB
   addToQuickbooks(e: Event) {
     e.stopPropagation(); // If click propagates it will open the edit member page
 
@@ -46,14 +48,14 @@ export class TakingsRowComponent {
 
     this.takings.isUpdating = true;
     this.takingsService
-      .addToQuickbooks(this.takings.id)
+      .addToQuickbooks(this.takings.id) // Adds to QB and sets 'quickbooks' = 1 in dB
       .subscribe(() => {
-        this.alertService.success('Takings added to Quickbooks', {
-          keepAfterRouteChange: true,
-        });
+        this.alertService.success('Daily sales added to QB for'+ 
+          formatDate(this.takings.date, "dd-MMM", "en_GB"), {keepAfterRouteChange: true}
+          );
         this.takings.quickbooks = true; // Quickbooks is now updated
         this.takings.isUpdating = false;        
-        this.onTakingsAddedToQB.emit(this.takings);
+        this.onTakingsAddedToQB.emit(this.takings); // refresh screen
       });
   }
 

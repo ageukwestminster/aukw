@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { environment } from '@environments/environment';
-import { Takings, TakingsSummary } from '@app/_models';
+import { ApiMessage, Takings, TakingsSummary } from '@app/_models';
+import { Observable } from 'rxjs';
 
 const baseUrl = `${environment.apiUrl}/takings`;
 
@@ -34,7 +35,12 @@ export class TakingsService {
         return this.http.delete(`${baseUrl}/${id}`);
     }
 
-    addToQuickbooks(id: number) {
-        return this.http.post(`${environment.apiUrl}/qb/salesreceipt/takings/${id}`, null);
+    patchQuickbooks(id: number, quickbooksStatus: boolean) {
+        const qb_status = { quickbooks: quickbooksStatus?1:0};
+        return this.http.patch(`${baseUrl}/${id}`, qb_status);
+    }
+
+    addToQuickbooks(id: number):Observable<ApiMessage> {
+        return this.http.post<ApiMessage>(`${environment.apiUrl}/qb/salesreceipt/takings/${id}`, null);
     }
 }

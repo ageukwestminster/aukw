@@ -5,7 +5,7 @@
           Add New Takings
         </button>
         <button *ngIf="user.isAdmin&&takingslistNotInQB&&takingslistNotInQB.length>0" 
-            class="btn btn-sm btn-warning m-1 mt-1" (click)="addAllToQuickbooks">
+            class="btn btn-sm btn-warning m-1 mt-1" (click)="addAllToQuickbooks()">
             Add All to QuickBooks
         </button>
     </div>
@@ -15,6 +15,7 @@
         <tr>
             <th style="width: 35%">Date</th>
             <th style="width: 25%">Sales</th>
+            <th style="width: 25%">+/-</th>
             <th style="width: 15%">Actions</th> 
         </tr>
     </thead>
