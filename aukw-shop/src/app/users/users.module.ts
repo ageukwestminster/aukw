@@ -12,18 +12,18 @@ import { UserAddEditComponent } from './add-edit.component';
 import { UserRowComponent } from './row.component';
 
 @NgModule({
-    imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        UsersRoutingModule,
-        SharedModule,
-        NgbModule
-    ],
-    declarations: [
-        UserLayoutComponent,
-        UserListComponent,
-        UserAddEditComponent,
-        UserRowComponent
-    ]
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    UsersRoutingModule,
+    SharedModule,
+    NgbModule,
+  ],
+  declarations: [
+    UserLayoutComponent,
+    UserListComponent,
+    UserAddEditComponent,
+    UserRowComponent,
+  ],
 })
-export class UsersModule { }
+export class UsersModule {}

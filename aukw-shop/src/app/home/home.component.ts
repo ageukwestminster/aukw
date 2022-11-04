@@ -1,10 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Summary,User } from '@app/_models';
+import { Summary, User } from '@app/_models';
 
-import {
-  AuthenticationService,
-  SummaryService
-} from '@app/_services';
+import { AuthenticationService, SummaryService } from '@app/_services';
 
 @Component({ templateUrl: 'home.component.html' })
 export class HomeComponent implements OnInit {
@@ -14,7 +11,7 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private authenticationService: AuthenticationService,
-    private summaryService: SummaryService,
+    private summaryService: SummaryService
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -25,6 +22,5 @@ export class HomeComponent implements OnInit {
       this.summary = response;
       this.loading = false;
     });
-        
   }
 }

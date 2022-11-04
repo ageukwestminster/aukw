@@ -8,19 +8,15 @@ import { DepartmentChartComponent } from './dept-chart/dept-chart.component';
 
 @NgModule({
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
-  declarations: [
-    AlertComponent,
-    DepartmentChartComponent,
-    SalesChartComponent,
-  ],
+  declarations: [AlertComponent, DepartmentChartComponent, SalesChartComponent],
   exports: [
     AlertComponent,
     DepartmentChartComponent,
     SalesChartComponent,
     CommonModule,
     FormsModule,
-    ReactiveFormsModule,    
+    ReactiveFormsModule,
   ],
-  providers: [ ],
+  providers: [],
 })
 export class SharedModule {}

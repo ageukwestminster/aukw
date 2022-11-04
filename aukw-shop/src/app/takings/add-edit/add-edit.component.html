@@ -1,163 +1,260 @@
 ﻿<h1 *ngIf="isAdd">Add Daily Takings</h1>
 <h1 *ngIf="isEdit">Edit Daily Takings</h1>
 <div *ngIf="loading">
-<span class="spinner-border spinner-border-lg align-center"></span>
+  <span class="spinner-border spinner-border-lg align-center"></span>
 </div>
 <!--'[formGroup]' is a Reactive forms property-->
 <!--The *ngIf is in place to stop errors of 'Expression has changed after it was checked.'-->
 <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!loading">
-    <!-- Buttons -->
+  <!-- Buttons -->
   <div class="row d-flex justify-content-between mb-2">
     <div class="col-auto">
-      <button
-        type="submit"
-        [disabled]="loading"
-        class="btn btn-primary mr-1"
-      >
+      <button type="submit" [disabled]="loading" class="btn btn-primary mr-1">
         <span
           *ngIf="loading"
           class="spinner-border spinner-border-sm mr-1"
         ></span>
         Save
-        </button>
-            <button (click)="goBack()" class="btn btn-outline-dark">
-                Close &times;
-            </button>
-        </div>
+      </button>
+      <button (click)="goBack()" class="btn btn-outline-dark">
+        Close &times;
+      </button>
     </div>
-    <!-- End of Buttons -->
+  </div>
+  <!-- End of Buttons -->
 
-    <div class="col-sm">      
-      <div class="input-group mb-1">
-        <input
-          class="form-control"
-          placeholder="*not-set*"
-          name="dp"
-          ngbDatepicker
-          #d1="ngbDatepicker"
-          formControlName="date"
-          id="inputTakingsDate"
-        />
-        <div class="input-group-append">
-          <button
-            class="btn btn-outline-secondary"
-            (click)="d1.toggle()"
-            type="button"
-          >
-            <i class="far fa-calendar-alt"></i>
-          </button>
-        </div>
+  <div class="col-sm">
+    <div class="input-group mb-1">
+      <input
+        class="form-control"
+        placeholder="*not-set*"
+        name="dp"
+        ngbDatepicker
+        #d1="ngbDatepicker"
+        formControlName="date"
+        id="inputTakingsDate"
+      />
+      <div class="input-group-append">
+        <button
+          class="btn btn-outline-secondary"
+          (click)="d1.toggle()"
+          type="button"
+        >
+          <i class="far fa-calendar-alt"></i>
+        </button>
       </div>
     </div>
+
     <select
       formControlName="shopid"
       id="shopSelect"
       name="shopSelect"
-      class="form-control"
-  >
-    <option *ngFor="let shop of shops" [ngValue]="shop.id">
-      {{ shop.name }}
-    </option>
-  </select>
+      class="form-control mb-2"
+    >
+      <option *ngFor="let shop of shops" [ngValue]="shop.id">
+        {{ shop.name }}
+      </option>
+    </select>
+  </div>
 
-    <!-- Department Sales -->
-    <div class="row">
-      <div class="col"></div>
-      <div class="col">
-        Number
-      </div>
-      <div class="col">
-        Amount
-      </div>
-    </div>
-    <div class="form-row mb-1">
-      <div class="col">Clothing</div>
-      <div class="col">
-        <input type="number" class="form-control" placeholder="Clothing" formControlName="clothing_num">
-      </div>
-      <div class="col">
-        <input type="number" class="form-control" placeholder="0.00" formControlName="clothing">
-      </div>
-    </div>
-    <div class="form-row mb-1">
-      <div class="col">Brica</div>
-      <div class="col">
-        <input type="number" class="form-control" placeholder="Brica" formControlName="brica_num">
-      </div>
-      <div class="col">
-        <input type="number" class="form-control" placeholder="0.00" formControlName="brica" pattern="^\d*(\.\d{0,2})?$">
-      </div>
-    </div>
-    <div class="form-row mb-1">
-      <div class="col">Books</div>
-      <div class="col">
-        <input type="number" class="form-control" placeholder="Books" formControlName="books_num">
-      </div>
-      <div class="col">
-        <input type="number" class="form-control" placeholder="0.00" formControlName="books" pattern="^\d*(\.\d{0,2})?$">
+  <div class="w-100"></div>
+
+  <!-- Department Sales -->
+  <div class="form-row mb-1">
+    <div class="input-group mb-1">
+      <span class="input-group-text col-4" id="clothing-label">Clothing</span>
+      <div class="card p-2 col">
+        <div class="row">
+          <div class="col">
+            <label for="clothingNumber" class="form-label"> Number </label>
+            <input
+              id="clothingNumber"
+              name="clothingNumber"
+              type="number"
+              class="form-control text-right"
+              formControlName="clothing_num"
+            />
+          </div>
+          <div class="col">
+            <label for="clothingAmount" class="form-label"> Amount </label>
+            <input
+              id="clothingAmount"
+              name="clothingAmount"
+              type="number"
+              class="form-control text-right"
+              formControlName="clothing"
+            />
+          </div>
+        </div>
       </div>
     </div>
-    <div class="form-row mb-1">
-      <div class="col">Linens</div>
-      <div class="col">
-        <input type="number" class="form-control" placeholder="Linens" formControlName="linens_num">
-      </div>
-      <div class="col">
-        <input type="number" class="form-control" placeholder="0.00" formControlName="linens" pattern="^\d*(\.\d{0,2})?$">
-      </div>
+  </div>
+  <div class="form-row mb-1">
+    <div class="col">Brica</div>
+    <div class="col">
+      <input
+        type="number"
+        class="form-control"
+        placeholder="Brica"
+        formControlName="brica_num"
+      />
     </div>
-    <div class="form-row mb-1">
-      <div class="col">Donations</div>
-      <div class="col">
-        <input type="number" class="form-control" placeholder="Donations" formControlName="donations_num">
-      </div>
-      <div class="col">
-        <input type="number" class="form-control" placeholder="0.00" formControlName="donations" pattern="^\d*(\.\d{0,2})?$">
-      </div>
+    <div class="col">
+      <input
+        type="number"
+        class="form-control"
+        placeholder="0.00"
+        formControlName="brica"
+        pattern="^\d*(\.\d{0,2})?$"
+      />
     </div>
-    <div class="form-row mb-1">
-      <div class="col">Rag</div>
-      <div class="col">
-        <input type="number" class="form-control" placeholder="Ragging" formControlName="rag_num">
-      </div>
-      <div class="col">
-        <input type="number" class="form-control" placeholder="0.00" formControlName="rag" pattern="^\d*(\.\d{0,2})?$">
-      </div>
+  </div>
+  <div class="form-row mb-1">
+    <div class="col">Books</div>
+    <div class="col">
+      <input
+        type="number"
+        class="form-control"
+        placeholder="Books"
+        formControlName="books_num"
+      />
     </div>
-    <div class="form-row mb-2">
-      <div class="col">Other</div>
-      <div class="col">
-        <input type="number" class="form-control" placeholder="0" formControlName="other_num">
-      </div>
-      <div class="col">
-        <input type="number" class="form-control" placeholder="0.00" formControlName="other" pattern="^\d*(\.\d{0,2})?$">
-      </div>
+    <div class="col">
+      <input
+        type="number"
+        class="form-control"
+        placeholder="0.00"
+        formControlName="books"
+        pattern="^\d*(\.\d{0,2})?$"
+      />
     </div>
-    <div class="form-row mb-3">
-      <div class="col">Total</div>
-      <div class="col">
-        <input type="text" class="form-control">
-      </div>
-      <div class="col">
-        <input type="number" class="form-control">
-      </div>
+  </div>
+  <div class="form-row mb-1">
+    <div class="col">Linens</div>
+    <div class="col">
+      <input
+        type="number"
+        class="form-control"
+        placeholder="Linens"
+        formControlName="linens_num"
+      />
     </div>
-    <div class="w-100"></div>
-    <div class="form-row mb-1">
-      <div class="col">Rag</div>
-      <div class="col">
-        <input type="number" class="form-control" placeholder="0" formControlName="rag_num">
-      </div>
-      <div class="col">
-        <input type="number" class="form-control" placeholder="0.00" formControlName="rag" pattern="^\d*(\.\d{0,2})?$">
-      </div>
+    <div class="col">
+      <input
+        type="number"
+        class="form-control"
+        placeholder="0.00"
+        formControlName="linens"
+        pattern="^\d*(\.\d{0,2})?$"
+      />
     </div>
-    <div class="form-group">
-      <label for="inputCustomers_Num">Number of Customers</label>
-      <input type="number" id="inputCustomers_Num" class="form-control" formControlName="customers_num_total">
+  </div>
+  <div class="form-row mb-1">
+    <div class="col">Donations</div>
+    <div class="col">
+      <input
+        type="number"
+        class="form-control"
+        placeholder="Donations"
+        formControlName="donations_num"
+      />
     </div>
-    <div class="form-group">
-      <label for="commentsTextarea">Comments</label>
-      <textarea class="form-control" id="commentsTextarea" rows="2" formControlName="comments"></textarea>
+    <div class="col">
+      <input
+        type="number"
+        class="form-control"
+        placeholder="0.00"
+        formControlName="donations"
+        pattern="^\d*(\.\d{0,2})?$"
+      />
     </div>
+  </div>
+  <div class="form-row mb-1">
+    <div class="col">Rag</div>
+    <div class="col">
+      <input
+        type="number"
+        class="form-control"
+        placeholder="Ragging"
+        formControlName="rag_num"
+      />
+    </div>
+    <div class="col">
+      <input
+        type="number"
+        class="form-control"
+        placeholder="0.00"
+        formControlName="rag"
+        pattern="^\d*(\.\d{0,2})?$"
+      />
+    </div>
+  </div>
+  <div class="form-row mb-2">
+    <div class="col">Other</div>
+    <div class="col">
+      <input
+        type="number"
+        class="form-control"
+        placeholder="0"
+        formControlName="other_num"
+      />
+    </div>
+    <div class="col">
+      <input
+        type="number"
+        class="form-control"
+        placeholder="0.00"
+        formControlName="other"
+        pattern="^\d*(\.\d{0,2})?$"
+      />
+    </div>
+  </div>
+  <div class="form-row mb-3">
+    <div class="col">Total</div>
+    <div class="col">
+      <input type="text" class="form-control" />
+    </div>
+    <div class="col">
+      <input type="number" class="form-control" />
+    </div>
+  </div>
+  <div class="w-100"></div>
+  <div class="form-row mb-1">
+    <div class="col">Rag</div>
+    <div class="col">
+      <input
+        type="number"
+        class="form-control"
+        placeholder="0"
+        formControlName="rag_num"
+      />
+    </div>
+    <div class="col">
+      <input
+        type="number"
+        class="form-control"
+        placeholder="0.00"
+        formControlName="rag"
+        pattern="^\d*(\.\d{0,2})?$"
+      />
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputCustomers_Num">Number of Customers</label>
+    <input
+      type="number"
+      id="inputCustomers_Num"
+      class="form-control"
+      formControlName="customers_num_total"
+    />
+  </div>
+  <div class="form-group">
+    <label for="commentsTextarea">Comments</label>
+    <textarea
+      class="form-control"
+      id="commentsTextarea"
+      rows="2"
+      formControlName="comments"
+    ></textarea>
+  </div>
 </form>

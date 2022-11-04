@@ -9,14 +9,13 @@ const authUrl = `${environment.apiUrl}/qb/auth`;
 
 @Injectable({ providedIn: 'root' })
 export class QBConnectionDetailsService {
-    constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-    getById(userid: number) {
-        return this.http.get<QBConnectionDetails>(`${baseUrl}/${userid}`);
-    }
+  getById(userid: number) {
+    return this.http.get<QBConnectionDetails>(`${baseUrl}/${userid}`);
+  }
 
-    getAuthUri() {
-        return this.http.get<QBConnectionDetails>(`${authUrl}`);
-    }
-
+  getAuthUri() {
+    return this.http.get<QBConnectionDetails>(`${authUrl}`);
+  }
 }

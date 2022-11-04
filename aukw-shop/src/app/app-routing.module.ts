@@ -6,38 +6,40 @@ import { LoginComponent } from './login';
 import { AuthGuard } from './_helpers';
 import { Role } from './_models';
 
-const usersModule = () => import('./users/users.module').then(x => x.UsersModule);
-const takingsModule = () => import('./takings/takings.module').then(x => x.TakingsModule);
+const usersModule = () =>
+  import('./users/users.module').then((x) => x.UsersModule);
+const takingsModule = () =>
+  import('./takings/takings.module').then((x) => x.TakingsModule);
 
 const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
   },
   {
-      path: 'login',
-      component: LoginComponent
+    path: 'login',
+    component: LoginComponent,
   },
   {
-      path: 'users',
-      loadChildren: usersModule,
-      canActivate: [AuthGuard],
-      data: { roles: [Role.Admin] }
+    path: 'users',
+    loadChildren: usersModule,
+    canActivate: [AuthGuard],
+    data: { roles: [Role.Admin] },
   },
 
   {
     path: 'takings',
     loadChildren: takingsModule,
-    canActivate: [AuthGuard]
-},
+    canActivate: [AuthGuard],
+  },
 
   // otherwise redirect to home
-  { path: '**', redirectTo: '' }
+  { path: '**', redirectTo: '' },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

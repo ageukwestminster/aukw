@@ -20,69 +20,72 @@ noData(Highcharts);
 @Component({
   selector: 'dept-chart',
   templateUrl: './dept-chart.component.html',
-  styleUrls: ['./dept-chart.component.css']
+  styleUrls: ['./dept-chart.component.css'],
 })
 export class DepartmentChartComponent implements OnInit {
-  
-  public options : any = {
+  public options: any = {
     chart: {
       plotBackgroundColor: null,
       plotBorderWidth: null,
       plotShadow: false,
-      type: 'pie'
+      type: 'pie',
     },
     title: {
-      text: 'Sales By Department, YTD'
+      text: 'Sales By Department, YTD',
     },
     subtitle: {
-      text: 'Since Jan 1st'
+      text: 'Since Jan 1st',
     },
-    tooltip: { //https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting
-      pointFormat: 'YTD Sales: £{point.y:,.0f} <b>({point.percentage:.1f}%)</b>'
+    tooltip: {
+      //https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting
+      pointFormat:
+        'YTD Sales: £{point.y:,.0f} <b>({point.percentage:.1f}%)</b>',
     },
     accessibility: {
       point: {
-        valueSuffix: '%'
-      }
+        valueSuffix: '%',
+      },
     },
     plotOptions: {
       pie: {
         allowPointSelect: true,
         cursor: 'pointer',
         dataLabels: {
-          enabled: false
+          enabled: false,
         },
-        showInLegend: true
-      }
+        showInLegend: true,
+      },
     },
-    series: [{
-      name: 'Depts',
-      colorByPoint: true,
-      data: []
-    }]
+    series: [
+      {
+        name: 'Depts',
+        colorByPoint: true,
+        data: [],
+      },
+    ],
   };
 
-  constructor(private summaryService: SummaryService) {   }
+  constructor(private summaryService: SummaryService) {}
 
   ngOnInit(): void {
-
     this.summaryService
       .getDepartmentBreakdownChartData()
-      .subscribe((x:DepartmentSalesChartData) => {
-
-        this.options.series[0]['data'].push({'name': 'Clothing', 'y': x.YTD.clothing
-                    , 'sliced': true, 'selected': true})
-        this.options.series[0]['data'].push({'name': 'Brica', 'y': x.YTD.brica})
-        this.options.series[0]['data'].push({'name': 'Books', 'y': x.YTD.books})
-        this.options.series[0]['data'].push({'name': 'Linens', 'y': x.YTD.linens})
-        this.options.series[0]['data'].push({'name': 'Other', 'y': x.YTD.other})
+      .subscribe((x: DepartmentSalesChartData) => {
+        this.options.series[0]['data'].push({
+          name: 'Clothing',
+          y: x.YTD.clothing,
+          sliced: true,
+          selected: true,
+        });
+        this.options.series[0]['data'].push({ name: 'Brica', y: x.YTD.brica });
+        this.options.series[0]['data'].push({ name: 'Books', y: x.YTD.books });
+        this.options.series[0]['data'].push({
+          name: 'Linens',
+          y: x.YTD.linens,
+        });
+        this.options.series[0]['data'].push({ name: 'Other', y: x.YTD.other });
 
         Highcharts.chart('dept-chart', this.options);
       });
-
-
-    
-   
   }
-
 }

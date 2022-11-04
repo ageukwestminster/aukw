@@ -6,18 +6,19 @@ import { TakingsListComponent } from './list/list.component';
 import { TakingsAddEditComponent } from './add-edit/add-edit.component';
 
 const routes: Routes = [
-    {
-        path: '', component: TakingsLayoutComponent,
-        children: [
-            { path: '', component: TakingsListComponent },
-            { path: 'add', component: TakingsAddEditComponent },
-            { path: 'edit/:id', component: TakingsAddEditComponent }
-        ]
-    }
+  {
+    path: '',
+    component: TakingsLayoutComponent,
+    children: [
+      { path: '', component: TakingsListComponent },
+      { path: 'add', component: TakingsAddEditComponent },
+      { path: 'edit/:id', component: TakingsAddEditComponent },
+    ],
+  },
 ];
 
 @NgModule({
-    imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-export class TakingsRoutingModule { }
+export class TakingsRoutingModule {}

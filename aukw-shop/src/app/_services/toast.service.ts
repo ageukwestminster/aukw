@@ -9,7 +9,7 @@ export class ToastService {
   }
 
   remove(toast: any) {
-    this.toasts = this.toasts.filter(t => t !== toast);
+    this.toasts = this.toasts.filter((t) => t !== toast);
   }
 
   /* 

@@ -1,32 +1,37 @@
 ﻿<div class="row">
-    <div class="col-sm-6"><h1>Users</h1></div>
-    <div class="col-sm-2">
-        <button routerLink="add" class="btn btn-sm btn-success m-1 mt-1" *ngIf="user.isAdmin">
-          Add New User
-        </button>
-    </div>
+  <div class="col-sm-6"><h1>Users</h1></div>
+  <div class="col-sm-2">
+    <button
+      routerLink="add"
+      class="btn btn-sm btn-success m-1 mt-1"
+      *ngIf="user.isAdmin"
+    >
+      Add New User
+    </button>
   </div>
+</div>
 <table class="table table-striped table-responsive">
-    <thead>
-        <tr>
-            <th style="width: 25%">Name</th>
-            <th style="width: 25%">Username</th>
-            <th style="width: 15%">Role</th> 
-            <th style="width: 15%">Suspended</th>
-            <th style="width: 20%">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr  *ngFor="let myUser of users"
-            user-row
-            [user]="myUser"
-            (onUserDeleted)="userWasDeleted($event)"
-            routerLink="edit/{{myUser.id}}">
-        </tr>
-        <tr *ngIf="!users">
-            <td colspan="4" class="text-center">
-                <span class="spinner-border spinner-border-lg align-center"></span>
-            </td>
-        </tr>
-    </tbody>
+  <thead>
+    <tr>
+      <th style="width: 25%">Name</th>
+      <th style="width: 25%">Username</th>
+      <th style="width: 15%">Role</th>
+      <th style="width: 15%">Suspended</th>
+      <th style="width: 20%">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr
+      *ngFor="let myUser of users"
+      user-row
+      [user]="myUser"
+      (onUserDeleted)="userWasDeleted($event)"
+      routerLink="edit/{{ myUser.id }}"
+    ></tr>
+    <tr *ngIf="!users">
+      <td colspan="4" class="text-center">
+        <span class="spinner-border spinner-border-lg align-center"></span>
+      </td>
+    </tr>
+  </tbody>
 </table>

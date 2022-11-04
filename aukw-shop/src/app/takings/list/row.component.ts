@@ -10,7 +10,6 @@ import { TakingsService, AlertService } from '@app/_services';
   templateUrl: './row.component.html',
 })
 export class TakingsRowComponent {
-
   @Input() takings!: TakingsSummary;
   @Input() user!: User;
   @Output() onTakingsDeleted: EventEmitter<TakingsSummary>;
@@ -30,14 +29,12 @@ export class TakingsRowComponent {
     if (!this.takings || !this.takings.id) return;
 
     this.takings.isDeleting = true;
-    this.takingsService
-      .delete(this.takings.id)
-      .subscribe(() => {
-        this.alertService.success('Takings deleted', {
-          keepAfterRouteChange: true,
-        });
-        this.onTakingsDeleted.emit(this.takings);
+    this.takingsService.delete(this.takings.id).subscribe(() => {
+      this.alertService.success('Takings deleted', {
+        keepAfterRouteChange: true,
       });
+      this.onTakingsDeleted.emit(this.takings);
+    });
   }
 
   // Add a Sales Receipt to QB based on the taking data in the dB
@@ -50,11 +47,13 @@ export class TakingsRowComponent {
     this.takingsService
       .addToQuickbooks(this.takings.id) // Adds to QB and sets 'quickbooks' = 1 in dB
       .subscribe(() => {
-        this.alertService.success('Daily sales added to QB for'+ 
-          formatDate(this.takings.date, "dd-MMM", "en_GB"), {keepAfterRouteChange: true}
-          );
+        this.alertService.success(
+          'Daily sales added to QB for' +
+            formatDate(this.takings.date, 'dd-MMM', 'en_GB'),
+          { keepAfterRouteChange: true }
+        );
         this.takings.quickbooks = true; // Quickbooks is now updated
-        this.takings.isUpdating = false;        
+        this.takings.isUpdating = false;
         this.onTakingsAddedToQB.emit(this.takings); // refresh screen
       });
   }
@@ -64,5 +63,4 @@ export class TakingsRowComponent {
   onClickEvent(e: Event) {
     e.stopPropagation();
   }
-
 }

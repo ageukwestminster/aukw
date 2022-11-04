@@ -1,6 +1,10 @@
-﻿import { Component, OnInit} from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { formatDate } from '@angular/common';
-import { AlertService, AuthenticationService, TakingsService } from '@app/_services';
+import {
+  AlertService,
+  AuthenticationService,
+  TakingsService,
+} from '@app/_services';
 import { ApiMessage, TakingsSummary, User } from '@app/_models';
 import { from, catchError, EMPTY, of, delay, Observable } from 'rxjs';
 import { map, mergeMap, scan, switchMap, concatMap } from 'rxjs/operators';
@@ -14,7 +18,7 @@ export class TakingsListComponent implements OnInit {
   constructor(
     private takingsService: TakingsService,
     private authenticationService: AuthenticationService,
-    private alertService: AlertService,
+    private alertService: AlertService
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -22,7 +26,9 @@ export class TakingsListComponent implements OnInit {
   ngOnInit() {
     this.takingsService.getSummary(1).subscribe((takingslist) => {
       this.takingslist = takingslist;
-      this.takingslistNotInQB = this.takingslist.filter((x) => x.quickbooks == false);      
+      this.takingslistNotInQB = this.takingslist.filter(
+        (x) => x.quickbooks == false
+      );
     });
   }
 
@@ -34,7 +40,7 @@ export class TakingsListComponent implements OnInit {
     let updateItem = this.takingslist.find((x) => x.id == takings.id);
 
     if (updateItem != null) {
-      let index = this.takingslist.indexOf(updateItem);  
+      let index = this.takingslist.indexOf(updateItem);
       this.takingslist[index] = takings;
     }
   }
@@ -42,34 +48,31 @@ export class TakingsListComponent implements OnInit {
   delayReply(id: number) {
     const msg: ApiMessage = new ApiMessage();
     msg.id = id;
-    msg.message = "Item "+id+" saved.";
+    msg.message = 'Item ' + id + ' saved.';
     console.log(msg.message);
-    return this.takingsService.patchQuickbooks(id, true).pipe( delay(250))
-    
+    return this.takingsService.patchQuickbooks(id, true).pipe(delay(250));
   }
 
   addAllToQuickbooks() {
     if (!this.takingslistNotInQB || !this.takingslistNotInQB.length) return;
 
     from(this.takingslistNotInQB)
-    .pipe(
-      concatMap((t:TakingsSummary) => {
-        t.isUpdating = true;
-        
-        return this.delayReply(t.id).pipe(
-          concatMap((msg:any) => {
-            t.quickbooks = true;
-            t.isUpdating = false;            
-            this.alertService.success(msg.message, {
-              keepAfterRouteChange: true,
-            });
-            return of(msg);
-          })
-        );
+      .pipe(
+        concatMap((t: TakingsSummary) => {
+          t.isUpdating = true;
 
-      }),
-
-    ).subscribe();
-    
+          return this.delayReply(t.id).pipe(
+            concatMap((msg: any) => {
+              t.quickbooks = true;
+              t.isUpdating = false;
+              this.alertService.success(msg.message, {
+                keepAfterRouteChange: true,
+              });
+              return of(msg);
+            })
+          );
+        })
+      )
+      .subscribe();
   }
 }

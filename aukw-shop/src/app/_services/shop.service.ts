@@ -8,10 +8,9 @@ const baseUrl = `${environment.apiUrl}/shop`;
 
 @Injectable({ providedIn: 'root' })
 export class ShopService {
-    constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-    getAll() {
-        return this.http.get<Shop[]>(baseUrl);
-    }
-
+  getAll() {
+    return this.http.get<Shop[]>(baseUrl);
+  }
 }

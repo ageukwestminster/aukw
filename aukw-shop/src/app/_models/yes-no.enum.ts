@@ -1,5 +1,5 @@
 export enum YesNoAny {
-    YES = 'yes',
-    NO = 'no',
-    ANY = 'any'
+  YES = 'yes',
+  NO = 'no',
+  ANY = 'any',
 }

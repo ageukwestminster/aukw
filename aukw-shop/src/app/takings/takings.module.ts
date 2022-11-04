@@ -12,18 +12,18 @@ import { TakingsAddEditComponent } from './add-edit/add-edit.component';
 import { TakingsRowComponent } from './list/row.component';
 
 @NgModule({
-    imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        TakingsRoutingModule,
-        SharedModule,
-        NgbModule
-    ],
-    declarations: [
-        TakingsLayoutComponent,
-        TakingsListComponent,
-        TakingsAddEditComponent,
-        TakingsRowComponent
-    ]
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    TakingsRoutingModule,
+    SharedModule,
+    NgbModule,
+  ],
+  declarations: [
+    TakingsLayoutComponent,
+    TakingsListComponent,
+    TakingsAddEditComponent,
+    TakingsRowComponent,
+  ],
 })
-export class TakingsModule { }
+export class TakingsModule {}

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import * as Highcharts from 'highcharts';
-import { SalesChartData,Summary } from '@app/_models';
+import { SalesChartData, Summary } from '@app/_models';
 import { SummaryService } from '@app/_services';
 import { from, map, reduce, switchMap } from 'rxjs';
 
@@ -21,72 +21,75 @@ noData(Highcharts);
 @Component({
   selector: 'sales-chart',
   templateUrl: './sales-chart.component.html',
-  styleUrls: ['./sales-chart.component.css']
+  styleUrls: ['./sales-chart.component.css'],
 })
 export class SalesChartComponent implements OnInit {
-  
-  public options : any = {
-
+  public options: any = {
     title: {
-      text: 'Harrow Road Daily Net Sales'
+      text: 'Harrow Road Daily Net Sales',
     },
     subtitle: {
-      text: 'Compared To Historical Averages'
-    },  
+      text: 'Compared To Historical Averages',
+    },
     yAxis: {
       title: {
-        text: 'Daily Sales Less Cash Expenses'
-      }
+        text: 'Daily Sales Less Cash Expenses',
+      },
     },
-  
+
     xAxis: {
       type: 'datetime',
       accessibility: {
-        rangeDescription: 'Range: Last 10 Trading Days'
-      }
+        rangeDescription: 'Range: Last 10 Trading Days',
+      },
     },
-  
+
     legend: {
       layout: 'vertical',
       align: 'right',
-      verticalAlign: 'middle'
+      verticalAlign: 'middle',
     },
-  
-    series: [{
-      name: 'Last 10 Trading Days',
-      data: []
-    }, {
-      name: 'Average of Last 10 Days',
-      data: []
-    }, {
-      name: 'Average of Last 30 Days',
-      data: []
-    }, {
-      name: 'Average of Last 365 Days',
-      data: []
-    }],
-  
+
+    series: [
+      {
+        name: 'Last 10 Trading Days',
+        data: [],
+      },
+      {
+        name: 'Average of Last 10 Days',
+        data: [],
+      },
+      {
+        name: 'Average of Last 30 Days',
+        data: [],
+      },
+      {
+        name: 'Average of Last 365 Days',
+        data: [],
+      },
+    ],
+
     responsive: {
-      rules: [{
-        condition: {
-          maxWidth: 500
+      rules: [
+        {
+          condition: {
+            maxWidth: 500,
+          },
+          chartOptions: {
+            legend: {
+              layout: 'horizontal',
+              align: 'center',
+              verticalAlign: 'bottom',
+            },
+          },
         },
-        chartOptions: {
-          legend: {
-            layout: 'horizontal',
-            align: 'center',
-            verticalAlign: 'bottom'
-          }
-        }
-      }]
-    }
-  
+      ],
+    },
   };
 
-  constructor(private summaryService: SummaryService) {   }
+  constructor(private summaryService: SummaryService) {}
 
   ngOnInit(): void {
-
     const updated_sales_data: any[] = [];
     const updated_avg10_data: any[] = [];
     const updated_avg30_data: any[] = [];
@@ -95,9 +98,9 @@ export class SalesChartComponent implements OnInit {
     this.summaryService
       .getSalesChartData()
       .pipe(
-        switchMap((x:SalesChartData[]) =>  from(x)
-          .pipe(
-            map((row: SalesChartData) => { 
+        switchMap((x: SalesChartData[]) =>
+          from(x).pipe(
+            map((row: SalesChartData) => {
               const date = new Date(row.date).getTime();
               updated_sales_data.push([date, row.sales]);
               updated_avg10_data.push([date, row.avg10]);
@@ -107,9 +110,12 @@ export class SalesChartComponent implements OnInit {
             })
           )
         ),
-        reduce((curr: SalesChartData[], next: SalesChartData) => [...curr, next], [])
-      ).subscribe( data => {
-        
+        reduce(
+          (curr: SalesChartData[], next: SalesChartData) => [...curr, next],
+          []
+        )
+      )
+      .subscribe((data) => {
         this.options.series[0]['data'] = updated_sales_data;
         this.options.series[1]['data'] = updated_avg10_data;
         this.options.series[2]['data'] = updated_avg30_data;
@@ -117,5 +123,4 @@ export class SalesChartComponent implements OnInit {
         Highcharts.chart('sales-chart', this.options);
       });
   }
-
 }

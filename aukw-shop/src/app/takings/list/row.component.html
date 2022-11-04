@@ -1,25 +1,48 @@
 <th scope="row" class="d-table-cell">
-    {{takings.date | date: 'E, MMM dd'}}
+  {{ takings.date | date: "E, MMM dd" }}
 </th>
 <td scope="row" class="d-table-cell">
-    {{takings.daily_net_sales | number: '1.2-2'}}
+  {{ takings.daily_net_sales | number: "1.2-2" }}
 </td>
 <td scope="row" class="d-table-cell">
-    {{takings.cash_difference | number: '1.2-2'}}
+  {{ takings.cash_difference | number: "1.2-2" }}
 </td>
 <td style="white-space: nowrap">
-    <div class="row">
-        <button routerLink="edit/{{takings.id}}" class="btn btn-sm btn-primary mr-1" [disabled]="takings.isUpdating">
-            <span *ngIf="takings.isUpdating" class="spinner-border spinner-border-sm"></span>
-            <span *ngIf="!takings.isUpdating">Edit</span>
-        </button>
-        <button *ngIf="user.isAdmin" (click)="deleteTakings($event)" class="btn btn-sm btn-danger btn-delete-takings" [disabled]="takings.isDeleting">
-            <span *ngIf="takings.isDeleting" class="spinner-border spinner-border-sm"></span>
-            <span *ngIf="!takings.isDeleting">Delete</span>
-        </button>
-        <button *ngIf="user.isAdmin&&!takings.quickbooks" (click)="addToQuickbooks($event)" class="btn btn-sm btn-warning btn-add-takings-to-qb" [disabled]="takings.isDeleting">
-            <span *ngIf="takings.isUpdating" class="spinner-border spinner-border-sm"></span>
-            <span *ngIf="!takings.isUpdating">Add to QB</span>
-        </button>
-    </div>
+  <div class="row">
+    <button
+      routerLink="edit/{{ takings.id }}"
+      class="btn btn-sm btn-primary mr-1"
+      [disabled]="takings.isUpdating"
+    >
+      <span
+        *ngIf="takings.isUpdating"
+        class="spinner-border spinner-border-sm"
+      ></span>
+      <span *ngIf="!takings.isUpdating">Edit</span>
+    </button>
+    <button
+      *ngIf="user.isAdmin"
+      (click)="deleteTakings($event)"
+      class="btn btn-sm btn-danger btn-delete-takings"
+      [disabled]="takings.isDeleting"
+    >
+      <span
+        *ngIf="takings.isDeleting"
+        class="spinner-border spinner-border-sm"
+      ></span>
+      <span *ngIf="!takings.isDeleting">Delete</span>
+    </button>
+    <button
+      *ngIf="user.isAdmin && !takings.quickbooks"
+      (click)="addToQuickbooks($event)"
+      class="btn btn-sm btn-warning btn-add-takings-to-qb"
+      [disabled]="takings.isDeleting"
+    >
+      <span
+        *ngIf="takings.isUpdating"
+        class="spinner-border spinner-border-sm"
+      ></span>
+      <span *ngIf="!takings.isUpdating">Add to QB</span>
+    </button>
+  </div>
 </td>

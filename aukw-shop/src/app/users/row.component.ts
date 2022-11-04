@@ -28,28 +28,24 @@ export class UserRowComponent {
     if (!this.user || !this.user.id) return;
 
     this.user.isDeleting = true;
-    this.userService
-      .delete(this.user.id)
-      .subscribe(() => {
-        this.alertService.success('User deleted', {
-          keepAfterRouteChange: true,
-        });
-        this.onUserDeleted.emit(this.user);
+    this.userService.delete(this.user.id).subscribe(() => {
+      this.alertService.success('User deleted', {
+        keepAfterRouteChange: true,
       });
+      this.onUserDeleted.emit(this.user);
+    });
   }
 
   onSuspendedChange(value: any) {
     if (!this.user) return;
     this.user.isUpdating = true;
     this.user.suspended = !this.user.suspended;
-    this.userService
-      .update(this.user.id, this.user)
-      .subscribe(() => {
-        this.alertService.success('User Updated', {
-          keepAfterRouteChange: true,
-        });
-        this.user.isUpdating = false;
+    this.userService.update(this.user.id, this.user).subscribe(() => {
+      this.alertService.success('User Updated', {
+        keepAfterRouteChange: true,
       });
+      this.user.isUpdating = false;
+    });
   }
 
   // Prevents the click event propagating back up to the table row
@@ -62,13 +58,11 @@ export class UserRowComponent {
     if (!this.user || !this.user.id) return;
     this.user.isUpdating = true;
     this.user.role = value;
-    this.userService
-      .update(this.user.id, this.user)
-      .subscribe(() => {
-        this.alertService.success('User Updated', {
-          keepAfterRouteChange: true,
-        });
-        this.user.isUpdating = false;
+    this.userService.update(this.user.id, this.user).subscribe(() => {
+      this.alertService.success('User Updated', {
+        keepAfterRouteChange: true,
       });
+      this.user.isUpdating = false;
+    });
   }
 }
