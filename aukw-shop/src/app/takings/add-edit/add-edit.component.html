@@ -22,41 +22,43 @@
     </div>
   </div>
   <!-- End of Buttons -->
-
-  <div class="col-sm">
-    <div class="input-group mb-1">
-      <input
-        class="form-control"
-        placeholder="*not-set*"
-        name="dp"
-        ngbDatepicker
-        #d1="ngbDatepicker"
-        formControlName="date"
-        id="inputTakingsDate"
-      />
-      <div class="input-group-append">
-        <button
-          class="btn btn-outline-secondary"
-          (click)="d1.toggle()"
-          type="button"
-        >
-          <i class="far fa-calendar-alt"></i>
-        </button>
+  <div class="row">
+    <div class="col-sm">
+      <label for="inputTakingsDate" class="form-label"> Sales Date </label>
+      <div class="input-group mb-1">
+        <!-- If using MySql dates don't forget to import NgbUTCStringAdapter-->
+        <input
+          class="form-control"
+          placeholder="*not-set*"
+          name="dp"
+          ngbDatepicker
+          #d="ngbDatepicker"
+          formControlName="date"
+          id="inputTakingsDate"
+        />
+        <div class="input-group-append">
+          <button
+            class="btn btn-outline-secondary"
+            (click)="d.toggle()"
+            type="button"
+          >
+            <i class="far fa-calendar-alt"></i>
+          </button>
+        </div>
       </div>
+      <label for="shopSelect" class="form-label"> Shop Name </label>
+      <select
+        formControlName="shopid"
+        id="shopSelect"
+        name="shopSelect"
+        class="form-control mb-2"
+      >
+        <option *ngFor="let shop of shops" [ngValue]="shop.id">
+          {{ shop.name }}
+        </option>
+      </select>
     </div>
-
-    <select
-      formControlName="shopid"
-      id="shopSelect"
-      name="shopSelect"
-      class="form-control mb-2"
-    >
-      <option *ngFor="let shop of shops" [ngValue]="shop.id">
-        {{ shop.name }}
-      </option>
-    </select>
   </div>
-
   <div class="w-100"></div>
 
   <!-- Department Sales -->
@@ -82,7 +84,9 @@
               name="clothingAmount"
               type="number"
               class="form-control text-right"
+              placeholder="0.00"
               formControlName="clothing"
+              pattern="^\d*(\.\d{0,2})?$"
             />
           </div>
         </div>
@@ -90,6 +94,35 @@
     </div>
   </div>
   <div class="form-row mb-1">
+    <div class="input-group mb-1">
+      <span class="input-group-text col-4" id="brica-label">Brica</span>
+      <div class="card p-2 col">
+        <div class="row">
+          <div class="col">
+            <label for="bricaNumber" class="form-label"> Number </label>
+            <input
+              id="bricaNumber"
+              name="bricaNumber"
+              type="number"
+              class="form-control text-right"
+              formControlName="brica_num"
+            />
+          </div>
+          <div class="col">
+            <label for="bricaAmount" class="form-label"> Amount </label>
+            <input
+              id="bricaAmount"
+              name="bricaAmount"
+              type="number"
+              class="form-control text-right"
+              placeholder="0.00"
+              formControlName="brica"
+              pattern="^\d*(\.\d{0,2})?$"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="col">Brica</div>
     <div class="col">
       <input

@@ -57,7 +57,7 @@ export class TakingsAddEditComponent implements OnInit {
     }
 
     this.form = this.formBuilder.group({
-      date: [null, Validators.required],
+      date: [null],
       shopid: [{ value: 1, disabled: true }],
       clothing_num: ['', Validators.required],
       brica_num: [''],
@@ -97,8 +97,11 @@ export class TakingsAddEditComponent implements OnInit {
       // Initialize the 'Date' field with today's date for New Takings
       this.form.controls['date'].setValue(
         // From https://stackoverflow.com/a/35922073/6941165
-        new Date().toISOString().slice(0, 10)
+        //new Date().toISOString().slice(0, 10)
+        '2022-10-31'
       );
+      console.log(this.form.controls['date'].value);
+      console.log(this.form.controls['date'].valid);
     }
 
     if (this.formMode != FormMode.Add) {
