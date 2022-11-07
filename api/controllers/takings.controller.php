@@ -159,11 +159,10 @@ class TakingsCtl{
     $model->credit_cards = $data->credit_cards;
     $model->operating_expenses = $data->operating_expenses;
     $model->volunteer_expenses = $data->volunteer_expenses;
-    $model->other_adjustments = $data->other_adjustments;
-    $model->cash_to_charity = $data->cash_to_charity;
+    $model->other_adjustments = empty($data->other_adjustments)?0:$data->other_adjustments;
+    $model->cash_to_charity = empty($data->cash_to_charity)?0:$data->cash_to_charity;
     $model->cash_difference = $data->cash_difference;
     $model->comments = $data->comments;
-    $model->rags_paid_in_cash = $data->rags_paid_in_cash;
     $model->quickbooks = empty($data->quickbooks)?0:$data->quickbooks;
     $model->rags_paid_in_cash = empty($data->rags_paid_in_cash)?0:$data->rags_paid_in_cash;
 
