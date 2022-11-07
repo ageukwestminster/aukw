@@ -28,7 +28,7 @@ import { CustomDateParserFormatter, NgbUTCStringAdapter } from '@app/_helpers';
   providers: [
     { provide: NgbDateAdapter, useClass: NgbUTCStringAdapter },
     { provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter },
-    DatePipe
+    DatePipe,
   ],
 })
 export class TakingsAddEditComponent implements OnInit {
@@ -117,7 +117,7 @@ export class TakingsAddEditComponent implements OnInit {
         // From https://stackoverflow.com/a/35922073/6941165
         //this.ngbCalendar.getToday()
         //this.datePipe.transform(new Date(),"dd-MMM-yyyy")
-        this.datePipe.transform(new Date(),"yyyy-MM-dd")
+        this.datePipe.transform(new Date(), 'yyyy-MM-dd')
         //"07-Nov-2022"
         //new Date().toISOString().slice(0, 10)
       );

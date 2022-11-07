@@ -1,8 +1,8 @@
 /*
  *  Adapter class for angular powered bootstrap ngbDatepicker to convert stardard
- *  date format (aka NgbDateStruct) to/from MySQL 'YYYY-MM-DD'. 
- * 
- *  Note: There is a separate CustomDateParserFormatter class that handles how the 
+ *  date format (aka NgbDateStruct) to/from MySQL 'YYYY-MM-DD'.
+ *
+ *  Note: There is a separate CustomDateParserFormatter class that handles how the
  *  date is represented on the screen in the input box atop the DatePicker
  *
  *  Code is from https://stackoverflow.com/a/47945155/6941165

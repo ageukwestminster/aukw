@@ -16,7 +16,9 @@
         ></span>
         Save
       </button>
-      <button (click)="goBack()" class="btn btn-outline-dark">
+      <!-- All button in a form are treated as 'submit' buttons' unless you specify type='button'-->
+      <!-- See https://stackoverflow.com/a/55685230/6941165 -->
+      <button type="button" (click)="goBack()" class="btn btn-outline-dark">
         Close &times;
       </button>
     </div>
@@ -24,7 +26,6 @@
   <!-- End of Buttons -->
   <div class="row">
     <div class="col-sm">
-      <label for="inputTakingsDate" class="form-label"> Sales Date </label>
       <div class="input-group mb-1">
         <!-- If using MySql dates don't forget to import NgbUTCStringAdapter-->
         <input
@@ -46,17 +47,18 @@
           </button>
         </div>
       </div>
-      <label for="shopSelect" class="form-label"> Shop Name </label>
-      <select
-        formControlName="shopid"
-        id="shopSelect"
-        name="shopSelect"
-        class="form-control mb-2"
-      >
-        <option *ngFor="let shop of shops" [ngValue]="shop.id">
-          {{ shop.name }}
-        </option>
-      </select>
+      <div>
+        <select
+          formControlName="shopid"
+          id="shopSelect"
+          name="shopSelect"
+          class="form-control mb-2"
+        >
+          <option *ngFor="let shop of shops" [ngValue]="shop.id">
+            {{ shop.name }}
+          </option>
+        </select>
+      </div>
     </div>
   </div>
   <div class="w-100"></div>
@@ -73,7 +75,7 @@
               id="clothingNumber"
               name="clothingNumber"
               type="number"
-              class="form-control text-right"
+              class="form-control"
               formControlName="clothing_num"
             />
           </div>
@@ -83,7 +85,7 @@
               id="clothingAmount"
               name="clothingAmount"
               type="number"
-              class="form-control text-right"
+              class="form-control"
               placeholder="0.00"
               formControlName="clothing"
               pattern="^\d*(\.\d{0,2})?$"
@@ -104,7 +106,7 @@
               id="bricaNumber"
               name="bricaNumber"
               type="number"
-              class="form-control text-right"
+              class="form-control"
               formControlName="brica_num"
             />
           </div>
@@ -114,7 +116,7 @@
               id="bricaAmount"
               name="bricaAmount"
               type="number"
-              class="form-control text-right"
+              class="form-control"
               placeholder="0.00"
               formControlName="brica"
               pattern="^\d*(\.\d{0,2})?$"
@@ -123,156 +125,164 @@
         </div>
       </div>
     </div>
-    <div class="col">Brica</div>
-    <div class="col">
-      <input
-        type="number"
-        class="form-control"
-        placeholder="Brica"
-        formControlName="brica_num"
-      />
-    </div>
-    <div class="col">
-      <input
-        type="number"
-        class="form-control"
-        placeholder="0.00"
-        formControlName="brica"
-        pattern="^\d*(\.\d{0,2})?$"
-      />
+  </div>
+  <div class="form-row mb-1">
+    <div class="input-group mb-1">
+      <span class="input-group-text col-4" id="brica-label">Books</span>
+      <div class="card p-2 col">
+        <div class="row">
+          <div class="col">
+            <label for="booksNumber" class="form-label"> Number </label>
+            <input
+              id="booksNumber"
+              name="booksNumber"
+              type="number"
+              class="form-control"
+              formControlName="books_num"
+            />
+          </div>
+          <div class="col">
+            <label for="booksAmount" class="form-label"> Amount </label>
+            <input
+              id="booksAmount"
+              name="booksAmount"
+              type="number"
+              class="form-control"
+              placeholder="0.00"
+              formControlName="books"
+              pattern="^\d*(\.\d{0,2})?$"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="form-row mb-1">
-    <div class="col">Books</div>
-    <div class="col">
-      <input
-        type="number"
-        class="form-control"
-        placeholder="Books"
-        formControlName="books_num"
-      />
-    </div>
-    <div class="col">
-      <input
-        type="number"
-        class="form-control"
-        placeholder="0.00"
-        formControlName="books"
-        pattern="^\d*(\.\d{0,2})?$"
-      />
-    </div>
-  </div>
-  <div class="form-row mb-1">
-    <div class="col">Linens</div>
-    <div class="col">
-      <input
-        type="number"
-        class="form-control"
-        placeholder="Linens"
-        formControlName="linens_num"
-      />
-    </div>
-    <div class="col">
-      <input
-        type="number"
-        class="form-control"
-        placeholder="0.00"
-        formControlName="linens"
-        pattern="^\d*(\.\d{0,2})?$"
-      />
+    <div class="input-group mb-1">
+      <span class="input-group-text col-4" id="brica-label">Linens</span>
+      <div class="card p-2 col">
+        <div class="row">
+          <div class="col">
+            <label for="linensNumber" class="form-label"> Number </label>
+            <input
+              id="linensNumber"
+              name="linensNumber"
+              type="number"
+              class="form-control"
+              formControlName="linens_num"
+            />
+          </div>
+          <div class="col">
+            <label for="linensAmount" class="form-label"> Amount </label>
+            <input
+              id="linensAmount"
+              name="linensAmount"
+              type="number"
+              class="form-control"
+              placeholder="0.00"
+              formControlName="linens"
+              pattern="^\d*(\.\d{0,2})?$"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="form-row mb-1">
-    <div class="col">Donations</div>
-    <div class="col">
-      <input
-        type="number"
-        class="form-control"
-        placeholder="Donations"
-        formControlName="donations_num"
-      />
-    </div>
-    <div class="col">
-      <input
-        type="number"
-        class="form-control"
-        placeholder="0.00"
-        formControlName="donations"
-        pattern="^\d*(\.\d{0,2})?$"
-      />
-    </div>
-  </div>
-  <div class="form-row mb-1">
-    <div class="col">Rag</div>
-    <div class="col">
-      <input
-        type="number"
-        class="form-control"
-        placeholder="Ragging"
-        formControlName="rag_num"
-      />
-    </div>
-    <div class="col">
-      <input
-        type="number"
-        class="form-control"
-        placeholder="0.00"
-        formControlName="rag"
-        pattern="^\d*(\.\d{0,2})?$"
-      />
+    <div class="input-group mb-1">
+      <span class="input-group-text col-4" id="brica-label">Donations</span>
+      <div class="card p-2 col">
+        <div class="row">
+          <div class="col">
+            <label for="donationsNumber" class="form-label"> Number </label>
+            <input
+              id="donationsNumber"
+              name="donationsNumber"
+              type="number"
+              class="form-control"
+              formControlName="donations_num"
+            />
+          </div>
+          <div class="col">
+            <label for="donationsAmount" class="form-label"> Amount </label>
+            <input
+              id="donationsAmount"
+              name="donationsAmount"
+              type="number"
+              class="form-control"
+              placeholder="0.00"
+              formControlName="donations"
+              pattern="^\d*(\.\d{0,2})?$"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="form-row mb-2">
-    <div class="col">Other</div>
-    <div class="col">
-      <input
-        type="number"
-        class="form-control"
-        placeholder="0"
-        formControlName="other_num"
-      />
-    </div>
-    <div class="col">
-      <input
-        type="number"
-        class="form-control"
-        placeholder="0.00"
-        formControlName="other"
-        pattern="^\d*(\.\d{0,2})?$"
-      />
-    </div>
-  </div>
-  <div class="form-row mb-3">
-    <div class="col">Total</div>
-    <div class="col">
-      <input type="text" class="form-control" />
-    </div>
-    <div class="col">
-      <input type="number" class="form-control" />
-    </div>
-  </div>
-  <div class="w-100"></div>
-  <div class="form-row mb-1">
-    <div class="col">Rag</div>
-    <div class="col">
-      <input
-        type="number"
-        class="form-control"
-        placeholder="0"
-        formControlName="rag_num"
-      />
-    </div>
-    <div class="col">
-      <input
-        type="number"
-        class="form-control"
-        placeholder="0.00"
-        formControlName="rag"
-        pattern="^\d*(\.\d{0,2})?$"
-      />
+    <div class="input-group mb-1">
+      <span class="input-group-text col-4" id="brica-label">Other</span>
+      <div class="card p-2 col">
+        <div class="row">
+          <div class="col">
+            <label for="otherNumber" class="form-label"> Number </label>
+            <input
+              id="otherNumber"
+              name="otherNumber"
+              type="number"
+              class="form-control"
+              formControlName="other_num"
+            />
+          </div>
+          <div class="col">
+            <label for="otherAmount" class="form-label"> Amount </label>
+            <input
+              id="otherAmount"
+              name="otherAmount"
+              type="number"
+              class="form-control"
+              placeholder="0.00"
+              formControlName="other"
+              pattern="^\d*(\.\d{0,2})?$"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="form-group">
+  <div class="form-row mb-2">
+    <div class="input-group mb-1">
+      <span class="input-group-text col-4" id="brica-label">Total</span>
+      <div class="card p-2 col">
+        <div class="row">
+          <div class="col">
+            <input
+              id="totalNumber"
+              name="totalNumber"
+              type="number"
+              class="form-control"
+              [(ngModel)]="sumOfNumber"
+              [ngModelOptions]="{ standalone: true }"
+            />
+          </div>
+          <div class="col">
+            <input
+              id="totalAmount"
+              name="totalAmount"
+              type="number"
+              class="form-control"
+              placeholder="£0.00"
+              pattern="^\d*(\.\d{0,2})?$"
+              [(ngModel)]="sumOfAmount"
+              [ngModelOptions]="{ standalone: true }"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group mb-2">
     <label for="inputCustomers_Num">Number of Customers</label>
     <input
       type="number"
@@ -281,7 +291,77 @@
       formControlName="customers_num_total"
     />
   </div>
-  <div class="form-group">
+  <div class="form-row mb-2">
+    <div class="input-group mb-1">
+      <span class="input-group-text col-4" id="clothing-label">Expenses</span>
+      <div class="card p-2 col">
+        <div class="row">
+          <div class="col">
+            <label for="operatingExpenses" class="form-label">
+              Operating
+            </label>
+            <input
+              id="operatingExpenses"
+              name="operatingExpenses"
+              type="number"
+              class="form-control"
+              placeholder="£0.00"
+              pattern="^\d*(\.\d{0,2})?$"
+              formControlName="operating_expenses"
+            />
+          </div>
+          <div class="col">
+            <label for="volunteerExpenses" class="form-label">Volunteer</label>
+            <input
+              id="volunteerExpenses"
+              name="volunteerExpenses"
+              type="number"
+              class="form-control"
+              placeholder="£0.00"
+              pattern="^\d*(\.\d{0,2})?$"
+              formControlName="volunteer_expenses"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="form-row mb-2">
+    <div class="input-group mb-1">
+      <span class="input-group-text col-4" id="clothing-label">Money</span>
+      <div class="card p-2 col">
+        <div class="row">
+          <div class="col">
+            <label for="cashReceived" class="form-label"> Cash </label>
+            <input
+              id="cashReceived"
+              name="cashReceived"
+              type="number"
+              class="form-control"
+              placeholder="£0.00"
+              pattern="^\d*(\.\d{0,2})?$"
+              formControlName="cash_to_bank"
+            />
+          </div>
+          <div class="col">
+            <label for="creditcardsReceived" class="form-label"
+              >Credit Cards</label
+            >
+            <input
+              id="creditcardsReceived"
+              name="creditcardsReceived"
+              type="number"
+              class="form-control"
+              placeholder="£0.00"
+              pattern="^\d*(\.\d{0,2})?$"
+              formControlName="credit_cards"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="form-group mb-2">
     <label for="commentsTextarea">Comments</label>
     <textarea
       class="form-control"
@@ -289,5 +369,28 @@
       rows="2"
       formControlName="comments"
     ></textarea>
+  </div>
+  <!-- Buttons -->
+  <div class="row d-flex justify-content-between mb-2">
+    <div class="col-auto">
+      <button type="submit" [disabled]="loading" class="btn btn-primary">
+        <span
+          *ngIf="loading"
+          class="spinner-border spinner-border-sm mr-1"
+        ></span>
+        Save
+      </button>
+      <!-- All button in a form are treated as 'submit' buttons' unless you specify type='button'-->
+      <!-- See https://stackoverflow.com/a/55685230/6941165 -->
+      <button type="button" (click)="goBack()" class="btn btn-outline-dark">
+        Close &times;
+      </button>
+    </div>
+  </div>
+  <div *ngIf="true">
+    <!--Debug Information for Testing -->
+    <hr />
+    <p>Form Value: {{ form.value | json }}</p>
+    <p>Form Status: {{ form.status | json }}</p>
   </div>
 </form>
