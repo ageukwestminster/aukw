@@ -75,7 +75,7 @@ export class AuthenticationService {
   }
 
   refreshToken() {
-    console.log('Refresh called');
+    console.log(new Date().toLocaleString() + ' Refresh called');
     return this.http
       .get<any>(`${environment.apiUrl}/auth/refresh`, { withCredentials: true })
       .pipe(
