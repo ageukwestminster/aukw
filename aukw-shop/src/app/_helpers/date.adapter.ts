@@ -1,6 +1,9 @@
 /*
  *  Adapter class for angular powered bootstrap ngbDatepicker to convert stardard
- *  date format to MySQL 'YYYY-MM-DD'.
+ *  date format (aka NgbDateStruct) to/from MySQL 'YYYY-MM-DD'. 
+ * 
+ *  Note: There is a separate CustomDateParserFormatter class that handles how the 
+ *  date is represented on the screen in the input box atop the DatePicker
  *
  *  Code is from https://stackoverflow.com/a/47945155/6941165
  *  Further information at https://ng-bootstrap.github.io/#/components/datepicker/overview#date-model
@@ -12,7 +15,7 @@ import { NgbDateAdapter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
 @Injectable()
 export class NgbUTCStringAdapter extends NgbDateAdapter<string> {
-  fromModel(date: string): NgbDateStruct | null {
+  fromModel(date: string | null): NgbDateStruct | null {
     return date &&
       Number(date.substring(0, 4)) &&
       Number(date.substring(5, 7) + 1) &&
@@ -25,7 +28,7 @@ export class NgbUTCStringAdapter extends NgbDateAdapter<string> {
       : null;
   }
 
-  toModel(date: NgbDateStruct): string | null {
+  toModel(date: NgbDateStruct | null): string | null {
     return date
       ? date.year.toString() +
           '-' +

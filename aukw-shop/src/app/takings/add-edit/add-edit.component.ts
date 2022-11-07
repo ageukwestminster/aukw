@@ -1,7 +1,13 @@
-﻿import { Component, OnInit, SimpleChanges } from '@angular/core';
-import { Location } from '@angular/common';
+﻿import { Component, OnInit } from '@angular/core';
+import { DatePipe, Location } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  NgbCalendar,
+  NgbDateAdapter,
+  NgbDateParserFormatter,
+  NgbDateStruct,
+} from '@ng-bootstrap/ng-bootstrap';
 
 import { Subscription } from 'rxjs';
 
@@ -12,10 +18,19 @@ import {
   AuthenticationService,
   ShopService,
 } from '@app/_services';
-import { Shop, User, Takings, FormMode } from '@app/_models';
-//import { Console } from 'console';
 
-@Component({ templateUrl: 'add-edit.component.html' })
+import { Shop, User, Takings, FormMode } from '@app/_models';
+
+import { CustomDateParserFormatter, NgbUTCStringAdapter } from '@app/_helpers';
+
+@Component({
+  templateUrl: 'add-edit.component.html',
+  providers: [
+    { provide: NgbDateAdapter, useClass: NgbUTCStringAdapter },
+    { provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter },
+    DatePipe
+  ],
+})
 export class TakingsAddEditComponent implements OnInit {
   form!: FormGroup;
   id!: number;
@@ -26,9 +41,10 @@ export class TakingsAddEditComponent implements OnInit {
   submitted = false;
   user!: User;
 
+  sumOfNumber: number = 0;
+  sumOfAmount: string = ''; // a string to allow easier rounding
+
   private subscription = new Subscription();
-  onChange: any = (_: Takings) => {};
-  onTouch: any = () => {};
 
   constructor(
     private formBuilder: FormBuilder,
@@ -39,7 +55,8 @@ export class TakingsAddEditComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private shopService: ShopService,
     private deptService: DepartmentService,
-    private location: Location
+    private location: Location,
+    private datePipe: DatePipe
   ) {
     this.user = this.authenticationService.userValue;
     this.depts = this.deptService.getAll();
@@ -80,6 +97,7 @@ export class TakingsAddEditComponent implements OnInit {
       volunteer_expenses: [''],
       cash_difference: [''],
       comments: [''],
+      quickbooks: [{ value: 1, disabled: true }],
     });
 
     this.subscription.add(
@@ -97,11 +115,12 @@ export class TakingsAddEditComponent implements OnInit {
       // Initialize the 'Date' field with today's date for New Takings
       this.form.controls['date'].setValue(
         // From https://stackoverflow.com/a/35922073/6941165
+        //this.ngbCalendar.getToday()
+        //this.datePipe.transform(new Date(),"dd-MMM-yyyy")
+        this.datePipe.transform(new Date(),"yyyy-MM-dd")
+        //"07-Nov-2022"
         //new Date().toISOString().slice(0, 10)
-        '2022-10-31'
       );
-      console.log(this.form.controls['date'].value);
-      console.log(this.form.controls['date'].valid);
     }
 
     if (this.formMode != FormMode.Add) {
@@ -118,34 +137,35 @@ export class TakingsAddEditComponent implements OnInit {
     this.subscription.unsubscribe();
   }
 
-  ngOnChanges(simpleChanges: SimpleChanges) {
-    if (simpleChanges['touched'] && simpleChanges['touched'].currentValue) {
-      this.form.markAllAsTouched();
-    }
-
-    // only run when property "data" changed
-    if (simpleChanges['transactions']) {
-      //console.log(`OnChanges: Tx length: ${this.transactions?.length}`);
-    }
-  }
-
   writeValue(value: null | Takings): void {
     if (value) {
       this.form.reset(value);
     }
   }
 
-  registerOnChange(fn: () => {}): void {
-    this.onChange = fn;
-  }
-
-  registerOnTouched(fn: (_: Takings) => {}): void {
-    this.onTouch = fn;
-  }
-
   // convenience getters for easy access to form fields
   get f() {
     return this.form.controls;
+  }
+
+  onChange(value: Takings) {
+    this.sumOfNumber =
+      Number(value.books_num) +
+      Number(value.brica_num) +
+      Number(value.clothing_num) +
+      Number(value.donations_num) +
+      Number(value.linens_num) +
+      Number(value.other_num) +
+      Number(value.rag_num);
+    this.sumOfAmount = (
+      Number(value.books) +
+      Number(value.brica) +
+      Number(value.clothing) +
+      Number(value.donations) +
+      Number(value.linens) +
+      Number(value.other) +
+      Number(value.rag)
+    ).toFixed(2);
   }
 
   onSubmit() {
@@ -193,7 +213,7 @@ export class TakingsAddEditComponent implements OnInit {
 
   private updateTakings() {
     this.takingsService
-      .update(this.id, this.form.value)
+      .update(this.id, this.form.getRawValue())
       .subscribe(() => {
         this.alertService.success('Takings updated', {
           keepAfterRouteChange: true,
