@@ -9,7 +9,7 @@ import { MoneyInputComponent } from './money-input/money-input.component';
 
 @NgModule({
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
-  declarations: [AlertComponent, DepartmentChartComponent, SalesChartComponent],
+  declarations: [AlertComponent, DepartmentChartComponent, MoneyInputComponent, SalesChartComponent],
   exports: [
     AlertComponent,
     DepartmentChartComponent,
