@@ -2,15 +2,14 @@ import { Component, forwardRef, Input } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 /*******
- * 
- * 
+ *
+ *
  * UNFINISHED
- * 
- * 
- * 
- * 
+ *
+ *
+ *
+ *
  * ****/
-
 
 @Component({
   selector: 'money-input',
@@ -25,11 +24,11 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 })
 
 /*
-*  Extends input html component so that value is always displayed as a 2 digit number
-*/
+ *  Extends input html component so that value is always displayed as a 2 digit number
+ */
 // From https://blog.woodies11.dev/how-to-properly-implement-controlvalueaccessor/
 export class MoneyInputComponent implements ControlValueAccessor {
-  private field: number =0;
+  private field: number = 0;
 
   // Save the callbacks, make sure to have a default so your app
   // doesn't crash when one isn't (yet) registered
@@ -46,5 +45,4 @@ export class MoneyInputComponent implements ControlValueAccessor {
   writeValue(obj: any): void {
     return;
   }
-
 }

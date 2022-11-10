@@ -40,9 +40,10 @@ export class TakingsAddEditComponent implements OnInit {
   loading = false;
   submitted = false;
   user!: User;
+  cashDifference = 0;
 
-  sumOfNumber: number = 0;
-  sumOfAmount: string = ''; // a string to allow easier rounding
+  sumOfNumber = 0;
+  sumOfAmount = ''; // a string to allow easier rounding
 
   private subscription = new Subscription();
 
@@ -166,6 +167,15 @@ export class TakingsAddEditComponent implements OnInit {
       Number(value.other) +
       Number(value.rag)
     ).toFixed(2);
+    this.cashDifference =
+      Math.round(
+        (Number(value.operating_expenses) +
+          Number(value.volunteer_expenses) +
+          Number(value.cash_to_bank) +
+          Number(value.credit_cards) -
+          Number(this.sumOfAmount)) *
+          100
+      ) / 100;
   }
 
   onSubmit() {
@@ -177,6 +187,10 @@ export class TakingsAddEditComponent implements OnInit {
     // stop here if form is invalid
     if (this.form.invalid) {
       return;
+    }
+
+    if (this.cashDifference) {
+      this.form.controls['cash_difference'].setValue(this.cashDifference);
     }
 
     this.loading = true;
@@ -201,7 +215,7 @@ export class TakingsAddEditComponent implements OnInit {
 
   private createTakings() {
     this.takingsService
-      .create(this.form.value)
+      .create(this.form.getRawValue())
       .subscribe(() => {
         this.alertService.success('Takings added', {
           keepAfterRouteChange: true,
