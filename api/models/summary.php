@@ -164,4 +164,117 @@ class TakingsSummary{
         return $department_sales;
     }
 
+    public function salesByMonth($shopid,$current_date){
+
+        // MySQL stored procedure
+        $query = "SELECT t.shopid, MIN(`date`) as month_start, Month(`date`) as month, Year(`date`) as year
+                        , COUNT(takingsid) as count
+                        ,ROUND(SUM(clothing+brica+books+linens+other+rag-operating_expenses-volunteer_expenses-other_adjustments+cash_difference),2)
+                            as sum_total_after_expenses_and_donations
+                        ,ROUND(AVG(clothing+brica+books+linens+other+rag-operating_expenses-volunteer_expenses-other_adjustments+cash_difference),2) 
+                            as avg_sales_after_expenses_and_donations
+                        ,ROUND(AVG(clothing)+(AVG(other+rag-operating_expenses-volunteer_expenses-other_adjustments+cash_difference)/2),2) as avg_clothing
+                        ,ROUND(AVG(brica)+AVG(other+rag-operating_expenses-volunteer_expenses-other_adjustments+cash_difference)/2,2) as avg_brica
+                        ,ROUND(AVG(books),2) as avg_books, ROUND(AVG(linens),2) as avg_linens
+                        FROM takings t
+                        WHERE t.shopid = :shopid AND t.`date` >= :date
+                        GROUP BY Month(`date`), YEAR(`date`)
+                        HAVING COUNT(takingsid) > 17
+                        ORDER BY `date`";
+
+        $stmt = $this->conn->prepare( $query );
+
+        // bind id of product to be updated
+        $stmt->bindParam(":shopid", $shopid, PDO::PARAM_INT);
+        $stmt->bindParam(":date", $current_date, PDO::PARAM_STR);
+
+        // execute query
+        $stmt->execute();
+        $num = $stmt->rowCount();
+
+        $monthly_sales=array();
+
+        // check if more than 0 record found
+        if($num>0){
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                extract($row);
+            
+                $monthly_sales_item=array(
+                    "shopid" => $shopid,
+                    "month_start" => $month_start,
+                    "month" => $month,
+                    "year" => $year,
+                    "count" => $count,
+                    "sales" => $sum_total_after_expenses_and_donations,
+                    "avg_sales" => $avg_sales_after_expenses_and_donations,
+                    "avg_clothing" => $avg_clothing,
+                    "avg_brica" => $avg_brica,
+                    "avg_books" => $avg_books,
+                    "avg_linens" => $avg_linens,
+                );
+        
+                    // create nonindexed array
+                    array_push ($monthly_sales, $monthly_sales_item);
+            }
+        }
+
+        return $monthly_sales;
+    }
+
+    public function salesByQuarter($shopid,$current_date){
+
+        // MySQL stored procedure
+        $query = "SELECT t.shopid, MIN(`date`) as quarter_start, Quarter(`date`) as quarter, Year(`date`) as year
+                    , COUNT(takingsid) as count
+                    ,ROUND(SUM(clothing+brica+books+linens+other+rag-operating_expenses-volunteer_expenses-other_adjustments+cash_difference),2)
+                        as sum_total_after_expenses_and_donations
+                    ,ROUND(AVG(clothing+brica+books+linens+other+rag-operating_expenses-volunteer_expenses-other_adjustments+cash_difference),2) 
+                        as avg_sales_after_expenses_and_donations
+                    ,ROUND(AVG(clothing)+(AVG(other+rag-operating_expenses-volunteer_expenses-other_adjustments+cash_difference)/2),2) as avg_clothing
+                    ,ROUND(AVG(brica)+AVG(other+rag-operating_expenses-volunteer_expenses-other_adjustments+cash_difference)/2,2) as avg_brica
+                    ,ROUND(AVG(books),2) as avg_books, ROUND(AVG(linens),2) as avg_linens
+                    FROM takings t
+                    WHERE t.shopid = :shopid AND t.`date` >= :date
+                    GROUP BY Quarter(`date`), YEAR(`date`)
+                    ORDER BY `date`;
+                    ";
+
+        $stmt = $this->conn->prepare( $query );
+
+        // bind id of product to be updated
+        $stmt->bindParam(":shopid", $shopid, PDO::PARAM_INT);
+        $stmt->bindParam(":date", $current_date, PDO::PARAM_STR);
+
+        // execute query
+        $stmt->execute();
+        $num = $stmt->rowCount();
+
+        $quarterly_sales=array();
+
+        // check if more than 0 record found
+        if($num>0){
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                extract($row);
+            
+                $quarterly_sales_item=array(
+                    "shopid" => $shopid,
+                    "quarter_start" => $quarter_start,
+                    "quarter" => $quarter,
+                    "year" => $year,
+                    "count" => $count,
+                    "sales" => $sum_total_after_expenses_and_donations,
+                    "avg_sales" => $avg_sales_after_expenses_and_donations,
+                    "avg_clothing" => $avg_clothing,
+                    "avg_brica" => $avg_brica,
+                    "avg_books" => $avg_books,
+                    "avg_linens" => $avg_linens,
+                );
+        
+                    // create nonindexed array
+                    array_push ($quarterly_sales, $quarterly_sales_item);
+            }
+        }
+
+        return $quarterly_sales;
+    }    
 }

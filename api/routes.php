@@ -71,6 +71,9 @@ $router->mount('/summary', function () use ($router) {
     $router->get('/', 'TakingsSummaryCtl@performanceSummary');
     $router->get('/sales-chart', 'TakingsSummaryCtl@salesChart');
     $router->get('/dept-chart', 'TakingsSummaryCtl@departmentChart');
+    // Dynamic route with (successive) optional subpatterns: /monthly-sales/shopid(/year(/month(/day)))
+    $router->get('/monthly-sales/(\d+)(/\d{4}(/\d{2}(/\d{2})?)?)?', 'TakingsSummaryCtl@salesByMonth');
+    $router->get('/quarterly-sales/(\d+)(/\d{4})?', 'TakingsSummaryCtl@salesByQuarter');
 });
 
 /*********************/
