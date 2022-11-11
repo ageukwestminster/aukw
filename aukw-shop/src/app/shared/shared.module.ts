@@ -6,6 +6,7 @@ import { AlertComponent } from './alert-component/alert.component';
 import { SalesChartComponent } from './sales-chart/sales-chart.component';
 import { DepartmentChartComponent } from './dept-chart/dept-chart.component';
 import { MoneyInputComponent } from './money-input/money-input.component';
+import { MonthlySalesChartComponent } from './monthly-sales-chart/monthly-sales-chart.component';
 
 @NgModule({
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
@@ -14,11 +15,13 @@ import { MoneyInputComponent } from './money-input/money-input.component';
     DepartmentChartComponent,
     MoneyInputComponent,
     SalesChartComponent,
+    MonthlySalesChartComponent,
   ],
   exports: [
     AlertComponent,
     DepartmentChartComponent,
     MoneyInputComponent,
+    MonthlySalesChartComponent,
     SalesChartComponent,
     CommonModule,
     FormsModule,

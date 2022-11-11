@@ -31,3 +31,32 @@ export class DepartmentSalesChartData {
     this.TrYTD = (obj && obj.TrYTD) || null;
   }
 }
+
+export class MonthlySalesChartData {
+  shopid: number;
+  start_date: string;
+  month: number;
+  year: number;
+  count: number;
+  sales: number;
+  avg_daily_sales: number;
+  avg_daily_sales_clothing: number;
+  avg_daily_sales_brica: number;
+  avg_daily_sales_books: number;
+  avg_daily_sales_linens: number;
+
+  constructor(obj?: any) {
+    this.shopid = (obj && obj.shopid) || null;
+    this.start_date = (obj && obj.start_date) || null;
+    this.month = (obj && obj.month) || null;
+    this.year = (obj && obj.year) || null;
+    this.count = (obj && obj.count) || null;
+    this.sales = (obj && obj.sales) || null;
+    this.avg_daily_sales = (obj && obj.avg_daily_sales) || null;
+    this.avg_daily_sales_clothing =
+      (obj && obj.avg_daily_sales_clothing) || null;
+    this.avg_daily_sales_brica = (obj && obj.avg_daily_sales_brica) || null;
+    this.avg_daily_sales_books = (obj && obj.avg_daily_sales_books) || null;
+    this.avg_daily_sales_linens = (obj && obj.avg_daily_sales_linens) || null;
+  }
+}
