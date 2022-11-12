@@ -39,11 +39,11 @@ export class MonthlySalesChartData {
   year: number;
   count: number;
   sales: number;
-  avg_daily_sales: number;
-  avg_daily_sales_clothing: number;
-  avg_daily_sales_brica: number;
-  avg_daily_sales_books: number;
-  avg_daily_sales_linens: number;
+  avg_sales: number;
+  avg_clothing: number;
+  avg_brica: number;
+  avg_books: number;
+  avg_linens: number;
 
   constructor(obj?: any) {
     this.shopid = (obj && obj.shopid) || null;
@@ -52,11 +52,10 @@ export class MonthlySalesChartData {
     this.year = (obj && obj.year) || null;
     this.count = (obj && obj.count) || null;
     this.sales = (obj && obj.sales) || null;
-    this.avg_daily_sales = (obj && obj.avg_daily_sales) || null;
-    this.avg_daily_sales_clothing =
-      (obj && obj.avg_daily_sales_clothing) || null;
-    this.avg_daily_sales_brica = (obj && obj.avg_daily_sales_brica) || null;
-    this.avg_daily_sales_books = (obj && obj.avg_daily_sales_books) || null;
-    this.avg_daily_sales_linens = (obj && obj.avg_daily_sales_linens) || null;
+    this.avg_sales = (obj && obj.avg_sales) || null;
+    this.avg_clothing = (obj && obj.avg_clothing) || null;
+    this.avg_brica = (obj && obj.avg_brica) || null;
+    this.avg_books = (obj && obj.avg_books) || null;
+    this.avg_linens = (obj && obj.avg_linens) || null;
   }
 }

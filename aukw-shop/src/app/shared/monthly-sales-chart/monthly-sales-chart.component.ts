@@ -25,7 +25,7 @@ noData(Highcharts);
   styleUrls: ['./monthly-sales-chart.component.css'],
 })
 export class MonthlySalesChartComponent implements OnInit {
-  public options1: any = {
+  public optionsSimpleBarChart: Highcharts.Options = {
     chart: {
       type: 'column',
     },
@@ -54,14 +54,62 @@ export class MonthlySalesChartComponent implements OnInit {
       {
         name: 'Sales less cash expenses',
         data: [],
+        type: 'column'
       },
+    ],
+  };
+  public optionsStackedBarChart: Highcharts.Options = {
+    chart: {
+      type: 'column',
+    },
+    title: {
+      text: 'Average Daily Sales Since COVID',
+    },
+    subtitle: {
+      text: 'Apr 2021 - Present',
+    },
+    xAxis: {
+      categories: [],
+    },
+    yAxis: {
+      title: {
+        useHTML: true,
+        text: 'Average Daily Sales in £',
+      },
+    },
+    plotOptions: {
+      column: {
+        stacking: 'normal',
+      },
+    },
+    series: [
+      {
+        name: 'Linens',
+        data: [],
+        type: 'column'
+      },
+      {
+        name: 'Books',
+        data: [],
+        type: 'column'
+      },
+      {
+        name: 'Brica',
+        data: [],
+        type: 'column'
+      },
+      {
+        name: 'Clothing',
+        data: [],
+        type: 'column'
+      },      
     ],
   };
 
   constructor(private summaryService: SummaryService) {}
 
   ngOnInit(): void {
-    // First 5 lines convert Observable<object[]> to Observable<object>
+    // First 5 lines convert Observable<MonthlySalesChartData[]> to Observable<MonthlySalesChartData>
     this.summaryService
       .getMonthlySalesChartData(1)
       .pipe(
@@ -76,13 +124,34 @@ export class MonthlySalesChartComponent implements OnInit {
         next: (value: MonthlySalesChartData) => {
           const date = new Date(value.year, value.month, 1);
           const month = date.toLocaleString('en-GB', { month: 'short' });
-          this.options1.xAxis.categories.push(
-            month + '-' + String(value.year).substring(2)
-          );
-          this.options1.series[0]['data'].push(value.sales);
+          const label = month + '-' + String(value.year).substring(2);
+          if (this.optionsSimpleBarChart.xAxis) {
+            if ((this.optionsSimpleBarChart.xAxis as Highcharts.XAxisOptions).categories) {
+              (this.optionsSimpleBarChart.xAxis as Highcharts.XAxisOptions).categories?.push(
+                label
+              );               
+            }
+          }
+          if (this.optionsStackedBarChart.xAxis) {
+            if ((this.optionsStackedBarChart.xAxis as Highcharts.XAxisOptions).categories) {
+              (this.optionsStackedBarChart.xAxis as Highcharts.XAxisOptions).categories?.push(
+                label
+              );               
+            }
+          }
+          if (this.optionsSimpleBarChart.series) {
+            this.optionsSimpleBarChart.series[0]['data'].push(value.sales);  
+          }  
+          if (this.optionsStackedBarChart.series) {
+            this.optionsStackedBarChart.series[3]['data'].push(value.avg_clothing);  
+            this.optionsStackedBarChart.series[2]['data'].push(value.avg_brica);  
+            this.optionsStackedBarChart.series[1]['data'].push(value.avg_books);  
+            this.optionsStackedBarChart.series[0]['data'].push(value.avg_linens);  
+          }          
         },
         complete: () => {
-          Highcharts.chart('monthly-sales-chart', this.options1);
+          Highcharts.chart('monthly-sales-chart', this.optionsSimpleBarChart);
+          Highcharts.chart('monthly-dept-sales-chart', this.optionsStackedBarChart);
         },
       });
   }
