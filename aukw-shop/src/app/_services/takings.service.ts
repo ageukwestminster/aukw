@@ -23,6 +23,10 @@ export class TakingsService {
     return this.http.get<Takings>(`${baseUrl}/${id}`);
   }
 
+  getMostRecent(shopid: number) {
+    return this.http.get<Takings>(`${baseUrl}/most-recent/${shopid}`);
+  }
+
   create(params: any) {
     return this.http.post(baseUrl, params);
   }

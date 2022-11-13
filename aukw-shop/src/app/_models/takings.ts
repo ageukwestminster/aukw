@@ -2,7 +2,7 @@ import { Shop } from '@app/_models';
 
 export class Takings {
   id: number;
-  date: Date;
+  date: string;
   shopid: Shop;
   clothing_num: number;
   brica_num: number;

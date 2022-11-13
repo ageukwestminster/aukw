@@ -48,6 +48,9 @@ $router->mount('/takings', function () use ($router) {
     $router->get('/shop/(\d+)', 'TakingsCtl@read_by_shop');
     $router->get('/(\d+)', 'TakingsCtl@read_one');
 
+    // Return the Takings for the most recent date
+    $router->get('/most-recent/(\d+)', 'TakingsCtl@read_most_recent');
+
     // Show takings data for the last 90 days for a given shop
     $router->get('/summary/shop/(\d+)', 'TakingsCtl@summary');
 

@@ -48,7 +48,7 @@ export class TakingsRowComponent {
       .addToQuickbooks(this.takings.id) // Adds to QB and sets 'quickbooks' = 1 in dB
       .subscribe(() => {
         this.alertService.success(
-          'Daily sales added to QB for' +
+          'Daily sales added to QB for ' +
             formatDate(this.takings.date, 'dd-MMM', 'en_GB'),
           { keepAfterRouteChange: true }
         );

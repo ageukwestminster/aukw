@@ -54,7 +54,7 @@ export class MonthlySalesChartComponent implements OnInit {
       {
         name: 'Sales less cash expenses',
         data: [],
-        type: 'column'
+        type: 'column',
       },
     ],
   };
@@ -86,23 +86,23 @@ export class MonthlySalesChartComponent implements OnInit {
       {
         name: 'Linens',
         data: [],
-        type: 'column'
+        type: 'column',
       },
       {
         name: 'Books',
         data: [],
-        type: 'column'
+        type: 'column',
       },
       {
         name: 'Brica',
         data: [],
-        type: 'column'
+        type: 'column',
       },
       {
         name: 'Clothing',
         data: [],
-        type: 'column'
-      },      
+        type: 'column',
+      },
     ],
   };
 
@@ -126,32 +126,45 @@ export class MonthlySalesChartComponent implements OnInit {
           const month = date.toLocaleString('en-GB', { month: 'short' });
           const label = month + '-' + String(value.year).substring(2);
           if (this.optionsSimpleBarChart.xAxis) {
-            if ((this.optionsSimpleBarChart.xAxis as Highcharts.XAxisOptions).categories) {
-              (this.optionsSimpleBarChart.xAxis as Highcharts.XAxisOptions).categories?.push(
-                label
-              );               
+            if (
+              (this.optionsSimpleBarChart.xAxis as Highcharts.XAxisOptions)
+                .categories
+            ) {
+              (
+                this.optionsSimpleBarChart.xAxis as Highcharts.XAxisOptions
+              ).categories?.push(label);
             }
           }
           if (this.optionsStackedBarChart.xAxis) {
-            if ((this.optionsStackedBarChart.xAxis as Highcharts.XAxisOptions).categories) {
-              (this.optionsStackedBarChart.xAxis as Highcharts.XAxisOptions).categories?.push(
-                label
-              );               
+            if (
+              (this.optionsStackedBarChart.xAxis as Highcharts.XAxisOptions)
+                .categories
+            ) {
+              (
+                this.optionsStackedBarChart.xAxis as Highcharts.XAxisOptions
+              ).categories?.push(label);
             }
           }
           if (this.optionsSimpleBarChart.series) {
-            this.optionsSimpleBarChart.series[0]['data'].push(value.sales);  
-          }  
+            this.optionsSimpleBarChart.series[0]['data'].push(value.sales);
+          }
           if (this.optionsStackedBarChart.series) {
-            this.optionsStackedBarChart.series[3]['data'].push(value.avg_clothing);  
-            this.optionsStackedBarChart.series[2]['data'].push(value.avg_brica);  
-            this.optionsStackedBarChart.series[1]['data'].push(value.avg_books);  
-            this.optionsStackedBarChart.series[0]['data'].push(value.avg_linens);  
-          }          
+            this.optionsStackedBarChart.series[3]['data'].push(
+              value.avg_clothing
+            );
+            this.optionsStackedBarChart.series[2]['data'].push(value.avg_brica);
+            this.optionsStackedBarChart.series[1]['data'].push(value.avg_books);
+            this.optionsStackedBarChart.series[0]['data'].push(
+              value.avg_linens
+            );
+          }
         },
         complete: () => {
           Highcharts.chart('monthly-sales-chart', this.optionsSimpleBarChart);
-          Highcharts.chart('monthly-dept-sales-chart', this.optionsStackedBarChart);
+          Highcharts.chart(
+            'monthly-dept-sales-chart',
+            this.optionsStackedBarChart
+          );
         },
       });
   }

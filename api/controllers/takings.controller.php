@@ -26,6 +26,13 @@ class TakingsCtl{
     echo json_encode($model->read_by_shop($shopid), JSON_NUMERIC_CHECK);
   }
 
+  public static function read_most_recent($shopid){  
+
+    $model = new \Models\Takings();
+
+    echo json_encode($model->read_most_recent($shopid), JSON_NUMERIC_CHECK);
+  }
+
   public static function summary($shopid){  
 
     $model = new \Models\Takings();
@@ -146,7 +153,7 @@ class TakingsCtl{
     $model->linens_num = empty($data->linens_num)?0:$data->linens_num;
     $model->donations_num = empty($data->donations_num)?0:$data->donations_num;
     $model->other_num = empty($data->other_num)?0:$data->other_num;
-    $model->rag_num = empty($data->rag_num);
+    $model->rag_num = empty($data->rag_num)?0:$data->rag_num;
     $model->clothing = empty($data->clothing)?0:$data->clothing;
     $model->brica = empty($data->brica)?0:$data->brica;
     $model->books = empty($data->books)?0:$data->books;

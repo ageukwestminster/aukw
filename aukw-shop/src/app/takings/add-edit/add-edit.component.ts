@@ -13,7 +13,6 @@ import { Subscription } from 'rxjs';
 
 import {
   TakingsService,
-  DepartmentService,
   AlertService,
   AuthenticationService,
   ShopService,
@@ -35,12 +34,13 @@ export class TakingsAddEditComponent implements OnInit {
   form!: FormGroup;
   id!: number;
   shops!: Shop[];
-  depts!: string[];
   formMode!: FormMode;
   loading = false;
   submitted = false;
   user!: User;
   cashDifference = 0;
+  minimumNextDate: NgbDateStruct = { year: 2000, month: 1, day: 1 };
+  readonly DEFAULT_SHOP_ID = 1; // Harrow Road
 
   sumOfNumber = 0;
   sumOfAmount = ''; // a string to allow easier rounding
@@ -55,12 +55,10 @@ export class TakingsAddEditComponent implements OnInit {
     private alertService: AlertService,
     private authenticationService: AuthenticationService,
     private shopService: ShopService,
-    private deptService: DepartmentService,
     private location: Location,
     private datePipe: DatePipe
   ) {
     this.user = this.authenticationService.userValue;
-    this.depts = this.deptService.getAll();
   }
 
   ngOnInit() {
@@ -76,7 +74,7 @@ export class TakingsAddEditComponent implements OnInit {
 
     this.form = this.formBuilder.group({
       date: [null],
-      shopid: [{ value: 1, disabled: true }],
+      shopid: [{ value: this.DEFAULT_SHOP_ID, disabled: true }],
       clothing_num: ['', Validators.required],
       brica_num: [''],
       books_num: [''],
@@ -113,15 +111,6 @@ export class TakingsAddEditComponent implements OnInit {
     });
 
     if (this.formMode === FormMode.Add) {
-      // Initialize the 'Date' field with today's date for New Takings
-      this.form.controls['date'].setValue(
-        // From https://stackoverflow.com/a/35922073/6941165
-        //this.ngbCalendar.getToday()
-        //this.datePipe.transform(new Date(),"dd-MMM-yyyy")
-        this.datePipe.transform(new Date(), 'yyyy-MM-dd')
-        //"07-Nov-2022"
-        //new Date().toISOString().slice(0, 10)
-      );
     }
 
     if (this.formMode != FormMode.Add) {
@@ -130,7 +119,36 @@ export class TakingsAddEditComponent implements OnInit {
         .subscribe((x) => this.form.patchValue(x))
         .add(() => (this.loading = false));
     } else {
-      this.loading = false;
+      // For new Takings set today's date and the minimum allowed date
+      // in the datePicker. We set a minimum date so that users can't add
+      // easily add takings with duplicate dates
+      this.takingsService
+        .getMostRecent(this.DEFAULT_SHOP_ID) // Find most recent Takings (usually yesterday's)
+        .subscribe((x) => {
+          let today = new Date();
+          if (x.date) {
+            let lastTradeDate = new Date(x.date);
+
+            lastTradeDate.setDate(lastTradeDate.getDate() + 1); // Add one day
+
+            let adapter = new NgbUTCStringAdapter();
+            this.minimumNextDate = adapter.fromModel(
+              this.datePipe.transform(lastTradeDate, 'yyyy-MM-dd')
+            )!;
+
+            this.form.controls['date'].setValue(
+              this.datePipe.transform(
+                today > lastTradeDate ? today : lastTradeDate,
+                'yyyy-MM-dd'
+              )
+            );
+          } else {                        
+            this.form.controls['date'].setValue(
+              this.datePipe.transform(today, 'yyyy-MM-dd')
+            );
+          }
+        })
+        .add(() => (this.loading = false));
     }
   }
 
@@ -216,11 +234,16 @@ export class TakingsAddEditComponent implements OnInit {
   private createTakings() {
     this.takingsService
       .create(this.form.getRawValue())
-      .subscribe(() => {
-        this.alertService.success('Takings added', {
-          keepAfterRouteChange: true,
-        });
-        this.router.navigate(['../'], { relativeTo: this.route });
+      .subscribe({
+        next: () => {
+          this.alertService.success('Takings added', {
+            keepAfterRouteChange: true,
+          });
+          this.router.navigate(['../'], { relativeTo: this.route });
+        },
+        error: (error) => {
+          this.alertService.error('Takings not added');
+        },
       })
       .add(() => (this.loading = false));
   }
@@ -228,12 +251,17 @@ export class TakingsAddEditComponent implements OnInit {
   private updateTakings() {
     this.takingsService
       .update(this.id, this.form.getRawValue())
-      .subscribe(() => {
-        this.alertService.success('Takings updated', {
-          keepAfterRouteChange: true,
-        });
+      .subscribe({
+        next: () => {
+          this.alertService.success('Takings updated', {
+            keepAfterRouteChange: true,
+          });
 
-        this.location.back();
+          this.location.back();
+        },
+        error: (error) => {
+          this.alertService.error('Takings not updated');
+        },
       })
       .add(() => (this.loading = false));
   }
