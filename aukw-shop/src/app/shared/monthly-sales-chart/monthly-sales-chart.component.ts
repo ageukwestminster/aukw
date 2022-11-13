@@ -122,7 +122,7 @@ export class MonthlySalesChartComponent implements OnInit {
       )
       .subscribe({
         next: (value: MonthlySalesChartData) => {
-          const date = new Date(value.year, value.month, 1);
+          const date = new Date(value.year, value.month-1, 1);
           const month = date.toLocaleString('en-GB', { month: 'short' });
           const label = month + '-' + String(value.year).substring(2);
           if (this.optionsSimpleBarChart.xAxis) {
