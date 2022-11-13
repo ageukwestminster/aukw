@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import * as Highcharts from 'highcharts';
-import { SalesChartData, Summary } from '@app/_models';
+import { SalesChartData } from '@app/_models';
 import { SummaryService } from '@app/_services';
 import { from, map, reduce, switchMap } from 'rxjs';
 
 /* from https://www.highcharts.com/blog/tutorials/highcharts-and-angular-7/ */
-declare var require: any;
+/*declare var require: any;
 let Boost = require('highcharts/modules/boost');
 let noData = require('highcharts/modules/no-data-to-display');
 let More = require('highcharts/highcharts-more');
@@ -16,7 +16,7 @@ noData(Highcharts);
 More(Highcharts);
 noData(Highcharts);
 Accessibility(Highcharts);
-noData(Highcharts);
+noData(Highcharts);*/
 
 @Component({
   selector: 'sales-chart',
@@ -56,15 +56,7 @@ export class SalesChartComponent implements OnInit {
         data: [],
       },
       {
-        name: 'Average of Last 10 Days',
-        data: [],
-      },
-      {
         name: 'Average of Last 30 Days',
-        data: [],
-      },
-      {
-        name: 'Average of Last 365 Days',
         data: [],
       },
     ],
@@ -117,9 +109,10 @@ export class SalesChartComponent implements OnInit {
       )
       .subscribe((data) => {
         this.options.series[0]['data'] = updated_sales_data;
-        this.options.series[1]['data'] = updated_avg10_data;
-        this.options.series[2]['data'] = updated_avg30_data;
-        this.options.series[3]['data'] = updated_avg365_data;
+        //this.options.series[1]['data'] = updated_avg10_data;
+        this.options.series[1]['data'] = updated_avg30_data;
+        //this.options.series[2]['data'] = updated_avg30_data;
+        //this.options.series[3]['data'] = updated_avg365_data;
         Highcharts.chart('sales-chart', this.options);
       });
   }

@@ -2,22 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import { SummaryService } from '@app/_services';
 import { MonthlySalesChartData } from '@app/_models';
-import { Observable, merge, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
-
-/* from https://www.highcharts.com/blog/tutorials/highcharts-and-angular-7/ */
-declare var require: any;
-let Boost = require('highcharts/modules/boost');
-let noData = require('highcharts/modules/no-data-to-display');
-let More = require('highcharts/highcharts-more');
-let Accessibility = require('highcharts/modules/accessibility');
-
-Boost(Highcharts);
-noData(Highcharts);
-More(Highcharts);
-noData(Highcharts);
-Accessibility(Highcharts);
-noData(Highcharts);
+import { merge, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'monthly-sales-chart',
@@ -122,7 +108,7 @@ export class MonthlySalesChartComponent implements OnInit {
       )
       .subscribe({
         next: (value: MonthlySalesChartData) => {
-          const date = new Date(value.year, value.month-1, 1);
+          const date = new Date(value.year, value.month - 1, 1);
           const month = date.toLocaleString('en-GB', { month: 'short' });
           const label = month + '-' + String(value.year).substring(2);
           if (this.optionsSimpleBarChart.xAxis) {

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import { SummaryService } from '@app/_services';
-import { DepartmentSalesChartData, SalesChartData } from '@app/_models';
+import { DepartmentSalesChartData } from '@app/_models';
 
 /* from https://www.highcharts.com/blog/tutorials/highcharts-and-angular-7/ */
 declare var require: any;
@@ -9,6 +9,7 @@ let Boost = require('highcharts/modules/boost');
 let noData = require('highcharts/modules/no-data-to-display');
 let More = require('highcharts/highcharts-more');
 let Accessibility = require('highcharts/modules/accessibility');
+let Exporting = require('highcharts/modules/exporting');
 
 Boost(Highcharts);
 noData(Highcharts);
@@ -16,6 +17,7 @@ More(Highcharts);
 noData(Highcharts);
 Accessibility(Highcharts);
 noData(Highcharts);
+Exporting(Highcharts);
 
 @Component({
   selector: 'dept-chart',
