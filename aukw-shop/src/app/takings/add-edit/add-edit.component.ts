@@ -75,14 +75,14 @@ export class TakingsAddEditComponent implements OnInit {
     this.form = this.formBuilder.group({
       date: [null],
       shopid: [{ value: this.DEFAULT_SHOP_ID, disabled: true }],
-      clothing_num: ['', Validators.required],
+      clothing_num: [''],
       brica_num: [''],
       books_num: [''],
       linens_num: [''],
       donations_num: [''],
       other_num: [''],
       rag_num: [''],
-      clothing: ['', Validators.required],
+      clothing: [''],
       brica: [''],
       books: [''],
       linens: [''],
@@ -162,7 +162,7 @@ export class TakingsAddEditComponent implements OnInit {
     }
   }
 
-  // convenience getters for easy access to form fields
+  // convenience getter for easy access to form fields
   get f() {
     return this.form.controls;
   }

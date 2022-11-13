@@ -5,7 +5,12 @@
 </div>
 <!--'[formGroup]' is a Reactive forms property-->
 <!--The *ngIf is in place to stop errors of 'Expression has changed after it was checked.'-->
-<form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!loading">
+<form
+  [formGroup]="form"
+  (ngSubmit)="onSubmit()"
+  *ngIf="!loading"
+  novalidate="novalidate"
+>
   <!-- Buttons -->
   <div class="row d-flex justify-content-between mb-2">
     <div class="col-auto">
@@ -253,7 +258,7 @@
   </div>
   <div class="form-row mb-2">
     <div class="input-group mb-1">
-      <span class="input-group-text col-4" id="brica-label">Total</span>
+      <span class="input-group-text col-4" id="brica-label">Gross</span>
       <div class="card p-2 col">
         <div class="row">
           <div class="col">
@@ -284,13 +289,67 @@
   </div>
 
   <div class="form-group mb-2">
-    <label for="inputCustomers_Num">Number of Customers</label>
+    <label for="inputCustomers_Num">Number of Transactions ("NET No")</label>
     <input
       type="number"
       id="inputCustomers_Num"
       class="form-control"
       formControlName="customers_num_total"
+      [ngClass]="{ 'is-invalid': submitted && f.customers_num_total.errors }"
     />
+    <div
+      *ngIf="submitted && f.customers_num_total.errors"
+      class="invalid-feedback"
+      id="inputGroupPrepend2"
+    >
+      <div *ngIf="f.customers_num_total.errors.required">
+        Number of Transactions (NET number) is required
+      </div>
+    </div>
+  </div>
+  <div class="form-row mb-2">
+    <div class="input-group mb-1">
+      <span class="input-group-text col-4" id="clothing-label">Money</span>
+      <div class="card p-2 col">
+        <div class="row">
+          <div class="col">
+            <label for="cashReceived" class="form-label">Cash to Bank</label>
+            <input
+              id="cashReceived"
+              name="cashReceived"
+              type="number"
+              class="form-control"
+              placeholder="£0.00"
+              pattern="^\d*(\.\d{0,2})?$"
+              formControlName="cash_to_bank"
+              [ngClass]="{ 'is-invalid': submitted && f.cash_to_bank.errors }"
+            />
+            <div
+              *ngIf="submitted && f.cash_to_bank.errors"
+              class="invalid-feedback"
+            >
+              <div *ngIf="f.cash_to_bank.errors.required">
+                Cash amount is required
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <label for="creditcardsReceived" class="form-label"
+              >Credit Cards</label
+            >
+            <input
+              id="creditcardsReceived"
+              name="creditcardsReceived"
+              type="number"
+              class="form-control"
+              placeholder="£0.00"
+              pattern="^\d*(\.\d{0,2})?$"
+              formControlName="credit_cards"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="form-row mb-2">
     <div class="input-group mb-1">
@@ -321,41 +380,6 @@
               placeholder="£0.00"
               pattern="^\d*(\.\d{0,2})?$"
               formControlName="operating_expenses"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="form-row mb-2">
-    <div class="input-group mb-1">
-      <span class="input-group-text col-4" id="clothing-label">Money</span>
-      <div class="card p-2 col">
-        <div class="row">
-          <div class="col">
-            <label for="cashReceived" class="form-label">Cash to Bank</label>
-            <input
-              id="cashReceived"
-              name="cashReceived"
-              type="number"
-              class="form-control"
-              placeholder="£0.00"
-              pattern="^\d*(\.\d{0,2})?$"
-              formControlName="cash_to_bank"
-            />
-          </div>
-          <div class="col">
-            <label for="creditcardsReceived" class="form-label"
-              >Credit Cards</label
-            >
-            <input
-              id="creditcardsReceived"
-              name="creditcardsReceived"
-              type="number"
-              class="form-control"
-              placeholder="£0.00"
-              pattern="^\d*(\.\d{0,2})?$"
-              formControlName="credit_cards"
             />
           </div>
         </div>
@@ -400,5 +424,6 @@
     <hr />
     <p>Form Value: {{ form.value | json }}</p>
     <p>Form Status: {{ form.status | json }}</p>
+    <p>Submitted: {{ submitted }}</p>
   </div>
 </form>
