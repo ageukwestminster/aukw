@@ -142,7 +142,7 @@ export class TakingsAddEditComponent implements OnInit {
                 'yyyy-MM-dd'
               )
             );
-          } else {                        
+          } else {
             this.form.controls['date'].setValue(
               this.datePipe.transform(today, 'yyyy-MM-dd')
             );
