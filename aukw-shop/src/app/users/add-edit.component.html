@@ -93,6 +93,7 @@
           aria-describedby="firstname-addon1"
           placement="bottom"
           ngbTooltip="The user's first or given name."
+          container="body"
         />
         <div *ngIf="submitted && f.firstname.errors" class="invalid-feedback">
           <div *ngIf="f.firstname.errors.required">First Name is required</div>
@@ -109,6 +110,7 @@
           aria-describedby="surname-addon1"
           placement="bottom"
           ngbTooltip="The family name of the user."
+          container="body"
         />
         <div *ngIf="submitted && f.surname.errors" class="invalid-feedback">
           <div *ngIf="f.surname.errors.required">Surname is required</div>
@@ -124,6 +126,7 @@
               class="form-check-input"
               placement="bottom"
               ngbTooltip="When checked the user will not be able to log in."
+              container="body"
             />
             <label class="form-check-label" for="flexCheckChecked">
               Suspended User
@@ -141,6 +144,7 @@
           aria-describedby="email-addon1"
           placement="bottom"
           ngbTooltip="A valid email address. May be blank."
+          container="body"
           [ngClass]="{ 'is-invalid': submitted && f.email.errors }"
         />
         <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
@@ -157,6 +161,7 @@
           aria-describedby="title-addon1"
           placement="bottom"
           ngbTooltip="Job title. May be blank."
+          container="body"
         />
       </div>
     </div>
