@@ -10,6 +10,8 @@ const usersModule = () =>
   import('./users/users.module').then((x) => x.UsersModule);
 const takingsModule = () =>
   import('./takings/takings.module').then((x) => x.TakingsModule);
+const reportsModule = () =>
+  import('./reports/reports.module').then((x) => x.ReportsModule);
 
 const routes: Routes = [
   {
@@ -20,6 +22,11 @@ const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
+  },
+  {
+    path: 'reports',
+    loadChildren: reportsModule,
+    canActivate: [AuthGuard],
   },
   {
     path: 'users',

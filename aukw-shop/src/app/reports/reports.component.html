@@ -1,0 +1,215 @@
+<div class="row justify-content-between">
+  <div class="col-sm-6">
+    <h2>Reports</h2>
+  </div>
+  <div class="col-sm-3">
+    <button (click)="goBack()" class="btn btn-outline-dark">
+      Close &times;
+    </button>
+  </div>
+</div>
+<div class="row">
+  <ngb-accordion
+    #acc1="ngbAccordion"
+    class="mb-2 col-sm-10"
+    (panelChange)="beforeChange($event)"
+  >
+    <ngb-panel title="MailingLists" id="static-1">
+      <ng-template ngbPanelHeader let-opened="opened">
+        <button
+          ngbPanelToggle
+          class="btn btn-link mb-2"
+          placement="bottom"
+          ngbTooltip="Show/Hide mailing list reports"
+          container="body"
+        >
+          <i class="fas fa-chevron-down" *ngIf="!panelOpen[0]"></i>
+          <i class="fas fa-chevron-up" *ngIf="panelOpen[0]"></i>
+        </button>
+        <span>Mailing Lists</span>
+      </ng-template>
+      <ng-template ngbPanelContent>
+        <ul>
+          <li>
+            <a routerLink="sales-list">Sales Data</a>
+          </li>
+          <li>
+            <a routerLink="email-list">All email addressess</a>
+          </li>
+          <li>
+            <a routerLink="no-email-list"
+              >Postal addresses for non-email members</a
+            >
+          </li>
+          <li>
+            <a routerLink="map-list"
+              >Email/Address chosen by location (Google Maps))</a
+            >
+          </li>
+          <br />
+          <li>
+            Reports to investigate members excluded from lists:
+            <ul>
+              <li>
+                <a routerLink="noukaddress">Members without a UK address</a>
+              </li>
+              <li>
+                <a routerLink="invalidpostcodes"
+                  >Members with invalid UK postcodes</a
+                >
+              </li>
+              <li>
+                <a routerLink="invalidemails"
+                  >Members with invalid email addresses</a
+                >
+              </li>
+              <li>
+                <a routerLink="/members/postonhold/true"
+                  >Members with post on hold</a
+                >
+              </li>
+              <li>
+                <a routerLink="/members/emailonhold/true"
+                  >Members with email on hold</a
+                >
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </ng-template>
+    </ngb-panel>
+  </ngb-accordion>
+
+  <ngb-accordion
+    #acc2="ngbAccordion"
+    class="mb-2 col-sm-10"
+    (panelChange)="beforeChange($event)"
+  >
+    <ngb-panel title="TransactionReports" id="static-2">
+      <ng-template ngbPanelHeader let-opened="opened">
+        <button
+          ngbPanelToggle
+          class="btn btn-link mb-2"
+          placement="bottom"
+          ngbTooltip="Show/Hide reports of members payments"
+          container="body"
+        >
+          <i class="fas fa-chevron-down" *ngIf="!panelOpen[1]"></i>
+          <i class="fas fa-chevron-up" *ngIf="panelOpen[1]"></i>
+        </button>
+        <span>Transaction Reports</span>
+      </ng-template>
+      <ng-template ngbPanelContent>
+        <ul>
+          <li>
+            <a routerLink="transactions">
+              Summary of payments received by bank account</a
+            >
+          </li>
+          <li>
+            <a routerLink="lapsed/18"
+              >Lapsed Members: active members without a recent payment</a
+            >
+          </li>
+          <li>
+            <a routerLink="duplicatepayers"
+              >List of members who have paid twice</a
+            >
+          </li>
+          <li>
+            <a routerLink="honlife"
+              >Life/Honorary members who are still paying</a
+            >
+          </li>
+          <li>
+            <a routerLink="discount">Members paying less than full fees</a>
+          </li>
+          <li>
+            <a routerLink="cem"
+              >Former members who are still paying (Contributing ex-Members)</a
+            >
+          </li>
+          <li class="text-muted">Recent PayPal payments (TO DO)</li>
+        </ul>
+      </ng-template>
+    </ngb-panel>
+  </ngb-accordion>
+
+  <ngb-accordion
+    #acc3="ngbAccordion"
+    class="mb-2 col-sm-10"
+    (panelChange)="beforeChange($event)"
+  >
+    <ngb-panel title="DatabaseIntegrity" id="static-3">
+      <ng-template ngbPanelHeader let-opened="opened">
+        <button
+          ngbPanelToggle
+          class="btn btn-link mb-2"
+          placement="bottom"
+          ngbTooltip="Show/Hide Reports that interrogate database integrity"
+          container="body"
+        >
+          <i class="fas fa-chevron-down" *ngIf="!panelOpen[2]"></i>
+          <i class="fas fa-chevron-up" *ngIf="panelOpen[2]"></i>
+        </button>
+        <span>Database Integrity Checks</span>
+      </ng-template>
+      <ng-template ngbPanelContent>
+        <ul>
+          <li>
+            <a routerLink="deletedmembers"
+              >Deleted members who are not Contributing Ex-Members or Former
+              Members</a
+            >
+          </li>
+          <li>
+            <a routerLink="lapsedcem/36"
+              >Contributing Ex-Members who have not paid for 3 years.</a
+            >
+          </li>
+          <li>
+            <a routerLink="formermembers/12"
+              >Former Members who have paid in the last year</a
+            >
+          </li>
+          <li>
+            <a routerLink="oldformermembers/36"
+              >Old former members who are not yet anonymized</a
+            >
+          </li>
+        </ul>
+      </ng-template>
+    </ngb-panel>
+  </ngb-accordion>
+
+  <ngb-accordion
+    #acc4="ngbAccordion"
+    class="mb-2 col-sm-10"
+    (panelChange)="beforeChange($event)"
+    *ngIf="user.isAdmin"
+  >
+    <ngb-panel title="SecurityReports" id="static-4">
+      <ng-template ngbPanelHeader let-opened="opened">
+        <button
+          ngbPanelToggle
+          class="btn btn-link mb-2"
+          placement="bottom"
+          ngbTooltip="Show/Hide reports related to audit and security"
+          container="body"
+        >
+          <i class="fas fa-chevron-down" *ngIf="!panelOpen[3]"></i>
+          <i class="fas fa-chevron-up" *ngIf="panelOpen[3]"></i>
+        </button>
+        <span>Security & Audit</span>
+      </ng-template>
+      <ng-template ngbPanelContent>
+        <ul>
+          <li class="text-muted">List members by update date (TO DO)</li>
+          <li>
+            <a routerLink="/users/suspended/true">List of suspended users</a>
+          </li>
+        </ul>
+      </ng-template>
+    </ngb-panel>
+  </ngb-accordion>
+</div>
