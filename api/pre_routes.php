@@ -76,11 +76,15 @@ $router->before('POST|PUT|DELETE|PATCH', '/.*', function() {
 
         // Allow user to maintain own data
         if  (!$jwt->isAdmin && !preg_match('/user\/\d+/', $path)){
-            http_response_code(401);  
-            echo json_encode(
-                array("message" => "Must be an admin.")
-            );
-            exit(1);
+
+            // One exception: normal users can create and update takings data
+            if (!Headers::path_is_takings_dataentry($path)) {
+                http_response_code(401);  
+                echo json_encode(
+                    array("message" => "Must be an admin.")
+                );
+                exit(1);
+            }
         }
     }
 });

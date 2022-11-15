@@ -34,6 +34,22 @@ class Headers
         return preg_match('/^auth/', $path);
     }
 
+    // Return 'true' if the path is either of these tow routes:
+    // POST 'takings/'
+    // PUT  'takings/(\d+)'
+    public static function path_is_takings_dataentry($path = '')
+    {
+        if (empty($path)) {
+            $path = Headers::stripped_path();
+        }
+
+        $method = $_SERVER['REQUEST_METHOD'];
+        $value = preg_match('/^takings\/(\d+)/', $path);
+
+        return ($method === 'POST' && preg_match('/^takings/', $path)) ||
+            ($method === 'PUT' && preg_match('/^takings\/(\d+)/', $path));
+    }
+
     // Return 'true' if the path starts with 'user'
     public static function path_is_user($path = '')
     {
@@ -42,11 +58,6 @@ class Headers
         }
 
         return preg_match('/^user/', $path);
-    }
-
-    public static function path_is_user_update($path)
-    {
-        return false;
     }
 
     private static function cors_headers()
