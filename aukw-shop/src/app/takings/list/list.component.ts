@@ -1,13 +1,12 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { formatDate } from '@angular/common';
 import {
   AlertService,
   AuthenticationService,
   TakingsService,
 } from '@app/_services';
 import { ApiMessage, TakingsSummary, User } from '@app/_models';
-import { from, catchError, EMPTY, of, delay, Observable } from 'rxjs';
-import { map, mergeMap, scan, switchMap, concatMap } from 'rxjs/operators';
+import { from, of } from 'rxjs';
+import { concatMap } from 'rxjs/operators';
 
 @Component({ templateUrl: 'list.component.html' })
 export class TakingsListComponent implements OnInit {
