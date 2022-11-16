@@ -61,8 +61,9 @@ export class TakingsListComponent implements OnInit {
         concatMap((t: TakingsSummary) => {
           t.isUpdating = true;
 
-          return this.delayReply(t.id).pipe(
-            concatMap((msg: any) => {
+          return this.takingsService
+          .addToQuickbooks(t.id).pipe(
+            concatMap((msg: ApiMessage) => {
               t.quickbooks = true;
               t.isUpdating = false;
               this.alertService.success(msg.message, {
