@@ -45,13 +45,6 @@ export class TakingsListComponent implements OnInit {
     }
   }
 
-  delayReply(id: number) {
-    const msg: ApiMessage = new ApiMessage();
-    msg.id = id;
-    msg.message = 'Item ' + id + ' saved.';
-    console.log(msg.message);
-    return this.takingsService.patchQuickbooks(id, true).pipe(delay(250));
-  }
 
   addAllToQuickbooks() {
     if (!this.takingslistNotInQB || !this.takingslistNotInQB.length) return;
