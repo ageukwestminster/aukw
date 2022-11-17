@@ -139,4 +139,12 @@ $router->mount('/user', function () use ($router) {
     $router->put('/(\d+)', 'UserCtl@update');
 });
 
+/***************/
+/* Report Routes */
+/***************/
+$router->mount('/reports', function () use ($router) {
+
+    $router->get('/profitandloss', 'ReportCtl@profit_and_loss');
+});
+
 

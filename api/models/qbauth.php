@@ -5,6 +5,7 @@ namespace Models;
 use QuickBooksOnline\API\DataService\DataService;
 use QuickBooksOnline\API\Core\OAuth\OAuth2\OAuth2LoginHelper;
 use QuickBooksOnline\API\Core\OAuth\OAuth2\OAuth2AccessToken;
+use QuickBooksOnline\API\Core\ServiceContext;
 
 use Models\JWTWrapper;
 use Models\QuickbooksToken;
@@ -214,6 +215,21 @@ class QuickbooksAuth{
         $this->dataService->updateOAuth2Token($accessToken);
     
         return $this->dataService;
+    }
+
+    public function getServiceContext(){
+
+        $settings = array(
+            'auth_mode' => 'oauth2',
+            'ClientID' => $this->config['ClientID'],
+            'ClientSecret' => $this->config['ClientSecret'],
+            'QBORealmID' => $this->config['QBORealmID'],
+            'accessTokenKey' => $this->tokenModel->accesstoken,
+            'refreshTokenKey' => $this->tokenModel->refreshtoken,
+            'baseUrl' => "Production"
+        );
+
+        return ServiceContext::ConfigureFromPassedArray($settings);
     }
 
     private function store_tokens_in_database($accessTokenObj){
