@@ -9,10 +9,10 @@
 </td>
 <td style="white-space: nowrap">
   <div class="row">
-    <button
-      routerLink="edit/{{ takings.id }}"
+    <button      
       class="btn btn-sm btn-primary mr-1"
-      [disabled]="takings.isUpdating"
+      [disabled]="(takings.isUpdating||takings.quickbooks) && !user.isAdmin"
+      routerLink="edit/{{ takings.id }}"
     >
       <span
         *ngIf="takings.isUpdating"

@@ -23,7 +23,7 @@ export class TakingsListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.takingsService.getSummary(1).subscribe((takingslist) => {
+    this.takingsService.getSummary(1).subscribe((takingslist: TakingsSummary[]) => {
       this.takingslist = takingslist;
       this.takingslistNotInQB = this.takingslist.filter(
         (x) => x.quickbooks == false

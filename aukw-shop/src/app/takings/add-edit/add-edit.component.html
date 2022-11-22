@@ -67,10 +67,19 @@
       </div>
     </div>
   </div>
+
   <div class="w-100"></div>
 
   <!-- Department Sales -->
   <div class="form-row mb-1">
+    <div *ngIf="f.quickbooks.value">
+      <label for="qbWarning"
+      [ngStyle]="{'color': 'red'}"
+        ><small
+          >Note: These values have already been uploaded to QB</small
+        ></label
+      >
+    </div>
     <div class="input-group mb-1">
       <span class="input-group-text col-4" id="clothing-label">Clothing</span>
       <div class="card p-2 col">
