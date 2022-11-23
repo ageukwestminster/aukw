@@ -10,7 +10,7 @@ use DateTime;
 class QuickbooksJournal{
 
 
-  private $zero_rated_taxcode = [
+  /*private $zero_rated_taxcode = [
     "value" => 4    
   ];
   private $zero_rated_taxrate = [
@@ -59,10 +59,10 @@ class QuickbooksJournal{
   private $vat_liability_account = [
     "value" => 153,
     "name" => "VAT:VAT Liability"
-  ];
+  ];*/
 
   public $id;
-  public $date;
+  /*public $date;
   public $donations;
   public $cashDiscrepency;
   public $creditCards;
@@ -72,7 +72,7 @@ class QuickbooksJournal{
   public $sales;
   public $cashToCharity;
   public $shopid; 
-  public $privatenote;  
+  public $privatenote;*/
 
   public function readOne(){
 
@@ -95,7 +95,7 @@ class QuickbooksJournal{
       }
   }
 
-
+/*
   public function create(){
 
     $docnumber = (new DateTime($this->date))->format('Ymd') . 'H'; //'H' is short for Harrow Road
@@ -190,5 +190,5 @@ class QuickbooksJournal{
         "ClassRef" => $class
       ]
     ));
-  }
+  }*/
 }

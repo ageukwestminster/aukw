@@ -87,12 +87,6 @@ $router->mount('/qb', function () use ($router) {
     // the normal QB website but it can been seen in Audit Log.
     // It is not the DocNumber which can be seen on the website.
     $router->get('/journal/(\w+)', 'JournalCtl@read_one');
-    $router->post('/journal', 'JournalCtl@create');
-     // The param is the takingsid value in the takings table in MySQL dB
-     $router->post('/journal/takings/(\d+)', 'JournalCtl@create_from_takings');
-         // take action on takings journal; Only 'create_all' implemented so far.
-    // Create All adds to QB any takings which has Quickbooks=0 in the mariaDB
-    $router->patch('/journal/takings/', 'JournalCtl@patch');
 
     // The param is the Quickbooks Journal Id. This number is not easily seen on 
     // the normal QB website but it can been seen in Audit Log.
