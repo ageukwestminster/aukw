@@ -9,9 +9,9 @@
 </td>
 <td style="white-space: nowrap">
   <div class="row">
-    <button      
+    <button
       class="btn btn-sm btn-primary mr-1"
-      [disabled]="(takings.isUpdating||takings.quickbooks) && !user.isAdmin"
+      [disabled]="(takings.isUpdating || takings.quickbooks) && !user.isAdmin"
       routerLink="edit/{{ takings.id }}"
     >
       <span

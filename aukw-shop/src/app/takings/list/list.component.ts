@@ -5,13 +5,14 @@ import {
   TakingsService,
 } from '@app/_services';
 import { ApiMessage, TakingsSummary, User } from '@app/_models';
-import { from, of } from 'rxjs';
-import { concatMap } from 'rxjs/operators';
+import { from, Observable, of, merge, map } from 'rxjs';
+import { concatMap, switchMap, reduce } from 'rxjs/operators';
 
 @Component({ templateUrl: 'list.component.html' })
 export class TakingsListComponent implements OnInit {
   takingslist!: TakingsSummary[];
   takingslistNotInQB!: TakingsSummary[];
+  average$!: Observable<number>;
   user!: User;
 
   constructor(
@@ -23,7 +24,30 @@ export class TakingsListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.takingsService.getSummary(1).subscribe((takingslist: TakingsSummary[]) => {
+    const takings$: Observable<TakingsSummary[]> =
+      this.takingsService.getSummary(1);
+
+    this.average$ = takings$.pipe(
+      // switchMap converts Observable<TakingSummary[]> (complex object)
+      // to Observable<number> (daily sales)
+      switchMap((dataArray: TakingsSummary[]) => {
+        const obs = dataArray.map((x) => {
+          return of(x.daily_net_sales);
+        });
+        return merge(...obs);
+      }),
+      // reduce calculates total sum & count
+      reduce(
+        (prev: { sum: number; count: number }, current) => {
+          return { sum: prev.sum + current, count: prev.count + 1 };
+        },
+        { sum: 0, count: 0 }
+      ),
+      // map calcualtes average
+      map((x) => x.sum / x.count)
+    );
+
+    takings$.subscribe((takingslist: TakingsSummary[]) => {
       this.takingslist = takingslist;
       this.takingslistNotInQB = this.takingslist.filter(
         (x) => x.quickbooks == false
@@ -44,7 +68,6 @@ export class TakingsListComponent implements OnInit {
     }
   }
 
-
   addAllToQuickbooks() {
     if (!this.takingslistNotInQB || !this.takingslistNotInQB.length) return;
 
@@ -53,8 +76,7 @@ export class TakingsListComponent implements OnInit {
         concatMap((t: TakingsSummary) => {
           t.isUpdating = true;
 
-          return this.takingsService
-          .addToQuickbooks(t.id).pipe(
+          return this.takingsService.addToQuickbooks(t.id).pipe(
             concatMap((msg: ApiMessage) => {
               t.quickbooks = true;
               t.isUpdating = false;
