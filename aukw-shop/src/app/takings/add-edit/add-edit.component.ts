@@ -96,7 +96,7 @@ export class TakingsAddEditComponent implements OnInit {
       volunteer_expenses: [''],
       cash_difference: [''],
       comments: [''],
-      quickbooks: [{ value: 1, disabled: true }],
+      quickbooks: [{ value: 0, disabled: true }],
     });
 
     this.subscription.add(
