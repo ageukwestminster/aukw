@@ -18,10 +18,6 @@ import { SalesListComponent } from './sales-list';
     SharedModule,
     NgbModule,
   ],
-  declarations: [
-    ReportsComponent,
-    ReportsLayoutComponent,
-    SalesListComponent,
-  ],
+  declarations: [ReportsComponent, ReportsLayoutComponent, SalesListComponent],
 })
 export class ReportsModule {}
