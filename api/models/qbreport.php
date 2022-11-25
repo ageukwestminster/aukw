@@ -30,7 +30,7 @@ class QuickbooksReport{
         }
   
         $reportService->setStartDate($this->start);
-        $reportService->setEndDate($this->start);
+        $reportService->setEndDate($this->end);
 
         $profitAndLossReport = $reportService->executeReport(ReportName::PROFITANDLOSS);
 

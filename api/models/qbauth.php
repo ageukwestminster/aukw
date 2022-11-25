@@ -154,7 +154,6 @@ class QuickbooksAuth{
     public function prepare(){
 
         $this->tokenModel = new QuickbooksToken();
-        $this->tokenModel->iduser = $this->config['iduser'];
         $this->tokenModel->read();
 
         // Is the refresh token still valid?
