@@ -216,7 +216,7 @@
 
   <div class="row mb-2"></div>
 
-  <div *ngIf="!isUserAdd">
+  <div *ngIf="!isUserAdd && user.isAdmin">
     <h3 class="pt-3">Quickbooks Connection</h3>
     <p>
       Quickbooks is the software we use to account for our profit and loss. A
@@ -224,10 +224,7 @@
       system. It must be authorised by one of the finance team and it is then
       used to export daily takings data to our online accounting software.
     </p>
-    <div *ngIf="!user.isAdmin">
-      <p>This feature is only available to admin users.</p>
-    </div>
-    <div *ngIf="user.isAdmin">
+    <div>
       <div *ngIf="qbconn && qbconn.refreshExpiry">
         <p>Your connection expires on {{ qbconn.refreshExpiry }}.</p>
       </div>
@@ -245,17 +242,6 @@
         ></span>
         Make QB Connection
       </button>
-      <!--<button
-          (click)="makeQBConnection()"
-          class="btn btn-sm btn-warning mr-1  mb-1"
-          *ngIf="qbconn && qbconn.refreshExpiry"
-          >
-            <span
-              *ngIf="loading"
-              class="spinner-border spinner-border-sm mr-1"
-            ></span>
-            Force Re-Auth of QB Connection
-            </button>-->
     </div>
   </div>
 </form>
