@@ -19,7 +19,7 @@ import {
   QBConnectionDetailsService,
 } from '@app/_services';
 import { MustMatch } from '@app/_helpers';
-import { ApiMessage, QBConnectionDetails, Shop, User, UserFormMode } from '@app/_models';
+import { QBConnectionDetails, Shop, User, UserFormMode } from '@app/_models';
 
 @Component({ templateUrl: 'add-edit.component.html' })
 export class UserAddEditComponent implements OnInit {
@@ -113,6 +113,7 @@ export class UserAddEditComponent implements OnInit {
     }
   }
 
+  //
   private refreshQBConnectionDetails(conn: any) {
     this.qbconn = new QBConnectionDetails();
     if (conn && conn.refreshtokenexpiry) {
@@ -122,8 +123,7 @@ export class UserAddEditComponent implements OnInit {
       );
       const nowDateAndTime = new Date();
       if (tokenExpiry > nowDateAndTime) {
-        this.qbconn.refreshExpiry =
-          tokenExpiry.toLocaleDateString('en-GB');
+        this.qbconn.refreshExpiry = tokenExpiry.toLocaleDateString('en-GB');
       }
     }
   }
@@ -195,27 +195,31 @@ export class UserAddEditComponent implements OnInit {
       .add(() => (this.loading = false));
   }
 
+  // Connect the QB company file to this app
   makeQBConnection() {
     this.qbConnDetsService.getAuthUri().subscribe((uri: any | null) => {
       const qbauthuri = new QBConnectionDetails(uri);
       if (qbauthuri && qbauthuri.authUri) {
+        // Open the QB Auth uri in a new tab or window
         this.windowHandle = window.open(qbauthuri.authUri);
       }
     });
     return false;
   }
 
+  // Disconnect the QB Company file from this app
   revokeQBConnection() {
-    this.qbConnDetsService.revokeQBConnection()
-    .pipe(
-      switchMap(() => {                
-        return this.qbConnDetsService.getDetails();
-      })
-    )
-    .subscribe((conn: any | null) => {
-      this.refreshQBConnectionDetails(conn);
-      this.alertService.success('QB Connection deleted');
-    });
+    this.qbConnDetsService
+      .revokeQBConnection()
+      .pipe(
+        switchMap(() => {
+          return this.qbConnDetsService.getDetails();
+        })
+      )
+      .subscribe((conn: any | null) => {
+        this.refreshQBConnectionDetails(conn);
+        this.alertService.success('QB Connection deleted');
+      });
     return false;
   }
 }
