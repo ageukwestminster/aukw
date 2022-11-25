@@ -7,7 +7,6 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { EventManager } from '@angular/platform-browser';
 
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -20,7 +19,7 @@ import {
   QBConnectionDetailsService,
 } from '@app/_services';
 import { MustMatch } from '@app/_helpers';
-import { QBConnectionDetails, Shop, User, UserFormMode } from '@app/_models';
+import { ApiMessage, QBConnectionDetails, Shop, User, UserFormMode } from '@app/_models';
 
 @Component({ templateUrl: 'add-edit.component.html' })
 export class UserAddEditComponent implements OnInit {
@@ -43,8 +42,7 @@ export class UserAddEditComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private shopService: ShopService,
     private qbConnDetsService: QBConnectionDetailsService,
-    private location: Location,
-    private eventManager: EventManager
+    private location: Location
   ) {
     this.user = this.authenticationService.userValue;
     this.shops$ = this.shopService.getAll();
@@ -105,24 +103,28 @@ export class UserAddEditComponent implements OnInit {
         .pipe(
           switchMap((u: User) => {
             this.form.patchValue(u);
-            return this.qbConnDetsService.getById(u.id);
+            return this.qbConnDetsService.getDetails();
           })
         )
         .subscribe((conn: any | null) => {
-          this.qbconn = new QBConnectionDetails();
-          if (conn && conn.refreshtokenexpiry) {
-            const t: string[] = conn.refreshtokenexpiry.split(/[- :]/);
-            const tokenExpiry = new Date(
-              Date.UTC(+t[0], +t[1] - 1, +t[2], +t[3], +t[4], +t[5])
-            );
-            const nowDateAndTime = new Date();
-            if (tokenExpiry > nowDateAndTime) {
-              this.qbconn.refreshExpiry =
-                tokenExpiry.toLocaleDateString('en-GB');
-            }
-          }
+          this.refreshQBConnectionDetails(conn);
           this.loading = false;
         });
+    }
+  }
+
+  private refreshQBConnectionDetails(conn: any) {
+    this.qbconn = new QBConnectionDetails();
+    if (conn && conn.refreshtokenexpiry) {
+      const t: string[] = conn.refreshtokenexpiry.split(/[- :]/);
+      const tokenExpiry = new Date(
+        Date.UTC(+t[0], +t[1] - 1, +t[2], +t[3], +t[4], +t[5])
+      );
+      const nowDateAndTime = new Date();
+      if (tokenExpiry > nowDateAndTime) {
+        this.qbconn.refreshExpiry =
+          tokenExpiry.toLocaleDateString('en-GB');
+      }
     }
   }
 
@@ -200,7 +202,20 @@ export class UserAddEditComponent implements OnInit {
         this.windowHandle = window.open(qbauthuri.authUri);
       }
     });
-    //this.eventManager.addEventListener('document', 'click', () => console.log(this.eventManager.getZone()));
+    return false;
+  }
+
+  revokeQBConnection() {
+    this.qbConnDetsService.revokeQBConnection()
+    .pipe(
+      switchMap(() => {                
+        return this.qbConnDetsService.getDetails();
+      })
+    )
+    .subscribe((conn: any | null) => {
+      this.refreshQBConnectionDetails(conn);
+      this.alertService.success('QB Connection deleted');
+    });
     return false;
   }
 }
