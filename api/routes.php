@@ -108,8 +108,7 @@ $router->mount('/qb', function () use ($router) {
     $router->delete('/', 'QuickbooksCtl@oauth2_revoke');
 
     // Retrieve details of the connection to QB (if any)
-    // The param is the MariaDB id of the user
-    $router->get('/connection/(\d+)', 'QBTokenCtl@read_one');
+    $router->get('/connection', 'QBTokenCtl@read_one');
 });
 
 /***************/

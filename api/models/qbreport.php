@@ -11,7 +11,7 @@ class QuickbooksReport{
 
     public $start;
     public $end;
-    public $sortbycolumn;
+    public $summarizeColumn;
 
     public function profitAndLoss(){
 
@@ -31,6 +31,7 @@ class QuickbooksReport{
   
         $reportService->setStartDate($this->start);
         $reportService->setEndDate($this->end);
+        $reportService->setSummarizeColumnBy($this->summarizeColumn);
 
         $profitAndLossReport = $reportService->executeReport(ReportName::PROFITANDLOSS);
 

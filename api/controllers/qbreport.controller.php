@@ -14,6 +14,7 @@ class ReportCtl{
 
     $model->start = '2021-10-01';
     $model->end = '2022-09-30';
+    $model->summarizeColumn = "Month";
 
     echo json_encode($model->profitAndLoss(), JSON_NUMERIC_CHECK);
   }
