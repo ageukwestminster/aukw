@@ -11,7 +11,7 @@ const authUrl = `${environment.apiUrl}/qb/auth`;
 export class QBConnectionDetailsService {
   constructor(private http: HttpClient) {}
 
-  getById(userid: number) {
+  getDetails() {
     return this.http.get<QBConnectionDetails>(`${baseUrl}/${userid}`);
   }
 
