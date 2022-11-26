@@ -26,6 +26,7 @@ class TakingsCtl{
     echo json_encode($model->read_by_shop($shopid), JSON_NUMERIC_CHECK);
   }
 
+  // The single Takings that is most recent
   public static function read_most_recent($shopid){  
 
     $model = new \Models\Takings();
@@ -38,6 +39,13 @@ class TakingsCtl{
     $model = new \Models\Takings();
 
     echo json_encode($model->summary($shopid), JSON_NUMERIC_CHECK);
+  }
+
+  public static function salesList($shopid, $numdatapoints = 100){  
+
+    $model = new \Models\Takings();
+
+    echo json_encode($model->salesList($shopid, $numdatapoints), JSON_NUMERIC_CHECK);
   }
 
   public static function create(){

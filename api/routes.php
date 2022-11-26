@@ -54,6 +54,9 @@ $router->mount('/takings', function () use ($router) {
     // Show takings data for the last 90 days for a given shop
     $router->get('/summary/shop/(\d+)', 'TakingsCtl@summary');
 
+    // Show takings data for the last 'datapoints' days for a given shop
+    $router->get('/saleslist/shop/(\d+)/datapoints/(\d+)', 'TakingsCtl@salesList');
+
     // Sample body : { "quickbooks": 0 } ... or ... { "quickbooks": 1 }
     $router->patch('/(\d+)', 'TakingsCtl@patch');
 });

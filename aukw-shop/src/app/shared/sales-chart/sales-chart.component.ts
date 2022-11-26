@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import { SalesChartData } from '@app/_models';
 import { SummaryService } from '@app/_services';
-import { from, map, reduce } from 'rxjs';
 import { merge, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
@@ -18,6 +17,9 @@ export class SalesChartComponent implements OnInit {
     },
     subtitle: {
       text: 'Compared To Avg of Last 30 days',
+    },
+    credits: {
+      enabled: false,
     },
     yAxis: {
       title: {

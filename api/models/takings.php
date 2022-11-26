@@ -45,7 +45,7 @@ class Takings{
     public $timestamp;
     public $quickbooks;
 
-    // Show takings data for the last 90 days for a given shop
+    // Show takings data for the last 100 trading days for a given shop
     public function summary($shopid){
         $query = "SELECT
                     takingsid, `date`, t.shopid, s.`name` as shopname, 
@@ -62,7 +62,7 @@ class Takings{
                     " . $this->table_name . " t
                     LEFT JOIN shop s ON t.shopid = s.id
                     WHERE t.shopid = :shopid AND t.`date` <= NOW()
-                    ORDER BY t.`date` DESC LIMIT 31
+                    ORDER BY t.`date` DESC LIMIT 100
                     ";
         
         // prepare query statement
@@ -113,6 +113,53 @@ class Takings{
 
         return $item_arr;
     }
+
+        // Return an array of net saless data for the last numdatapoints days
+        public function salesList($shopid, $numdatapoints){
+            $query = "SELECT * FROM (SELECT UNIX_TIMESTAMP(`date`)*1000 as sales_date,
+                        (clothing+brica+books+linens+donations+other+rag-operating_expenses-volunteer_expenses-other_adjustments+cash_difference-donations) 
+                           as total_after_expenses_and_donations
+                        FROM
+                        " . $this->table_name . " t
+                        WHERE t.shopid = :shopid AND t.`date` <= NOW()
+                        ORDER BY t.`date` DESC LIMIT :numdatapoints)
+                        AS tbl ORDER BY sales_date
+                        ";
+            
+            // prepare query statement
+            $stmt = $this->conn->prepare( $query );
+    
+            // bind id of product to be updated
+            $stmt->bindParam(":shopid", $shopid, PDO::PARAM_INT);
+            $stmt->bindParam(":numdatapoints", $numdatapoints, PDO::PARAM_INT);
+    
+            // execute query
+            $stmt->execute();
+    
+            $num = $stmt->rowCount();
+    
+            //$date_arr=array();
+            $sales_arr=array();
+    
+            // check if more than 0 record found
+            if($num>0){
+                // retrieve our table contents
+                // fetch() is faster than fetchAll()
+                // http://stackoverflow.com/questions/2770630/pdofetchall-vs-pdofetch-in-a-loop
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                    // extract row
+                    // this will make $row['name'] to
+                    // just $name only
+                    extract($row);
+    
+                    //$date_arr[] = $row['sales_date'];
+                    $sales_arr[] = array($row['sales_date'], $row['total_after_expenses_and_donations']);
+                }
+            }
+    
+            //return array("dates" => $date_arr, "sales" => $sales_arr);
+            return $sales_arr;
+        }
 
     // Show takings data for the last 90 days for a given shop
     public function read_by_shop($shopid){

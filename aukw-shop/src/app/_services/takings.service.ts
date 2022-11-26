@@ -19,6 +19,13 @@ export class TakingsService {
     return this.http.get<TakingsSummary[]>(`${baseUrl}/summary/shop/${shopid}`);
   }
 
+  /* return an array of the numdatapoints most recent sales */
+  getSimpleSalesList(shopid: number, numdatapoints: number) {
+    return this.http.get<[number, number]>(
+      `${baseUrl}/saleslist/shop/${shopid}/datapoints/${numdatapoints}`
+    );
+  }
+
   getById(id: number) {
     return this.http.get<Takings>(`${baseUrl}/${id}`);
   }

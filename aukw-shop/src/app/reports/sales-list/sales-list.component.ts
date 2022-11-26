@@ -2,13 +2,10 @@ import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'sales-list',
-  templateUrl: './sales-list.component.html'
+  templateUrl: './sales-list.component.html',
 })
 export class SalesListComponent implements OnInit {
+  constructor() {}
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

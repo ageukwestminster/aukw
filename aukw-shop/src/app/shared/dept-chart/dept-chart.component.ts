@@ -6,6 +6,7 @@ import { DepartmentSalesChartData } from '@app/_models';
 /* from https://www.highcharts.com/blog/tutorials/highcharts-and-angular-7/ */
 declare var require: any;
 let Boost = require('highcharts/modules/boost');
+let Histogram = require('highcharts/modules/histogram-bellcurve');
 let noData = require('highcharts/modules/no-data-to-display');
 let More = require('highcharts/highcharts-more');
 let Accessibility = require('highcharts/modules/accessibility');
@@ -14,9 +15,8 @@ let Exporting = require('highcharts/modules/exporting');
 Boost(Highcharts);
 noData(Highcharts);
 More(Highcharts);
-noData(Highcharts);
+Histogram(Highcharts);
 Accessibility(Highcharts);
-noData(Highcharts);
 Exporting(Highcharts);
 
 @Component({

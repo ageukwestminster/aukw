@@ -26,60 +26,19 @@
           <i class="fas fa-chevron-down" *ngIf="!panelOpen[0]"></i>
           <i class="fas fa-chevron-up" *ngIf="panelOpen[0]"></i>
         </button>
-        <span>Mailing Lists</span>
+        <span>Sales Drill-down</span>
       </ng-template>
       <ng-template ngbPanelContent>
         <ul>
           <li>
             <a routerLink="sales-list">Sales Data</a>
           </li>
-          <li>
-            <a routerLink="email-list">All email addressess</a>
-          </li>
-          <li>
-            <a routerLink="no-email-list"
-              >Postal addresses for non-email members</a
-            >
-          </li>
-          <li>
-            <a routerLink="map-list"
-              >Email/Address chosen by location (Google Maps))</a
-            >
-          </li>
-          <br />
-          <li>
-            Reports to investigate members excluded from lists:
-            <ul>
-              <li>
-                <a routerLink="noukaddress">Members without a UK address</a>
-              </li>
-              <li>
-                <a routerLink="invalidpostcodes"
-                  >Members with invalid UK postcodes</a
-                >
-              </li>
-              <li>
-                <a routerLink="invalidemails"
-                  >Members with invalid email addresses</a
-                >
-              </li>
-              <li>
-                <a routerLink="/members/postonhold/true"
-                  >Members with post on hold</a
-                >
-              </li>
-              <li>
-                <a routerLink="/members/emailonhold/true"
-                  >Members with email on hold</a
-                >
-              </li>
-            </ul>
-          </li>
         </ul>
       </ng-template>
     </ngb-panel>
   </ngb-accordion>
 
+  <!--
   <ngb-accordion
     #acc2="ngbAccordion"
     class="mb-2 col-sm-10"
@@ -180,7 +139,7 @@
         </ul>
       </ng-template>
     </ngb-panel>
-  </ngb-accordion>
+  </ngb-accordion>-->
 
   <ngb-accordion
     #acc4="ngbAccordion"
@@ -204,7 +163,7 @@
       </ng-template>
       <ng-template ngbPanelContent>
         <ul>
-          <li class="text-muted">List members by update date (TO DO)</li>
+          <!--<li class="text-muted">List members by update date (TO DO)</li>-->
           <li>
             <a routerLink="/users/suspended/true">List of suspended users</a>
           </li>
