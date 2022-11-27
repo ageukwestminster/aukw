@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import { SummaryService } from '@app/_services';
+
 import { MonthlySalesChartData } from '@app/_models';
+import { environment } from '@environments/environment';
+
 import { merge, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
@@ -97,7 +100,7 @@ export class MonthlySalesChartComponent implements OnInit {
   ngOnInit(): void {
     // First 5 lines convert Observable<MonthlySalesChartData[]> to Observable<MonthlySalesChartData>
     this.summaryService
-      .getMonthlySalesChartData(1)
+      .getMonthlySalesChartData(environment.HARROWROAD_SHOPID)
       .pipe(
         switchMap((dataArray: MonthlySalesChartData[]) => {
           const obs = dataArray.map((x) => {

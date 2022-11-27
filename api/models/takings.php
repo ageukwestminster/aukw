@@ -138,8 +138,12 @@ class Takings{
     
             $num = $stmt->rowCount();
     
-            //$date_arr=array();
             $sales_arr=array();
+            $sales_arr["average"] = 0;
+            $sales_arr["count"] = 0;
+            $sales_arr["data"]=array();
+    
+            $sum =0; // sum of daily sales as we loop over rows
     
             // check if more than 0 record found
             if($num>0){
@@ -151,13 +155,14 @@ class Takings{
                     // this will make $row['name'] to
                     // just $name only
                     extract($row);
-    
-                    //$date_arr[] = $row['sales_date'];
-                    $sales_arr[] = array($row['sales_date'], $row['total_after_expenses_and_donations']);
+                    $sales_arr["count"] = $sales_arr["count"]+1;
+                    $sum = $sum+$row['total_after_expenses_and_donations'];
+                    array_push($sales_arr["data"], array($row['sales_date'], $row['total_after_expenses_and_donations']));
                 }
             }
+
+            $sales_arr["average"] = $sum / $sales_arr["count"];
     
-            //return array("dates" => $date_arr, "sales" => $sales_arr);
             return $sales_arr;
         }
 

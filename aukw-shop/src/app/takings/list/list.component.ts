@@ -5,6 +5,8 @@ import {
   TakingsService,
 } from '@app/_services';
 import { ApiMessage, TakingsSummary, User } from '@app/_models';
+import { environment } from '@environments/environment';
+
 import { from, Observable, of, merge, map } from 'rxjs';
 import { concatMap, switchMap, reduce } from 'rxjs/operators';
 
@@ -25,7 +27,7 @@ export class TakingsListComponent implements OnInit {
 
   ngOnInit() {
     const takings$: Observable<TakingsSummary[]> =
-      this.takingsService.getSummary(1);
+      this.takingsService.getSummary(environment.HARROWROAD_SHOPID);
 
     this.average$ = takings$.pipe(
       // switchMap converts Observable<TakingSummary[]> (complex object)

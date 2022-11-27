@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '@environments/environment';
 import { ApiMessage, Takings, TakingsSummary } from '@app/_models';
 import { Observable } from 'rxjs';
+import { numberFormat } from 'highcharts';
 
 const baseUrl = `${environment.apiUrl}/takings`;
 
@@ -21,9 +22,11 @@ export class TakingsService {
 
   /* return an array of the numdatapoints most recent sales */
   getSimpleSalesList(shopid: number, numdatapoints: number) {
-    return this.http.get<[number, number]>(
-      `${baseUrl}/saleslist/shop/${shopid}/datapoints/${numdatapoints}`
-    );
+    return this.http.get<{
+      average: number;
+      count: number;
+      data: [number, number];
+    }>(`${baseUrl}/saleslist/shop/${shopid}/datapoints/${numdatapoints}`);
   }
 
   getById(id: number) {

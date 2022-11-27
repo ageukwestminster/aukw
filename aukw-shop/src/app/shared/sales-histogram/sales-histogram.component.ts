@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import { TakingsService } from '@app/_services';
+import { environment } from '@environments/environment';
 
 @Component({
   selector: 'sales-histogram',
@@ -8,11 +9,10 @@ import { TakingsService } from '@app/_services';
   styleUrls: ['./sales-histogram.component.css'],
 })
 export class SalesHistogramComponent implements OnInit {
-  private data: number[] = [];
 
   public options: Highcharts.Options = {
     title: {
-      text: 'Histogram of Daily Sales',
+      text: 'Histogram of Net Daily Sales',
     },
 
     xAxis: [
@@ -29,7 +29,6 @@ export class SalesHistogramComponent implements OnInit {
         visible: false,
       },
       {
-        title: { text: 'Daily Sales £' },
         alignTicks: false,
       },
     ],
@@ -50,7 +49,7 @@ export class SalesHistogramComponent implements OnInit {
         accessibility: {
           point: {
             valueDescriptionFormat:
-              '{index}. {point.x:.3f} to {point.x2:.3f}, {point.y}.',
+              '{index}. {point.x:.2f} to {point.x2:.2f}, {point.y}.',
           },
         },
       },
@@ -79,13 +78,16 @@ export class SalesHistogramComponent implements OnInit {
         name: "Today's Sales",
         visible: true,
         type: 'scatter',
-        data: [[233.9, 233.9]],
+        data: [],
         id: 's2',
         marker: {
           radius: 10,
         },
         xAxis: 1,
         yAxis: 0,
+        tooltip: {
+          pointFormat: '',
+        },
       },
     ],
   };
@@ -93,10 +95,33 @@ export class SalesHistogramComponent implements OnInit {
   constructor(private takingsService: TakingsService) {}
 
   ngOnInit(): void {
-    this.takingsService.getSimpleSalesList(1, 250).subscribe({
-      next: (result: [number, number]) => {
+    const NUMDATAPOINTS = 250;
+    this.takingsService.getSimpleSalesList(environment.HARROWROAD_SHOPID, NUMDATAPOINTS).subscribe({
+      next: (result: {
+        average: number;
+        count: number;
+        data: [number, number];
+      }) => {
         if (this.options.series) {
-          this.options.series[1]['data'] = result;
+          if (result.data) {
+            this.options.series[1]['data'] = result.data;
+            const length = result.data.length;
+            const average = result.average;
+            if (
+              length &&
+              result.data[length - 1] &&
+              result.data[length - 1][1]
+            ) {
+              this.options.series[2]['data'] = [
+                [result.data[length - 1][1], NUMDATAPOINTS],
+              ];
+              this.options.series[2]['name'] =
+                "Today's Sales = £" + result.data[length - 1][1];
+              if (result.data[length - 1][1] < average) {
+                this.options.series[2]['color'] = 'red';
+              }
+            }
+          }
         }
       },
       complete: () => {
