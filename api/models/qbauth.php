@@ -60,6 +60,9 @@ class QuickbooksAuth{
         $this->tokenModel->read();
     }
 
+    /** Start the OAuth2 process to create a link between QuiockBooks and this app
+     * @return The Uri to follow to make the link plus instructions on what to do
+     */
     public function begin() {
 
         $authUri=array();
@@ -83,6 +86,7 @@ class QuickbooksAuth{
         );
     }
 
+    /** Called from Quickbooks API servers as part of the OAuth2 process */
     public function callback(){
 
         $this->init();
@@ -115,6 +119,9 @@ class QuickbooksAuth{
         return true;
       }
 
+      /**
+       * Refresh the QB access token from the refresh token
+       */
     public function refresh() {
 
         $this->init();
