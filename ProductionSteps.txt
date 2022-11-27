@@ -9,3 +9,4 @@ PHP - Config.php
 
 HTACCESS
 * Ensure all ENV keys are in place
+* Ensure .htaccess has correct instructions for redirection
