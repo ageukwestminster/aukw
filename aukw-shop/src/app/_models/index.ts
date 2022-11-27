@@ -6,6 +6,7 @@ export * from './date-range.enum';
 export * from './department.enum';
 export * from './form-mode.enum';
 export * from './qb-connection-details';
+export * from './qb-auth-uri';
 export * from './role';
 export * from './shop';
 export * from './summary';

@@ -1,9 +1,13 @@
 export class QBConnectionDetails {
-  authUri: string | null;
-  refreshExpiry: string | null;
+  accesstoken: string;
+  accesstokenexpiry: string;
+  refreshtoken: string;
+  refreshtokenexpiry: string;
 
   constructor(obj?: any) {
-    this.refreshExpiry = (obj && obj.refreshExpiry) || null;
-    this.authUri = (obj && obj.authUri) || null;
+    this.refreshtokenexpiry = (obj && obj.refreshtokenexpiry) || null;
+    this.accesstoken = (obj && obj.accesstoken) || null;
+    this.accesstokenexpiry = (obj && obj.accesstokenexpiry) || null;
+    this.refreshtoken = (obj && obj.refreshtoken) || null;
   }
 }
