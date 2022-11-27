@@ -37,7 +37,7 @@ Config::write('db.host', '192.168.1.44');
 Config::write('db.port', '3306');
 Config::write('db.name', 'dailytakings2');
 Config::write('db.user', 'shop');
-Config::write('db.password', '?Efa*6tr7wRe');
+Config::write('db.password', 'DB_PASSWORD');
 
 // number of allowed password attempts
 Config::write('password_attempts', 5);
@@ -55,8 +55,8 @@ Config::write('token.cookiesecure', false);
 // Quickbooks SDKsettings
 //PRODUCTION COMPANY
 // Todo: move id & secret to variable in .htaccess
-Config::write('qb.clientid', 'ABfKBoCDvYwfccfV7X48SxjS9DewKuKXSujBMjSHB7X9BUcoyi');
-Config::write('qb.clientsecret', 'Cv8mgBHgP4uwkw3NlIQ0ONxHlKQaIdkalIDYDT60');
+Config::write('qb.clientid', 'QB_CLIENT_ID');
+Config::write('qb.clientsecret', 'QB_CLIENT_SECRET');
 Config::write('qb.redirecturl', 'https://8219-86-142-147-138.ngrok.io/api/auth/callback');
 Config::write('qb.realmid', '9130350604308576');
 Config::write('qb.enablelog', false);

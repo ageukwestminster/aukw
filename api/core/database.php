@@ -30,7 +30,7 @@ class Database{
                 $this->conn = new PDO("mysql:host=" . $host . ";port=" . 
                                             $port. ";dbname=" . 
                                             Config::read('db.name') . ";charset=utf8"
-                                            , Config::read('db.user'), Config::read('db.password'));
+                                            , Config::read('db.user'), getenv(Config::read('db.password')));
 
                 // From https://stackoverflow.com/a/60496/6941165
                 $this->conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
