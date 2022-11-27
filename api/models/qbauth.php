@@ -86,7 +86,9 @@ class QuickbooksAuth{
         );
     }
 
-    /** Called from Quickbooks API servers as part of the OAuth2 process */
+    /** Called from Quickbooks API servers as part of the OAuth2 process 
+     * @return true if success
+    */
     public function callback(){
 
         $this->init();
@@ -121,6 +123,7 @@ class QuickbooksAuth{
 
       /**
        * Refresh the QB access token from the refresh token
+       * @return true if success
        */
     public function refresh() {
 
@@ -141,7 +144,8 @@ class QuickbooksAuth{
     }
 
     /**
-     * Break the link between this app and Quickbooks.
+     * Break the link between this app and Quickbooks
+     * @return true if success
      */
     public function revoke(){
 
@@ -157,6 +161,7 @@ class QuickbooksAuth{
 
     /**
      * Prepare the dataService object for API calls
+     * @return true if success
      */
     public function prepare(){
 
