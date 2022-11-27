@@ -1,0 +1,7 @@
+List of Steps To Move To Production
+
+PHP
+* At top of Config.php change PHP error handling
+
+HTACCESS
+* Ensure all ENV keys are in place
