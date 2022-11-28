@@ -87,6 +87,13 @@
           <a class="btn btn-link">Refresh</a>
         </div>
       </div>
+
+        <sales-histogram [histogramChartData]="histogramChartData"></sales-histogram>
+        <!--<transactions-detail
+            [bankAccounts]="bankAccounts"
+            [apiDataRow]="selectedRow"
+          ></transactions-detail>-->
+
       <div class="row class">
         <div class="col-sm">
           <!--<table
@@ -136,16 +143,10 @@
                 </tr>
               </tbody>
             </table>-->
-          <p class="p-2">Click on a row to see transaction detail.</p>
+          <p class="p-2">Click on a row to see sales detail.</p>
         </div>
       </div>
     </form>
   </div>
 </div>
-<div class="card mt-4 col-sm-11">
-  <sales-histogram [histogramChartData]="histogramChartData"></sales-histogram>
-  <!--<transactions-detail
-      [bankAccounts]="bankAccounts"
-      [apiDataRow]="selectedRow"
-    ></transactions-detail>-->
-</div>
+

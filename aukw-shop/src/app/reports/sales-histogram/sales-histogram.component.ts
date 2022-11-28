@@ -31,19 +31,17 @@ export class SalesHistogramComponent implements OnInit {
     this.onDateRangeChanged(DateRangeEnum.THIS_YEAR);
   }
 
-  // convenience getters for easy access to form fields
+  /** Convenience getter for easy access to form fields */
   get f() {
     return this.form.controls;
   }
 
-  // Required so that the template can access the EnumS
-  // From https://stackoverflow.com/a/59289208
-  public get DateRange() {
-    return DateRangeEnum;
-  }
+  /** Required so that the template can access the Enum.
+  * Source: https://stackoverflow.com/a/59289208 */
+  readonly DateRange = DateRangeEnum;
 
-  /* Used to stop the keyvalues pipe re-arranging the order of the Enum */
-  /* From https://stackoverflow.com/a/52794221/6941165 */
+  /** Used to stop the keyvalues pipe re-arranging the order of the Enum. 
+   * Source: https://stackoverflow.com/a/52794221/6941165 */
   originalOrder = (
     a: KeyValue<string, DateRangeEnum>,
     b: KeyValue<string, DateRangeEnum>
