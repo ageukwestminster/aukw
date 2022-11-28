@@ -97,18 +97,24 @@ export class SalesHistogramComponent implements OnInit {
     ],
   };
 
-  constructor(private reportService: ReportService,
-    private dateRangeAdapter: DateRangeAdapter,
-    ) {}
+  constructor(
+    private reportService: ReportService,
+    private dateRangeAdapter: DateRangeAdapter
+  ) {}
 
   ngOnInit(): void {
     const YAXISPOSITION = 250;
 
-    let dtRng: DateRange =
-      this.dateRangeAdapter.enumToDateRange(DateRangeEnum.THIS_YEAR);
+    let dtRng: DateRange = this.dateRangeAdapter.enumToDateRange(
+      DateRangeEnum.THIS_YEAR
+    );
 
     this.reportService
-      .getSalesHistogram(dtRng.startDate,dtRng.endDate,environment.HARROWROAD_SHOPID)
+      .getSalesHistogram(
+        dtRng.startDate,
+        dtRng.endDate,
+        environment.HARROWROAD_SHOPID
+      )
       .subscribe({
         next: (result: HistogramChartData) => {
           if (this.options.series) {
@@ -120,7 +126,6 @@ export class SalesHistogramComponent implements OnInit {
                 result.data[length - 1] &&
                 result.data[length - 1][1]
               ) {
-
                 this.options.series[2]['data'] = [
                   [result.data[length - 1][1], YAXISPOSITION],
                 ];
@@ -129,14 +134,23 @@ export class SalesHistogramComponent implements OnInit {
                 this.options.series[2]['name'] =
                   "Today's Sales = £" + result.data[length - 1][1];
 
-                // If today's sales are below average then set the 
-                // data colour to red
+                // If today's sales are below average then set the
+                // data colour to red and update the tooltip
                 if (result.data[length - 1][1] < result.average) {
                   this.options.series[2]['color'] = 'red';
+                  this.options.series[2].tooltip!.pointFormat =
+                    'Below average by £' +
+                    (result.average - result.data[length - 1][1]);
+                } else {
+                  this.options.series[2].tooltip!.pointFormat =
+                    'Above average by £' +
+                    (result.data[length - 1][1] - result.average);
                 }
 
                 //Add a subtitle
-                this.options.subtitle!.text = 'Average during period = £'+result.average,2;
+                (this.options.subtitle!.text =
+                  'Average during period = £' + result.average),
+                  2;
               }
             }
           }
