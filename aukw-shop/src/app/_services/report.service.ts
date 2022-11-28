@@ -12,10 +12,6 @@ export class ReportService {
 
   /** Provide the data necessary to create the Histogram chart */
   getSalesHistogram(start: string = '', end: string = '', shopID: number = 1) {
-    if (shopID == null) {
-      shopID = 1;
-    }
-
     return this.http.get<HistogramChartData>(
       `${baseUrl}/histogram?start=${start}&end=${end}&shopID=${shopID}`
     );
