@@ -61,13 +61,21 @@ export class MonthlySalesChartData {
 }
 
 export class HistogramChartData {
+  start: string;
+  end: string;
+  shopid: number;
   average: number;
   count: number;
   data: [number, number];
+  last: [string, number];
 
   constructor(obj?: any) {
+    this.start = (obj && obj.start) || null;
+    this.end = (obj && obj.end) || null;
+    this.shopid = (obj && obj.shopid) || null;
     this.average = (obj && obj.average) || null;
     this.count = (obj && obj.count) || null;
     this.data = (obj && obj.data) || null;
+    this.last = (obj && obj.last) || null;
   }
 }

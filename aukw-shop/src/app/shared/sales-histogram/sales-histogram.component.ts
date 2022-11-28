@@ -120,31 +120,34 @@ export class SalesHistogramComponent implements OnInit {
           if (this.options.series) {
             if (result.data) {
               this.options.series[1]['data'] = result.data;
-              const length = result.data.length;
-              if (
-                length &&
-                result.data[length - 1] &&
-                result.data[length - 1][1]
-              ) {
+              if (result.last) {
+                const lastSalesDate = new Date(result.last[0]);
+                const lastSalesAmount = result.last[1];
+
                 this.options.series[2]['data'] = [
-                  [result.data[length - 1][1], YAXISPOSITION],
+                  [lastSalesAmount, YAXISPOSITION],
                 ];
 
                 // Set a custom Series name
-                this.options.series[2]['name'] =
-                  "Today's Sales = £" + result.data[length - 1][1];
+                this.options.series[2]['name'] = this.isToday(lastSalesDate)
+                  ? "Today's Sales = £" + lastSalesAmount
+                  : 'Previous Sales = £' + lastSalesAmount;
 
                 // If today's sales are below average then set the
                 // data colour to red and update the tooltip
-                if (result.data[length - 1][1] < result.average) {
+                if (lastSalesAmount < result.average) {
                   this.options.series[2]['color'] = 'red';
                   this.options.series[2].tooltip!.pointFormat =
-                    'Below average by £' +
-                    (result.average - result.data[length - 1][1]);
+                    'Sales for ' +
+                    lastSalesDate.toDateString() +
+                    ' below average by £' +
+                    (result.average - lastSalesAmount);
                 } else {
                   this.options.series[2].tooltip!.pointFormat =
-                    'Above average by £' +
-                    (result.data[length - 1][1] - result.average);
+                    'Sales for ' +
+                    lastSalesDate.toDateString() +
+                    ' above average by £' +
+                    (lastSalesAmount - result.average);
                 }
 
                 //Add a subtitle
@@ -159,5 +162,15 @@ export class SalesHistogramComponent implements OnInit {
           Highcharts.chart('sales-histogram', this.options);
         },
       });
+  }
+
+  private isToday(date: Date) {
+    const today = new Date();
+
+    if (today.toDateString() === date.toDateString()) {
+      return true;
+    }
+
+    return false;
   }
 }
