@@ -3,13 +3,14 @@ import { DatePipe, Location } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
-  NgbCalendar,
   NgbDateAdapter,
   NgbDateParserFormatter,
   NgbDateStruct,
 } from '@ng-bootstrap/ng-bootstrap';
 
 import { Subscription } from 'rxjs';
+
+import { environment } from '@environments/environment';
 
 import {
   TakingsService,
@@ -40,7 +41,6 @@ export class TakingsAddEditComponent implements OnInit {
   user!: User;
   cashDifference = 0;
   minimumNextDate: NgbDateStruct = { year: 2000, month: 1, day: 1 };
-  readonly DEFAULT_SHOP_ID = 1; // Harrow Road
 
   sumOfNumber = 0;
   sumOfAmount = ''; // a string to allow easier rounding
@@ -74,7 +74,7 @@ export class TakingsAddEditComponent implements OnInit {
 
     this.form = this.formBuilder.group({
       date: [null],
-      shopid: [{ value: this.DEFAULT_SHOP_ID, disabled: true }],
+      shopid: [{ value: environment.HARROWROAD_SHOPID, disabled: true }],
       clothing_num: [''],
       brica_num: [''],
       books_num: [''],
@@ -123,7 +123,7 @@ export class TakingsAddEditComponent implements OnInit {
       // in the datePicker. We set a minimum date so that users can't add
       // easily add takings with duplicate dates
       this.takingsService
-        .getMostRecent(this.DEFAULT_SHOP_ID) // Find most recent Takings (usually yesterday's)
+        .getMostRecent(environment.HARROWROAD_SHOPID) // Find most recent Takings (usually yesterday's)
         .subscribe((x) => {
           let today = new Date();
           if (x.date) {
