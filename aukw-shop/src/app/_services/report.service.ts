@@ -17,7 +17,7 @@ export class ReportService {
     }
 
     return this.http.get<HistogramChartData>(
-      `${baseUrl}/histogram?start=${start}&end=${end}&bankID=${shopID}`
+      `${baseUrl}/histogram?start=${start}&end=${end}&shopID=${shopID}`
     );
   }
 }

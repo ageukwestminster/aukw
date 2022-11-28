@@ -60,13 +60,19 @@ export class MonthlySalesChartData {
   }
 }
 
+/**Stores data to build a histogram of net daily sales data */
 export class HistogramChartData {
   start: string;
   end: string;
+  /**'1' for Harrow Road, '2' for Church Street (now closed) */
   shopid: number;
   average: number;
   count: number;
-  data: [number, number];
+  /** An array of arrays. Each item array is made up of i) unix timestamp*1000 and ii) net sales.
+   *  Timestamp from MariaDB is multiplied by 1000 because timestamps in Javascript are milliseconds
+   */
+  data: [[number, number]];
+  /**The most recent sales numbers within the data series */
   last: [string, number];
 
   constructor(obj?: any) {

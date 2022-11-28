@@ -9,6 +9,7 @@ import { SharedModule } from '@app/shared/shared.module';
 import { ReportsLayoutComponent } from './layout.component';
 import { ReportsComponent } from './reports.component';
 import { SalesListComponent } from './sales-list';
+import { SalesHistogramComponent } from './sales-histogram';
 
 @NgModule({
   imports: [
@@ -18,6 +19,11 @@ import { SalesListComponent } from './sales-list';
     SharedModule,
     NgbModule,
   ],
-  declarations: [ReportsComponent, ReportsLayoutComponent, SalesListComponent],
+  declarations: [
+    ReportsComponent,
+    ReportsLayoutComponent,
+    SalesListComponent,
+    SalesHistogramComponent,
+  ],
 })
 export class ReportsModule {}

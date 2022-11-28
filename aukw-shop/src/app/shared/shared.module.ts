@@ -7,7 +7,7 @@ import { SalesChartComponent } from './sales-chart/sales-chart.component';
 import { DepartmentChartComponent } from './dept-chart/dept-chart.component';
 import { MoneyInputComponent } from './money-input/money-input.component';
 import { MonthlySalesChartComponent } from './monthly-sales-chart/monthly-sales-chart.component';
-import { SalesHistogramComponent } from './sales-histogram/sales-histogram.component';
+import { SalesHistogramChartComponent } from './sales-histogram/sales-histogram-chart.component';
 
 @NgModule({
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
@@ -17,7 +17,7 @@ import { SalesHistogramComponent } from './sales-histogram/sales-histogram.compo
     MoneyInputComponent,
     SalesChartComponent,
     MonthlySalesChartComponent,
-    SalesHistogramComponent,
+    SalesHistogramChartComponent,
   ],
   exports: [
     AlertComponent,
@@ -25,7 +25,7 @@ import { SalesHistogramComponent } from './sales-histogram/sales-histogram.compo
     MoneyInputComponent,
     MonthlySalesChartComponent,
     SalesChartComponent,
-    SalesHistogramComponent,
+    SalesHistogramChartComponent,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
