@@ -9,6 +9,10 @@ import { DateRange, DateRangeEnum } from '@app/_models';
 export class DateRangeAdapter {
   constructor() {}
 
+  customDateRange(start: Date, end: Date): DateRange {
+    return this.instantiateObj(start, end);
+  }
+
   enumToDateRange(value: DateRangeEnum): DateRange {
     /** Use 12pm (noon) so that BST -> Z time zone conversion won't affect date
      *  We make this conversion when using getISOString which converts times to Z
