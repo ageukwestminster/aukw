@@ -9,8 +9,8 @@ use DateTime;
 
 class QuickbooksReport{
 
-    public $start;
-    public $end;
+    public $startdate;
+    public $enddate;
     public $summarizeColumn;
 
     public function profitAndLoss(){
@@ -29,8 +29,8 @@ class QuickbooksReport{
             return;
         }
   
-        $reportService->setStartDate($this->start);
-        $reportService->setEndDate($this->end);
+        $reportService->setStartDate($this->startdate);
+        $reportService->setEndDate($this->enddate);
         $reportService->setSummarizeColumnBy($this->summarizeColumn);
 
         $profitAndLossReport = $reportService->executeReport(ReportName::PROFITANDLOSS);

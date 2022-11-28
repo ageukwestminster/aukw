@@ -15,7 +15,10 @@ class Report{
         $this->conn = \Core\Database::getInstance()->conn;
     }
 
-     // Return an array of net sales data for the last numdatapoints days
+     /**
+      * Get data to build a histogram chart from net daily sales. HighCharts date format
+      * is UNIX epoch in miliseconds
+      */
      public function dailySalesHistogram(){
         $query = "SELECT UNIX_TIMESTAMP(`date`)*1000 as sales_date,
                     (clothing+brica+books+linens+donations+other+rag-operating_expenses-volunteer_expenses-other_adjustments+cash_difference-donations) 
@@ -48,15 +51,8 @@ class Report{
 
         $sum =0; // sum of daily sales as we loop over rows
 
-        // check if more than 0 record found
         if($num>0){
-            // retrieve our table contents
-            // fetch() is faster than fetchAll()
-            // http://stackoverflow.com/questions/2770630/pdofetchall-vs-pdofetch-in-a-loop
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-                // extract row
-                // this will make $row['name'] to
-                // just $name only
                 extract($row);
                 $sales_arr["count"] = $sales_arr["count"]+1;
                 $sum = $sum+$row['total_after_expenses_and_donations'];
