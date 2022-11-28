@@ -59,3 +59,15 @@ export class MonthlySalesChartData {
     this.avg_linens = (obj && obj.avg_linens) || null;
   }
 }
+
+export class HistogramChartData {
+  average: number;
+  count: number;
+  data: [number, number];
+
+  constructor(obj?: any) {
+    this.average = (obj && obj.average) || null;
+    this.count = (obj && obj.count) || null;
+    this.data = (obj && obj.data) || null;
+  }
+}

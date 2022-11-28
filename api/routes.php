@@ -62,6 +62,14 @@ $router->mount('/takings', function () use ($router) {
 });
 
 /***************/
+/* Report Routes */
+/***************/
+$router->mount('/report', function () use ($router) {
+    $router->get('/histogram', 'ReportCtl@dailySalesHistogram');
+    $router->get('/profitandloss', 'QBReportCtl@profit_and_loss');
+});
+
+/***************/
 /* Shop Routes */
 /***************/
 $router->mount('/shop', function () use ($router) {
@@ -135,12 +143,5 @@ $router->mount('/user', function () use ($router) {
     $router->put('/(\d+)', 'UserCtl@update');
 });
 
-/***************/
-/* Report Routes */
-/***************/
-$router->mount('/reports', function () use ($router) {
-
-    $router->get('/profitandloss', 'ReportCtl@profit_and_loss');
-});
 
 

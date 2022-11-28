@@ -41,9 +41,30 @@ class TakingsCtl{
     echo json_encode($model->summary($shopid), JSON_NUMERIC_CHECK);
   }
 
-  public static function salesList($shopid, $numdatapoints = 100){  
+  public static function salesList($shopid){  
 
     $model = new \Models\Takings();
+
+    if(isset($_GET['start']) || isset($_GET['end'])) {
+      $start='';
+      $end='';
+      list($start, $end) = \Core\DatesHelper::sanitizeDateValues(
+                                  !isset($_GET['start']) ? '' : $_GET['start'], 
+                                  !isset($_GET['end']) ? '' : $_GET['end']
+                              );
+  
+      $model->startdate = $start;
+      $model->enddate = $end;
+  } else {
+      $model->startdate = '2000-01-01';
+      $model->enddate = date('Y-m-d');
+  }
+
+  if (isset($_GET['bankID']) && !empty($_GET['bankID'])) {
+      $model->bankID = $_GET['bankID'];
+  } else {
+      $model->bankID = 0;
+  }
 
     echo json_encode($model->salesList($shopid, $numdatapoints), JSON_NUMERIC_CHECK);
   }

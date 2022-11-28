@@ -2,6 +2,7 @@
 export * from './authentication.service';
 export * from './department.service';
 export * from './qb-connection-details.service';
+export * from './report.service';
 export * from './shop.service';
 export * from './summary.service';
 export * from './takings.service';

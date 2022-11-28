@@ -3,7 +3,7 @@
 namespace Controllers;
 
 
-class ReportCtl{
+class QBReportCtl{
 
   public static function profit_and_loss(){  
 
