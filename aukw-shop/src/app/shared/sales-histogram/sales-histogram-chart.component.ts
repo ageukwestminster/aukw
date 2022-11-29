@@ -162,10 +162,14 @@ export class SalesHistogramChartComponent implements OnInit, OnChanges {
                 100;
           }
 
+          //Add a title
+          this.options.title = {
+            text: 'Histogram of Net Daily Sales</br>' + this.histogramChartData.start + ' - ' + this.histogramChartData.end,
+          };
+
           //Add a subtitle
           (this.options.subtitle!.text =
-            'Average during period = £' + this.histogramChartData.average),
-            2;
+            'Average during period = £' + this.histogramChartData.average);
 
           // show the chart
           Highcharts.chart('sales-histogram', this.options);

@@ -84,57 +84,41 @@
           </div>
         </div>
         <div class="col-sm-auto p-0">
-          <a class="btn btn-link">Refresh</a>
+          <a class="btn btn-link" (click)="onRefreshPressed()">Refresh</a>
         </div>
       </div>
 
-        <sales-histogram [histogramChartData]="histogramChartData"></sales-histogram>
-        <!--<transactions-detail
-            [bankAccounts]="bankAccounts"
-            [apiDataRow]="selectedRow"
-          ></transactions-detail>-->
+      <sales-histogram [histogramChartData]="histogramChartData"></sales-histogram>
 
       <div class="row class">
         <div class="col-sm">
-          <!--<table
+          <p class="p-2" *ngIf="histogramChartData">Click on a row to see sales detail.</p>
+          <table
               class="table table-striped table-hover table-responsive w-auto"
             >
               <thead>
                 <tr>
-                  <th>Month</th>
-                  <th>Bank</th>
-                  <th>Count</th>
-                  <th>Sum</th>
+                  <th>Date</th>
+                  <th>Sales</th>
                 </tr>
               </thead>
               <tbody>
                 <tr
-                  *ngFor="let item of apiData.data"
-                  (click)="rowSelected(item)"
+                  *ngFor="let item of histogramChartData?.list"
+                  (click)="onRowSelected(item)"
                 >
                   <th>
-                    <span class="text-dark">{{ item.index }}</span>
+                    <span class="text-dark">{{ item[1] }}</span>
                   </th>
-                  <td class="text-center">
-                    {{ shops[apiData.shopID - 1]?.name }}
-                  </td>
-                  <td class="text-center d-none d-sm-table-cell">
-                    {{ item.count }}
-                  </td>
-                  <td class="text-center">{{ item.sum | number: "1.2-2" }}</td>
+                  <td class="text-center">{{ item[2] | number: "1.2-2" }}</td>
                 </tr>
                 <tr>
                   <td>Total</td>
-                  <td class="d-none d-sm-table-cell"></td>
-                  <td class="text-center">
-                    <strong>{{ apiData.count }}</strong>
-                  </td>
-  
-                  <td class="text-center">
-                    <strong>£{{ total | number: "1.2-2" }}</strong>
+                  <td class="text-center" >
+                    <strong *ngIf="histogramChartData">{{ histogramChartData!.count*histogramChartData!.average | number: "1.2-2"}}</strong>
                   </td>
                 </tr>
-                <tr *ngIf="!apiData">
+                <tr *ngIf="!histogramChartData">
                   <td colspan="4" class="text-center">
                     <span
                       class="spinner-border spinner-border-lg align-center"
@@ -142,8 +126,8 @@
                   </td>
                 </tr>
               </tbody>
-            </table>-->
-          <p class="p-2">Click on a row to see sales detail.</p>
+            </table>
+          
         </div>
       </div>
     </form>

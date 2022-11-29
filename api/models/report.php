@@ -20,7 +20,7 @@ class Report{
       * is UNIX epoch in miliseconds
       */
      public function dailySalesHistogram(){
-        $query = "SELECT UNIX_TIMESTAMP(`date`)*1000 as sales_date,
+        $query = "SELECT takingsid, UNIX_TIMESTAMP(`date`)*1000 as sales_date,
                     (clothing+brica+books+linens+donations+other+rag-operating_expenses-volunteer_expenses-other_adjustments+cash_difference-donations) 
                        as total_after_expenses_and_donations
                     FROM takings t
@@ -52,20 +52,22 @@ class Report{
         $sales_arr["count"] = 0;
         $sales_arr["data"]=array();
         $sales_arr["last"]=array();
+        $sales_arr["list"]=array();
 
         $sum =0; // sum of daily sales as we loop over rows
 
         if($num>0){
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
                 extract($row);
-                $sales_arr["count"] = $sales_arr["count"]+1;
-                $sum = $sum+$row['total_after_expenses_and_donations'];
+                
+                $sum = $sum + $row['total_after_expenses_and_donations'];
                 array_push($sales_arr["data"], array($row['sales_date'], $row['total_after_expenses_and_donations']));
+                array_push($sales_arr["list"], array($row["takingsid"],gmdate("Y-m-d", $row["sales_date"]/1000),$row['total_after_expenses_and_donations']));
             }
+            $sales_arr["count"] = $num;
             $sales_arr["last"] = array(gmdate("Y-m-d", end($sales_arr["data"])[0]/1000), end($sales_arr["data"])[1]);
-        }
-
-        $sales_arr["average"] = round($sum / $sales_arr["count"],2);
+            $sales_arr["average"] = round($sum / $sales_arr["count"],2);
+        }       
 
         return $sales_arr;
     }

@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { KeyValue } from '@angular/common';
+import { Router } from '@angular/router';
+
+import { tap } from 'rxjs/operators';
+
+import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
 import { environment } from '@environments/environment';
 
@@ -18,7 +23,8 @@ export class SalesHistogramComponent implements OnInit {
   constructor(
     private reportService: ReportService,
     private dateRangeAdapter: DateRangeAdapter,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -74,20 +80,38 @@ export class SalesHistogramComponent implements OnInit {
     this.refreshSummary(dtRng.startDate, dtRng.endDate);
   }
 
-  onShopChanged(value: string) {
-    this.refreshSummary(this.f['startDate'].value, this.f['endDate'].value);
+  onRefreshPressed() {
+    if (this.f['startDate'].value && this.f['endDate'].value) {
+      const start = this.ngbDateToString(this.f['startDate'].value);
+      const end = this.ngbDateToString(this.f['endDate'].value);
+      this.f['dateRange'].setValue(DateRangeEnum.CUSTOM);
+      this.refreshSummary(start!, end!); 
+    }
   }
 
   refreshSummary(startDate: string, endDate: string) {
     this.reportService
       .getSalesHistogram(startDate, endDate, environment.HARROWROAD_SHOPID)
-      .subscribe((result) => {
-        this.histogramChartData = result;
-      });
+      .pipe(tap({next: (result) => {
+        this.histogramChartData = result;        
+      },
+    error: (error) => {console.log(error);}}))
+      .subscribe();
   }
 
-  onRowSelected(summaryRow: [string, number]) {
-    // this.selectedRow = summaryRow;
-    // this.detail = true;
+  onRowSelected(salesRow: [number, string, number]) {
+    if (salesRow && salesRow[0]) {
+      this.router.navigate([`takings/edit/${salesRow[0]}`]);  
+    }    
+  }
+
+  private ngbDateToString(date: NgbDateStruct | null): string | null {
+    return date
+      ? date.year.toString() +
+          '-' +
+          String('00' + date.month).slice(-2) +
+          '-' +
+          String('00' + date.day).slice(-2)
+      : null;
   }
 }

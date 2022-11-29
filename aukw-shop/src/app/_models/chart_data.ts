@@ -62,7 +62,9 @@ export class MonthlySalesChartData {
 
 /**Stores data to build a histogram of net daily sales data */
 export class HistogramChartData {
+  /**First day of period */
   start: string;
+  /**Last day of period */
   end: string;
   /**'1' for Harrow Road, '2' for Church Street (now closed) */
   shopid: number;
@@ -74,6 +76,7 @@ export class HistogramChartData {
   data: [[number, number]];
   /**The most recent sales numbers within the data series */
   last: [string, number];
+  list: [[number,string,number]];
 
   constructor(obj?: any) {
     this.start = (obj && obj.start) || null;
@@ -83,5 +86,6 @@ export class HistogramChartData {
     this.count = (obj && obj.count) || null;
     this.data = (obj && obj.data) || null;
     this.last = (obj && obj.last) || null;
+    this.list = (obj && obj.list) || null;
   }
 }
