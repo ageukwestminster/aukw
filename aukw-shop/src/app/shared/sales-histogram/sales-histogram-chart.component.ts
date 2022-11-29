@@ -7,7 +7,6 @@ import {
 } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import { HistogramChartData } from '@app/_models';
-import { environment } from '@environments/environment';
 
 @Component({
   selector: 'sales-histogram',
