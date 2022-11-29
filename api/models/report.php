@@ -4,6 +4,10 @@ namespace Models;
 
 use \PDO;
 
+/**Used to convert between Unix timestamp and London dates */
+use DateTime;
+use DateTimeZone;
+
 class Report{
 
     private $conn;
@@ -61,12 +65,23 @@ class Report{
                 extract($row);
                 
                 $sum = $sum + $row['total_after_expenses_and_donations'];
-                array_push($sales_arr["data"], array($row['sales_date'], $row['total_after_expenses_and_donations']));
-                array_push($sales_arr["list"], array($row["takingsid"],gmdate("Y-m-d", $row["sales_date"]/1000),$row['total_after_expenses_and_donations']));
+                array_push($sales_arr["data"], array($row['sales_date']
+                    , $row['total_after_expenses_and_donations']));
+
+                // Unix timestamp is timezone independent
+                // These timestamps are for midnight on each day
+                // If timezone is not taken into accoun then during BST dates will 
+                // be 1 day earlier: (23:00 instead of 24:00)
+                $dt = (new DateTime())->setTimestamp($row["sales_date"]/1000);
+                $dt->setTimezone(new DateTimeZone('Europe/London'));
+                array_push($sales_arr["list"], array($row["takingsid"],$dt->format('Y-m-d')
+                    ,$row['total_after_expenses_and_donations']));
             }
             $sales_arr["count"] = $num;
-            $sales_arr["last"] = array(gmdate("Y-m-d", end($sales_arr["data"])[0]/1000), end($sales_arr["data"])[1]);
             $sales_arr["average"] = round($sum / $sales_arr["count"],2);
+
+            $sales_arr["last"] = end($sales_arr["list"]);
+            
         }       
 
         return $sales_arr;
