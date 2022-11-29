@@ -75,7 +75,7 @@ export class HistogramChartData {
    */
   data: [[number, number]];
   /**The most recent sales numbers within the data series */
-  last: [string, number];
+  last: [number, string, number];
   list: [[number, string, number]];
 
   constructor(obj?: any) {

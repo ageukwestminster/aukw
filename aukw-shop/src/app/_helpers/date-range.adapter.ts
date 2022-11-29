@@ -59,6 +59,17 @@ export class DateRangeAdapter {
           NOON
         );
         return this.instantiateObj(firstDayOfThisQuarter, lastDayOfThisQuarter);
+      case DateRangeEnum.THIS_TRADING_YEAR:
+        var firstDayOfTradingYear: Date;
+        var lastDayOfTradingYear: Date;
+        if (month > 8) {
+          firstDayOfTradingYear = new Date(year, 9, 1, NOON);
+          lastDayOfTradingYear = new Date(year + 1, 9, 0, NOON);
+        } else {
+          firstDayOfTradingYear = new Date(year-1, 9, 1, NOON);
+          lastDayOfTradingYear = new Date(year, 9, 0, NOON);
+        }
+        return this.instantiateObj(firstDayOfTradingYear, lastDayOfTradingYear);
       case DateRangeEnum.THIS_YEAR:
         var firstDayOfYear = new Date(year, 0, 1, NOON);
         var lastDayOfYear = new Date(year + 1, 0, 0, NOON);
@@ -84,6 +95,17 @@ export class DateRangeAdapter {
         );
         var lastDayOfLastQuarter = new Date(year, quarterStartMonth, 0, NOON);
         return this.instantiateObj(firstDayOfLastQuarter, lastDayOfLastQuarter);
+      case DateRangeEnum.LAST_TRADING_YEAR:
+        var firstDayOfTradingYear: Date;
+        var lastDayOfTradingYear: Date;
+        if (month > 8) {
+          firstDayOfTradingYear = new Date(year-1, 9, 1, NOON);
+          lastDayOfTradingYear = new Date(year, 9, 0, NOON);
+        } else {
+          firstDayOfTradingYear = new Date(year-1, 9, 1, NOON);
+          lastDayOfTradingYear = new Date(year, 9, 0, NOON);
+        }
+        return this.instantiateObj(firstDayOfTradingYear, lastDayOfTradingYear);
       case DateRangeEnum.LAST_YEAR:
         var firstDayOfLastYear = new Date(year - 1, 0, 1, NOON);
         var lastDayOfLastYear = new Date(year, 0, 0, NOON);

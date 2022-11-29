@@ -127,8 +127,8 @@ export class SalesHistogramChartComponent implements OnInit, OnChanges {
       ) {
         this.options.series[1]['data'] = this.histogramChartData.data;
         if (this.histogramChartData.last) {
-          const lastSalesDate = new Date(this.histogramChartData.last[0]);
-          const lastSalesAmount = this.histogramChartData.last[1];
+          const lastSalesDate = new Date(this.histogramChartData.last[1]);
+          const lastSalesAmount = this.histogramChartData.last[2];
 
           this.options.series[2]['data'] = [
             [lastSalesAmount, this.YAXISPOSITION],
@@ -137,7 +137,7 @@ export class SalesHistogramChartComponent implements OnInit, OnChanges {
           // Set a custom Series name
           this.options.series[2]['name'] = this.isToday(lastSalesDate)
             ? "Today's Sales = £" + lastSalesAmount
-            : 'Previous Sales = £' + lastSalesAmount;
+            : 'Latest Sales = £' + lastSalesAmount;
 
           // If today's sales are below average then set the
           // data colour to red and update the tooltip.
