@@ -90,6 +90,12 @@ export class TakingsListComponent implements OnInit {
           );
         })
       )
-      .subscribe();
+      .subscribe({
+        error: (error) => {
+          this.alertService.error(error.message, {
+            autoClose: false,
+          });
+        },
+      });
   }
 }

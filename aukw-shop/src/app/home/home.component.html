@@ -44,7 +44,9 @@
       <tbody>
         <tr *ngFor="let item of summary">
           <th
-            ngbTooltip="{{ item.type }} sales {{ item.start_date }} - {{ item.end_date }}"
+            ngbTooltip="{{ item.type }} sales {{ item.start_date }} - {{
+              item.end_date
+            }}"
             placement="right"
             container="body"
           >

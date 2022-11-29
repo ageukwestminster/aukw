@@ -46,15 +46,29 @@ export class TakingsRowComponent {
     this.takings.isUpdating = true;
     this.takingsService
       .addToQuickbooks(this.takings.id) // Adds to QB and sets 'quickbooks' = 1 in dB
-      .subscribe(() => {
-        this.alertService.success(
-          'Daily sales added to QB for ' +
-            formatDate(this.takings.date, 'dd-MMM', 'en_GB'),
-          { keepAfterRouteChange: true }
-        );
-        this.takings.quickbooks = true; // Quickbooks is now updated
-        this.takings.isUpdating = false;
-        this.onTakingsAddedToQB.emit(this.takings); // refresh screen
+      .subscribe({
+        next: () => {
+          this.alertService.success(
+            'Daily sales added to QB for ' +
+              formatDate(this.takings.date, 'dd-MMM', 'en_GB'),
+            { keepAfterRouteChange: true }
+          );
+          this.takings.quickbooks = true; // Quickbooks is now updated
+          this.takings.isUpdating = false;
+          this.onTakingsAddedToQB.emit(this.takings); // refresh screen
+        },
+        error: (error) => {
+          this.alertService.error(
+            'Daily sales for ' +
+              formatDate(this.takings.date, 'dd-MMM-yy', 'en_GB') +
+              ' not added to Quickbooks. Error message: "' +
+              error.message +
+              '"',
+            { autoClose: false }
+          );
+          this.takings.isUpdating = false;
+          this.onTakingsAddedToQB.emit(this.takings); // refresh screen
+        },
       });
   }
 
