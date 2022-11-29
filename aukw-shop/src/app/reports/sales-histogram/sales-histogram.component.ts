@@ -24,7 +24,7 @@ export class SalesHistogramComponent implements OnInit {
     private reportService: ReportService,
     private dateRangeAdapter: DateRangeAdapter,
     private formBuilder: FormBuilder,
-    private router: Router,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -43,10 +43,10 @@ export class SalesHistogramComponent implements OnInit {
   }
 
   /** Required so that the template can access the Enum.
-  * Source: https://stackoverflow.com/a/59289208 */
+   * Source: https://stackoverflow.com/a/59289208 */
   readonly DateRange = DateRangeEnum;
 
-  /** Used to stop the keyvalues pipe re-arranging the order of the Enum. 
+  /** Used to stop the keyvalues pipe re-arranging the order of the Enum.
    * Source: https://stackoverflow.com/a/52794221/6941165 */
   originalOrder = (
     a: KeyValue<string, DateRangeEnum>,
@@ -85,24 +85,30 @@ export class SalesHistogramComponent implements OnInit {
       const start = this.ngbDateToString(this.f['startDate'].value);
       const end = this.ngbDateToString(this.f['endDate'].value);
       this.f['dateRange'].setValue(DateRangeEnum.CUSTOM);
-      this.refreshSummary(start!, end!); 
+      this.refreshSummary(start!, end!);
     }
   }
 
   refreshSummary(startDate: string, endDate: string) {
     this.reportService
       .getSalesHistogram(startDate, endDate, environment.HARROWROAD_SHOPID)
-      .pipe(tap({next: (result) => {
-        this.histogramChartData = result;        
-      },
-    error: (error) => {console.log(error);}}))
+      .pipe(
+        tap({
+          next: (result) => {
+            this.histogramChartData = result;
+          },
+          error: (error) => {
+            console.log(error);
+          },
+        })
+      )
       .subscribe();
   }
 
   onRowSelected(salesRow: [number, string, number]) {
     if (salesRow && salesRow[0]) {
-      this.router.navigate([`takings/edit/${salesRow[0]}`]);  
-    }    
+      this.router.navigate([`takings/edit/${salesRow[0]}`]);
+    }
   }
 
   private ngbDateToString(date: NgbDateStruct | null): string | null {

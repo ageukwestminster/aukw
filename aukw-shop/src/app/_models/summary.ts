@@ -29,6 +29,7 @@ export class Summary {
   expenses: number;
   cash_to_bank: number;
   credit_cards: number;
+  count: number;
 
   constructor(obj?: any) {
     this.index = (obj && obj.index) || null;
@@ -62,5 +63,6 @@ export class Summary {
 
     this.cash_to_bank = (obj && obj.cash_to_bank) || 0;
     this.credit_cards = (obj && obj.credit_cards) || 0;
+    this.count = (obj && obj.count) || 0;
   }
 }

@@ -29,7 +29,7 @@ export class SalesHistogramChartComponent implements OnInit, OnChanges {
 
     credits: {
       text: 'Source Data',
-      href: "/reports/sales-histogram"
+      href: '/reports/sales-histogram',
     },
 
     xAxis: [
@@ -82,7 +82,7 @@ export class SalesHistogramChartComponent implements OnInit, OnChanges {
         zIndex: -1,
         tooltip: {
           pointFormat:
-            '<span style="font-size: 10px">Sales between £{point.x:.2f} & £{point.x2:.2f}</span>'+
+            '<span style="font-size: 10px">Sales between £{point.x:.2f} & £{point.x2:.2f}</span>' +
             '<br/><span style="color:{point.color}">●</span> {series.name} <b>{point.y}</b>',
         },
       },
@@ -165,12 +165,16 @@ export class SalesHistogramChartComponent implements OnInit, OnChanges {
 
           //Add a title
           this.options.title = {
-            text: 'Histogram of Net Daily Sales</br>' + this.histogramChartData.start + ' - ' + this.histogramChartData.end,
+            text:
+              'Histogram of Net Daily Sales</br>' +
+              this.histogramChartData.start +
+              ' - ' +
+              this.histogramChartData.end,
           };
 
           //Add a subtitle
-          (this.options.subtitle!.text =
-            'Average during period = £' + this.histogramChartData.average);
+          this.options.subtitle!.text =
+            'Average during period = £' + this.histogramChartData.average;
 
           // show the chart
           Highcharts.chart('sales-histogram', this.options);

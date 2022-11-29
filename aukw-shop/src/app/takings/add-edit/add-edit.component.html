@@ -303,22 +303,24 @@
           <div class="col-6">
             <label for="inputCustomers_Num" class="form-label"> Number </label>
             <input
-            type="number"
-            id="inputCustomers_Num"
-            class="form-control"
-            formControlName="customers_num_total"
-            [ngClass]="{ 'is-invalid': submitted && f.customers_num_total.errors }"
-          />
-          <div
-            *ngIf="submitted && f.customers_num_total.errors"
-            class="invalid-feedback"
-            id="inputGroupPrepend2"
-          >
-            <div *ngIf="f.customers_num_total.errors.required">
-              Number of Transactions (NET number) is required
+              type="number"
+              id="inputCustomers_Num"
+              class="form-control"
+              formControlName="customers_num_total"
+              [ngClass]="{
+                'is-invalid': submitted && f.customers_num_total.errors
+              }"
+            />
+            <div
+              *ngIf="submitted && f.customers_num_total.errors"
+              class="invalid-feedback"
+              id="inputGroupPrepend2"
+            >
+              <div *ngIf="f.customers_num_total.errors.required">
+                Number of Transactions (NET number) is required
+              </div>
             </div>
           </div>
-        </div>
         </div>
       </div>
     </div>
