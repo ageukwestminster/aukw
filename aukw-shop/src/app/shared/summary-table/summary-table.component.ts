@@ -12,5 +12,5 @@ export class SummaryTableComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 }
