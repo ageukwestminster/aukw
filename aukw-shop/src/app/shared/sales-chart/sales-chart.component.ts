@@ -29,10 +29,17 @@ export class SalesChartComponent implements OnInit {
 
     xAxis: {
       type: 'datetime',
+      alignTicks: false,
       accessibility: {
         rangeDescription: 'Range: Last 10 Trading Days',
       },
       categories: [],
+      labels: {
+        formatter: function () {
+          return Highcharts.dateFormat('%e %b', this.value as number);
+        },
+      },
+      tickInterval: 10,
     },
 
     legend: {
@@ -53,6 +60,9 @@ export class SalesChartComponent implements OnInit {
         data: [],
         type: 'line',
         color: '#008080',
+        marker: {
+          enabled: false,
+        },
       },
     ],
 
@@ -76,73 +86,17 @@ export class SalesChartComponent implements OnInit {
 
   constructor(private summaryService: SummaryService) {}
 
-  ngOnInit(): void {
-    // First 5 lines convert Observable<MonthlySalesChartData[]> to Observable<MonthlySalesChartData>
-    this.summaryService
-      .getSalesChartData()
-      .pipe(
-        switchMap((dataArray: SalesChartData[]) => {
-          const obs = dataArray.map((x) => {
-            return of(x);
-          });
-          return merge(...obs);
-        })
-      )
-      .subscribe({
-        next: (row: SalesChartData) => {
-          const date = new Date(row.date);
-          const label =
-            date.toLocaleString('en-GB', { day: 'numeric' }) +
-            '-' +
-            date.toLocaleString('en-GB', { month: 'short' });
-          if (this.options.xAxis) {
-            if ((this.options.xAxis as Highcharts.XAxisOptions).categories) {
-              (this.options.xAxis as Highcharts.XAxisOptions).categories?.push(
-                label
-              );
-            }
-          }
-          if (this.options.series) {
-            this.options.series[0]['data'].push(row.sales);
-            this.options.series[1]['data'].push(row.avg30);
-          }
-        },
-        complete: () => {
-          Highcharts.chart('sales-chart', this.options);
-        },
-      });
-    // const updated_sales_data: any[] = [];
-    // const updated_avg10_data: any[] = [];
-    // const updated_avg30_data: any[] = [];
-    // const updated_avg365_data: any[] = [];
-
-    // this.summaryService
-    // .getSalesChartData()
-    // .pipe(
-    //   switchMap((x: SalesChartData[]) =>
-    //     from(x).pipe(
-    //       map((row: SalesChartData) => {
-    //         const date = new Date(row.date).getTime();
-    //         updated_sales_data.push([date, row.sales]);
-    //         updated_avg10_data.push([date, row.avg10]);
-    //         updated_avg30_data.push([date, row.avg30]);
-    //         updated_avg365_data.push([date, row.avg365]);
-    //         return row;
-    //       })
-    //     )
-    //   ),
-    //   reduce(
-    //     (curr: SalesChartData[], next: SalesChartData) => [...curr, next],
-    //     []
-    //   )
-    // )
-    // .subscribe((data) => {
-    //   this.options.series[0]['data'] = updated_sales_data;
-    //   //this.options.series[1]['data'] = updated_avg10_data;
-    //   this.options.series[1]['data'] = updated_avg30_data;
-    //   //this.options.series[2]['data'] = updated_avg30_data;
-    //   //this.options.series[3]['data'] = updated_avg365_data;
-    //   Highcharts.chart('sales-chart', this.options);
-    // });
+  ngOnInit(): void {    
+    this.summaryService.getSalesChartData().subscribe({
+      next: (data: SalesChartData) => {
+        if (this.options.series) {
+          this.options.series[0]['data'] = data.sales;
+          this.options.series[1]['data'] = data.avg30;
+        }
+      },
+      complete: () => {
+        Highcharts.chart('sales-chart', this.options);
+      },
+    });
   }
 }

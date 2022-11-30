@@ -1,15 +1,24 @@
 import { Takings } from './takings';
 
+/**Stores data to display a line graph of most recent sales versus historical averages */
 export class SalesChartData {
-  date: string;
-  sales: number;
-  avg10: number;
-  avg30: number;
-  avg365: number;
-  avgAll: number;
+  current_date: string;
+  /**'1' for Harrow Road, '2' for Church Street (now closed) */
+  shopid: number;
+  /**The dates of the sales values */
+  dates: [string];
+  /** Each item array is made up of i) unix timestamp*1000 and ii) net sales.
+   *  Timestamp is multiplied by 1000 because timestamps in Javascript are milliseconds */
+  sales: [[number, number]];
+  avg10: [[number, number]];
+  avg30: [[number, number]];
+  avg365: [[number, number]];
+  avgAll: [[number, number]];
 
   constructor(obj?: any) {
-    this.date = (obj && obj.date) || null;
+    this.current_date = (obj && obj.current_date) || null;
+    this.shopid = (obj && obj.shopid) || null;
+    this.dates = (obj && obj.dates) || null;
     this.sales = (obj && obj.sales) || null;
     this.avg10 = (obj && obj.avg10) || null;
     this.avg30 = (obj && obj.avg30) || null;
@@ -70,12 +79,13 @@ export class HistogramChartData {
   shopid: number;
   average: number;
   count: number;
-  /** An array of arrays. Each item array is made up of i) unix timestamp*1000 and ii) net sales.
-   *  Timestamp from MariaDB is multiplied by 1000 because timestamps in Javascript are milliseconds
+  /** i) unix timestamp*1000 of sales date and ii) net sales.
+   *  Timestamp is multiplied by 1000 because timestamps in Javascript are milliseconds
    */
   data: [[number, number]];
   /**The most recent sales numbers within the data series */
   last: [number, string, number];
+  /**Takings ID, Date, Value */
   list: [[number, string, number]];
 
   constructor(obj?: any) {

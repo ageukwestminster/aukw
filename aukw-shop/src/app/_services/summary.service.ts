@@ -23,7 +23,7 @@ export class SummaryService {
   }
 
   getSalesChartData() {
-    return this.http.get<SalesChartData[]>(salesChartUrl);
+    return this.http.get<SalesChartData>(salesChartUrl);
   }
 
   getDepartmentBreakdownChartData() {

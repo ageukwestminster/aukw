@@ -1,5 +1,8 @@
 List of Steps To Move To Production
 
+DataBASE
+* Ensure 3 sprocedures are updated to latest
+
 PHP - Config.php
 * At top of file change PHP error handling
 * Ensure 'server' is correct for Access-Origin

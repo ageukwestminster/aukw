@@ -74,39 +74,44 @@ class TakingsSummary{
         return $summary_arr;
     }
 
-    public function salesChart($shopid,$current_date){
+    public function salesChart($shopid,$current_date, $number_of_days = 10){
 
         // MySQL stored procedure
-        $query = "CALL sales_chart(:shopid,:date)";
+        $query = "CALL sales_chart(:shopid,:date,:number)";
 
         $stmt = $this->conn->prepare( $query );
 
         // bind id of product to be updated
         $stmt->bindParam(":shopid", $shopid, PDO::PARAM_INT);
         $stmt->bindParam(":date", $current_date, PDO::PARAM_STR);
+        $stmt->bindParam(":number", $number_of_days, PDO::PARAM_INT);
 
         // execute query
         $stmt->execute();
         $num = $stmt->rowCount();
 
         $chart_data=array();
+        $chart_data["current_date"] = $current_date;
+        $chart_data["shopid"] = $shopid;
+        $chart_data['dates'] = array();
+        $chart_data['sales'] = array();        
+        $chart_data['avg10'] = array();
+        $chart_data['avg30'] = array();
+        $chart_data['avg365'] = array();
+        $chart_data['avgAll'] = array();
 
         // check if more than 0 record found
         if($num>0){
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
                 extract($row);
-            
-                $data_row=array(
-                    "date" => $date,
-                    "sales" => $net_sales,
-                    "avg10" => $AvgSales,
-                    "avg30" => $AvgSalesLast30Days,
-                    "avg365" => $AvgSalesLast365Days,
-                    "avgAll" => $AvgSalesEver,
-                );
 
-                // create un-keyed list
-                array_push ($chart_data, $data_row);
+                // create un-keyed lists
+                array_push ($chart_data['dates'], $date);
+                array_push ($chart_data['sales'], array($sales_date, $net_sales));                
+                array_push ($chart_data['avg10'], array($sales_date, $AvgSales));
+                array_push ($chart_data['avg30'], array($sales_date, $AvgSalesLast30Days));
+                array_push ($chart_data['avg365'], array($sales_date, $AvgSalesLast365Days));
+                array_push ($chart_data['avgAll'], array($sales_date, $AvgSalesEver));
             }
         }
 
