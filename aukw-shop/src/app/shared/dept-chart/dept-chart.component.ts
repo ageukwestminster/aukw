@@ -20,7 +20,7 @@ Accessibility(Highcharts);
 Exporting(Highcharts);
 
 @Component({
-  selector: 'dept-chart',
+  selector: 'dept-pie-chart',
   templateUrl: './dept-chart.component.html',
   styleUrls: ['./dept-chart.component.css'],
 })
