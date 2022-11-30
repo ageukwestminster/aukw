@@ -29,7 +29,6 @@ export class SalesChartComponent implements OnInit {
 
     xAxis: {
       type: 'datetime',
-      alignTicks: false,
       accessibility: {
         rangeDescription: 'Range: Last 10 Trading Days',
       },
@@ -39,7 +38,7 @@ export class SalesChartComponent implements OnInit {
           return Highcharts.dateFormat('%e %b', this.value as number);
         },
       },
-      tickInterval: 10,
+      tickInterval: 1000 * 60 * 60 * 24,
     },
 
     legend: {
