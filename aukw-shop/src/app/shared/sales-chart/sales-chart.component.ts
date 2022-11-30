@@ -13,13 +13,14 @@ import { switchMap } from 'rxjs/operators';
 export class SalesChartComponent implements OnInit {
   public options: Highcharts.Options = {
     title: {
-      text: 'Harrow Road Daily Net Sales',
+      text: 'Harrow Road Daily Net Sales For Last 10 Trading Days',
     },
     subtitle: {
       text: 'Compared To Avg of Last 30 days',
     },
     credits: {
-      enabled: false,
+      text: 'Source Data',
+      href: '/reports/sales-list',
     },
     yAxis: {
       title: {
@@ -63,6 +64,14 @@ export class SalesChartComponent implements OnInit {
           enabled: false,
         },
       },
+      {
+        name: 'Average of Last 365 Days',
+        data: [],
+        type: 'line',
+        marker: {
+          enabled: false,
+        },
+      },
     ],
 
     responsive: {
@@ -91,6 +100,10 @@ export class SalesChartComponent implements OnInit {
         if (this.options.series) {
           this.options.series[0]['data'] = data.sales;
           this.options.series[1]['data'] = data.avg30;
+          this.options.series[2]['data'] = data.avg365;
+          this.options.series[0]['name'] = 'Daily Sales (average £' + data.avg[0][1]+')';
+          this.options.series[1]['name'] = '30 day average (£' + data.avg30[0][1]+')';
+          this.options.series[2]['name'] = '365 day average (£' + data.avg365[0][1]+')';
         }
       },
       complete: () => {

@@ -10,7 +10,7 @@ export class SalesChartData {
   /** Each item array is made up of i) unix timestamp*1000 and ii) net sales.
    *  Timestamp is multiplied by 1000 because timestamps in Javascript are milliseconds */
   sales: [[number, number]];
-  avg10: [[number, number]];
+  avg: [[number, number]];
   avg30: [[number, number]];
   avg365: [[number, number]];
   avgAll: [[number, number]];
@@ -20,7 +20,7 @@ export class SalesChartData {
     this.shopid = (obj && obj.shopid) || null;
     this.dates = (obj && obj.dates) || null;
     this.sales = (obj && obj.sales) || null;
-    this.avg10 = (obj && obj.avg10) || null;
+    this.avg = (obj && obj.avg) || null;
     this.avg30 = (obj && obj.avg30) || null;
     this.avg365 = (obj && obj.avg365) || null;
     this.avgAll = (obj && obj.avgAll) || null;

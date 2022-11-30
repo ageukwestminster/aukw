@@ -95,7 +95,7 @@ class TakingsSummary{
         $chart_data["shopid"] = $shopid;
         $chart_data['dates'] = array();
         $chart_data['sales'] = array();        
-        $chart_data['avg10'] = array();
+        $chart_data['avg'] = array();
         $chart_data['avg30'] = array();
         $chart_data['avg365'] = array();
         $chart_data['avgAll'] = array();
@@ -108,7 +108,7 @@ class TakingsSummary{
                 // create un-keyed lists
                 array_push ($chart_data['dates'], $date);
                 array_push ($chart_data['sales'], array($sales_date, $net_sales));                
-                array_push ($chart_data['avg10'], array($sales_date, $AvgSales));
+                array_push ($chart_data['avg'], array($sales_date, $AvgSales));
                 array_push ($chart_data['avg30'], array($sales_date, $AvgSalesLast30Days));
                 array_push ($chart_data['avg365'], array($sales_date, $AvgSalesLast365Days));
                 array_push ($chart_data['avgAll'], array($sales_date, $AvgSalesEver));
