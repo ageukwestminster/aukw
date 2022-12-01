@@ -5,6 +5,7 @@ Codebase
 
 DataBASE
 * Ensure 3 stored procedures are updated to latest
+* Is qbtoken table sync'd?
 
 PHP - Config.php
 * At top of file change PHP error handling
