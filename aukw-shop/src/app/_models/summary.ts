@@ -5,7 +5,7 @@ export class Summary {
   start_date: string;
   end_date: string;
   count: number;
-  
+
   number_of_items_sold: number;
   avg_sales: number;
   avg_net_sales: number;

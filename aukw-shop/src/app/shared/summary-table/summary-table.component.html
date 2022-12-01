@@ -17,13 +17,10 @@
       <th [ngbTooltip]="footfallTooltipHtml" placement="top" container="body">
         Footfall
       </th>
-      <th>Cash</th>
-      <th>CCs</th>
+      <th class="d-none d-sm-table-cell">Cash</th>
+      <th class="d-none d-sm-table-cell">CCs</th>
       <th class="d-none d-sm-table-cell">Clothing</th>
       <th class="d-none d-sm-table-cell">Brica</th>
-      <!--<th class="d-none d-sm-table-cell">Books</th>
-      <th class="d-none d-sm-table-cell">Linens</th>
-      <th class="d-none d-sm-table-cell">Donations</th>-->
       <th class="d-none d-sm-table-cell">Expenses</th>
       <th class="d-none d-sm-table-cell"># Days</th>
       <th class="d-none d-sm-table-cell"># Items Sold</th>
@@ -37,28 +34,23 @@
       <th [ngbTooltip]="periodTooltipHtml" placement="right" container="body">
         {{ item.period }}
       </th>
-      <td class="text-center d-none d-sm-table-cell">
+      <td class="text-center">
         {{ item.total_sales | number: "1.2-2" }}
       </td>
       <td class="text-center">{{ item.avg_net_sales | number }}</td>
       <td class="text-center">{{ item.customers_num_total }}</td>
-      <td class="text-center">{{ item.cash_to_bank | number }}</td>
-      <td class="text-center">{{ item.credit_cards | number }}</td>
+      <td class="text-center d-none d-sm-table-cell">
+        {{ item.cash_to_bank | number }}
+      </td>
+      <td class="text-center d-none d-sm-table-cell">
+        {{ item.credit_cards | number }}
+      </td>
       <td class="text-center d-none d-sm-table-cell">
         {{ item.clothing | number: "1.2-2" }}
       </td>
       <td class="text-center d-none d-sm-table-cell">
         {{ item.brica | number: "1.2-2" }}
       </td>
-      <!--<td class="text-center d-none d-sm-table-cell">
-        {{ item.books | number: "1.2-2" }}
-      </td>
-      <td class="text-center d-none d-sm-table-cell">
-        {{ item.linens | number: "1.2-2" }}
-      </td>
-      <td class="text-center d-none d-sm-table-cell">
-        {{ item.donations | number: "1.2-2" }}
-      </td>-->
       <td class="text-center d-none d-sm-table-cell">
         {{ -item.expenses | number: "1.2-2" }}
       </td>
