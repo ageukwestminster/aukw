@@ -2,7 +2,8 @@
   <thead>
     <tr>
       <th>Period</th>
-      <th class="d-none d-sm-table-cell">Dates</th>
+      <th class="d-none d-sm-table-cell">Start</th>
+      <th class="d-none d-sm-table-cell">End</th>
       <th class="text-center">Total</th>
       <th
         ngbTooltip="Sales minus expenses, rag, overage/underage and donations"
@@ -35,7 +36,8 @@
       <th [ngbTooltip]="periodTooltipHtml" placement="right" container="body">
         {{ item.period }}
       </th>
-      <th class="d-none d-sm-table-cell">{{ item.start_date_format }} ~ {{ item.end_date_format }}</th>
+      <td class="d-none d-sm-table-cell">{{ item.start_date_format }}</td>
+      <td class="d-none d-sm-table-cell">{{ item.end_date_format }}</td>
       <td class="text-center">
         {{ item.total_sales | number: "1.2-2" }}
       </td>

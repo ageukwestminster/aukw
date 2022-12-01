@@ -14,6 +14,8 @@ export class SalesChartData {
   avg30: [[number, number]];
   avg365: [[number, number]];
   avgAll: [[number, number]];
+  /**Database ID for each takings item */
+  takingsids: [number];
 
   constructor(obj?: any) {
     this.current_date = (obj && obj.current_date) || null;
@@ -24,6 +26,7 @@ export class SalesChartData {
     this.avg30 = (obj && obj.avg30) || null;
     this.avg365 = (obj && obj.avg365) || null;
     this.avgAll = (obj && obj.avgAll) || null;
+    this.takingsids = (obj && obj.takingsids) || null;
   }
 }
 
