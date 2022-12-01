@@ -1,14 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { Summary, User } from '@app/_models';
-
+import {
+  DateRangeEnum,
+  HistogramChartData,
+  SalesChartData,
+  Summary,
+  User,
+} from '@app/_models';
 import {
   AuthenticationService,
   ReportService,
   SummaryService,
 } from '@app/_services';
 import { DateRangeAdapter } from '@app/_helpers';
-import { DateRangeEnum, HistogramChartData } from '@app/_models';
-
 import { concatMap } from 'rxjs/operators';
 
 @Component({ templateUrl: 'home.component.html' })
@@ -17,6 +20,7 @@ export class HomeComponent implements OnInit {
   user: User;
   summary!: Summary[];
   histogramChartData?: HistogramChartData;
+  salesChartData?: SalesChartData;
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -41,10 +45,14 @@ export class HomeComponent implements OnInit {
             dtRng.startDate,
             dtRng.endDate
           );
+        }),
+        concatMap((response) => {
+          this.histogramChartData = response;
+          return this.summaryService.getSalesChartData();
         })
       )
       .subscribe((response) => {
-        this.histogramChartData = response;
+        this.salesChartData = response;
         this.loading = false;
       });
   }

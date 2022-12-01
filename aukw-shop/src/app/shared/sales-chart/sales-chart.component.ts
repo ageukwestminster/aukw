@@ -1,16 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import * as Highcharts from 'highcharts';
 import { SalesChartData } from '@app/_models';
-import { SummaryService } from '@app/_services';
-import { merge, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'sales-chart',
   templateUrl: './sales-chart.component.html',
   styleUrls: ['./sales-chart.component.css'],
 })
-export class SalesChartComponent implements OnInit {
+export class SalesChartComponent implements OnInit, OnChanges {
+  @Input() salesChartData?: SalesChartData;
   public options: Highcharts.Options = {
     title: {
       text: 'Harrow Road Daily Net Sales For Last 10 Trading Days',
@@ -39,7 +43,7 @@ export class SalesChartComponent implements OnInit {
           return Highcharts.dateFormat('%e %b', this.value as number);
         },
       },
-      tickInterval: 1000 * 60 * 60 * 24,
+      tickInterval: 1000 * 60 * 60 * 24, // 1 day
     },
 
     legend: {
@@ -92,26 +96,25 @@ export class SalesChartComponent implements OnInit {
     },
   };
 
-  constructor(private summaryService: SummaryService) {}
+  constructor() {}
 
-  ngOnInit(): void {
-    this.summaryService.getSalesChartData().subscribe({
-      next: (data: SalesChartData) => {
-        if (this.options.series) {
-          this.options.series[0]['data'] = data.sales;
-          this.options.series[1]['data'] = data.avg30;
-          this.options.series[2]['data'] = data.avg365;
-          this.options.series[0]['name'] =
-            'Daily Sales (average £' + data.avg[0][1] + ')';
-          this.options.series[1]['name'] =
-            '30 day average (£' + data.avg30[0][1] + ')';
-          this.options.series[2]['name'] =
-            '365 day average (£' + data.avg365[0][1] + ')';
-        }
-      },
-      complete: () => {
+  ngOnInit(): void {}
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['salesChartData']) {
+      if (this.options.series && this.salesChartData) {
+        this.options.series[0]['data'] = this.salesChartData.sales;
+        this.options.series[1]['data'] = this.salesChartData.avg30;
+        this.options.series[2]['data'] = this.salesChartData.avg365;
+        this.options.series[0]['name'] =
+          'Daily Sales (average £' + this.salesChartData.avg[0][1] + ')';
+        this.options.series[1]['name'] =
+          '30 day average (£' + this.salesChartData.avg30[0][1] + ')';
+        this.options.series[2]['name'] =
+          '365 day average (£' + this.salesChartData.avg365[0][1] + ')';
+
         Highcharts.chart('sales-chart', this.options);
-      },
-    });
+      }
+    }
   }
 }
