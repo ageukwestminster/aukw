@@ -1,7 +1,10 @@
 List of Steps To Move To Production
 
+Codebase
+* Check in code in branch & merge to master
+
 DataBASE
-* Ensure 3 sprocedures are updated to latest
+* Ensure 3 stored procedures are updated to latest
 
 PHP - Config.php
 * At top of file change PHP error handling
