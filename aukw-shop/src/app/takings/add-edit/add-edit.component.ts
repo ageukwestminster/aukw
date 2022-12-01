@@ -41,6 +41,7 @@ export class TakingsAddEditComponent implements OnInit {
   user!: User;
   cashDifference = 0;
   minimumNextDate: NgbDateStruct = { year: 2000, month: 1, day: 1 };
+  prevMinimumNextDate: NgbDateStruct = { year: 2000, month: 1, day: 1 };
 
   sumOfNumber = 0;
   sumOfAmount = ''; // a string to allow easier rounding
@@ -216,6 +217,17 @@ export class TakingsAddEditComponent implements OnInit {
       this.createTakings();
     } else {
       this.updateTakings();
+    }
+  }
+
+  // /(change)="onDatePickerCheckboxChange($event.target)
+  onDatePickerCheckboxChange(target: any) {
+    console.log('Checked = ' + target.checked);
+    if (target && target.checked) {
+      this.minimumNextDate = this.prevMinimumNextDate;
+    } else {
+      this.prevMinimumNextDate = this.minimumNextDate;
+      this.minimumNextDate = { year: 2000, month: 1, day: 1 };
     }
   }
 

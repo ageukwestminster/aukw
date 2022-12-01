@@ -38,11 +38,25 @@
           placeholder="*not-set*"
           name="dp"
           ngbDatepicker
-          #d="ngbDatepicker"
           formControlName="date"
           id="inputTakingsDate"
           [minDate]="minimumNextDate"
+          [footerTemplate]="footerTemplate"
+          #d="ngbDatepicker"
         />
+        <!-- template from 
+          https://ng-bootstrap.github.io/#/components/datepicker/examples#footertemplate -->
+        <ng-template #footerTemplate>
+          <label class="p-2" for="allowOldDates">
+            <input
+              type="checkbox"
+              id="allowOldDates"
+              checked="true"
+              (change)="onDatePickerCheckboxChange($event.target)"
+              class="mr-2"
+            /><span>No Historic Dates</span>
+          </label>
+        </ng-template>
         <div class="input-group-append">
           <button
             class="btn btn-outline-secondary"
