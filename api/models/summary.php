@@ -4,6 +4,8 @@ namespace Models;
 
 use \PDO;
 
+use DateTime;
+
 class TakingsSummary{
     // database conn 
     private $conn;
@@ -64,7 +66,8 @@ class TakingsSummary{
                     "other" => $other,
                     "rag" => $rag,
                     "donations" => $donations,
-
+                    "start_date_format" => (new DateTime($start_date))->format('d/m/y'),
+                    "end_date_format" => (new DateTime($end_date))->format('d/m/y'),
                 );
 
                 // create un-keyed list
@@ -94,6 +97,7 @@ class TakingsSummary{
         $chart_data=array();
         $chart_data["current_date"] = $current_date;
         $chart_data["shopid"] = $shopid;
+        $chart_data['takingsids'] = array();
         $chart_data['dates'] = array();
         $chart_data['sales'] = array();        
         $chart_data['avg'] = array();
@@ -107,6 +111,7 @@ class TakingsSummary{
                 extract($row);
 
                 // create un-keyed lists
+                array_push ($chart_data['takingsids'], $takingsid);
                 array_push ($chart_data['dates'], $date);
                 array_push ($chart_data['sales'], array($sales_date, $net_sales));                
                 array_push ($chart_data['avg'], array($sales_date, $AvgSales));

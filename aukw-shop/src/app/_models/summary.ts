@@ -4,6 +4,8 @@ export class Summary {
   type: string;
   start_date: string;
   end_date: string;
+  start_date_format: string;
+  end_date_format: string;
   count: number;
 
   number_of_items_sold: number;
@@ -39,6 +41,8 @@ export class Summary {
     this.type = (obj && obj.type) || 0;
     this.start_date = (obj && obj.start_date) || 0;
     this.end_date = (obj && obj.end_date) || 0;
+    this.start_date_format = (obj && obj.start_date_format) || 0;
+    this.end_date_format = (obj && obj.end_date_format) || 0;
     this.shopid = (obj && obj.shopid) || null;
     this.number_of_items_sold = (obj && obj.number_of_items_sold) || null;
     this.customers_num_total = (obj && obj.customers_num_total) || null;
