@@ -4,7 +4,12 @@ export class Summary {
   type: string;
   start_date: string;
   end_date: string;
-  net_sales: number;
+  count: number;
+  
+  number_of_items_sold: number;
+  avg_sales: number;
+  avg_net_sales: number;
+  total_sales: number;
 
   clothing: number;
   brica: number;
@@ -14,6 +19,12 @@ export class Summary {
   other: number;
   donations: number;
 
+  customers_num_total: number;
+  cash_to_bank: number;
+  credit_cards: number;
+  expenses: number;
+  shopid: number;
+
   clothing_num: number;
   brica_num: number;
   books_num: number;
@@ -21,15 +32,6 @@ export class Summary {
   rag_num: number;
   other_num: number;
   donations_num: number;
-
-  shopid: number;
-  number_of_items_sold: number;
-  customers_num_total: number;
-  sales_total: number;
-  expenses: number;
-  cash_to_bank: number;
-  credit_cards: number;
-  count: number;
 
   constructor(obj?: any) {
     this.index = (obj && obj.index) || null;
@@ -40,9 +42,10 @@ export class Summary {
     this.shopid = (obj && obj.shopid) || null;
     this.number_of_items_sold = (obj && obj.number_of_items_sold) || null;
     this.customers_num_total = (obj && obj.customers_num_total) || null;
-    this.sales_total = (obj && obj.sales_total) || null;
+    this.avg_sales = (obj && obj.avg_sales) || null;
+    this.total_sales = (obj && obj.total_sales) || null;
     this.rag = (obj && obj.rag) || null;
-    this.net_sales = (obj && obj.net_sales) || null;
+    this.avg_net_sales = (obj && obj.avg_net_sales) || null;
     this.expenses = (obj && obj.expenses) || null;
 
     this.clothing = (obj && obj.clothing) || null;
