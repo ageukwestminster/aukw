@@ -16,7 +16,7 @@ export class SalesChartComponent implements OnInit {
       text: 'Harrow Road Daily Net Sales For Last 10 Trading Days',
     },
     subtitle: {
-      text: 'Compared To Avg of Last 30 days',
+      text: 'Compared To Avg of Last 30 & 365 days',
     },
     credits: {
       text: 'Source Data',
@@ -94,16 +94,19 @@ export class SalesChartComponent implements OnInit {
 
   constructor(private summaryService: SummaryService) {}
 
-  ngOnInit(): void {    
+  ngOnInit(): void {
     this.summaryService.getSalesChartData().subscribe({
       next: (data: SalesChartData) => {
         if (this.options.series) {
           this.options.series[0]['data'] = data.sales;
           this.options.series[1]['data'] = data.avg30;
           this.options.series[2]['data'] = data.avg365;
-          this.options.series[0]['name'] = 'Daily Sales (average £' + data.avg[0][1]+')';
-          this.options.series[1]['name'] = '30 day average (£' + data.avg30[0][1]+')';
-          this.options.series[2]['name'] = '365 day average (£' + data.avg365[0][1]+')';
+          this.options.series[0]['name'] =
+            'Daily Sales (average £' + data.avg[0][1] + ')';
+          this.options.series[1]['name'] =
+            '30 day average (£' + data.avg30[0][1] + ')';
+          this.options.series[2]['name'] =
+            '365 day average (£' + data.avg365[0][1] + ')';
         }
       },
       complete: () => {
