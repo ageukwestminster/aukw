@@ -17,7 +17,7 @@
         ></span>
         Save
       </button>
-      <button (click)="goBack()" class="btn btn-outline-dark">
+      <button type="button" (click)="goBack()" class="btn btn-outline-dark">
         Close &times;
       </button>
     </div>
@@ -229,28 +229,28 @@
       the QB connection.
     </p>
     <div>
-      <div *ngIf="qbconn && qbconn.refreshtokenexpiry">
+      <div *ngIf="refreshTokenExpiry">
         <p>
           <strong>
             Your QB Connection is valid. It will expire on
-            {{ qbconn.refreshtokenexpiry | date: "mediumDate" }}.
+            {{ refreshTokenExpiry | date: "mediumDate" }}.
           </strong>
         </p>
       </div>
-      <div *ngIf="!qbconn || !qbconn.refreshtokenexpiry">
+      <div *ngIf="!refreshTokenExpiry">
         <p>At present you do not have a valid QB Connection.</p>
       </div>
       <button
         (click)="makeQBConnection()"
         class="btn btn-sm btn-primary mr-1 mb-1"
-        *ngIf="!qbconn || !qbconn.refreshtokenexpiry"
+        *ngIf="!refreshTokenExpiry"
       >
         Make QB Connection
       </button>
       <button
         (click)="revokeQBConnection()"
         class="btn btn-sm btn-info mr-1 mb-1"
-        *ngIf="qbconn && qbconn.refreshtokenexpiry"
+        *ngIf="refreshTokenExpiry"
       >
         Revoke QB Connection
       </button>

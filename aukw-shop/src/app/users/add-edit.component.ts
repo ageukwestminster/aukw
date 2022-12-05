@@ -32,7 +32,7 @@ export class UserAddEditComponent implements OnInit {
   form!: FormGroup;
   id!: number;
   shops$!: Observable<Shop[]>;
-  qbconn?: QBConnectionDetails;
+  refreshTokenExpiry: Date | null = null;
   formMode!: UserFormMode;
   loading = false;
   submitted = false;
@@ -121,16 +121,17 @@ export class UserAddEditComponent implements OnInit {
 
   //
   private refreshQBConnectionDetails(conn: QBConnectionDetails) {
-    this.qbconn = new QBConnectionDetails();
+    //this.qbconn = new QBConnectionDetails();
     if (conn && conn.refreshtokenexpiry) {
       const t: string[] = conn.refreshtokenexpiry.split(/[- :]/);
       const tokenExpiry = new Date(
-        Date.UTC(+t[0], +t[2] - 1, +t[1], +t[3], +t[4], +t[5])
+        Date.UTC(+t[0], +t[1] - 1, +t[2], +t[3], +t[4], +t[5])
       );
       const nowDateAndTime = new Date();
       if (tokenExpiry > nowDateAndTime) {
-        this.qbconn.refreshtokenexpiry =
-          tokenExpiry.toLocaleDateString('en-GB');
+        this.refreshTokenExpiry = tokenExpiry;
+      } else {
+        this.refreshTokenExpiry = null;
       }
     }
   }
