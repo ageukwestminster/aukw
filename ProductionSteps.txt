@@ -7,12 +7,17 @@ DataBASE
 * Ensure 3 stored procedures are updated to latest
 * Is qbtoken table sync'd?
 
+FILEZILLA: COPY Codebase
+
 PHP - Config.php
+* api: delete .vscode directory
 * At top of file change PHP error handling
-* Ensure 'server' is correct for Access-Origin
+* Ensure 'server' is correct for Access-Origin (https://www.aukw.org.uk)
 * Ensure database IP address and name are correct
 * Ensure redirecturl points to Production location
-* Ensure QB log location is a valid file path
+* Change cookie secure to true
+* Change QB log to true
+* Ensure QB log location is a valid file path (/var/log/apache2/www.aukw.org.uk)
 
 HTACCESS
 * Ensure all ENV keys are in place

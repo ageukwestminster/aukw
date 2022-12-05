@@ -53,20 +53,10 @@ Config::write('token.cookiepath', Config::read('api.path') . 'auth');
 Config::write('token.cookiesecure', false);
 
 // Quickbooks SDKsettings
-//PRODUCTION COMPANY
-// Todo: move id & secret to variable in .htaccess
+// PRODUCTION COMPANY
 Config::write('qb.clientid', 'QB_CLIENT_ID');
 Config::write('qb.clientsecret', 'QB_CLIENT_SECRET');
 Config::write('qb.redirecturl', 'https://8219-86-142-147-138.ngrok.io/api/auth/callback');
 Config::write('qb.realmid', '9130350604308576');
 Config::write('qb.enablelog', false);
 Config::write('qb.loglocation', 'B:\\logs');
-
-// email
-/*Config::write('em.host', 'uk1.cp.netnerd.com');
-Config::write('em.port', '465');
-Config::write('em.user', 'member_admin+knightsbridgeassociation.com');
-Config::write('em.replyto', 'membership@knightsbridgeassociation.com');
-Config::write('em.password_envkeyname', 'EMAIL_PASSWORD');
-Config::write('em.secure', true);
-*/
