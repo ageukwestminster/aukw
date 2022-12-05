@@ -45,7 +45,7 @@ export class TakingsListComponent implements OnInit {
         },
         { sum: 0, count: 0 }
       ),
-      // map calcualtes average
+      // map calculates average
       map((x) => x.sum / x.count)
     );
 
@@ -67,6 +67,9 @@ export class TakingsListComponent implements OnInit {
     if (updateItem != null) {
       let index = this.takingslist.indexOf(updateItem);
       this.takingslist[index] = takings;
+      this.takingslistNotInQB = this.takingslist.filter(
+        (x) => x.quickbooks == false
+      );
     }
   }
 
