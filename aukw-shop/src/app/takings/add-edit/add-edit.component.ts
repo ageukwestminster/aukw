@@ -221,8 +221,7 @@ export class TakingsAddEditComponent implements OnInit {
   }
 
   // /(change)="onDatePickerCheckboxChange($event.target)
-  onDatePickerCheckboxChange(target: any) {
-    console.log('Checked = ' + target.checked);
+  onDatePickerCheckboxChange(target: any) {    
     if (target && target.checked) {
       this.minimumNextDate = this.prevMinimumNextDate;
     } else {
