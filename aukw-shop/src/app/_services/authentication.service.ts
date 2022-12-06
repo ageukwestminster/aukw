@@ -55,20 +55,20 @@ export class AuthenticationService {
       .delete<any>(`${environment.apiUrl}/auth/revoke`, {
         withCredentials: true,
       })
-      .subscribe(
-        (result) => {
+      .subscribe({
+        next: (result) => {
           // Handle result
           //console.log(result)
         },
-        (error) => {
-          //console.log(error)
+        error: (error) => {
+          console.log(error);
         },
-        () => {
+        complete: () => {
           // 'onCompleted' callback.
           // No errors, route to new page here
           //console.log('Completed.');
         }
-      );
+      });
     this.stopRefreshTokenTimer();
     this.userSubject.next(new User());
     this.router.navigate(['/login']);
