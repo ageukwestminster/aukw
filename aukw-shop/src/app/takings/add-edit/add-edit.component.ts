@@ -221,7 +221,7 @@ export class TakingsAddEditComponent implements OnInit {
   }
 
   // /(change)="onDatePickerCheckboxChange($event.target)
-  onDatePickerCheckboxChange(target: any) {    
+  onDatePickerCheckboxChange(target: any) {
     if (target && target.checked) {
       this.minimumNextDate = this.prevMinimumNextDate;
     } else {
@@ -253,7 +253,9 @@ export class TakingsAddEditComponent implements OnInit {
           this.router.navigate(['../'], { relativeTo: this.route });
         },
         error: (error) => {
-          this.alertService.error('Takings not added');
+          this.alertService.error('Takings not added', {
+            autoClose: false,
+          });
         },
       })
       .add(() => (this.loading = false));
@@ -271,7 +273,9 @@ export class TakingsAddEditComponent implements OnInit {
           this.location.back();
         },
         error: (error) => {
-          this.alertService.error('Takings not updated');
+          this.alertService.error('Takings not updated', {
+            autoClose: false,
+          });
         },
       })
       .add(() => (this.loading = false));

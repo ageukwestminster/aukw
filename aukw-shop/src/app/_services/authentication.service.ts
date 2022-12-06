@@ -67,7 +67,7 @@ export class AuthenticationService {
           // 'onCompleted' callback.
           // No errors, route to new page here
           //console.log('Completed.');
-        }
+        },
       });
     this.stopRefreshTokenTimer();
     this.userSubject.next(new User());
