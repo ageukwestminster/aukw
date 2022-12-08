@@ -67,6 +67,7 @@ $router->mount('/takings', function () use ($router) {
 $router->mount('/report', function () use ($router) {
     $router->get('/histogram', 'ReportCtl@dailySalesHistogram');
     $router->get('/profitandloss', 'QBReportCtl@profit_and_loss');
+    $router->get('/salesbyitem', 'QBReportCtl@sales_by_item');
 });
 
 /***************/
@@ -120,6 +121,10 @@ $router->mount('/qb', function () use ($router) {
 
     // Retrieve details of the connection to QB (if any)
     $router->get('/connection', 'QBTokenCtl@read_one');
+
+    // QB item is for Products/Services
+    $router->get('/item/(\w+)', 'QBItemCtl@read_one');
+    $router->get('/items', 'QBItemCtl@read_all');
 });
 
 /***************/
