@@ -213,7 +213,7 @@ class User{
                     shopid=:shopid,
                     timestamp=NULL,
                     failedloginattempts=:failedloginattempts
-                    " . (isset($this->password)?',new_pass=:password ':'') ."
+                    " . (isset($this->password)?',password=:password ':'') ."
                  WHERE
                     id=:id";
         
