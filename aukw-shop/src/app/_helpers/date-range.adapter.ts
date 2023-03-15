@@ -102,8 +102,8 @@ export class DateRangeAdapter {
           firstDayOfTradingYear = new Date(year - 1, 9, 1, NOON);
           lastDayOfTradingYear = new Date(year, 9, 0, NOON);
         } else {
-          firstDayOfTradingYear = new Date(year - 1, 9, 1, NOON);
-          lastDayOfTradingYear = new Date(year, 9, 0, NOON);
+          firstDayOfTradingYear = new Date(year - 2, 9, 1, NOON);
+          lastDayOfTradingYear = new Date(year - 1, 9, 0, NOON);
         }
         return this.instantiateObj(firstDayOfTradingYear, lastDayOfTradingYear);
       case DateRangeEnum.LAST_YEAR:
