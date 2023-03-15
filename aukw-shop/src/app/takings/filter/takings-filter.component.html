@@ -1,0 +1,97 @@
+<form [formGroup]="form">
+  <ngb-accordion #acc="ngbAccordion" (panelChange)="beforeChange($event)">
+    <ngb-panel title="Filter">
+      <ng-template ngbPanelHeader let-opened="opened">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <button
+              ngbPanelToggle
+              class="btn btn-link mb-2"
+              *ngIf="!working"
+              placement="bottom"
+              ngbTooltip="Show/Hide Filter Options"
+              container="body"
+            >
+              <i class="fas fa-chevron-down" *ngIf="!panelOpen"></i>
+              <i class="fas fa-chevron-up" *ngIf="panelOpen"></i>
+            </button>
+            <span>Filter</span>
+          </div>
+          <span *ngIf="working" class="spinner-border spinner-border-sm"></span>
+        </div>
+      </ng-template>
+      <ng-template ngbPanelContent>
+        <div class="col-sm-auto pl-2">
+          <select
+            class="form-control"
+            #selectList
+            (change)="onDateRangeChanged(selectList.value)"
+          >
+            <option disabled selected [ngValue]="null">
+              -- select --
+            </option>
+            <option
+              *ngFor="let item of DateRange | keyvalue: originalOrder"
+              value="{{ item.value }}"
+            >
+              {{ item.value }}
+            </option>
+          </select>
+        </div>
+        <div class="col-sm-auto pl-2 pt-2">between</div>
+        <div class="col-sm-auto">
+          <div class="input-group col p-0 mb-1">
+            <input
+              class="form-control"
+              placeholder="Start"
+              name="dp1"
+              ngbDatepicker
+              #d1="ngbDatepicker"
+              formControlName="startDate"
+              id="inputStartDate"
+              placement="top"
+            />
+            <div class="input-group-append">
+              <button
+                class="btn btn-outline-secondary"
+                (click)="d1.toggle()"
+                type="button"
+              >
+                <i class="far fa-calendar-alt"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-auto pl-2 pt-2">and</div>
+        <div class="col-sm-auto">
+          <div class="input-group col p-0 mb-1">
+            <input
+              class="form-control"
+              placeholder="End"
+              name="dp2"
+              ngbDatepicker
+              #d2="ngbDatepicker"
+              formControlName="endDate"
+              id="inputEndDate"
+              placement="top"
+            />
+            <div class="input-group-append">
+              <button
+                class="btn btn-outline-secondary"
+                (click)="d2.toggle()"
+                type="button"
+              >
+                <i class="far fa-calendar-alt"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </ngb-panel>
+  </ngb-accordion>
+  <div *ngIf="false">
+    <p>Form Value: {{ form.value | json }}</p>
+    <p>Form Status: {{ form.status }}</p>
+    <p>Filter: {{ filter$ | async | json }}</p>
+  </div>
+</form>

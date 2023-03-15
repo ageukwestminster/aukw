@@ -4,7 +4,7 @@ import {
   AuthenticationService,
   TakingsService,
 } from '@app/_services';
-import { ApiMessage, TakingsSummary, User } from '@app/_models';
+import { ApiMessage, TakingsFilter, TakingsSummary, User } from '@app/_models';
 import { environment } from '@environments/environment';
 
 import { from, Observable, of, merge, map } from 'rxjs';
@@ -16,6 +16,8 @@ export class TakingsListComponent implements OnInit {
   takingslistNotInQB!: TakingsSummary[];
   average$!: Observable<number>;
   user!: User;
+  loading: boolean = false;
+  filter!: TakingsFilter;
 
   constructor(
     private takingsService: TakingsService,
@@ -57,6 +59,7 @@ export class TakingsListComponent implements OnInit {
     });
   }
 
+  /* remove takings from visible list */
   takingsWasDeleted(takings: TakingsSummary): void {
     this.takingslist = this.takingslist.filter((x) => x.id !== takings.id);
   }
@@ -100,5 +103,17 @@ export class TakingsListComponent implements OnInit {
           });
         },
       });
+  }
+
+  takingsUpdated(takings: TakingsSummary[]) {
+    this.takingslist = takings;
+  }
+
+  takingsFilterUpdated(filter: TakingsFilter) {
+    this.filter = filter;
+  }
+
+  filterIsLoading(value: boolean) {
+    this.loading = value;
   }
 }

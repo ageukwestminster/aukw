@@ -10,6 +10,7 @@ export * from './qb-auth-uri';
 export * from './role';
 export * from './shop';
 export * from './summary';
+export * from './takings-filter';
 export * from './takings-summary';
 export * from './takings';
 export * from './user';

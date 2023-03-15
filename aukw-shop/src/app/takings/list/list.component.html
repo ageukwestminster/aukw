@@ -15,6 +15,11 @@
     </button>
   </div>
 </div>
+<takings-filter
+  (filteredTakings)="takingsUpdated($event)"
+  (loading)="filterIsLoading($event)"
+  (filter)="takingsFilterUpdated($event)"
+></takings-filter>
 <div *ngIf="average$ | async as avg">
   Average Sales £{{ avg | number: "1.2-2" }}
 </div>
