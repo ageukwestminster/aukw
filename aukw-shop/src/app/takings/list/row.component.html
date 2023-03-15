@@ -10,9 +10,10 @@
 <td style="white-space: nowrap">
   <div class="row">
     <button
-      class="btn btn-sm btn-primary mr-1"
+      class="btn btn-sm btn-primary mr-1 mb-1"
       [disabled]="(takings.isUpdating || takings.quickbooks) && !user.isAdmin"
       routerLink="edit/{{ takings.id }}"
+      *ngIf="!takings.quickbooks || user.isAdmin"
     >
       <span
         *ngIf="takings.isUpdating"
@@ -21,9 +22,21 @@
       <span *ngIf="!takings.isUpdating">Edit</span>
     </button>
     <button
+    class="btn btn-sm btn-secondary mr-1 mb-1"
+    [disabled]="takings.isUpdating"
+    routerLink="view/{{ takings.id }}"
+    *ngIf="takings.quickbooks"
+  >
+    <span
+      *ngIf="takings.isUpdating"
+      class="spinner-border spinner-border-sm"
+    ></span>
+    <span *ngIf="!takings.isUpdating">View</span>
+  </button>
+    <button
       *ngIf="user.isAdmin"
       (click)="deleteTakings($event)"
-      class="btn btn-sm btn-danger btn-delete-takings"
+      class="btn btn-sm btn-danger btn-delete-takings mb-1"
       [disabled]="takings.isDeleting"
     >
       <span

@@ -69,8 +69,12 @@ export class TakingsAddEditComponent implements OnInit {
 
     if (!this.id) {
       this.formMode = FormMode.Add;
-    } else {
+    } else if (this.route.snapshot.url[0] && 
+        this.route.snapshot.url[0].path && 
+        this.route.snapshot.url[0].path == 'edit') {
       this.formMode = FormMode.Edit;
+    } else {
+      this.formMode = FormMode.View;
     }
 
     this.form = this.formBuilder.group({
@@ -110,9 +114,6 @@ export class TakingsAddEditComponent implements OnInit {
     this.shopService.getAll().subscribe((x) => {
       this.shops = x;
     });
-
-    if (this.formMode === FormMode.Add) {
-    }
 
     if (this.formMode != FormMode.Add) {
       this.takingsService
@@ -215,7 +216,7 @@ export class TakingsAddEditComponent implements OnInit {
     this.loading = true;
     if (this.formMode == FormMode.Add) {
       this.createTakings();
-    } else {
+    } else if (this.formMode == FormMode.Edit) {
       this.updateTakings();
     }
   }
@@ -240,6 +241,9 @@ export class TakingsAddEditComponent implements OnInit {
   }
   get isEdit() {
     return this.formMode == FormMode.Edit;
+  }
+  get isReadOnly() {
+    return this.formMode == FormMode.View;
   }
 
   private createTakings() {

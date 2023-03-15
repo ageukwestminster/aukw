@@ -73,12 +73,7 @@ export class MonthlySalesChartComponent implements OnInit {
     },
     series: [
       {
-        name: 'Linens',
-        data: [],
-        type: 'column',
-      },
-      {
-        name: 'Books',
+        name: 'Clothing',
         data: [],
         type: 'column',
       },
@@ -88,10 +83,15 @@ export class MonthlySalesChartComponent implements OnInit {
         type: 'column',
       },
       {
-        name: 'Clothing',
+        name: 'Books',
         data: [],
         type: 'column',
       },
+      {
+        name: 'Linens',
+        data: [],
+        type: 'column',
+      }
     ],
   };
 
@@ -138,12 +138,12 @@ export class MonthlySalesChartComponent implements OnInit {
             this.optionsSimpleBarChart.series[0]['data'].push(value.sales);
           }
           if (this.optionsStackedBarChart.series) {
-            this.optionsStackedBarChart.series[3]['data'].push(
+            this.optionsStackedBarChart.series[0]['data'].push(
               value.avg_clothing
             );
-            this.optionsStackedBarChart.series[2]['data'].push(value.avg_brica);
-            this.optionsStackedBarChart.series[1]['data'].push(value.avg_books);
-            this.optionsStackedBarChart.series[0]['data'].push(
+            this.optionsStackedBarChart.series[1]['data'].push(value.avg_brica);
+            this.optionsStackedBarChart.series[2]['data'].push(value.avg_books);
+            this.optionsStackedBarChart.series[3]['data'].push(
               value.avg_linens
             );
           }
