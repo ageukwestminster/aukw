@@ -35,7 +35,7 @@ Config::write('api.path', '/api/');
 // db
 Config::write('db.host', '192.168.1.44');
 Config::write('db.port', '3306');
-Config::write('db.name', 'dailytakings');
+Config::write('db.name', 'dailytakings2');
 Config::write('db.user', 'shop');
 Config::write('db.password', 'DB_PASSWORD');
 
