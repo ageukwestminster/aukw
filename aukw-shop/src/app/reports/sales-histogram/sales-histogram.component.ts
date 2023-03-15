@@ -107,7 +107,7 @@ export class SalesHistogramComponent implements OnInit {
 
   onRowSelected(salesRow: [number, string, number]) {
     if (salesRow && salesRow[0]) {
-      this.router.navigate([`takings/edit/${salesRow[0]}`]);
+      this.router.navigate([`takings/view/${salesRow[0]}`]);
     }
   }
 
