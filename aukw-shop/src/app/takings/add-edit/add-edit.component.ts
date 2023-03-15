@@ -69,9 +69,11 @@ export class TakingsAddEditComponent implements OnInit {
 
     if (!this.id) {
       this.formMode = FormMode.Add;
-    } else if (this.route.snapshot.url[0] && 
-        this.route.snapshot.url[0].path && 
-        this.route.snapshot.url[0].path == 'edit') {
+    } else if (
+      this.route.snapshot.url[0] &&
+      this.route.snapshot.url[0].path &&
+      this.route.snapshot.url[0].path == 'edit'
+    ) {
       this.formMode = FormMode.Edit;
     } else {
       this.formMode = FormMode.View;

@@ -91,7 +91,7 @@ export class MonthlySalesChartComponent implements OnInit {
         name: 'Linens',
         data: [],
         type: 'column',
-      }
+      },
     ],
   };
 

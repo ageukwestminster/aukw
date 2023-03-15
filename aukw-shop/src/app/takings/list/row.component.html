@@ -22,17 +22,17 @@
       <span *ngIf="!takings.isUpdating">Edit</span>
     </button>
     <button
-    class="btn btn-sm btn-secondary mr-1 mb-1"
-    [disabled]="takings.isUpdating"
-    routerLink="view/{{ takings.id }}"
-    *ngIf="takings.quickbooks"
-  >
-    <span
-      *ngIf="takings.isUpdating"
-      class="spinner-border spinner-border-sm"
-    ></span>
-    <span *ngIf="!takings.isUpdating">View</span>
-  </button>
+      class="btn btn-sm btn-secondary mr-1 mb-1"
+      [disabled]="takings.isUpdating"
+      routerLink="view/{{ takings.id }}"
+      *ngIf="takings.quickbooks"
+    >
+      <span
+        *ngIf="takings.isUpdating"
+        class="spinner-border spinner-border-sm"
+      ></span>
+      <span *ngIf="!takings.isUpdating">View</span>
+    </button>
     <button
       *ngIf="user.isAdmin"
       (click)="deleteTakings($event)"
