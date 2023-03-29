@@ -2,6 +2,8 @@
 
 namespace Controllers;
 
+use DateTime;
+
 class TakingsCtl{
 
   public static function read_one($id){  
@@ -38,33 +40,33 @@ class TakingsCtl{
 
     $model = new \Models\Takings();
 
-    echo json_encode($model->summary($shopid), JSON_NUMERIC_CHECK);
-  }
+    $startdate='';
+    $enddate='';
 
-  public static function salesList($shopid){  
-
-    $model = new \Models\Takings();
-
+    // if parameters are proovided use them
     if(isset($_GET['start']) || isset($_GET['end'])) {
-      $start='';
-      $end='';
-      list($start, $end) = \Core\DatesHelper::sanitizeDateValues(
+      list($startdate, $enddate) = \Core\DatesHelper::sanitizeDateValues(
                                   !isset($_GET['start']) ? '' : $_GET['start'], 
                                   !isset($_GET['end']) ? '' : $_GET['end']
                               );
-  
-      $model->startdate = $start;
-      $model->enddate = $end;
-  } else {
-      $model->startdate = '2000-01-01';
-      $model->enddate = date('Y-m-d');
+    } 
+    
+    // default values are today and 3 months ago
+    if ($startdate == '') {    
+      if ($enddate == '') {           
+        $enddate = date('Y-m-d');      
+      }
+      $startdate = (new DateTime($enddate))->modify('-3 month')->format('Y-m-d');
+    } else if ($enddate == '') {           
+      $enddate = (new DateTime($startdate))->modify('+3 month')->format('Y-m-d');
+    }    
+
+    echo json_encode($model->summary($shopid, $startdate, $enddate), JSON_NUMERIC_CHECK);
   }
 
-  if (isset($_GET['bankID']) && !empty($_GET['bankID'])) {
-      $model->bankID = $_GET['bankID'];
-  } else {
-      $model->bankID = 0;
-  }
+  public static function salesList($shopid, $numdatapoints){  
+
+    $model = new \Models\Takings();
 
     echo json_encode($model->salesList($shopid, $numdatapoints), JSON_NUMERIC_CHECK);
   }

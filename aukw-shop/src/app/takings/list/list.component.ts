@@ -29,7 +29,7 @@ export class TakingsListComponent implements OnInit {
 
   ngOnInit() {
     const takings$: Observable<TakingsSummary[]> =
-      this.takingsService.getSummary(environment.HARROWROAD_SHOPID);
+      this.takingsService.getSummary(environment.HARROWROAD_SHOPID, '');
 
     this.average$ = takings$.pipe(
       // switchMap converts Observable<TakingSummary[]> (complex object)

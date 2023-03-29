@@ -45,8 +45,8 @@ class Takings{
     public $timestamp;
     public $quickbooks;
 
-    // Show takings data for the last 100 trading days for a given shop
-    public function summary($shopid){
+    // Show takings data  for a given shop, between start and end dates
+    public function summary($shopid, $startdate, $enddate){
         $query = "SELECT
                     takingsid, `date`, t.shopid, s.`name` as shopname, 
                     (clothing_num+brica_num+books_num+linens_num+donations_num+other_num+rag_num) as number_of_items_sold,
@@ -61,8 +61,8 @@ class Takings{
                     FROM
                     " . $this->table_name . " t
                     LEFT JOIN shop s ON t.shopid = s.id
-                    WHERE t.shopid = :shopid AND t.`date` <= NOW()
-                    ORDER BY t.`date` DESC LIMIT 100
+                    WHERE t.shopid = :shopid AND t.`date` >= :start AND t.`date`<= :end
+                    ORDER BY t.`date` DESC
                     ";
         
         // prepare query statement
@@ -70,6 +70,8 @@ class Takings{
 
         // bind id of product to be updated
         $stmt->bindParam(":shopid", $shopid, PDO::PARAM_INT);
+        $stmt->bindParam(":start", $startdate);
+        $stmt->bindParam(":end", $enddate);
 
         // execute query
         $stmt->execute();

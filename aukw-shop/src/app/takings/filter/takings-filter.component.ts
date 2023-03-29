@@ -2,7 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { KeyValue } from '@angular/common';
 import { NgbPanelChangeEvent } from '@ng-bootstrap/ng-bootstrap';
-
+import { environment } from '@environments/environment';
 import { Observable, BehaviorSubject } from 'rxjs';
 
 import {
@@ -94,6 +94,18 @@ export class TakingsFilterComponent implements OnInit {
       this.f['endDate'].setValue(dtRng.endDate);
     }
 
-    //this.refreshSummary(dtRng.startDate, dtRng.endDate);
+    this.refreshSummary(dtRng.startDate, dtRng.endDate);
+  }
+
+  refreshSummary(startDate: string, endDate: string) {
+
+    var str = `start=${startDate!}`;
+    str = str.concat('&', 'end=', endDate);
+
+    this.takingsService
+      .getSummary(environment.HARROWROAD_SHOPID, str)
+      .subscribe((response: any) => {
+        this.filteredTakings.emit(response);
+      });
   }
 }

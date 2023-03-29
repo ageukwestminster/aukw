@@ -20,8 +20,8 @@ export class TakingsService {
     return this.http.get<Takings[]>(`${baseUrl}/shop/${shopid}`);
   }
 
-  getSummary(shopid: number) {
-    return this.http.get<TakingsSummary[]>(`${baseUrl}/summary/shop/${shopid}`);
+  getSummary(shopid: number, urlParameters: string) {
+    return this.http.get<TakingsSummary[]>(`${baseUrl}/summary/shop/${shopid}?${urlParameters}`);
   }
 
   /* return an array of the numdatapoints most recent sales */
