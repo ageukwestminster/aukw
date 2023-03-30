@@ -3,7 +3,7 @@
 /*
     Router logic supplied by bramus\router (https://github.com/bramus/router)
 
-    Useing some example uses from https://github.com/wdekkers/raspberry-pi-app
+    Using some example uses from https://github.com/wdekkers/raspberry-pi-app
 
     Regex cheat sheet: https://courses.cs.washington.edu/courses/cse154/15sp/cheat-sheets/php-regex-cheat-sheet.pdf
 
@@ -66,6 +66,7 @@ $router->mount('/takings', function () use ($router) {
 /***************/
 $router->mount('/report', function () use ($router) {
     $router->get('/histogram', 'ReportCtl@dailySalesHistogram');
+    $router->get('/moving-avg', 'ReportCtl@dailySalesMovingAverage');
     $router->get('/profitandloss', 'QBReportCtl@profit_and_loss');
     $router->get('/salesbyitem', 'QBReportCtl@sales_by_item');
 });

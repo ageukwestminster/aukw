@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {
   DateRangeEnum,
   HistogramChartData,
+  MovingAverageSalesChartData,
   SalesChartData,
   Summary,
   User,
@@ -21,6 +22,7 @@ export class HomeComponent implements OnInit {
   summary!: Summary[];
   histogramChartData?: HistogramChartData;
   salesChartData?: SalesChartData;
+  movingAvgChartData?: MovingAverageSalesChartData;
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -48,6 +50,10 @@ export class HomeComponent implements OnInit {
         }),
         concatMap((response) => {
           this.histogramChartData = response;
+          return this.reportService.getMovingAverageSales();
+        }),
+        concatMap((response) => {
+          this.movingAvgChartData = response;
           return this.summaryService.getSalesChartData();
         })
       )

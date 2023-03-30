@@ -33,5 +33,15 @@ class ReportCtl{
     echo json_encode($model->dailySalesHistogram(), JSON_NUMERIC_CHECK);
   }
 
+  public static function dailySalesMovingAverage(){  
+
+    $model = new \Models\Report();
+
+    $model->startdate = '2020-10-01';
+    $model->shopID = 1;
+
+    echo json_encode($model->dailySalesMovingAverage(), JSON_NUMERIC_CHECK);
+  }
+
   
 }

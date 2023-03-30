@@ -57,7 +57,7 @@ export class TakingsFilterComponent implements OnInit {
     this.onDateRangeChanged(DateRangeEnum.THIS_YEAR);
   }
 
-    // Required so that the template can access the Enum
+  // Required so that the template can access the Enum
   // From https://stackoverflow.com/a/59289208
   public get DateRange() {
     return DateRangeEnum;
@@ -98,7 +98,6 @@ export class TakingsFilterComponent implements OnInit {
   }
 
   refreshSummary(startDate: string, endDate: string) {
-
     var str = `start=${startDate!}`;
     str = str.concat('&', 'end=', endDate);
 

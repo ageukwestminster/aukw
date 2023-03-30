@@ -10,6 +10,7 @@ import { MoneyInputComponent } from './money-input/money-input.component';
 import { MonthlySalesChartComponent } from './monthly-sales-chart/monthly-sales-chart.component';
 import { SalesHistogramChartComponent } from './sales-histogram/sales-histogram-chart.component';
 import { SummaryTableComponent } from './summary-table/summary-table.component';
+import { MovingAverageChartComponent } from './moving-avg-chart/moving-avg-chart.component';
 
 @NgModule({
   imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbModule],
@@ -19,6 +20,7 @@ import { SummaryTableComponent } from './summary-table/summary-table.component';
     MoneyInputComponent,
     SalesChartComponent,
     MonthlySalesChartComponent,
+    MovingAverageChartComponent,
     SalesHistogramChartComponent,
     SummaryTableComponent,
   ],
@@ -27,6 +29,7 @@ import { SummaryTableComponent } from './summary-table/summary-table.component';
     DepartmentChartComponent,
     MoneyInputComponent,
     MonthlySalesChartComponent,
+    MovingAverageChartComponent,
     SalesChartComponent,
     SalesHistogramChartComponent,
     SummaryTableComponent,

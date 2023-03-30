@@ -21,7 +21,9 @@ export class TakingsService {
   }
 
   getSummary(shopid: number, urlParameters: string) {
-    return this.http.get<TakingsSummary[]>(`${baseUrl}/summary/shop/${shopid}?${urlParameters}`);
+    return this.http.get<TakingsSummary[]>(
+      `${baseUrl}/summary/shop/${shopid}?${urlParameters}`
+    );
   }
 
   /* return an array of the numdatapoints most recent sales */
