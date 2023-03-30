@@ -27,6 +27,10 @@ export class TakingsListComponent implements OnInit {
     this.user = this.authenticationService.userValue;
   }
 
+  get isProduction() {
+    return environment.production;
+  }
+
   ngOnInit() {
     const takings$: Observable<TakingsSummary[]> =
       this.takingsService.getSummary(environment.HARROWROAD_SHOPID, '');

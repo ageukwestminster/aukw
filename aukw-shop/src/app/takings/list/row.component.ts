@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { formatDate } from '@angular/common';
+import { environment } from '@environments/environment';
 import { TakingsSummary, User } from '@app/_models';
 import { TakingsService, AlertService } from '@app/_services';
 /**
@@ -21,6 +22,10 @@ export class TakingsRowComponent {
   ) {
     this.onTakingsDeleted = new EventEmitter();
     this.onTakingsAddedToQB = new EventEmitter();
+  }
+
+  get isProduction() {
+    return environment.production;
   }
 
   deleteTakings(e: Event) {

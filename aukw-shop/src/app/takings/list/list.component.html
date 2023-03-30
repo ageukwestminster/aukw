@@ -1,15 +1,16 @@
 ﻿<div class="row">
   <div class="col-6"><h1>Takings</h1></div>
   <div class="col-6">
-    <button routerLink="add" class="btn btn btn-success m-1 mt-1">
+    <button routerLink="add" class="btn btn-success m-1 mt-1">
       Add New Takings
     </button>
     <button
       *ngIf="
         user.isAdmin && takingslistNotInQB && takingslistNotInQB.length > 0
       "
-      class="btn btn-sm btn-warning m-1 mt-1"
+      class="btn btn-warning m-1 mt-1"
       (click)="addAllToQuickbooks()"
+      [disabled]="!isProduction"
     >
       Add All to QuickBooks
     </button>

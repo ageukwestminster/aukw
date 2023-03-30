@@ -49,7 +49,7 @@
       *ngIf="user.isAdmin && !takings.quickbooks"
       (click)="addToQuickbooks($event)"
       class="btn btn-sm btn-warning btn-add-takings-to-qb"
-      [disabled]="takings.isDeleting"
+      [disabled]="takings.isDeleting || !isProduction"
     >
       <span
         *ngIf="takings.isUpdating"
