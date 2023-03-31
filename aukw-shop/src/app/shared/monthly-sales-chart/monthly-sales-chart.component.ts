@@ -13,6 +13,9 @@ import { switchMap } from 'rxjs/operators';
   templateUrl: './monthly-sales-chart.component.html',
   styleUrls: ['./monthly-sales-chart.component.css'],
 })
+/* 
+ * Create two bar charts displaying  monthly sales using Highcarts
+*/
 export class MonthlySalesChartComponent implements OnInit {
   public optionsSimpleBarChart: Highcharts.Options = {
     chart: {
@@ -134,21 +137,50 @@ export class MonthlySalesChartComponent implements OnInit {
               ).categories?.push(label);
             }
           }
-          if (this.optionsSimpleBarChart.series) {
-            this.optionsSimpleBarChart.series[0]['data'].push(value.sales);
+
+          /* The elaborate if statements below are to allow typescript to
+          * detecxt the presence of the 'data' property. 
+          */          
+          if (
+            this.optionsSimpleBarChart.series &&
+            this.optionsSimpleBarChart.series[0] &&
+            this.optionsSimpleBarChart.series[0].type === 'column'
+          ) {
+            this.optionsSimpleBarChart.series[0].data?.push(value.sales);
           }
           if (this.optionsStackedBarChart.series) {
-            this.optionsStackedBarChart.series[0]['data'].push(
-              value.avg_clothing
-            );
-            this.optionsStackedBarChart.series[1]['data'].push(value.avg_brica);
-            this.optionsStackedBarChart.series[2]['data'].push(value.avg_books);
-            this.optionsStackedBarChart.series[3]['data'].push(
-              value.avg_linens
-            );
+            if (
+              this.optionsStackedBarChart.series[0] &&
+              this.optionsStackedBarChart.series[0].type === 'column'
+            ) {
+              this.optionsStackedBarChart.series[0].data?.push(
+                value.avg_clothing
+              );
+            }
+            if (
+              this.optionsStackedBarChart.series[0] &&
+              this.optionsStackedBarChart.series[1].type === 'column'
+            ) {
+              this.optionsStackedBarChart.series[1].data?.push(value.avg_brica);
+            }
+            if (
+              this.optionsStackedBarChart.series[0] &&
+              this.optionsStackedBarChart.series[2].type === 'column'
+            ) {
+              this.optionsStackedBarChart.series[2].data?.push(value.avg_books);
+            }
+            if (
+              this.optionsStackedBarChart.series[0] &&
+              this.optionsStackedBarChart.series[3].type === 'column'
+            ) {
+              this.optionsStackedBarChart.series[3].data?.push(
+                value.avg_linens
+              );
+            }
           }
         },
         complete: () => {
+          // Create two charts
           Highcharts.chart('monthly-sales-chart', this.optionsSimpleBarChart);
           Highcharts.chart(
             'monthly-dept-sales-chart',

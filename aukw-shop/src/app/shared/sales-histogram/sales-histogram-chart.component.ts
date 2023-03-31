@@ -124,14 +124,19 @@ export class SalesHistogramChartComponent implements OnInit, OnChanges {
         this.histogramChartData &&
         this.histogramChartData.data
       ) {
-        this.options.series[1]['data'] = this.histogramChartData.data;
+        if (this.options.series[1] && this.options.series[1].type === 'scatter') {
+          this.options.series[1].data = this.histogramChartData.data;  
+        }        
+        
         if (this.histogramChartData.last) {
           const lastSalesDate = new Date(this.histogramChartData.last[1]);
           const lastSalesAmount = this.histogramChartData.last[2];
 
-          this.options.series[2]['data'] = [
-            [lastSalesAmount, this.YAXISPOSITION],
-          ];
+          if (this.options.series[2] && this.options.series[2].type === 'scatter') {
+            this.options.series[2].data = [
+              [lastSalesAmount, this.YAXISPOSITION],
+            ]
+          }
 
           // Set a custom Series name
           this.options.series[2]['name'] = this.isToday(lastSalesDate)

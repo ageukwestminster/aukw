@@ -103,9 +103,15 @@ export class SalesChartComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['salesChartData']) {
       if (this.options.series && this.salesChartData) {
-        this.options.series[0]['data'] = this.salesChartData.sales;
-        this.options.series[1]['data'] = this.salesChartData.avg30;
-        this.options.series[2]['data'] = this.salesChartData.avg365;
+        if (this.options.series[0] && this.options.series[0].type  === 'line') {
+          this.options.series[0].data = this.salesChartData.sales;
+        }
+        if (this.options.series[1] && this.options.series[1].type  === 'line') {
+          this.options.series[1].data = this.salesChartData.avg30;
+        }
+        if (this.options.series[2] && this.options.series[2].type  === 'line') {
+          this.options.series[2].data = this.salesChartData.avg365;
+        }
         this.options.series[0]['name'] =
           'Daily Sales (average £' + this.salesChartData.avg[0][1] + ')';
         this.options.series[1]['name'] =
