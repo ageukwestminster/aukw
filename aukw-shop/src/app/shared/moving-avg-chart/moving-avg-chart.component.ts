@@ -41,10 +41,10 @@ export class MovingAverageChartComponent implements OnInit, OnChanges {
       categories: [],
       labels: {
         formatter: function () {
-          return Highcharts.dateFormat('%e %b', this.value as number);
+          return Highcharts.dateFormat('%e %b %y', this.value as number);
         },
       },
-      tickInterval: 1000 * 60 * 60 * 24 * 10, // 10 days
+      tickInterval: 1000 * 60 * 60 * 24 * 15, // 15 days
     },
 
     legend: {
@@ -55,13 +55,13 @@ export class MovingAverageChartComponent implements OnInit, OnChanges {
 
     series: [
       {
-        name: 'Average Sales for Last 20 days',
+        name: 'Rolling monthly average sales',
         data: [],
         type: 'line',
         color: '#FF0000',
       },
       {
-        name: 'Average Sales for Last 75 days',
+        name: 'Rolling verage quarter sales',
         data: [],
         type: 'line',
         color: '#008080',

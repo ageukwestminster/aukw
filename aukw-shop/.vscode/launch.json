@@ -11,7 +11,11 @@
       "preLaunchTask": "npm: start",
       "url": "http://localhost:4200",
       "webRoot": "${workspaceFolder}",
-      "skipFiles": ["<node_modules>/**"]
+      "skipFiles": ["<node_modules>/**"],
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/**",
+        "!**/node_modules/**"
+    ],
     }
   ]
 }

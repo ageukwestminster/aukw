@@ -139,7 +139,8 @@ class Report{
         $cutoffdate->setTime(0,0); // midnight
 
         $sales_arr=array();
-        $sales_arr["shopid"] =$this->shopID?$this->shopID:'';
+        $sales_arr["shopid"] = $this->shopID?$this->shopID:'';
+        $sales_arr["start"] = $this->startdate;
         $sales_arr["dates"]=array();
         $sales_arr["net_sales"]=array();
         $sales_arr["avg10"]=array();
