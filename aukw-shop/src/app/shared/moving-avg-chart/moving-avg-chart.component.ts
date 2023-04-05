@@ -61,7 +61,7 @@ export class MovingAverageChartComponent implements OnInit, OnChanges {
         color: '#FF0000',
       },
       {
-        name: 'Rolling verage quarter sales',
+        name: 'Rolling quarterly average sales',
         data: [],
         type: 'line',
         color: '#008080',
