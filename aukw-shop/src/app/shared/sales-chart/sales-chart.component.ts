@@ -32,6 +32,11 @@ export class SalesChartComponent implements OnInit, OnChanges {
       },
     },
 
+    tooltip: {
+      xDateFormat: '%A, %e-%b-%Y',
+      shared: true,
+    },
+
     xAxis: {
       type: 'datetime',
       accessibility: {

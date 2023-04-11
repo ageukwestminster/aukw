@@ -22,9 +22,10 @@ class Report{
     /**
       * Get data to build a histogram chart from net daily sales. HighCharts date format
       * is UNIX epoch in miliseconds
+      * The addition of the 61.2million miliseconds is to force the date into the correct day, even during BST
       */
     public function dailySalesHistogram(){
-        $query = "SELECT takingsid, UNIX_TIMESTAMP(`date`)*1000 as sales_date,
+        $query = "SELECT takingsid, UNIX_TIMESTAMP(`date`)*1000 +61200000 as sales_date,
                     (clothing+brica+books+linens+donations+other+rag-operating_expenses-volunteer_expenses-other_adjustments+cash_difference-donations) 
                        as total_after_expenses_and_donations
                     FROM takings t
@@ -94,9 +95,10 @@ class Report{
       * 1) HighCharts date format is UNIX epoch in miliseconds
       * 2) MariaDB windows frame method means moving average of start of data
       *    set will be incorrect. So we take an extra year of data and then discard
+      * 3) The addition of the 61.2million miliseconds is to force the date into the correct day, even during BST
       */
     public function dailySalesMovingAverage(){
-        $query = "SELECT `date`, UNIX_TIMESTAMP(`date`)*1000 as sales_timestamp
+        $query = "SELECT `date`, UNIX_TIMESTAMP(`date`)*1000 + 61200000 as sales_timestamp
                     ,clothing+brica+books+linens+other-operating_expenses-volunteer_expenses-other_adjustments+cash_difference as net_sales
                     ,AVG(clothing+brica+books+linens+other-operating_expenses-volunteer_expenses-other_adjustments+cash_difference)
                              OVER (order by date ASC ROWS 9 PRECEDING) as ten_day_avg 
@@ -165,8 +167,8 @@ class Report{
                     array_push($sales_arr["dates"], $row['date']);
                     //array_push($sales_arr["net_sales"], array($row['sales_timestamp'],$row['net_sales']));
                     //array_push($sales_arr["avg10"], array($row['sales_timestamp'],$row['ten_day_avg']));
-                    array_push($sales_arr["avg20"], array($row['sales_timestamp'],$row['twenty_day_avg']));
-                    array_push($sales_arr["avgQuarter"], array($row['sales_timestamp'],$row['quarter_avg']));
+                    array_push($sales_arr["avg20"], array($row["sales_timestamp"],$row['twenty_day_avg']));
+                    array_push($sales_arr["avgQuarter"], array($row["sales_timestamp"],$row['quarter_avg']));
                     //array_push($sales_arr["avgYear"], array($row['sales_timestamp'],$row['year_avg']));
                 }
             }

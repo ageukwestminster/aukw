@@ -20,7 +20,7 @@ export class MovingAverageChartComponent implements OnInit, OnChanges {
       text: 'Harrow Road Net Sales - Moving Average',
     },
     subtitle: {
-      text: 'Averaged over the last 20 & 75 trading days',
+      text: 'Averaged over preceeding 20 & 75 trading days',
     },
     yAxis: {
       title: {
@@ -55,16 +55,16 @@ export class MovingAverageChartComponent implements OnInit, OnChanges {
 
     series: [
       {
-        name: 'Rolling monthly average sales',
+        name: 'Average for last M',
         data: [],
         type: 'line',
-        color: '#FF0000',
+        color: '#800000',
       },
       {
-        name: 'Rolling quarterly average sales',
+        name: 'Average for last Q',
         data: [],
         type: 'line',
-        color: '#008080',
+        color: '#1cb2f5',
       },
     ],
 
