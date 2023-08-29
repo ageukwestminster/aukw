@@ -17,10 +17,10 @@ export class MovingAverageChartComponent implements OnInit, OnChanges {
   @Input() movingAvgChartData?: MovingAverageSalesChartData;
   public options: Highcharts.Options = {
     title: {
-      text: 'Harrow Road Net Sales - Moving Average',
+      text: 'Harrow Road Shop Sales Trend',
     },
     subtitle: {
-      text: 'Averaged over preceeding 20 & 75 trading days',
+      text: 'Daily sales, rolling average over 1 month and 3 months',
     },
     yAxis: {
       title: {
@@ -55,13 +55,13 @@ export class MovingAverageChartComponent implements OnInit, OnChanges {
 
     series: [
       {
-        name: 'Average for last M',
+        name: '1 month rolling average',
         data: [],
         type: 'line',
         color: '#800000',
       },
       {
-        name: 'Average for last Q',
+        name: '3 month rolling average',
         data: [],
         type: 'line',
         color: '#1cb2f5',

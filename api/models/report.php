@@ -136,7 +136,7 @@ class Report{
         $num = $stmt->rowCount();
 
         // The cutoff date is at midnight, local time
-        $cutoffdate = (new DateTime($this->startdate))->modify('+12 month');
+        $cutoffdate = (new DateTime($this->startdate))->modify('+6 month');
         $cutoffdate->setTimezone(new DateTimeZone('Europe/London'));
         $cutoffdate->setTime(0,0); // midnight
 
