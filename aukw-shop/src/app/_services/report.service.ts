@@ -13,14 +13,14 @@ export class ReportService {
   /** Provide the data necessary to create the Histogram chart */
   getSalesHistogram(start: string = '', end: string = '', shopID: number = 1) {
     return this.http.get<HistogramChartData>(
-      `${baseUrl}/histogram?start=${start}&end=${end}&shopID=${shopID}`
+      `${baseUrl}/histogram?start=${start}&end=${end}&shopID=${shopID}`,
     );
   }
 
   /** Provide the data necessary to create the Moving Average sales chart */
   getMovingAverageSales(start: string = '', shopID: number = 1) {
     return this.http.get<MovingAverageSalesChartData>(
-      `${baseUrl}/moving-avg?start=${start}&shopID=${shopID}`
+      `${baseUrl}/moving-avg?start=${start}&shopID=${shopID}`,
     );
   }
 }

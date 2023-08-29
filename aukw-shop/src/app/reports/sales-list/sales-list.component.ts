@@ -21,7 +21,7 @@ export class SalesListComponent extends AbstractChartReportComponent<SalesChartD
     private summaryService: SummaryService,
     private dateRangeAdapter1: DateRangeAdapter,
     private formBuilder1: FormBuilder,
-    private router1: Router
+    private router1: Router,
   ) {
     super(dateRangeAdapter1, formBuilder1, router1);
   }
@@ -37,7 +37,7 @@ export class SalesListComponent extends AbstractChartReportComponent<SalesChartD
           error: (error) => {
             console.log(error);
           },
-        })
+        }),
       )
       .subscribe();
   }

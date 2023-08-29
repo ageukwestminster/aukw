@@ -17,7 +17,7 @@ export class UserRowComponent {
 
   constructor(
     private userService: UserService,
-    private alertService: AlertService
+    private alertService: AlertService,
   ) {
     this.onUserDeleted = new EventEmitter();
   }

@@ -124,18 +124,24 @@ export class SalesHistogramChartComponent implements OnInit, OnChanges {
         this.histogramChartData &&
         this.histogramChartData.data
       ) {
-        if (this.options.series[1] && this.options.series[1].type === 'scatter') {
-          this.options.series[1].data = this.histogramChartData.data;  
-        }        
-        
+        if (
+          this.options.series[1] &&
+          this.options.series[1].type === 'scatter'
+        ) {
+          this.options.series[1].data = this.histogramChartData.data;
+        }
+
         if (this.histogramChartData.last) {
           const lastSalesDate = new Date(this.histogramChartData.last[1]);
           const lastSalesAmount = this.histogramChartData.last[2];
 
-          if (this.options.series[2] && this.options.series[2].type === 'scatter') {
+          if (
+            this.options.series[2] &&
+            this.options.series[2].type === 'scatter'
+          ) {
             this.options.series[2].data = [
               [lastSalesAmount, this.YAXISPOSITION],
-            ]
+            ];
           }
 
           // Set a custom Series name
@@ -153,7 +159,7 @@ export class SalesHistogramChartComponent implements OnInit, OnChanges {
               lastSalesDate.toDateString() +
               ' below average by £' +
               Math.round(
-                (this.histogramChartData.average - lastSalesAmount) * 100
+                (this.histogramChartData.average - lastSalesAmount) * 100,
               ) /
                 100;
           } else {
@@ -162,7 +168,7 @@ export class SalesHistogramChartComponent implements OnInit, OnChanges {
               lastSalesDate.toDateString() +
               ' above average by £' +
               Math.round(
-                (lastSalesAmount - this.histogramChartData.average) * 100
+                (lastSalesAmount - this.histogramChartData.average) * 100,
               ) /
                 100;
           }

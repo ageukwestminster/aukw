@@ -18,7 +18,7 @@ export class TakingsRowComponent {
 
   constructor(
     private takingsService: TakingsService,
-    private alertService: AlertService
+    private alertService: AlertService,
   ) {
     this.onTakingsDeleted = new EventEmitter();
     this.onTakingsAddedToQB = new EventEmitter();
@@ -56,7 +56,7 @@ export class TakingsRowComponent {
           this.alertService.success(
             'Daily sales added to QB for ' +
               formatDate(this.takings.date, 'dd-MMM', 'en_GB'),
-            { keepAfterRouteChange: true }
+            { keepAfterRouteChange: true },
           );
           this.takings.quickbooks = true; // Quickbooks is now updated
           this.takings.isUpdating = false;
@@ -69,7 +69,7 @@ export class TakingsRowComponent {
               ' not added to Quickbooks. Error message: "' +
               error.message +
               '"',
-            { autoClose: false }
+            { autoClose: false },
           );
           this.takings.isUpdating = false;
           this.onTakingsAddedToQB.emit(this.takings); // refresh screen

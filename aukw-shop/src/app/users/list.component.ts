@@ -13,7 +13,7 @@ export class UserListComponent implements OnInit {
     private userService: UserService,
     private authenticationService: AuthenticationService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -26,7 +26,7 @@ export class UserListComponent implements OnInit {
         this.users = this.users.filter(
           (x) =>
             x.suspended ==
-            (this.route.snapshot.params['suspended'] === 'true' ? true : false)
+            (this.route.snapshot.params['suspended'] === 'true' ? true : false),
         );
       }
     });

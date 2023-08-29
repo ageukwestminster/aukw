@@ -39,7 +39,7 @@ export class AlertService {
       type,
       message,
       options.autoClose,
-      options.keepAfterRouteChange
+      options.keepAfterRouteChange,
     );
     this.subject.next(alert);
   }

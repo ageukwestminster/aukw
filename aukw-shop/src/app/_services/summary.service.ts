@@ -32,7 +32,7 @@ export class SummaryService {
 
   getMonthlySalesChartData(shopid: number) {
     return this.http.get<MonthlySalesChartData[]>(
-      monthlySalesChartUrl + `/${shopid}`
+      monthlySalesChartUrl + `/${shopid}`,
     );
   }
 }

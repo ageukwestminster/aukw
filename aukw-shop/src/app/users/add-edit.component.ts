@@ -48,7 +48,7 @@ export class UserAddEditComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private shopService: ShopService,
     private qbConnDetsService: QBConnectionDetailsService,
-    private location: Location
+    private location: Location,
   ) {
     this.user = this.authenticationService.userValue;
     this.shops$ = this.shopService.getAll();
@@ -100,7 +100,7 @@ export class UserAddEditComponent implements OnInit {
             : Validators.nullValidator,
         ],
       },
-      formOptions
+      formOptions,
     );
 
     if (this.formMode != UserFormMode.Add) {
@@ -110,7 +110,7 @@ export class UserAddEditComponent implements OnInit {
           switchMap((u: User) => {
             this.form.patchValue(u);
             return this.qbConnDetsService.getDetails();
-          })
+          }),
         )
         .subscribe((conn: any | null) => {
           this.refreshQBConnectionDetails(conn);
@@ -125,7 +125,7 @@ export class UserAddEditComponent implements OnInit {
     if (conn && conn.refreshtokenexpiry) {
       const t: string[] = conn.refreshtokenexpiry.split(/[- :]/);
       const tokenExpiry = new Date(
-        Date.UTC(+t[0], +t[1] - 1, +t[2], +t[3], +t[4], +t[5])
+        Date.UTC(+t[0], +t[1] - 1, +t[2], +t[3], +t[4], +t[5]),
       );
       const nowDateAndTime = new Date();
       if (tokenExpiry > nowDateAndTime) {
@@ -221,7 +221,7 @@ export class UserAddEditComponent implements OnInit {
       .pipe(
         switchMap(() => {
           return this.qbConnDetsService.getDetails();
-        })
+        }),
       )
       .subscribe((conn: QBConnectionDetails) => {
         this.refreshQBConnectionDetails(conn);

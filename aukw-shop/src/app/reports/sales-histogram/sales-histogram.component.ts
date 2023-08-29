@@ -24,7 +24,7 @@ export class SalesHistogramComponent implements OnInit {
     private reportService: ReportService,
     private dateRangeAdapter: DateRangeAdapter,
     private formBuilder: FormBuilder,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -50,7 +50,7 @@ export class SalesHistogramComponent implements OnInit {
    * Source: https://stackoverflow.com/a/52794221/6941165 */
   originalOrder = (
     a: KeyValue<string, DateRangeEnum>,
-    b: KeyValue<string, DateRangeEnum>
+    b: KeyValue<string, DateRangeEnum>,
   ): number => {
     return 0;
   };
@@ -100,7 +100,7 @@ export class SalesHistogramComponent implements OnInit {
           error: (error) => {
             console.log(error);
           },
-        })
+        }),
       )
       .subscribe();
   }

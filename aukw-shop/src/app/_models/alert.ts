@@ -5,7 +5,7 @@ export class Alert {
     public message?: string,
     public autoClose: boolean = true,
     public keepAfterRouteChange: boolean = false,
-    public fade: boolean = false
+    public fade: boolean = false,
   ) {}
 }
 

@@ -57,7 +57,7 @@ export class TakingsAddEditComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private shopService: ShopService,
     private location: Location,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -109,7 +109,7 @@ export class TakingsAddEditComponent implements OnInit {
     this.subscription.add(
       this.form.valueChanges.subscribe((value: Takings) => {
         this.onChange(value);
-      })
+      }),
     );
 
     // Fill shop dropdown
@@ -137,18 +137,18 @@ export class TakingsAddEditComponent implements OnInit {
 
             let adapter = new NgbUTCStringAdapter();
             this.minimumNextDate = adapter.fromModel(
-              this.datePipe.transform(lastTradeDate, 'yyyy-MM-dd')
+              this.datePipe.transform(lastTradeDate, 'yyyy-MM-dd'),
             )!;
 
             this.form.controls['date'].setValue(
               this.datePipe.transform(
                 today > lastTradeDate ? today : lastTradeDate,
-                'yyyy-MM-dd'
-              )
+                'yyyy-MM-dd',
+              ),
             );
           } else {
             this.form.controls['date'].setValue(
-              this.datePipe.transform(today, 'yyyy-MM-dd')
+              this.datePipe.transform(today, 'yyyy-MM-dd'),
             );
           }
         })
@@ -196,7 +196,7 @@ export class TakingsAddEditComponent implements OnInit {
           Number(value.cash_to_bank) +
           Number(value.credit_cards) -
           Number(this.sumOfAmount)) *
-          100
+          100,
       ) / 100;
   }
 

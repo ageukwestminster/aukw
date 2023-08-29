@@ -24,7 +24,10 @@ export class AuthenticationService {
   private userSubject: BehaviorSubject<User>;
   public user: Observable<User>;
 
-  constructor(private router: Router, private http: HttpClient) {
+  constructor(
+    private router: Router,
+    private http: HttpClient,
+  ) {
     this.userSubject = new BehaviorSubject<User>(new User());
     this.user = this.userSubject.asObservable();
   }
@@ -38,7 +41,7 @@ export class AuthenticationService {
       .post<any>(
         `${environment.apiUrl}/auth`,
         { username, password },
-        { withCredentials: true }
+        { withCredentials: true },
       )
       .pipe(
         map((user) => {
@@ -46,7 +49,7 @@ export class AuthenticationService {
           this.userSubject.next(user);
           this.startRefreshTokenTimer();
           return user;
-        })
+        }),
       );
   }
 
@@ -84,7 +87,7 @@ export class AuthenticationService {
           this.userSubject.next(user);
           this.startRefreshTokenTimer();
           return user;
-        })
+        }),
       );
   }
 
@@ -95,7 +98,7 @@ export class AuthenticationService {
     if (this.userValue && this.userValue.accessToken) {
       // parse json object from base64 encoded jwt token
       const accessToken = JSON.parse(
-        atob(this.userValue.accessToken.split('.')[1])
+        atob(this.userValue.accessToken.split('.')[1]),
       );
 
       // set a timeout to refresh the token a minute before it expires
@@ -105,7 +108,7 @@ export class AuthenticationService {
       //use of 'window' : https://stackoverflow.com/a/54507207/6941165
       this.refreshTokenTimeout = window.setTimeout(
         () => this.refreshToken().subscribe(),
-        timeout
+        timeout,
       );
     } else {
       this.stopRefreshTokenTimer();

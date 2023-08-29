@@ -22,7 +22,7 @@ export class TakingsListComponent implements OnInit {
   constructor(
     private takingsService: TakingsService,
     private authenticationService: AuthenticationService,
-    private alertService: AlertService
+    private alertService: AlertService,
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -49,16 +49,16 @@ export class TakingsListComponent implements OnInit {
         (prev: { sum: number; count: number }, current) => {
           return { sum: prev.sum + current, count: prev.count + 1 };
         },
-        { sum: 0, count: 0 }
+        { sum: 0, count: 0 },
       ),
       // map calculates average
-      map((x) => x.sum / x.count)
+      map((x) => x.sum / x.count),
     );
 
     takings$.subscribe((takingslist: TakingsSummary[]) => {
       this.takingslist = takingslist;
       this.takingslistNotInQB = this.takingslist.filter(
-        (x) => x.quickbooks == false
+        (x) => x.quickbooks == false,
       );
     });
   }
@@ -75,7 +75,7 @@ export class TakingsListComponent implements OnInit {
       let index = this.takingslist.indexOf(updateItem);
       this.takingslist[index] = takings;
       this.takingslistNotInQB = this.takingslist.filter(
-        (x) => x.quickbooks == false
+        (x) => x.quickbooks == false,
       );
     }
   }
@@ -96,9 +96,9 @@ export class TakingsListComponent implements OnInit {
                 keepAfterRouteChange: true,
               });
               return of(msg);
-            })
+            }),
           );
-        })
+        }),
       )
       .subscribe({
         error: (error) => {

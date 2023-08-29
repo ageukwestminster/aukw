@@ -14,12 +14,12 @@ import { AuthenticationService, AlertService } from '@app/_services';
 export class ErrorInterceptor implements HttpInterceptor {
   constructor(
     private authenticationService: AuthenticationService,
-    private alertService: AlertService
+    private alertService: AlertService,
   ) {}
 
   intercept(
     request: HttpRequest<any>,
-    next: HttpHandler
+    next: HttpHandler,
   ): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(
       catchError((err) => {
@@ -39,7 +39,7 @@ export class ErrorInterceptor implements HttpInterceptor {
 
         console.error(err);
         return throwError(() => new Error(error));
-      })
+      }),
     );
   }
 }

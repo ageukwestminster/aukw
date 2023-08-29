@@ -13,9 +13,9 @@ import { switchMap } from 'rxjs/operators';
   templateUrl: './monthly-sales-chart.component.html',
   styleUrls: ['./monthly-sales-chart.component.css'],
 })
-/* 
+/*
  * Create two bar charts displaying  monthly sales using Highcarts
-*/
+ */
 export class MonthlySalesChartComponent implements OnInit {
   public optionsSimpleBarChart: Highcharts.Options = {
     chart: {
@@ -110,7 +110,7 @@ export class MonthlySalesChartComponent implements OnInit {
             return of(x);
           });
           return merge(...obs);
-        })
+        }),
       )
       .subscribe({
         next: (value: MonthlySalesChartData) => {
@@ -139,8 +139,8 @@ export class MonthlySalesChartComponent implements OnInit {
           }
 
           /* The elaborate if statements below are to allow typescript to
-          * detecxt the presence of the 'data' property. 
-          */          
+           * detecxt the presence of the 'data' property.
+           */
           if (
             this.optionsSimpleBarChart.series &&
             this.optionsSimpleBarChart.series[0] &&
@@ -154,7 +154,7 @@ export class MonthlySalesChartComponent implements OnInit {
               this.optionsStackedBarChart.series[0].type === 'column'
             ) {
               this.optionsStackedBarChart.series[0].data?.push(
-                value.avg_clothing
+                value.avg_clothing,
               );
             }
             if (
@@ -174,7 +174,7 @@ export class MonthlySalesChartComponent implements OnInit {
               this.optionsStackedBarChart.series[3].type === 'column'
             ) {
               this.optionsStackedBarChart.series[3].data?.push(
-                value.avg_linens
+                value.avg_linens,
               );
             }
           }
@@ -184,7 +184,7 @@ export class MonthlySalesChartComponent implements OnInit {
           Highcharts.chart('monthly-sales-chart', this.optionsSimpleBarChart);
           Highcharts.chart(
             'monthly-dept-sales-chart',
-            this.optionsStackedBarChart
+            this.optionsStackedBarChart,
           );
         },
       });

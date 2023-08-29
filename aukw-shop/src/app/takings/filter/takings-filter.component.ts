@@ -36,7 +36,7 @@ export class TakingsFilterComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private dateRangeAdapter: DateRangeAdapter,
-    private takingsService: TakingsService
+    private takingsService: TakingsService,
   ) {}
 
   get f() {
@@ -67,7 +67,7 @@ export class TakingsFilterComponent implements OnInit {
   /* From https://stackoverflow.com/a/52794221/6941165 */
   originalOrder = (
     a: KeyValue<string, DateRangeEnum>,
-    b: KeyValue<string, DateRangeEnum>
+    b: KeyValue<string, DateRangeEnum>,
   ): number => {
     return 0;
   };

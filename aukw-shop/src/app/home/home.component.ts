@@ -28,7 +28,7 @@ export class HomeComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private reportService: ReportService,
     private summaryService: SummaryService,
-    private dateRangeAdapter: DateRangeAdapter
+    private dateRangeAdapter: DateRangeAdapter,
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -41,11 +41,11 @@ export class HomeComponent implements OnInit {
         concatMap((response) => {
           this.summary = response;
           const dtRng = this.dateRangeAdapter.enumToDateRange(
-            DateRangeEnum.THIS_YEAR
+            DateRangeEnum.THIS_YEAR,
           );
           return this.reportService.getSalesHistogram(
             dtRng.startDate,
-            dtRng.endDate
+            dtRng.endDate,
           );
         }),
         concatMap((response) => {
@@ -55,7 +55,7 @@ export class HomeComponent implements OnInit {
         concatMap((response) => {
           this.movingAvgChartData = response;
           return this.summaryService.getSalesChartData();
-        })
+        }),
       )
       .subscribe((response) => {
         this.salesChartData = response;

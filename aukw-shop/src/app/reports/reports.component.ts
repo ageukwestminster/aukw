@@ -14,7 +14,7 @@ export class ReportsComponent implements OnInit {
 
   constructor(
     private location: Location,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
   ) {
     this.user = this.authenticationService.userValue;
   }

@@ -18,7 +18,7 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
   constructor(
     private dateRangeAdapter: DateRangeAdapter,
     private formBuilder: FormBuilder,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -44,7 +44,7 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
    * Source: https://stackoverflow.com/a/52794221/6941165 */
   originalOrder = (
     a: KeyValue<string, DateRangeEnum>,
-    b: KeyValue<string, DateRangeEnum>
+    b: KeyValue<string, DateRangeEnum>,
   ): number => {
     return 0;
   };

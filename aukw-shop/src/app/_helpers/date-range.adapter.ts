@@ -32,7 +32,7 @@ export class DateRangeAdapter {
       today.getDate() - dayOfWeek + (dayOfWeek == 0 ? -6 : 1);
     var firstDayOfWeek = new Date(new Date(today).setDate(diffToWeekStart));
     var lastDayOfWeek = new Date(
-      new Date(firstDayOfWeek).setDate(firstDayOfWeek.getDate() + 7)
+      new Date(firstDayOfWeek).setDate(firstDayOfWeek.getDate() + 7),
     );
 
     /* Get the number of the quarter year (0,3)*/
@@ -56,7 +56,7 @@ export class DateRangeAdapter {
           year,
           quarterStartMonth + 3,
           0,
-          NOON
+          NOON,
         );
         return this.instantiateObj(firstDayOfThisQuarter, lastDayOfThisQuarter);
       case DateRangeEnum.THIS_TRADING_YEAR:
@@ -76,10 +76,10 @@ export class DateRangeAdapter {
         return this.instantiateObj(firstDayOfYear, lastDayOfYear);
       case DateRangeEnum.LAST_WEEK:
         var lastDayOfLastWeek = new Date(
-          new Date(firstDayOfWeek).setDate(firstDayOfWeek.getDate() - 1)
+          new Date(firstDayOfWeek).setDate(firstDayOfWeek.getDate() - 1),
         );
         var firstDayOfLastWeek = new Date(
-          new Date(lastDayOfLastWeek).setDate(lastDayOfLastWeek.getDate() - 7)
+          new Date(lastDayOfLastWeek).setDate(lastDayOfLastWeek.getDate() - 7),
         );
         return this.instantiateObj(firstDayOfLastWeek, lastDayOfLastWeek);
       case DateRangeEnum.LAST_MONTH:
@@ -91,7 +91,7 @@ export class DateRangeAdapter {
           year,
           quarterStartMonth - 3,
           1,
-          NOON
+          NOON,
         );
         var lastDayOfLastQuarter = new Date(year, quarterStartMonth, 0, NOON);
         return this.instantiateObj(firstDayOfLastQuarter, lastDayOfLastQuarter);
@@ -112,10 +112,12 @@ export class DateRangeAdapter {
         return this.instantiateObj(firstDayOfLastYear, lastDayOfLastYear);
       case DateRangeEnum.NEXT_WEEK:
         var firstDayOfNextWeek = new Date(
-          new Date(lastDayOfWeek).setDate(lastDayOfWeek.getDate() + 1)
+          new Date(lastDayOfWeek).setDate(lastDayOfWeek.getDate() + 1),
         );
         var lastDayOfNextWeek = new Date(
-          new Date(firstDayOfNextWeek).setDate(firstDayOfNextWeek.getDate() + 7)
+          new Date(firstDayOfNextWeek).setDate(
+            firstDayOfNextWeek.getDate() + 7,
+          ),
         );
         return this.instantiateObj(firstDayOfNextWeek, lastDayOfNextWeek);
       case DateRangeEnum.NEXT_MONTH:
@@ -127,13 +129,13 @@ export class DateRangeAdapter {
           year,
           quarterStartMonth + 3,
           1,
-          NOON
+          NOON,
         );
         var lastDayOfNextQuarter = new Date(
           year,
           quarterStartMonth + 6,
           0,
-          NOON
+          NOON,
         );
         return this.instantiateObj(firstDayOfNextQuarter, lastDayOfNextQuarter);
       case DateRangeEnum.NEXT_YEAR:

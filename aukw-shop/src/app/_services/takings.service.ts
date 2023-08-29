@@ -22,14 +22,14 @@ export class TakingsService {
 
   getSummary(shopid: number, urlParameters: string) {
     return this.http.get<TakingsSummary[]>(
-      `${baseUrl}/summary/shop/${shopid}?${urlParameters}`
+      `${baseUrl}/summary/shop/${shopid}?${urlParameters}`,
     );
   }
 
   /* return an array of the numdatapoints most recent sales */
   getSimpleSalesList(shopid: number, numdatapoints: number) {
     return this.http.get<HistogramChartData>(
-      `${baseUrl}/saleslist/shop/${shopid}/datapoints/${numdatapoints}`
+      `${baseUrl}/saleslist/shop/${shopid}/datapoints/${numdatapoints}`,
     );
   }
 
@@ -61,7 +61,7 @@ export class TakingsService {
   addToQuickbooks(id: number): Observable<ApiMessage> {
     return this.http.post<ApiMessage>(
       `${environment.apiUrl}/qb/salesreceipt/takings/${id}`,
-      null
+      null,
     );
   }
 }
