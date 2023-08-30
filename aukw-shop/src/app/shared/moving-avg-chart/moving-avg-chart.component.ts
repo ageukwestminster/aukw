@@ -29,34 +29,40 @@ export class MovingAverageChartComponent implements OnInit, OnChanges {
     subtitle: {
       text: 'Daily sales, rolling avg. over 1 month and 3 months',
     },
-  
+
     rangeSelector: {
       selected: 2,
-      buttons: [{
-        type: 'month',
-        count: 6,
-        text: '6m',
-        title: 'View 6 months',
-    }, {
-        type: 'ytd',
-        text: 'YTD',
-        title: 'View year to date',
-    }, {
-        type: 'year',
-        count: 1,
-        text: '1y',
-        title: 'View 1 year',
-    }, {
-      type: 'year',
-      count: 5,
-      text: '5y',
-      title: 'View 5 years',
-  }, {
-        type: 'all',
-        text: 'All',
-        title: 'View all',
-    }]
-  },
+      buttons: [
+        {
+          type: 'month',
+          count: 6,
+          text: '6m',
+          title: 'View 6 months',
+        },
+        {
+          type: 'ytd',
+          text: 'YTD',
+          title: 'View year to date',
+        },
+        {
+          type: 'year',
+          count: 1,
+          text: '1y',
+          title: 'View 1 year',
+        },
+        {
+          type: 'year',
+          count: 5,
+          text: '5y',
+          title: 'View 5 years',
+        },
+        {
+          type: 'all',
+          text: 'All',
+          title: 'View all',
+        },
+      ],
+    },
 
     yAxis: {
       title: {
