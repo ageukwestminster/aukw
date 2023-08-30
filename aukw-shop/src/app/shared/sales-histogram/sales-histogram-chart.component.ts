@@ -152,7 +152,12 @@ export class SalesHistogramChartComponent implements OnInit, OnChanges {
           // If today's sales are below average then set the
           // data colour to red and update the tooltip.
           // The numbers in the tooltip are rounded to 2 places
-          if (lastSalesAmount < this.histogramChartData.average) {
+          // The duplicated if statement tests are to stop typescript errors
+          if (
+            lastSalesAmount < this.histogramChartData.average &&
+            this.options.series[2] &&
+            this.options.series[2].type === 'scatter'
+          ) {
             this.options.series[2]['color'] = 'red';
             this.options.series[2].tooltip!.pointFormat =
               'Sales for ' +
@@ -162,7 +167,10 @@ export class SalesHistogramChartComponent implements OnInit, OnChanges {
                 (this.histogramChartData.average - lastSalesAmount) * 100,
               ) /
                 100;
-          } else {
+          } else if (
+            this.options.series[2] &&
+            this.options.series[2].type === 'scatter'
+          ) {
             this.options.series[2].tooltip!.pointFormat =
               'Sales for ' +
               lastSalesDate.toDateString() +
