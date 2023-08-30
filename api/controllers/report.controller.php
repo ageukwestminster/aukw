@@ -42,9 +42,13 @@ class ReportCtl{
     if(isset($_GET['start']) && \Core\DatesHelper::validateDate($_GET['start'])) {
         $model->startdate = $_GET['start'];
     } else {
-      $model->startdate = (new DateTime())->modify('-18 month')->format('Y-m-d');
+      $model->startdate = '2000-01-01';
     }
-    $model->shopID = 1;
+    if (isset($_GET['shopID']) && !empty($_GET['shopID'])) {
+      $model->shopID = $_GET['shopID'];
+    } else {
+        $model->shopID = 1;
+    }
 
     echo json_encode($model->dailySalesMovingAverage(), JSON_NUMERIC_CHECK);
   }
