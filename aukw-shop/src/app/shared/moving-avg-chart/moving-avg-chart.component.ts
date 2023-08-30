@@ -5,22 +5,59 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import * as Highcharts from 'highcharts';
+import * as Highcharts from 'highcharts/highstock';
 import { MovingAverageSalesChartData } from '@app/_models';
+
+/* from https://www.highcharts.com/blog/tutorials/highcharts-and-angular-7/ */
+declare var require: any;
+let Accessibility = require('highcharts/modules/accessibility');
+let Exporting = require('highcharts/modules/exporting');
+
+Accessibility(Highcharts);
+Exporting(Highcharts);
 
 @Component({
   selector: 'moving-average',
-  template: '<div id="moving-average"></div>',
+  templateUrl: './moving-avg-chart.component.html',
 })
 export class MovingAverageChartComponent implements OnInit, OnChanges {
   @Input() movingAvgChartData?: MovingAverageSalesChartData;
   public options: Highcharts.Options = {
     title: {
-      text: 'Harrow Road Shop Sales Trend',
+      text: 'Harrow Road Shop Sales',
     },
     subtitle: {
-      text: 'Daily sales, rolling average over 1 month and 3 months',
+      text: 'Daily sales, rolling avg. over 1 month and 3 months',
     },
+  
+    rangeSelector: {
+      selected: 2,
+      buttons: [{
+        type: 'month',
+        count: 6,
+        text: '6m',
+        title: 'View 6 months',
+    }, {
+        type: 'ytd',
+        text: 'YTD',
+        title: 'View year to date',
+    }, {
+        type: 'year',
+        count: 1,
+        text: '1y',
+        title: 'View 1 year',
+    }, {
+      type: 'year',
+      count: 5,
+      text: '5y',
+      title: 'View 5 years',
+  }, {
+        type: 'all',
+        text: 'All',
+        title: 'View all',
+    }]
+  },
+
     yAxis: {
       title: {
         text: 'Daily Sales Less Cash Expenses',
@@ -43,7 +80,6 @@ export class MovingAverageChartComponent implements OnInit, OnChanges {
           return Highcharts.dateFormat('%e %b %y', this.value as number);
         },
       },
-      tickInterval: 1000 * 60 * 60 * 24 * 15, // 15 days
     },
 
     legend: {
@@ -101,7 +137,7 @@ export class MovingAverageChartComponent implements OnInit, OnChanges {
           this.options.series[1].data = this.movingAvgChartData.avgQuarter;
         }
 
-        Highcharts.chart('moving-average', this.options);
+        Highcharts.stockChart('moving-average', this.options);
       }
     }
   }
