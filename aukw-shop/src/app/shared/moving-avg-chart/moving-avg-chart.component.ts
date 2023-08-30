@@ -9,7 +9,7 @@ import * as Highcharts from 'highcharts';
 import { MovingAverageSalesChartData } from '@app/_models';
 
 @Component({
-  selector: 'moving-average-chart',
+  selector: 'moving-average',
   template: '<div id="moving-average"></div>',
 })
 export class MovingAverageChartComponent implements OnInit, OnChanges {
