@@ -37,7 +37,7 @@ Config::write('db.host', '192.168.1.44');
 Config::write('db.port', '3306');
 Config::write('db.name', 'dailytakings2');
 Config::write('db.user', 'shop');
-Config::write('db.password', 'DB_PASSWORD');
+Config::write('db.password', 'DB_PASSWORD'); // env key name in .htaccess
 
 // number of allowed password attempts
 Config::write('password_attempts', 5);
@@ -47,15 +47,14 @@ Config::write('token.accessExpiry', '+15 minute');
 Config::write('token.refreshExpiry', '+7 day');
 Config::write('token.iss', 'https://www.aukw.org.uk');
 Config::write('token.aud', 'https://www.aukw.org.uk');
-Config::write('token.envkeyname', 'AUKW_SHOP_KEY');
+Config::write('token.envkeyname', 'AUKW_SHOP_KEY'); // env key name in .htaccess
 Config::write('token.cookiename', 'refreshToken');
 Config::write('token.cookiepath', Config::read('api.path') . 'auth');
 Config::write('token.cookiesecure', false);
 
 // Quickbooks SDKsettings
-// PRODUCTION COMPANY
-Config::write('qb.clientid', 'QB_CLIENT_ID');
-Config::write('qb.clientsecret', 'QB_CLIENT_SECRET');
+Config::write('qb.clientid', 'QB_CLIENT_ID'); // env key name in .htaccess
+Config::write('qb.clientsecret', 'QB_CLIENT_SECRET'); // env key name in .htaccess
 Config::write('qb.redirecturl', 'https://8219-86-142-147-138.ngrok.io/api/auth/callback');
 Config::write('qb.realmid', '9130350604308576');
 Config::write('qb.enablelog', false);
