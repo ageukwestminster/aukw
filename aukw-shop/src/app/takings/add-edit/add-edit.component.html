@@ -90,13 +90,12 @@
   <div class="w-100"></div>
 
   <!-- Department Sales -->
-    <div *ngIf="f.quickbooks.value">
-      <p class="mb-0" [ngStyle]="{ color: 'red' }"
-        ><small
-          >Note: These values have already been uploaded to QB</small
-        >
-      </p
-    >
+  <div *ngIf="f.quickbooks.value">
+    <p class="mb-0" [ngStyle]="{ color: 'red' }">
+      <small>Note: These values have already been uploaded to QB</small>
+    </p>
+  </div>
+  <div class="form-row mb-1">
     <div class="input-group mb-1">
       <span class="input-group-text col-4" id="clothing-label">Clothing</span>
       <div class="card p-2 col">
@@ -424,11 +423,11 @@
     </div>
   </div>
   <div>
-    <p
-      ><small id="cashDifference"
+    <p>
+      <small id="cashDifference"
         >(Cash Difference £{{ cashDifference | number: "1.2-2" }})</small
-      ></p
-    >
+      >
+    </p>
   </div>
   <div class="form-group mb-2">
     <label for="commentsTextarea">Comments</label>
