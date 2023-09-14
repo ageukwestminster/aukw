@@ -42,7 +42,7 @@ Config::write('db.password', 'DB_PASSWORD'); // env key name
 // Note
 // Environment key values (such as 'DB_PASSWORD') are stored in:
 // Development: C:\Apache24\conf\httpd.conf
-// Production: /var/www/aukw/.htaccess (!! not ./api/.htaccess)
+// Production: ~/public_html/.htaccess (!! not ./api/.htaccess)
 
 // number of allowed password attempts
 Config::write('password_attempts', 5);
