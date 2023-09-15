@@ -8,15 +8,17 @@
 <!--The *ngIf is in place to stop errors of 'Expression has changed after it was checked.'-->
 <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!loading">
   <!-- Buttons -->
-  <div class="row d-flex justify-content-between mb-2">
-    <div class="col-auto">
-      <button type="submit" [disabled]="loading" class="btn btn-primary mr-1">
+  <div class="d-flex flex-row mb-2">
+    <div>
+      <button type="submit" [disabled]="loading" class="btn btn-primary">
         <span
           *ngIf="loading"
           class="spinner-border spinner-border-sm mr-1"
         ></span>
         Save
       </button>
+    </div>
+    <div class="ms-2">
       <button type="button" (click)="goBack()" class="btn btn-outline-dark">
         Close &times;
       </button>
@@ -250,14 +252,14 @@
       </div>
       <button
         (click)="makeQBConnection()"
-        class="btn btn-sm btn-primary mr-1 mb-1"
+        class="btn btn-sm btn-primary me-1 mb-1"
         *ngIf="!refreshTokenExpiry"
       >
         Make QB Connection
       </button>
       <button
         (click)="revokeQBConnection()"
-        class="btn btn-sm btn-info mr-1 mb-1"
+        class="btn btn-sm btn-info me-1 mb-1"
         *ngIf="refreshTokenExpiry"
       >
         Revoke QB Connection

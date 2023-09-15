@@ -10,7 +10,7 @@
 <td style="white-space: nowrap">
   <div class="row">
     <button
-      class="btn btn-sm btn-primary mr-1 mb-1"
+      class="btn btn-sm btn-primary mb-1"
       [disabled]="(takings.isUpdating || takings.quickbooks) && !user.isAdmin"
       routerLink="edit/{{ takings.id }}"
       *ngIf="!takings.quickbooks || user.isAdmin"
@@ -22,7 +22,7 @@
       <span *ngIf="!takings.isUpdating">Edit</span>
     </button>
     <button
-      class="btn btn-sm btn-secondary mr-1 mb-1"
+      class="btn btn-sm btn-secondary mb-1"
       [disabled]="takings.isUpdating"
       routerLink="view/{{ takings.id }}"
       *ngIf="takings.quickbooks"

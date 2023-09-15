@@ -12,20 +12,22 @@
   novalidate="novalidate"
 >
   <!-- Buttons -->
-  <div class="row d-flex justify-content-between mb-2">
-    <div class="col-auto">
+  <div class="d-flex flex-row mb-2">
+    <div>
       <button
         type="submit"
         [disabled]="loading"
-        class="btn btn-primary mr-1"
+        class="btn btn-primary"
         *ngIf="!isReadOnly"
       >
         <span
           *ngIf="loading"
-          class="spinner-border spinner-border-sm mr-1"
+          class="spinner-border spinner-border-sm me-1"
         ></span>
         Save
       </button>
+      </div>
+      <div class="ms-2">
       <!-- All button in a form are treated as 'submit' buttons' unless you specify type='button'-->
       <!-- See https://stackoverflow.com/a/55685230/6941165 -->
       <button type="button" (click)="goBack()" class="btn btn-outline-dark">
@@ -449,7 +451,7 @@
       >
         <span
           *ngIf="loading"
-          class="spinner-border spinner-border-sm mr-1"
+          class="spinner-border spinner-border-sm me-1"
         ></span>
         Save
       </button>
