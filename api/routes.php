@@ -41,11 +41,17 @@ $router->mount('/auth', function() use ($router) {
 /* Takings Routes */
 /***************/
 $router->mount('/takings', function () use ($router) {
+    // new takings entry
     $router->post('/', 'TakingsCtl@create');
+    // update takings
     $router->put('/(\d+)', 'TakingsCtl@update');
+    // delete takings
     $router->delete('/(\d+)', 'TakingsCtl@delete');
+    // return all takings objects defined by quickbooks status
     $router->get('/quickbooks/(\d+)', 'TakingsCtl@read_by_quickbooks_status');
+    // return all takings defined by shopid
     $router->get('/shop/(\d+)', 'TakingsCtl@read_by_shop');
+    // return a single takings with the given id (primary key)
     $router->get('/(\d+)', 'TakingsCtl@read_one');
 
     // Return the Takings for the most recent date
@@ -57,6 +63,7 @@ $router->mount('/takings', function () use ($router) {
     // Show takings data for the last 'datapoints' days for a given shop
     $router->get('/saleslist/shop/(\d+)/datapoints/(\d+)', 'TakingsCtl@salesList');
 
+    // Update single property on existing takings object
     // Sample body : { "quickbooks": 0 } ... or ... { "quickbooks": 1 }
     $router->patch('/(\d+)', 'TakingsCtl@patch');
 });
@@ -75,8 +82,11 @@ $router->mount('/report', function () use ($router) {
 /* Shop Routes */
 /***************/
 $router->mount('/shop', function () use ($router) {
+    // return all shops
     $router->get('/', 'ShopCtl@read_all');
+    // return one shop, with the given id (primary key)
     $router->get('/(\d+)', 'ShopCtl@read_one');
+    // return one shop, with the given name
     $router->get('/(\D+)', 'ShopCtl@read_one_name');
 });
 
@@ -105,6 +115,8 @@ $router->mount('/qb', function () use ($router) {
     // the normal QB website but it can been seen in Audit Log.
     // It is not the DocNumber which can be seen on the website.
     $router->get('/salesreceipt/(\w+)', 'SalesReceiptCtl@read_one');
+
+    // Create a new sales receipt in QB
     $router->post('/salesreceipt', 'SalesReceiptCtl@create');
 
     // The param is the takingsid value in the takings table in MySQL dB
@@ -133,10 +145,10 @@ $router->mount('/qb', function () use ($router) {
 /***************/
 $router->mount('/user', function () use ($router) {
 
-    // will result in '/user'
+    // return list of all users
     $router->get('/', 'UserCtl@read_all');
 
-    // will result in '/user/id'
+    // return single user that has the given id
     $router->get('/(\d+)', 'UserCtl@read_one');
 
     // new user
