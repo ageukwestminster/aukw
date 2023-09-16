@@ -1,14 +1,17 @@
 <?php
 
 /*
-    'Pre' Router logic allied in this file:
+    These methods are called before the processor gets to any of the actual Routes.
 
-    * Only logged in users can access the api, except for requests to 'auth'.
-      The exception is to allow the presenting of credentials and return of tokens.
+    This 'Pre'-Router logic attempts to enfore these rules:
+
+    * Only logged in users can access the api, except for requests to '/auth'.
+      Requests to '/auth' are to allow the presenting of credentials and return of tokens.
 
     * If it is an 'auth' request then set 'Allow-Credentials' header
 
-    * Commands that affect data on the server (PUT/POST/DELETE etc.) require admin access
+    * Commands that affect data on the server (PUT/POST/DELETE etc.) require admin access,
+      with one exception: normal users can add new takings or update existing takings
 
     Main routes are specified in 'routes.php'
 
@@ -78,6 +81,7 @@ $router->before('POST|PUT|DELETE|PATCH', '/.*', function() {
         if  (!$jwt->isAdmin && !preg_match('/user\/\d+/', $path)){
 
             // One exception: normal users can create and update takings data
+            // Normal users can't delete takings data
             if (!Headers::path_is_takings_dataentry($path)) {
                 http_response_code(401);  
                 echo json_encode(

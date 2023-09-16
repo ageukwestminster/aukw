@@ -26,9 +26,6 @@ $router->set404(function() {
 /***************/
 /* Auth Routes */
 /***************/
-/*$router->post('/auth', function () {
-    require 'authenticate/auth.php'; 
-} );*/
 $router->mount('/auth', function() use ($router) {
     $router->post('/', function () {include 'authenticate/auth.php'; } );
     $router->get('/refresh', function () {include 'authenticate/refresh.php'; } );

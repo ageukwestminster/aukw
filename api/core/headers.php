@@ -34,7 +34,7 @@ class Headers
         return preg_match('/^auth/', $path);
     }
 
-    // Return 'true' if the path is either of these tow routes:
+    // Return 'true' if the path is either of these two routes:
     // POST 'takings/'
     // PUT  'takings/(\d+)'
     public static function path_is_takings_dataentry($path = '')
