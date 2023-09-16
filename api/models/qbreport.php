@@ -22,7 +22,16 @@ class QuickbooksReport{
         if ($dataService == false) {
           return;
         }
-        $serviceContext = $auth->getServiceContext();
+        try{
+            $serviceContext = $auth->getServiceContext();
+        }
+        catch (\Exception $e) {
+            http_response_code(400);  
+            echo json_encode(
+              array("message" => "Unable to proceed with QB callback: 'state' does not match initial value.")
+            );
+            exit(0);            
+        }
         if ($serviceContext == false) {
             return;
         }

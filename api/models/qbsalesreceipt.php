@@ -142,7 +142,17 @@ class SalesReceiptJournal{
   public function readOne(){
 
       $auth = new QuickbooksAuth();
-      $dataService = $auth->prepare();
+      try{
+        $dataService = $auth->prepare();
+      }
+      catch (\Exception $e) {
+        http_response_code(401);  
+        echo json_encode(
+          array("message" =>  $e->getMessage() )
+        );
+        return;
+      }
+
       if ($dataService == false) {
         return;
       }
@@ -212,26 +222,22 @@ class SalesReceiptJournal{
 
     $this->salesreceipt_line($salesreceipt['Line'], "Volunteer expenses paid in cash", 
       $this->volunteerExpenses, $this->volexpenses_item, $this->harrow_road_class,
-      1, $this->volunteer_expenses_account, $this->no_vat_taxcode);
+      1, $this->volunteer_expenses_account, $this->no_vat_taxcode); //$quantity = 1
     $this->salesreceipt_line($salesreceipt['Line'], "Minor operating expenses paid in cash", 
       $this->operatingExpenses, $this->opexpenses_item, $this->harrow_road_class,
-      1, $this->other_expenses_account, $this->no_vat_taxcode);            
-
-    /*$this->salesreceipt_line($salesreceipt['Line'], "Cash received from customers", 
-      $this->cash, $this->cash_item, $this->harrow_road_class,
-      1, $this->undeposited_funds_account, $this->no_vat_taxcode);*/
+      1, $this->other_expenses_account, $this->no_vat_taxcode); //$quantity = 1
 
     $this->salesreceipt_line($salesreceipt['Line'], "Credit card payments received from customers", 
       $this->creditCards, $this->ccards_item, $this->harrow_road_class,
-      1, $this->credit_card_account, $this->no_vat_taxcode);
+      1, $this->credit_card_account, $this->no_vat_taxcode); //$quantity = 1
 
     $this->salesreceipt_line($salesreceipt['Line'], "Cash discrepancies between sales total and cash/credit card subtotals", 
       $this->cashDiscrepency, $this->overage_item, $this->harrow_road_class,
-      1, $this->cash_discrepencies_account, $this->no_vat_taxcode);  
+      1, $this->cash_discrepencies_account, $this->no_vat_taxcode); //$quantity = 1
 
     $this->salesreceipt_line($salesreceipt['Line'], "Cash that has gone to the parent charity without being deposited into the Enterprises bank account", 
       $this->cashToCharity, $this->charitycash_item, $this->harrow_road_class,
-      1, $this->cash_to_charity_account, $this->no_vat_taxcode);  
+      1, $this->cash_to_charity_account, $this->no_vat_taxcode); //$quantity = 1
 
     $theResourceObj = SalesReceipt::create($salesreceipt);
     

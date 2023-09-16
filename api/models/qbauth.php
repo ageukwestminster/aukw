@@ -86,7 +86,8 @@ class QuickbooksAuth{
         );
     }
 
-    /** Called from Quickbooks API servers as part of the OAuth2 process 
+    /** 
+     * Called from Quickbooks API servers as part of the OAuth2 process 
      * @return true if success
     */
     public function callback(){
@@ -175,7 +176,7 @@ class QuickbooksAuth{
             echo json_encode(
                 array("message" => "QB refresh token missing from local database. Have you authorised the app?")
             );
-            return false;
+            exit();
         }
         $refreshtokenexpiry = new DateTime($refreshtokenexpiry, new DateTimeZone('Europe/London'));
         $now = new DateTime("now", new DateTimeZone('Europe/London'));
@@ -186,7 +187,7 @@ class QuickbooksAuth{
             echo json_encode(
                 array("message" => "refresh token has expired")
             );
-            return false;
+            exit();
         }
  
         $this->dataService = DataService::Configure(array(
@@ -207,20 +208,34 @@ class QuickbooksAuth{
         $accesstokenexpiry = $this->tokenModel->accesstokenexpiry;
         $accesstokenexpiry = new DateTime($accesstokenexpiry, new DateTimeZone('Europe/London'));
         if($accesstokenexpiry < $now) {
-          $accessToken = $OAuth2LoginHelper->refreshToken();
-          $error = $OAuth2LoginHelper->getLastError();
-          if ($error) {
-              echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
-              echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
-              echo "The Response message is: " . $error->getResponseBody() . "\n";
-              return false;
-          }
-          $this->store_tokens_in_database($accessToken);
+            try{
+                $accessToken = $OAuth2LoginHelper->refreshToken();
+            }
+            catch (\Exception $e) {
+                http_response_code(401);  
+                echo json_encode(
+                    array("message" => "Unable to get new QB Access token with supplied Refresh Token.")
+                );
+                exit();
+            }
+            $error = $OAuth2LoginHelper->getLastError();
+            if ($error) {
+                echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
+                echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
+                echo "The Response message is: " . $error->getResponseBody() . "\n";
+                exit();
+            }
+            $this->store_tokens_in_database($accessToken);
         } else {
-          $accessToken= new OAuth2AccessToken($this->config['ClientID'], $this->config['ClientSecret']);
-          $accessToken->updateAccessToken(3600, $this->tokenModel->refreshtoken, 
-                                                        8726400, $this->tokenModel->accesstoken);
-          $accessToken->setRealmID($this->config['QBORealmID']);
+            $accessToken= new OAuth2AccessToken($this->config['ClientID'], $this->config['ClientSecret']);
+
+            $accessToken->updateAccessToken(
+                3600, // = The number of seconds to access token expiry
+                $this->tokenModel->refreshtoken, 
+                8726400, // = The number of seconds to refresh token expiry
+                $this->tokenModel->accesstoken
+            );
+            $accessToken->setRealmID($this->config['QBORealmID']);
         }
     
         $this->dataService->updateOAuth2Token($accessToken);
@@ -228,6 +243,12 @@ class QuickbooksAuth{
         return $this->dataService;
     }
 
+    /**
+     * Return the ServiceContext of this DataService
+     *
+     * @return ServiceContext
+     * @throws \Exception ServiceContext is NULL.
+     */
     public function getServiceContext(){
 
         $settings = array(
@@ -249,16 +270,14 @@ class QuickbooksAuth{
         $this->tokenModel->iduser = $this->config['iduser'];
         $this->tokenModel->read();
 
-        $model = $this->tokenModel;
-
-        if ($model->accesstoken) {
+        if ($this->tokenModel->accesstoken) {
             $isUpdate = true;
         } else {
             $isUpdate = false;
         }
 
-        $model->accesstoken = $accessTokenObj->getAccessToken();
-        $model->refreshtoken = $accessTokenObj->getRefreshToken();
+        $this->tokenModel->accesstoken = $accessTokenObj->getAccessToken();
+        $this->tokenModel->refreshtoken = $accessTokenObj->getRefreshToken();
 
         // Expiries in the QB world are in UTC. Convert to local time
         // before saving to the database. Otherwise during BST the time
@@ -266,17 +285,17 @@ class QuickbooksAuth{
         $expiry = $accessTokenObj->getAccessTokenExpiresAt();
         $displayDate = new DateTime($expiry, new DateTimeZone('UTC'));
         $displayDate->setTimezone(new DateTimeZone('Europe/London'));
-        $model->accesstokenexpiry = $displayDate->format('Y-m-d H:i:s');
+        $this->tokenModel->accesstokenexpiry = $displayDate->format('Y-m-d H:i:s');
 
         $expiry = $accessTokenObj->getRefreshTokenExpiresAt();
         $displayDate = new DateTime($expiry, new DateTimeZone('UTC'));
         $displayDate->setTimezone(new DateTimeZone('Europe/London'));
-        $model->refreshtokenexpiry = $displayDate->format('Y-m-d H:i:s');
+        $this->tokenModel->refreshtokenexpiry = $displayDate->format('Y-m-d H:i:s');
 
         if ($isUpdate) {
-            return $model->update();
+            return $this->tokenModel->update();
         } else {
-            return $model->insert();
+            return $this->tokenModel->insert();
         }
     }
 

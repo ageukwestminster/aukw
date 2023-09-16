@@ -13,7 +13,7 @@ class SalesReceiptCtl{
     $model = new \Models\SalesReceiptJournal();
     $model->id = $id;
 
-    echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
+    echo json_encode($model->readone(), JSON_NUMERIC_CHECK);   
   }
 
   public static function patch(){
