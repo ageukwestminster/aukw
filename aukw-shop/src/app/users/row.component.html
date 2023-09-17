@@ -23,11 +23,7 @@
       class="form-check"
       *ngIf="user.suspended"
     >
-      <input
-        class="form-check-input"
-        type="checkbox"
-        checked
-      />
+      <input class="form-check-input" type="checkbox" checked />
     </div>
     <div
       (change)="onSuspendedChange($any($event.target).value)"
