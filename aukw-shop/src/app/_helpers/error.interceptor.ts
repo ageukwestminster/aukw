@@ -10,6 +10,14 @@ import { catchError } from 'rxjs/operators';
 
 import { AuthenticationService, AlertService } from '@app/_services';
 
+/**
+ * The Error Interceptor intercepts http responses from the api to check if there were any errors. 
+ * If there is a 401 Unauthorized or 403 Forbidden response the user is automatically logged out 
+ * of the application, all other errors are re-thrown up to the calling service to be handled.
+ *
+ * To intercept and inspect HTTP responses returned to the Angular app, the ErrorInterceptor 
+ * class implements the HttpInterceptor interface and intercept() method.
+ */
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
   constructor(

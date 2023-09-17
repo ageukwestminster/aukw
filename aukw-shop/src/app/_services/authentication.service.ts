@@ -7,6 +7,11 @@ import { map } from 'rxjs/operators';
 import { environment } from '@environments/environment';
 import { Role, User } from '@app/_models';
 
+/**
+ * The authentication service is used to login & logout of the Angular app, 
+ * it notifies other components when the user logs in & out, and allows access
+ * to the currently logged in user.
+ */
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
   /* This pattern (private BehaviorSubject<object> & public 

@@ -45,6 +45,18 @@ const routes: Routes = [
   { path: '**', redirectTo: '' },
 ];
 
+
+/**
+ * Routing for the Angular app is configured as an array of Routes, each component 
+ * is mapped to a path so the Angular Router knows which component to display based 
+ * on the URL in the browser address bar. The home route is secured by passing the 
+ * AuthGuard to the canActivate property of the route.
+ * 
+ * The Routes array is passed to the RouterModule.forRoot() method which creates a 
+ * routing module with all of the app routes configured, and also includes all of 
+ * the Angular Router providers and directives such as the 
+ * <router-outlet></router-outlet> directive.
+ */
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],

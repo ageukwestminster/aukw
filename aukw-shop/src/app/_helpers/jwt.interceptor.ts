@@ -10,6 +10,14 @@ import { Observable } from 'rxjs';
 import { environment } from '@environments/environment';
 import { AuthenticationService } from '@app/_services';
 
+/**
+ * The JWT Interceptor intercepts http requests from the application to add JWT authentication 
+ * credentials to the Authorization header if the user is logged in and the request is to the 
+ * application api url (environment.apiUrl).
+ *
+ * To intercept and modify HTTP requests sent from the Angular app, the JwtInterceptor 
+ * class implements the HttpInterceptor interface and intercept() method.
+ */
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
   constructor(private authenticationService: AuthenticationService) {}
