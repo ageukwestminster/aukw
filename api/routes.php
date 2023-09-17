@@ -29,7 +29,7 @@ $router->set404(function() {
 $router->mount('/auth', function() use ($router) {
     $router->post('/', function () {include 'authenticate/auth.php'; } );
     $router->get('/refresh', function () {include 'authenticate/refresh.php'; } );
-    $router->delete('/revoke', function () {include 'authenticate/revoke.php'; } );
+    $router->delete('/', function () {include 'authenticate/revoke.php'; } );
 
     $router->get('/callback', 'QuickbooksCtl@oauth2_callback');
 });
@@ -55,6 +55,7 @@ $router->mount('/takings', function () use ($router) {
     $router->get('/most-recent/(\d+)', 'TakingsCtl@read_most_recent');
 
     // Show takings data for the last 90 days for a given shop
+    // A simplification of the next api method
     $router->get('/summary/shop/(\d+)', 'TakingsCtl@summary');
 
     // Show takings data for the last 'datapoints' days for a given shop

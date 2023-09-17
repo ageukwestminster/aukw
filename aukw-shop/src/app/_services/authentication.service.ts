@@ -93,7 +93,7 @@ export class AuthenticationService {
    */
   logout() {
     this.http
-      .delete<any>(`${environment.apiUrl}/auth/revoke`, {
+      .delete<any>(`${environment.apiUrl}/auth`, {
         withCredentials: true,
       })
       .subscribe();
