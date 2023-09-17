@@ -1,3 +1,6 @@
+/**
+ * Define the properties of an Alert
+ */
 export class Alert {
   constructor(
     public id: string,
@@ -9,6 +12,9 @@ export class Alert {
   ) {}
 }
 
+/**
+ * All possible types of {@link Alert}
+ */
 export enum AlertType {
   Success,
   Error,

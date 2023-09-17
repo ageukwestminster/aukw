@@ -1,3 +1,6 @@
+/**
+ * Defines the properties of a shop
+ */
 export class Shop {
   id: number;
   name: string;

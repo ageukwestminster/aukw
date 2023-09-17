@@ -1,4 +1,7 @@
-﻿export class ApiMessage {
+﻿/**
+ * Simple class to store an id/string pair
+ */
+export class ApiMessage {
   id: number;
   message: string;
 
