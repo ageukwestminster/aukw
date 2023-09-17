@@ -1,3 +1,6 @@
+/**
+ * Defines the properties of a validly configured and connected connection to the QBO system.
+ */
 export class QBConnectionDetails {
   accesstoken: string;
   accesstokenexpiry: string;
