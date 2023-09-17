@@ -1,5 +1,8 @@
 ﻿import { Role } from './role';
 
+/**
+ * Define the properties of a user.
+ */
 export class User {
   id: number;
   shopid: number;
