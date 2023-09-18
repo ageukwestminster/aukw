@@ -4,6 +4,9 @@ namespace Controllers;
 
 use Models\QuickbooksAuth;
 
+/**
+ * 
+ */
 class QBAuthCtl{
 
   public static function oauth2_begin(){
@@ -52,7 +55,7 @@ class QBAuthCtl{
 
   /**
    * 
-   * Show details of the authenticated connection to QBO, if it exists.
+   * Show details of the authenticated connection with QBO, if it exists.
    * 
    * @return QuickbooksToken Contains the access and refresh tokens for QBO
    */

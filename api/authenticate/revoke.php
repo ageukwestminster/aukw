@@ -6,6 +6,8 @@ $jwt = new \Models\JWTWrapper();
  * If logged in then disable all tokens for the logged-in user
  * and delete the refresh token cookie.
  * 
+ * Called when logging out.
+ * 
  */
 if(!$jwt->loggedIn){    
     // Keep status 200

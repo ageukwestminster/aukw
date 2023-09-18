@@ -4,6 +4,8 @@
  * Generate a new access token from a refresh token.
  * 
  * The refresh token is in a cookie
+ * 
+ * Called at very start of application
  */
 
 // instantiate JWT and user object

@@ -8,6 +8,8 @@ header("Access-Control-Allow-Credentials: true");
  * 
  * If success then respond with user and token data
  * If failure reply with 410 http code and error message 
+ * 
+ * Called when logging in.
  */
 
 // instantiate database and user object
