@@ -27,8 +27,11 @@ $router->set404(function() {
 /* Auth Routes */
 /***************/
 $router->mount('/auth', function() use ($router) {
+    // Login, JWT tokens returned + cookie
     $router->post('/', function () {include 'authenticate/auth.php'; } );
+    // Generate a new access token from refresh token
     $router->get('/refresh', function () {include 'authenticate/refresh.php'; } );
+    // Logout
     $router->delete('/', function () {include 'authenticate/revoke.php'; } );
 
     $router->get('/callback', 'QuickbooksCtl@oauth2_callback');
@@ -107,7 +110,7 @@ $router->mount('/qb', function () use ($router) {
     // The param is the Quickbooks Journal Id. This number is not easily seen on 
     // the normal QB website but it can been seen in Audit Log.
     // It is not the DocNumber which can be seen on the website.
-    $router->get('/journal/(\w+)', 'JournalCtl@read_one');                                                      
+    $router->get('/journal/(\w+)', 'QBJournalCtl@read_one');                                                      
 
     // The param is the Quickbooks Journal Id. This number is not easily seen on 
     // the normal QB website but it can been seen in Audit Log.

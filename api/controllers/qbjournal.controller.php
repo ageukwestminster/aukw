@@ -2,11 +2,7 @@
 
 namespace Controllers;
 
-use \Datetime;
-
-class JournalCtl{
-
-  const NOT_IN_QUICKBOOKS = 0;
+class QBJournalCtl{
 
   public static function read_one($id){  
 

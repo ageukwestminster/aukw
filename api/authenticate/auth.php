@@ -2,6 +2,14 @@
 
 header("Access-Control-Allow-Credentials: true");
 
+/**
+ * Check if the user credentials provided via POST data match
+ * any of the credentials saved in the database.
+ * 
+ * If success then respond with user and token data
+ * If failure reply with 410 http code and error message 
+ */
+
 // instantiate database and user object
 $db = \Core\Database::getInstance()->conn;
 $user = new \Models\User($db);
@@ -59,7 +67,6 @@ if($num>0){
 
         $user->updateFailedAttempts($id, 0, false);
 
-        // echo json_encode($user_with_token, JSON_PRETTY_PRINT);
         echo json_encode($user_with_token);
     }
     else{

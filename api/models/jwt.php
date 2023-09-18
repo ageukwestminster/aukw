@@ -18,6 +18,10 @@ use Lcobucci\JWT\Validation\Constraint\LooseValidAt;
 use Lcobucci\JWT\Validation\Constraint\IssuedBy;
 use Lcobucci\JWT\Validation\Constraint\PermittedFor;
 
+/**
+ * Provide properties and methods to handle creation, validation 
+ * and destruction of JWT access and refresh tokens as part of the authentication process.
+ */
 class JWTWrapper{
     
     private $config; // Jwt configuration object, contains the signer and constraints
@@ -28,9 +32,17 @@ class JWTWrapper{
     private $cookiesecure;
     private $usertoken;
 
-    // object properties
+    /**
+     * The userid of the user
+     * @var int
+     */
     public $id;
+    /**
+     * The username of the user
+     * @var string
+     */
     public $user;
+
     public $isAdmin;
     public $role;
     public $loggedIn;
@@ -70,6 +82,11 @@ class JWTWrapper{
         $this->checkAuth();
     }
 
+    /**
+     * Get the Authorization header from the request.
+     * 
+     * @return string|null The header or null if no authorization header found.
+     */
     private function getAuthorizationHeader(){
         $headers = null;
         if (isset($_SERVER['Authorization'])) {
@@ -80,7 +97,7 @@ class JWTWrapper{
             $requestHeaders = apache_request_headers();
             // Server-side fix for bug in old Android versions (a nice side-effect of this fix means we don't care about capitalization for Authorization)
             $requestHeaders = array_combine(array_map('ucwords', array_keys($requestHeaders)), array_values($requestHeaders));
-            //print_r($requestHeaders);
+
             if (isset($requestHeaders['Authorization'])) {
                 $headers = trim($requestHeaders['Authorization']);
             }
@@ -88,8 +105,10 @@ class JWTWrapper{
         return $headers;
     }
     /**
-    * get access token from header
-    * */
+     * Get the access token from the request headers.
+     * 
+     * @return string|null The required token or null if none found.
+     */
     private function getAccessTokenFromHeaders() {
         $headers = $this->getAuthorizationHeader();
         // HEADER: Get the access token from the header
@@ -101,9 +120,12 @@ class JWTWrapper{
         return NULL;
     }
 
+   
     /**
-    * get refresh token
-    * */
+     * If the request contains a cokkie by the name of $this->cookiename then return it.
+     * 
+     * @return string|null The required cookie or null.
+     */
     private function getRefreshTokenFromCookies() {
 
         if(isset($_COOKIE[$this->cookiename])) {
@@ -119,7 +141,13 @@ class JWTWrapper{
         return NULL;
     }
 
-    // Check the headers for the presence of a valid JWT
+    /**
+     * Check if the user is supplying a valid auth token and check against the database.
+     * 
+     * If success then update the instance properties with the JWT data and change loggin flag to true.
+     * 
+     * @return void
+     */
     public function checkAuth(){
 
         $token = $this->getAccessTokenFromHeaders(); // get token from Auth header
@@ -168,106 +196,126 @@ class JWTWrapper{
         }
     }
 
-        
-        public function validateRefreshToken(){
-            $token = $this->getRefreshTokenFromCookies(); // get token from Auth header
+    /**
+     * Check that there is a valid refresh token saved in the cookies.
+     *  
+     * @return string|null The refresh token value or null if no valid token found.
+     */  
+    public function validateRefreshToken(){
+        $token = $this->getRefreshTokenFromCookies(); // get token from Auth header
 
-            // If no token just exit
-            if( is_null($token) ){
-                return NULL;
-            }
-    
-            // convert from string into JWT object
-            $parser = $this->config->parser();
-            $token = $parser->parse((string) $token);
-    
-            $token->headers(); // Retrieves the token headers
-            $claims = $token->claims(); // Retrieves the token claims
-    
-            $constraints = $this->config->validationConstraints();      
-            
-            // If its a valid token then update the class properties
-            // the '...' means to pass an array as function arguments
-            try {
-                if($this->config->validator()->validate($token, ...$constraints)){
-                    $simplified_token=array(
-                        "id" => $claims->get('sub'),
-                        "hash" => $claims->get('jti'),
-                        "expiry" => $claims->get('exp')
-                    );
-        
-                    // Check database for existance of the JWT for the given user, and that it is not suspeded
-                    if ($this->usertoken->getRefreshTokenStatus($simplified_token['id'], $simplified_token['hash'])) {
-                        return $simplified_token;
-                    } else {
-                        // Someone has used a valid RefreshToken that has already been used (status = 0)
-                        // Disable all tokens and force user to log in again
+        // If no token just exit
+        if( is_null($token) ){
+            return NULL;
+        }
 
-                        // TODO: This is being called too often
-                        //$this->disableAllTokens($simplified_token['id']);                        
-                        return NULL;
-                    }
-                }
-                else {
+        // convert from string into JWT object
+        $parser = $this->config->parser();
+        $token = $parser->parse((string) $token);
+
+        $token->headers(); // Retrieves the token headers
+        $claims = $token->claims(); // Retrieves the token claims
+
+        $constraints = $this->config->validationConstraints();      
+        
+        // If its a valid token then update the class properties
+        // the '...' means to pass an array as function arguments
+        try {
+            if($this->config->validator()->validate($token, ...$constraints)){
+                $simplified_token=array(
+                    "id" => $claims->get('sub'),
+                    "hash" => $claims->get('jti'),
+                    "expiry" => $claims->get('exp')
+                );
+    
+                // Check database for existance of the JWT for the given user, and that it is not suspended
+                if ($this->usertoken->getRefreshTokenStatus($simplified_token['id'], $simplified_token['hash'])) {
+                    return $simplified_token;
+                } else {
+                    // Someone has used a valid RefreshToken that has already been used (status = 0)
+                    // Disable all tokens and force user to log in again
+
+                    // TODO: This is being called too often
+                    //$this->disableAllTokens($simplified_token['id']);                        
                     return NULL;
                 }
             }
-            catch (\Exception $e) {
+            else {
                 return NULL;
             }
         }
-
-        public function getAccessToken(User $user){
-            
-            $now = new DateTimeImmutable();
-
-            $accessTokenExpiry = $now->modify(\Core\Config::read('token.accessExpiry')); // time limit on JWT session tokens
-            $accessHash = $this->GUIDv4();
-            $accessToken = $this->getToken($user->id, $accessHash, $now, 
-                                            $accessTokenExpiry, $user->username, $user->role);  
-
-            $user_with_token=array(
-                "username" => $user->username,
-                "id" => $user->id,
-                "role" => $user->role, 
-                "fullname" => $user->firstname. ' ' . $user->surname,
-                "accessToken" => (string)$accessToken,
-                "accessHash" => $accessHash
-            );
-            return $user_with_token;
+        catch (\Exception $e) {
+            return NULL;
         }
+    }
 
-        // Disable any tokens created from the old Refresh Token and the Refresh Token itself
-        public function disableOldToken($token){            
-            $this->usertoken->updateStatus($token['id'], $token['hash'], false);
+    public function getAccessToken(User $user){
+        
+        $now = new DateTimeImmutable();
+
+        $accessTokenExpiry = $now->modify(\Core\Config::read('token.accessExpiry')); // time limit on JWT session tokens
+        $accessHash = $this->GUIDv4();
+        $accessToken = $this->getToken($user->id, $accessHash, $now, 
+                                        $accessTokenExpiry, $user->username, $user->role);  
+
+        $user_with_token=array(
+            "username" => $user->username,
+            "id" => $user->id,
+            "role" => $user->role, 
+            "fullname" => $user->firstname. ' ' . $user->surname,
+            "accessToken" => (string)$accessToken,
+            "accessHash" => $accessHash
+        );
+        return $user_with_token;
+    }
+
+    /**
+     * Disable a refresh Token by setting the valid/invalid flag to false.
+     * 
+     * @return bool If update succeeds then return true, else false.
+     */
+    public function disabeRefreshToken($refresh_token){            
+        $this->usertoken->updateStatus($refresh_token['id'], $refresh_token['hash'], false);
+    }
+
+    /**
+     * Disable all tokens for the given user and delete the refresh token cookie
+     * 
+     * @return bool If process succeeds then return true, else false.
+     */
+    public function disableAllTokens($userid){            
+        $this->usertoken->deleteAll($userid);
+        setcookie(\Core\Config::read('token.cookiename'), '', time() - 3600);
+    }
+
+    /**
+     * 
+     */
+    public function setRefreshTokenCookieFor($user_with_token, $tokenExpiry = '') {
+
+        // Create New Token
+        $now = new DateTimeImmutable();
+        if (empty($tokenExpiry)) {                
+            $tokenExpiry = $now->modify(\Core\Config::read('token.refreshExpiry'));
         }
+        $hash = $this->GUIDv4();
+        $token = $this->getToken($user_with_token['id'], $hash, $now, $tokenExpiry);
 
-        // Disable any tokens created from the old Refresh Token and the Refresh Token itself
-        public function disableAllTokens($userid){            
-            $this->usertoken->deleteAll($userid);
-            setcookie(\Core\Config::read('token.cookiename'), '', time() - 3600);
-        }
+        setcookie($this->cookiename, $token, $tokenExpiry->getTimestamp()
+            , $this->cookiepath, '', $this->cookiesecure, true); // 'true' = HttpOnly
 
-        public function setRefreshTokenCookieFor($user_with_token, $tokenExpiry = '') {
+        $this->usertoken->store($user_with_token['id'], $user_with_token['accessHash'], $hash, 
+                    true, $tokenExpiry->format("Y-m-d H:i:s")); // 'true' = isValid
 
-            // Create New Token
-            $now = new DateTimeImmutable();
-            if (empty($tokenExpiry)) {                
-                $tokenExpiry = $now->modify(\Core\Config::read('token.refreshExpiry'));
-            }
-            $hash = $this->GUIDv4();
-            $token = $this->getToken($user_with_token['id'], $hash, $now, $tokenExpiry);
-
-            setcookie($this->cookiename, $token, $tokenExpiry->getTimestamp()
-                , $this->cookiepath, '', $this->cookiesecure, true); // 'true' = HttpOnly
-
-            $this->usertoken->store($user_with_token['id'], $user_with_token['accessHash'], $hash, 
-                        true, $tokenExpiry->format("Y-m-d H:i:s")); // 'true' = isValid
-
-        }
+    }
 
 
-    // Get a string representation of a new JWT
+    /**
+     * Get a string representation of a new JWT using
+     * 
+     * @param string $userid e.g. 'admin' or 'nsc'
+     * @param string $hash  
+     */
     private function getToken($userid, $hash, $issuedAt, $expiresAt, $username = '', $role = ''){
 
         $builder = $this->config->builder();
@@ -293,9 +341,11 @@ class JWTWrapper{
         return $token->toString();
     }
 
-    /*
-        Set the token properties to default states
-    */
+    /**
+     * Set the token properties to default states
+     * 
+     * @return void
+     */
     private function initializeToken(){
         $this->user = '';
         $this->isAdmin = false;
@@ -313,8 +363,8 @@ class JWTWrapper{
     * for all supported pltforms with fallback to an older,
     * less secure version.
     *
-    * @param bool $trim
-    * @return string
+    * @param bool $trim remove leading and trailing spaces
+    * @return string The newly generated GUIDv4 string.
     */
     private function GUIDv4 ($trim = true)
     {

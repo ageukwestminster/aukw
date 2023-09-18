@@ -43,7 +43,17 @@ class UserToken{
         return false;
     }
 
-    function updateStatus($iduser, $hash, $isValid){
+    /**
+     * Update the database valid/invalid flag for the user's token
+     * identified by $hash. CAn be an access or refresh token.
+     * 
+     * @param int $iduser The userid of the user
+     * @param string $hash The cryptographic hash of the token
+     * @param bool $isValid 'True' means set token to valid, 'false' means set it to invalid
+     * 
+     * @return bool If database update succeeds then return true, else false.
+     */
+    public function updateStatus($iduser, $hash, $isValid){
         $query = "UPDATE
                     " . $this->table_name . "
                     SET 

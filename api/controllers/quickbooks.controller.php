@@ -2,17 +2,7 @@
 
 namespace Controllers;
 
-use QuickBooksOnline\API\DataService\DataService;
-use QuickBooksOnline\API\Core\OAuth\OAuth2\OAuth2LoginHelper;
-use QuickBooksOnline\API\Facades\JournalEntry;
-use QuickBooksOnline\API\Core\OAuth\OAuth2\OAuth2AccessToken;
-
-use Models\JWTWrapper;
 use Models\QuickbooksAuth;
-use Models\QuickbooksToken;
-use Models\User;
-use DateTime;
-use DateTimeZone;
 
 class QuickbooksCtl{
 
