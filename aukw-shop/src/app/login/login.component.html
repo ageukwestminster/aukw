@@ -4,7 +4,7 @@
     <div class="card-body">
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <div class="form-group">
-          <label for="username">Username</label>
+          <label for="usernameInput">Username</label>
           <!-- Autocomplete from https://developer.apple.com/documentation/security/password_autofill/enabling_password_autofill_on_an_html_input_element -->
           <!-- Also see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete -->
           <input
@@ -13,19 +13,21 @@
             class="form-control"
             [ngClass]="{ 'is-invalid': submitted && f.username.errors }"
             autocomplete="username"
+            id="usernameInput"
           />
           <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
             <div *ngIf="f.username.errors.required">Username is required</div>
           </div>
         </div>
         <div class="form-group">
-          <label for="password">Password</label>
+          <label for="passwordInput">Password</label>
           <input
             type="password"
             formControlName="password"
             class="form-control"
             [ngClass]="{ 'is-invalid': submitted && f.password.errors }"
             autocomplete="current-password"
+            id="passwordInput"
           />
           <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
             <div *ngIf="f.password.errors.required">Password is required</div>
