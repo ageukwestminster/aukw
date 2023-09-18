@@ -5,7 +5,7 @@ namespace Models;
 use \PDO;
 
 /**
- * Holds QB token information and has data persistance capbility.
+ * Holds QB token information and has data persistance capability.
  */
 class QuickbooksToken{
     /**
