@@ -1,3 +1,6 @@
+/**
+ * All the possible values of department
+ */
 export enum Department {
   CLOTHING = 'Clothing',
   BRICA = 'Bric-a-Brac',
