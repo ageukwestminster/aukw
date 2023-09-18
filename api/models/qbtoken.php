@@ -4,21 +4,57 @@ namespace Models;
 
 use \PDO;
 
+/**
+ * Holds QB token information and has data persistance capbility.
+ */
 class QuickbooksToken{
-    // database conn 
+    /**
+     * Database connection
+     * @var Database
+     */ 
     private $conn;
-    // table name
+    /**
+     * The name of the table that holds the data
+     * @var string
+     */
     private $table_name = "qbtoken";
 
+    /**
+     * initializes a new instance of the QuickbooksToken class.
+     */
     public function __construct(){
         $this->conn = \Core\Database::getInstance()->conn;
     }
 
+    /**
+     * QBO access token
+     * @var string
+     */
     public $accesstoken;
+    /**
+     * Date and time that QBO access token expires in string format. Time is 
+     * London local time.
+     * @var string
+     */
     public $accesstokenexpiry;
+    /**
+     * QBO access token
+     * @var string
+     */
     public $refreshtoken;
+    /**
+     * Date and time that QBO refresh token expires in string format. Time is 
+     * London local time.
+     * @var string
+     */
     public $refreshtokenexpiry;
 
+    /**
+     * Insert the QB token information into the database with the values of
+     * the current instance.
+     * 
+     * @return bool 'true' if operation succeeded
+     */
     function insert(){
         $query = "INSERT INTO
                     " . $this->table_name . "
@@ -47,6 +83,12 @@ class QuickbooksToken{
         return false;
     }
 
+    /**
+     * Update the QB token information in the database with the values of
+     * the current instance.
+     * 
+     * @return bool 'true' if operation succeeded
+     */
     function update(){
         $query = "UPDATE
                     " . $this->table_name . "
@@ -74,6 +116,11 @@ class QuickbooksToken{
         return false;
     }
 
+    /**
+     * Refresh the instance properties with QB token information from the database
+     * 
+     * @return void
+     */
     function read(){
         $query = "SELECT `accesstoken`,`accesstokenexpiry`,`refreshtoken`,`refreshtokenexpiry`
                     FROM " . $this->table_name;
@@ -96,7 +143,12 @@ class QuickbooksToken{
         }
     }
 
-    function delete(){
+    /**
+     * Delete the QB access and refresh tokens from the database
+     * 
+     * @return bool 'true' if operation succeeded
+     */
+    public function delete(){
         $query = "DELETE FROM " . $this->table_name;
 
         $stmt = $this->conn->prepare($query);

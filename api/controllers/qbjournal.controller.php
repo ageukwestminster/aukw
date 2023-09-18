@@ -2,6 +2,9 @@
 
 namespace Controllers;
 
+/**
+ * Provide the read_one method to query QBO for transactions of type General Journal
+ */
 class QBJournalCtl{
 
   public static function read_one($id){  

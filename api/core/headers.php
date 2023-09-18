@@ -16,6 +16,12 @@ class Headers
         return $path;
     }
     
+    /**
+     * Respond with the raw CORS or non-CORS headers as appropiate.
+     * CORS headers are used when the request is part of tthe authentication process
+     *      
+     * * @return void
+     */
     public static function getHeaders($path_is_auth = false) {
         if ($path_is_auth || Headers::path_is_auth()) {
             Headers::cors_headers();
@@ -24,13 +30,24 @@ class Headers
         }
     }
 
-    // Return 'true' if the path starts with 'auth'
+    /**
+     * Return 'true' if the path is an authentication-related path. These
+     * paths do not require the user to be logged before accessing them.
+     * 
+     * @return bool 'true' if the path is for authentication purposes
+     */
     public static function path_is_auth($path = '')
     {
         if (empty($path)) {
             $path = Headers::stripped_path();
         }
 
+        // QBO callback when making connection
+        if (preg_match('/^qb\/callback/', $path)) {
+            return true;
+        }
+
+        // Normal login/logout auth path
         return preg_match('/^auth/', $path);
     }
 
@@ -60,6 +77,11 @@ class Headers
         return preg_match('/^user/', $path);
     }
 
+    /**
+     * Respond with the raw CORS headers for authentication requests
+     *      
+     * * @return void
+     */
     private static function cors_headers()
     {
         header("Access-Control-Allow-Origin: ". \Core\Config::read('server'));
@@ -70,6 +92,11 @@ class Headers
         header("Content-Type: application/json; charset=UTF-8");
     }
 
+    /**
+     * Respond with the raw non-CORS headers for simple requests
+     *      
+     * * @return void
+     */
     private static function normal_headers()
     {
         header("Access-Control-Allow-Origin: *");

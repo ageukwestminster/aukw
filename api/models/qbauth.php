@@ -14,6 +14,9 @@ use Models\User;
 use DateTime;
 use DateTimeZone;
 
+/**
+ * 
+ */
 class QuickbooksAuth{
 
     /**
@@ -21,47 +24,59 @@ class QuickbooksAuth{
      * @var array
      */
     private $config;
-
-    public $dataService;
-
+    /**
+     * QBO API object used to perform CRUD operations
+     * @var DataService
+     */
+    private $dataService;
+    /**
+     * Holds QB token informaiton in persistable format
+     * @var QuickbooksToken
+     */
     private $tokenModel;
 
     /**
      * Initializes a new instance of the QuickbooksAuth class. Populates the $config property
-     *
+     * with required constant values and iduser
+     * @return void
      */
     public function __construct(){
 
         $jwt = new JWTWrapper();
   
         $this->config = array(
-          'auth_mode' => 'oauth2',
-          'authorizationRequestUrl' => 'https://appcenter.intuit.com/connect/oauth2',
-          'tokenEndPointUrl' => 'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer',
+          'auth_mode' => \Core\Config::read('qb.authmode'),
+          'authorizationRequestUrl' => \Core\Config::read('qb.authrequesturi'),
+          'tokenEndPointUrl' => \Core\Config::read('qb.tokenendpointuri'),
           'ClientID' => getenv(\Core\Config::read('qb.clientid')),
           'ClientSecret' => getenv(\Core\Config::read('qb.clientsecret')),
-          'scope' => 'com.intuit.quickbooks.accounting',
+          'scope' => \Core\Config::read('qb.authscope'),
           'redirectURI' => \Core\Config::read('qb.redirecturl'),
           'QBORealmID' => \Core\Config::read('qb.realmid'),
-          'response_type' => 'code',
-          'state' => 'TEKP56', // A random string of chars
+          'response_type' => \Core\Config::read('qb.responsetype'),
+          'state' => \Core\Config::read('qb.authstate'),
           'iduser' => $jwt->id,
           'enablelog' => \Core\Config::read('qb.enablelog'),
           'loglocation' => \Core\Config::read('qb.loglocation')
         );
     }
 
+    /**
+     * Instantiate the QBO Dataservice from the config settings and 
+     * Called from refresh, revoke and callback
+     * @return void
+     */
     private function init(){
         $this->dataService = DataService::Configure($this->config);    
         $this->dataService->throwExceptionOnError(false);    
 
         $this->tokenModel = new QuickbooksToken();
-        $this->tokenModel->iduser = $this->config['iduser'];
         $this->tokenModel->read();
     }
 
-    /** Start the OAuth2 process to create a link between QuiockBooks and this app
-     * @return The Uri to follow to make the link plus instructions on what to do
+    /** 
+     * Start the OAuth2 process to create a link between QuickBooks and this app
+     * @return array The Uri to follow to make the link plus instructions on what to do
      */
     public function begin() {
 
@@ -70,11 +85,6 @@ class QuickbooksAuth{
         if (empty($this->config['ClientID'])) {
             return $authUri;
         }
-
-        // The callback from Intuit does not contain information about which user the access token
-        // applies to. We encode the iduser value in the 'state' object that is transmitted with
-        // the access code.
-        $this->config['state'] = $this->config['state'] . '-' . $this->config['iduser'];
 
         $this->dataService = DataService::Configure($this->config);
         $OAuth2LoginHelper = $this->dataService->getOAuth2LoginHelper();
@@ -88,7 +98,7 @@ class QuickbooksAuth{
 
     /** 
      * Called from Quickbooks API servers as part of the OAuth2 process 
-     * @return true if success
+     * @return bool 'true' if success
     */
     public function callback(){
 
@@ -96,29 +106,42 @@ class QuickbooksAuth{
     
         $code = $_GET['code'];        
         $realmId = $_GET['realmId'];
+        $state = $_GET['state'];
 
-        // The callback from Intuit does not contain information about which user the access token
-        // applies to. We encode the iduser value in the 'state' object that is transmitted with
-        // the access code.
-        $stateArray = explode('-',$_GET['state']);
-        $state = $stateArray[0];
-        $this->config['iduser'] = $stateArray[1];
+        if (empty($code) || empty($realmId) || empty($state) ) {
+            http_response_code(400);  
+            echo json_encode(
+              array("message" => "Unable to proceed with QB callback: provided parameters not as expected")
+            );
+            exit(0);
+        }
+            
+        try {
+            // The state value is used to verify that this is a legimiate callback, not a hoax
+            if ($state != $this->config['state']) {
+                http_response_code(400);  
+                echo json_encode(
+                    array("message" => "Unable to proceed with QB callback: 'state' does not match initial value.")
+                );
+                exit(0);
+            }
 
-        if ($state != $this->config['state']) {
-          http_response_code(400);  
-          echo json_encode(
-            array("message" => "Unable to proceed with QB callback: 'state' does not match initial value.")
-          );
-          exit(0);
+            $OAuth2LoginHelper = $this->dataService->getOAuth2LoginHelper();
+            $accessTokenObj = $OAuth2LoginHelper->exchangeAuthorizationCodeForToken($code, $realmId);
+        }
+        catch (\Exception $e) {
+            http_response_code(400);  
+            echo json_encode(
+              array("message" => "Unable to proceed with QB callback. Contact support.")
+            );
+            exit(0);
         }
     
-        $OAuth2LoginHelper = $this->dataService->getOAuth2LoginHelper();
-        $accessTokenObj = $OAuth2LoginHelper->exchangeAuthorizationCodeForToken($code, $realmId);
-    
+
         $this->dataService->updateOAuth2Token($accessTokenObj);
 
         $this->store_tokens_in_database($accessTokenObj);
-    
+
         return true;
       }
 
@@ -244,7 +267,8 @@ class QuickbooksAuth{
     }
 
     /**
-     * Return the ServiceContext of this DataService
+     * Return the ServiceContext of this DataService. 
+     * Required by QBReportService.
      *
      * @return ServiceContext
      * @throws \Exception ServiceContext is NULL.
@@ -264,10 +288,14 @@ class QuickbooksAuth{
         return ServiceContext::ConfigureFromPassedArray($settings);
     }
 
+    /**
+     * Store the access and refresh tokens in the database
+     * 
+     * @param OAuth2AccessToken QB object that contains access and refresh token info
+     */
     private function store_tokens_in_database($accessTokenObj){
 
         $this->tokenModel = new QuickbooksToken();
-        $this->tokenModel->iduser = $this->config['iduser'];
         $this->tokenModel->read();
 
         if ($this->tokenModel->accesstoken) {
@@ -299,9 +327,14 @@ class QuickbooksAuth{
         }
     }
 
+    /**
+     * Delete the QB access and refresh tokens from the database
+     * 
+     * @return bool 'true' if operation succeeded
+     */
     private function remove_tokens_from_database(){
 
-        $this->tokenModel->delete();
+        return $this->tokenModel->delete();
         
     }
 }

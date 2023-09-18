@@ -4,7 +4,7 @@ namespace Controllers;
 
 use Models\QuickbooksAuth;
 
-class QuickbooksCtl{
+class QBAuthCtl{
 
   public static function oauth2_begin(){
     $model = new QuickbooksAuth();

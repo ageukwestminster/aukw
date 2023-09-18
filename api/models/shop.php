@@ -1,22 +1,50 @@
 <?php
 namespace Models;
 use \PDO;
+/**
+ * Defines a shop and has data persistance capbility.
+ */
 class Shop{
-    // database conn 
+    /**
+     * Database connection
+     * @var Database
+     */ 
     private $conn;
-    // table name
+    /**
+     * The name of the table that holds the data
+     * @var string
+     */
     private $table_name = "shop";
+    /**
+     * The primary key field name of the table that holds the data
+     * @var string
+     */
     private $table_id = "id";
 
-    // object properties
+    /**
+     * The id of the shop
+     * @var int
+     */
     public $id;
+    /**
+     * The name of the shop
+     * @var string
+     */
     public $name;
 
+    /**
+     * initializes a new instance of the Shop class.
+     */
     public function __construct(){
         $this->conn = \Core\Database::getInstance()->conn;
     }
 
-    // used by select drop-down list
+    /**
+     * Get a list of all shops that we can enter takings for. Used by select drop-down list.
+     * Ignores whether shop is open or closed.
+     * 
+     * @return array All available shops
+     */
     public function read(){
 
         //select all data
@@ -31,7 +59,7 @@ class Shop{
 
         $num = $stmt->rowCount();
 
-        $item_arr=array();
+        $shops=array();
 
         // check if more than 0 record found
         if($num>0){
@@ -45,62 +73,61 @@ class Shop{
                 // just $name only
                 extract($row);
             
-                    $item=array(
+                $shops[]=array(
                         "id" => $id,
                         "name" => $name
                     );
-
-                    $item_arr[] = $item;
                 }
         }
 
-        return $item_arr;
+        return $shops;
     }
         
-        public function readOne(){
+    /**
+     * Get data of a single shop that is specified by either id or name.
+     * 
+     * @return array The reuired shop.
+     */
+    public function readOne(){
 
-            //select data for one item using PK of table
-            $query = "SELECT
-                        " . $this->table_id ." as `id`, `name`
-                    FROM
-                        " . $this->table_name . "
-                        WHERE "; 
+        //select data for one item using PK of table
+        $query = "SELECT
+                    " . $this->table_id ." as `id`, `name`
+                FROM
+                    " . $this->table_name . "
+                    WHERE "; 
 
-            // WHERE clause depends on parameters
-            if($this->name) {
-                $query .= "LOWER(name) LIKE :name ";
-            }            
-            else {
-                $query .= $this->table_id ." = :id ";
-            }
-            $query .= "LIMIT 0,1";
-    
-            // prepare query statement
-            $stmt = $this->conn->prepare($query);      
-
-            if($this->name) {
-                $name = htmlspecialchars(strip_tags($this->name)).'%';
-                $stmt->bindParam (":name", $name, PDO::PARAM_STR);
-            }
-            else {
-                $id = filter_var($this->id, FILTER_SANITIZE_NUMBER_INT);
-                $stmt->bindParam (":id", $id, PDO::PARAM_INT);
-            }
-            
-            $stmt->execute();
-
-            // get retrieved row
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-            // set values to object properties
-            $this->id = $row['id'];
-            $this->name = $row['name'];
-            // create array
-            $item = array(
-                "id" => $this->id,
-                "name" => $this->name    
-            );
-
-            return $item;
+        // WHERE clause depends on parameters
+        if($this->name) {
+            $query .= "LOWER(name) LIKE :name ";
+        }            
+        else {
+            $query .= $this->table_id ." = :id ";
         }
+        $query .= "LIMIT 0,1";
+
+        // prepare query statement
+        $stmt = $this->conn->prepare($query);      
+
+        if($this->name) {
+            $name = htmlspecialchars(strip_tags($this->name)).'%';
+            $stmt->bindParam (":name", $name, PDO::PARAM_STR);
+        }
+        else {
+            $id = filter_var($this->id, FILTER_SANITIZE_NUMBER_INT);
+            $stmt->bindParam (":id", $id, PDO::PARAM_INT);
+        }
+        
+        $stmt->execute();
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $this->id = $row['id'];
+        $this->name = $row['name'];
+        
+        return array(
+            "id" => $this->id,
+            "name" => $this->name    
+        );
+    }
 }

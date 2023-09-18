@@ -3,7 +3,7 @@
 header("Access-Control-Allow-Credentials: true");
 
 /**
- * Check if the user credentials provided via POST data match
+ * Check if the user credentials provided via POST match
  * any of the credentials saved in the database.
  * 
  * If success then respond with user and token data

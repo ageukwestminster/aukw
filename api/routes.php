@@ -33,8 +33,6 @@ $router->mount('/auth', function() use ($router) {
     $router->get('/refresh', function () {include 'authenticate/refresh.php'; } );
     // Logout
     $router->delete('/', function () {include 'authenticate/revoke.php'; } );
-
-    $router->get('/callback', 'QuickbooksCtl@oauth2_callback');
 });
 
 /***************/
@@ -127,13 +125,15 @@ $router->mount('/qb', function () use ($router) {
     $router->patch('/salesreceipt/takings/', 'SalesReceiptCtl@patch');
 
     // Returns the uri needed to start the QBO authorisation process
-    $router->get('/auth', 'QuickbooksCtl@oauth2_begin');    
+    $router->get('/auth', 'QBAuthCtl@oauth2_begin');    
     // Exchange a refresh token for a new access token
-    $router->get('/refresh', 'QuickbooksCtl@oauth2_refresh');
+    $router->get('/refresh', 'QBAuthCtl@oauth2_refresh');
     // Delete QBO authorisation
-    $router->delete('/', 'QuickbooksCtl@oauth2_revoke');
+    $router->delete('/', 'QBAuthCtl@oauth2_revoke');
     // Retrieve details of the connection to QB (if any)
-    $router->get('/connection', 'QuickbooksCtl@connection_details');
+    $router->get('/connection', 'QBAuthCtl@connection_details');
+    // QBO callback endpoint for QBO authentication process
+    $router->get('/callback', 'QBAuthCtl@oauth2_callback');
 
     // QB item is for Products/Services
     $router->get('/item/(\w+)', 'QBItemCtl@read_one');
