@@ -26,7 +26,6 @@ include_once 'models/summary.php';
 include_once 'models/takings.php';
 include_once 'models/user.php';
 include_once 'models/usertoken.php';
-include_once 'controllers/qbconnection.controller.php';
 include_once 'controllers/qbitem.controller.php';
 include_once 'controllers/qbjournal.controller.php';
 include_once 'controllers/qbreport.controller.php';

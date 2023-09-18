@@ -109,12 +109,12 @@ $router->mount('/summary', function () use ($router) {
 $router->mount('/qb', function () use ($router) {
     // The param is the Quickbooks Journal Id. This number is not easily seen on 
     // the normal QB website but it can been seen in Audit Log.
-    // It is not the DocNumber which can be seen on the website.
+    // It is not the DocNumber which can be seen when adding/editing on QBO.
     $router->get('/journal/(\w+)', 'QBJournalCtl@read_one');                                                      
 
     // The param is the Quickbooks Journal Id. This number is not easily seen on 
     // the normal QB website but it can been seen in Audit Log.
-    // It is not the DocNumber which can be seen on the website.
+    // It is not the DocNumber which can be seen when adding/editing on QBO.
     $router->get('/salesreceipt/(\w+)', 'SalesReceiptCtl@read_one');
 
     // Create a new sales receipt in QB
@@ -128,13 +128,12 @@ $router->mount('/qb', function () use ($router) {
 
     // Returns the uri needed to start the QBO authorisation process
     $router->get('/auth', 'QuickbooksCtl@oauth2_begin');    
-    // Exchange a refresh token for a new access toekn
+    // Exchange a refresh token for a new access token
     $router->get('/refresh', 'QuickbooksCtl@oauth2_refresh');
     // Delete QBO authorisation
     $router->delete('/', 'QuickbooksCtl@oauth2_revoke');
-
     // Retrieve details of the connection to QB (if any)
-    $router->get('/connection', 'QBTokenCtl@read_one');
+    $router->get('/connection', 'QuickbooksCtl@connection_details');
 
     // QB item is for Products/Services
     $router->get('/item/(\w+)', 'QBItemCtl@read_one');
