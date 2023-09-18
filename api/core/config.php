@@ -11,16 +11,30 @@ error_reporting(E_ALL);
 //ini_set('log_errors', 1);
 //error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
-// Config pattern from https://stackoverflow.com/a/2047999/6941165
+/**
+ * A static class that holds application-level constants.
+ * 
+ * The config pattern that this classs uses is from {@link https://stackoverflow.com/a/2047999/6941165}
+ */
 class Config
 {
+    /**
+     * Array of constants
+     * @var array
+     */
     static $confArray;
 
+    /**
+     * Read a constant value
+     */
     public static function read($name)
     {
         return self::$confArray[$name];
     }
 
+    /**
+     * Write a constant value
+     */
     public static function write($name, $value)
     {
         self::$confArray[$name] = $value;
