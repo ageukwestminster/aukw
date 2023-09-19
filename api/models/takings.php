@@ -416,13 +416,18 @@ class Takings{
         }
 
         // execute query
-        if($stmt->execute()){
-            $this->id = $this->conn->lastInsertId();
-            if($this->id) {
-                return true;
-            } else {
-                return false;
+        try {
+            if($stmt->execute()){
+                $this->id = $this->conn->lastInsertId();
+                if($this->id) {
+                    return true;
+                } else {
+                    return false;
+                }
             }
+        }
+        catch (\Exception $e) {
+            return false;
         }
         
         return false;

@@ -89,7 +89,7 @@ class TakingsCtl{
       // if unable to create the model, tell the admin
         http_response_code(400);  
         echo json_encode(
-          array("message" => "Unable to INSERT row.")
+          array("message" => "Unable to add takings to database.")
         );
     }
   }
