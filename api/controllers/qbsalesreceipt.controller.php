@@ -10,7 +10,7 @@ class SalesReceiptCtl{
 
   public static function read_one($id){  
 
-    $model = new \Models\SalesReceiptJournal();
+    $model = new \Models\QuickbooksSalesReceipt();
     $model->id = $id;
 
     echo json_encode($model->readone(), JSON_NUMERIC_CHECK);   
@@ -52,7 +52,7 @@ class SalesReceiptCtl{
 
     $emptySales = (object) [ 'number' => 0, 'sales' => 0];
 
-    $model = new \Models\SalesReceiptJournal();
+    $model = new \Models\QuickbooksSalesReceipt();
     $data = json_decode(file_get_contents("php://input"));
     $model->date = $data->date;          
     $model->shopid = $data->shopid ?? 1;          
@@ -113,7 +113,7 @@ class SalesReceiptCtl{
       exit(0);
     }
 
-    $model = new \Models\SalesReceiptJournal();
+    $model = new \Models\QuickbooksSalesReceipt();
     SalesReceiptCtl::transfer_parameters($model, $takings);
     SalesReceiptCtl::check_parameters($model);
 
@@ -151,7 +151,7 @@ class SalesReceiptCtl{
       $takings->id = $takingsRow["id"];
       $takings->readOne();
       
-      $model = new \Models\SalesReceiptJournal();
+      $model = new \Models\QuickbooksSalesReceipt();
 
       SalesReceiptCtl::transfer_parameters($model, $takings);
       SalesReceiptCtl::check_parameters($model);

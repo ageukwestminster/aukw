@@ -7,7 +7,7 @@ use QuickBooksOnline\API\Facades\SalesReceipt;
 
 use DateTime;
 
-class SalesReceiptJournal{
+class QuickbooksSalesReceipt{
 
 
   private $zero_rated_taxcode = [
