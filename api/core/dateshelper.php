@@ -8,7 +8,7 @@ use DateTimeZone;
 /**
  * A class supplying helper functions to manage PHP dates and date ranges.
  * 
- * @category  Core
+ * @category Core
  */
 class DatesHelper
 {

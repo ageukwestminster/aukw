@@ -2,10 +2,15 @@
 
 namespace Core;
 
+/**
+ * A helper class that provides methoids to return HTTP headers.
+ * @category Core
+ */
 class Headers
 {
     /**
      * Return the part of the path that is after .../api/
+     * Used to simplify the path before checking if (for example) it is a 'auth' path.
      * 
      * @return string
      */
