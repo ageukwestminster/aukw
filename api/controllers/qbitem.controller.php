@@ -4,9 +4,18 @@ namespace Controllers;
 
 use \Datetime;
 
+/**
+ * [Description QBItemCtl]
+ */
 class QBItemCtl{
 
-  public static function read_one($id){  
+  /**
+   * Return details of the QBItem identified by $id
+   *
+   * @param int $id
+   * @return void 
+   */
+  public static function read_one(int $id){  
 
     $model = new \Models\QuickbooksItem();
     $model->id = $id;
@@ -14,6 +23,11 @@ class QBItemCtl{
     echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
   }
 
+  /**
+   * Return details of all QBO Items
+   * 
+   * @return void 
+   */
   public static function read_all(){  
 
     $model = new \Models\QuickbooksItem();

@@ -7,7 +7,13 @@ namespace Controllers;
  */
 class QBJournalCtl{
 
-  public static function read_one($id){  
+    /**
+   * Return details of the QBItem identified by $id
+   *
+   * @param int $id
+   * @return void 
+   */
+  public static function read_one(int $id){  
 
     $model = new \Models\QuickbooksJournal();
     $model->id = $id;

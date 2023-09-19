@@ -2,12 +2,26 @@
 
 namespace Models;
 
+/**
+ * Factory class that provides data about QBO Items. Items can also be known as Products.
+ */
 class QuickbooksItem{
+ 
+  /**
+   * The QBO id of the Quickbooks Item.
+   *
+   * @var int
+   */
+  public int $id;
 
-
-  public $id;
-  
-
+  /**
+   * Return details of the QBItem identified by $id
+   *
+   * @param int $id The QBO id of the Quickbooks Item.
+   * 
+   * @return IPPIntuitEntity Returns an item of specified Id.
+   * 
+   */
   public function readOne(){
 
       $auth = new QuickbooksAuth();
@@ -29,6 +43,12 @@ class QuickbooksItem{
       }
   }
 
+  /**
+   * Return details of all QBO Items
+   * 
+   * @return array An array of QBO Items
+   * 
+   */
   public function readAll(){
 
     $auth = new QuickbooksAuth();

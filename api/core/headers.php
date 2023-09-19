@@ -4,7 +4,11 @@ namespace Core;
 
 class Headers
 {
-
+    /**
+     * Return the part of the path that is after .../api/
+     * 
+     * @return string
+     */
     public static function stripped_path() {
         $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         $api_prefix = \Core\Config::read('api.path');
@@ -18,12 +22,12 @@ class Headers
     
     /**
      * Respond with the raw CORS or non-CORS headers as appropiate.
-     * CORS headers are used when the request is part of tthe authentication process
+     * CORS headers are used when the request is part of the authentication process
      *      
-     * * @return void
+     * @return void
      */
     public static function getHeaders($path_is_auth = false) {
-        if ($path_is_auth || Headers::path_is_auth()) {
+        if ($path_is_auth) {
             Headers::cors_headers();
         } else {
             Headers::normal_headers();
@@ -51,9 +55,12 @@ class Headers
         return preg_match('/^auth/', $path);
     }
 
-    // Return 'true' if the path is either of these two routes:
-    // POST 'takings/'
-    // PUT  'takings/(\d+)'
+    /**
+     * Return 'true' if the path is either of these two routes:
+     * POST 'takings/' or PUT  'takings/(\d+)'
+     * 
+     * @return string
+     */
     public static function path_is_takings_dataentry($path = '')
     {
         if (empty($path)) {
@@ -67,7 +74,12 @@ class Headers
             ($method === 'PUT' && preg_match('/^takings\/(\d+)/', $path));
     }
 
-    // Return 'true' if the path starts with 'user'
+    /** 
+     * Return 'true' if the path starts with 'user'. Used to determine if
+     * the route requested requires special authorization.
+     * 
+     * @return bool
+     * */
     public static function path_is_user($path = '')
     {
         if (empty($path)) {
@@ -80,7 +92,7 @@ class Headers
     /**
      * Respond with the raw CORS headers for authentication requests
      *      
-     * * @return void
+     * @return void
      */
     private static function cors_headers()
     {
@@ -95,7 +107,7 @@ class Headers
     /**
      * Respond with the raw non-CORS headers for simple requests
      *      
-     * * @return void
+     * @return void
      */
     private static function normal_headers()
     {

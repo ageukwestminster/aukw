@@ -21,6 +21,8 @@
 use \Core\Headers;
 
 $router->options('/(\S+)',function() {
+    $path = Headers::stripped_path();
+    $isAuthPath = Headers::path_is_auth($path);
     Headers::getHeaders();
 }); // just return headers when OPTIONS call
 
