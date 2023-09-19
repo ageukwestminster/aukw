@@ -29,10 +29,10 @@ class Headers
      * Respond with the raw CORS or non-CORS headers as appropiate.
      * CORS headers are used when the request is part of the authentication process
      *      
-     * @return void
+     * @return void Output is echo'd directly to response
      */
     public static function getHeaders($path_is_auth = false) {
-        if ($path_is_auth) {
+        if ($path_is_auth || Headers::path_is_auth()) {
             Headers::cors_headers();
         } else {
             Headers::normal_headers();
@@ -97,7 +97,7 @@ class Headers
     /**
      * Respond with the raw CORS headers for authentication requests
      *      
-     * @return void
+     * @return void Output is echo'd directly to response
      */
     private static function cors_headers()
     {
@@ -112,7 +112,7 @@ class Headers
     /**
      * Respond with the raw non-CORS headers for simple requests
      *      
-     * @return void
+     * @return void Output is echo'd directly to response
      */
     private static function normal_headers()
     {

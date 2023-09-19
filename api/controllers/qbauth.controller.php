@@ -28,7 +28,7 @@ class QBAuthCtl{
    * system authorization codes. It does this by means of a callback uri. When the QBO
    * API calls the endpoint the system routes the request through here.
    * 
-   * @return void
+   * @return void Output is echo'd directly to response Output is echo'd directly to response
    */
   public static function oauth2_callback(){
     $model = new QuickbooksAuth();
@@ -42,7 +42,7 @@ class QBAuthCtl{
   /**
    * Break the link between this app and Quickbooks
    * 
-   * @return void
+   * @return void Output is echo'd directly to response
    */
   public static function oauth2_revoke(){
     $model = new QuickbooksAuth();

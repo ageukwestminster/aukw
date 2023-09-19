@@ -148,7 +148,7 @@ class JWTWrapper{
      * 
      * If success then update the instance properties with the JWT data and change loggin flag to true.
      * 
-     * @return void
+     * @return void Output is echo'd directly to response
      */
     public function checkAuth(){
 
@@ -346,7 +346,7 @@ class JWTWrapper{
     /**
      * Set the token properties to default states
      * 
-     * @return void
+     * @return void Output is echo'd directly to response
      */
     private function initializeToken(){
         $this->user = '';

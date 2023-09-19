@@ -39,7 +39,7 @@ class QuickbooksAuth{
     /**
      * Initializes a new instance of the QuickbooksAuth class. Populates the $config property
      * with required constant values and iduser
-     * @return void
+     * @return void Output is echo'd directly to response
      */
     public function __construct(){
 
@@ -65,7 +65,7 @@ class QuickbooksAuth{
     /**
      * Instantiate the QBO Dataservice from the config settings and 
      * Called from refresh, revoke and callback
-     * @return void
+     * @return void Output is echo'd directly to response
      */
     private function init(){
         $this->dataService = DataService::Configure($this->config);    

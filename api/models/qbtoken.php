@@ -121,7 +121,7 @@ class QuickbooksToken{
     /**
      * Refresh the instance properties with QB token information from the database
      * 
-     * @return void
+     * @return void Output is echo'd directly to response
      */
     function read(){
         $query = "SELECT `accesstoken`,`accesstokenexpiry`,`refreshtoken`,`refreshtokenexpiry`

@@ -15,7 +15,7 @@ class QBItemCtl{
    * Return details of the QBItem identified by $id
    *
    * @param int $id
-   * @return void 
+   * @return void Output is echo'd directly to response 
    */
   public static function read_one(int $id){  
 
@@ -28,7 +28,7 @@ class QBItemCtl{
   /**
    * Return details of all QBO Items
    * 
-   * @return void 
+   * @return void Output is echo'd directly to response 
    */
   public static function read_all(){  
 

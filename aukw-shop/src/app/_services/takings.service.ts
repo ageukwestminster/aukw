@@ -22,14 +22,14 @@ export class TakingsService {
 
   getSummary(shopid: number, urlParameters: string) {
     return this.http.get<TakingsSummary[]>(
-      `${baseUrl}/summary/shop/${shopid}?${urlParameters}`,
+      `${environment.apiUrl}/report/takingssummary/shop/${shopid}?${urlParameters}`,
     );
   }
 
   /* return an array of the numdatapoints most recent sales */
   getSimpleSalesList(shopid: number, numdatapoints: number) {
     return this.http.get<HistogramChartData>(
-      `${baseUrl}/saleslist/shop/${shopid}/datapoints/${numdatapoints}`,
+      `${environment.apiUrl}/report/saleslist/shop/${shopid}/datapoints/${numdatapoints}`,
     );
   }
 

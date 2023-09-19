@@ -13,7 +13,7 @@ class QBJournalCtl{
    * Return details of the QBO general journal identified by $id
    *
    * @param int $id
-   * @return void 
+   * @return void Output is echo'd directly to response 
    */
   public static function read_one(int $id){  
 

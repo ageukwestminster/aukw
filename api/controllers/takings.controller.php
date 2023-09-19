@@ -4,9 +4,22 @@ namespace Controllers;
 
 use DateTime;
 
+/**
+ * Controller to accomplish Takings related tasks. 
+ *
+ * @category  Controller
+*/
 class TakingsCtl{
 
-  public static function read_one($id){  
+  /**
+   * Return details of a Takings entry identified by $id
+   *
+   * @param int $id
+   * 
+   * @return void Output is echo'd directly to response
+   * 
+   */
+  public static function read_one(int $id){  
 
     $model = new \Models\Takings();
     $model->id = $id;
@@ -14,21 +27,45 @@ class TakingsCtl{
     echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
   }
 
-  public static function read_by_quickbooks_status($quickbooks){  
+  /**
+   * List all takings that have the 'quickbooks' property matching the given value.
+   *
+   * @param int $quickbooks
+   * 
+   * @return void Output is echo'd directly to response
+   * 
+   */
+  public static function read_by_quickbooks_status(int $quickbooks){  
 
     $model = new \Models\Takings();
 
     echo json_encode($model->read_by_quickbooks_status($quickbooks), JSON_NUMERIC_CHECK);
   }
 
-  public static function read_by_shop($shopid){  
+  /**
+   * List all takings that have the 'shopid' property matching the given value.
+   *
+   * @param int $shopid
+   * 
+   * @return void Output is echo'd directly to response
+   * 
+   */
+  public static function read_by_shop(int $shopid){  
 
     $model = new \Models\Takings();
 
     echo json_encode($model->read_by_shop($shopid), JSON_NUMERIC_CHECK);
   }
 
-  // The single Takings that is most recent
+  /**
+   * Output the single Takings that is the most recent takings that also has the 'shopid' 
+   * property matching the given value.
+   *
+   * @param int $shopid
+   * 
+   * @return void Output is echo'd directly to response
+   * 
+   */
   public static function read_most_recent($shopid){  
 
     $model = new \Models\Takings();
@@ -36,41 +73,12 @@ class TakingsCtl{
     echo json_encode($model->read_most_recent($shopid), JSON_NUMERIC_CHECK);
   }
 
-  public static function summary($shopid){  
-
-    $model = new \Models\Takings();
-
-    $startdate='';
-    $enddate='';
-
-    // if parameters are proovided use them
-    if(isset($_GET['start']) || isset($_GET['end'])) {
-      list($startdate, $enddate) = \Core\DatesHelper::sanitizeDateValues(
-                                  !isset($_GET['start']) ? '' : $_GET['start'], 
-                                  !isset($_GET['end']) ? '' : $_GET['end']
-                              );
-    } 
-    
-    // default values are today and 3 months ago
-    if ($startdate == '') {    
-      if ($enddate == '') {           
-        $enddate = date('Y-m-d');      
-      }
-      $startdate = (new DateTime($enddate))->modify('-3 month')->format('Y-m-d');
-    } else if ($enddate == '') {           
-      $enddate = (new DateTime($startdate))->modify('+3 month')->format('Y-m-d');
-    }    
-
-    echo json_encode($model->summary($shopid, $startdate, $enddate), JSON_NUMERIC_CHECK);
-  }
-
-  public static function salesList($shopid, $numdatapoints){  
-
-    $model = new \Models\Takings();
-
-    echo json_encode($model->salesList($shopid, $numdatapoints), JSON_NUMERIC_CHECK);
-  }
-
+  /**
+   * Add a new Takings entry to the database. Parameters are supplied via POST data.
+   * 
+   * @return void Output is echo'd directly to response
+   * 
+   */
   public static function create(){
 
     $model = new \Models\Takings();
@@ -94,6 +102,12 @@ class TakingsCtl{
     }
   }
 
+  /**
+   * Update an existing Takings entry in the database with new data. Parameters are supplied via POST data.
+   * 
+   * @return void Output is echo'd directly to response
+   * 
+   */
   public static function update($id){
 
     $model = new \Models\Takings();
@@ -118,7 +132,15 @@ class TakingsCtl{
     }
   }
 
-  public static function delete($id){  
+  /**
+   * Delete the Takings object inthe database that matches the given $id.
+   *
+   * @param int $id
+   * 
+   * @return void Output is echo'd directly to response
+   * 
+   */
+  public static function delete(int $id){  
 
     $model = new \Models\Takings();
     $model->id = $id;
@@ -139,7 +161,16 @@ class TakingsCtl{
       }
   }
 
-  public static function patch($id){
+  /**
+   * PATCH the takings with the given id. 
+   * At presenmt this only works for the quickbooks property.
+   *
+   * @param int $id The database id of the taking object.
+   * 
+   * @return void Output is echo'd directly to response
+   * 
+   */
+  public static function patch(int $id){
     $data = json_decode(file_get_contents("php://input"));
     if(isset($data->quickbooks)){
 
@@ -166,8 +197,17 @@ class TakingsCtl{
     }
   }
 
-  private static function transferParameters($data, $model)
-  {
+  /**
+   * Helper funciton to copy takings property data into Model.
+   * Used by {@link create} and {@link update} methods.
+   *
+   * @param object $data The supplied data of the new/updated takings object
+   * @param \Models\Takings $model
+   * 
+   * @return void
+   * 
+   */
+  private static function transferParameters($data, \Models\Takings $model){
     if (isset($data->date)) {
         $model->date = $data->date;          
     } else {

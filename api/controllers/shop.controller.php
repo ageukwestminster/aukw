@@ -12,7 +12,7 @@ class ShopCtl{
   /**
    * Return details of all Shops
    * 
-   * @return void 
+   * @return void Output is echo'd directly to response 
    */
   public static function read_all(){  
 
@@ -44,7 +44,7 @@ class ShopCtl{
    *
    * @param string $name
    * 
-   * @return void
+   * @return void Output is echo'd directly to response
    * 
    */
   public static function read_one_name(string $name){  

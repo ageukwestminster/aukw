@@ -55,13 +55,6 @@ $router->mount('/takings', function () use ($router) {
     // Return the Takings for the most recent date
     $router->get('/most-recent/(\d+)', 'TakingsCtl@read_most_recent');
 
-    // Show takings data for the last 90 days for a given shop
-    // A simplification of the next api method
-    $router->get('/summary/shop/(\d+)', 'TakingsCtl@summary');
-
-    // Show takings data for the last 'datapoints' days for a given shop
-    $router->get('/saleslist/shop/(\d+)/datapoints/(\d+)', 'TakingsCtl@salesList');
-
     // Update single property on existing takings object
     // Sample body : { "quickbooks": 0 } ... or ... { "quickbooks": 1 }
     $router->patch('/(\d+)', 'TakingsCtl@patch');
@@ -75,6 +68,20 @@ $router->mount('/report', function () use ($router) {
     $router->get('/moving-avg', 'ReportCtl@dailySalesMovingAverage');
     $router->get('/profitandloss', 'QBReportCtl@profit_and_loss');
     $router->get('/salesbyitem', 'QBReportCtl@sales_by_item');
+    $router->get('/summarytable', 'ReportCtl@performanceSummary');
+    $router->get('/sales-chart', 'ReportCtl@salesChart');
+    $router->get('/dept-chart', 'ReportCtl@departmentChart');
+
+    // Dynamic route with (successive) optional subpatterns: /monthly-sales/shopid(/year(/month(/day)))
+    $router->get('/monthly-sales/(\d+)(/\d{4}(/\d{2}(/\d{2})?)?)?', 'ReportCtl@salesByMonth');
+    $router->get('/quarterly-sales/(\d+)(/\d{4})?', 'ReportCtl@salesByQuarter');
+
+    // Show takings data for the last 90 days for a given shop
+    // (A simplification of the next api method)
+    $router->get('/takingssummary/shop/(\d+)', 'ReportCtl@takingsSummary');
+
+    // Show takings data for the last 'datapoints' days for a given shop
+    $router->get('/saleslist/shop/(\d+)/datapoints/(\d+)', 'ReporCtl@salesList');
 });
 
 /***************/
@@ -87,18 +94,6 @@ $router->mount('/shop', function () use ($router) {
     $router->get('/(\d+)', 'ShopCtl@read_one');
     // return one shop, with the given name
     $router->get('/(\D+)', 'ShopCtl@read_one_name');
-});
-
-/******************/
-/* Summary Routes */
-/******************/
-$router->mount('/summary', function () use ($router) {
-    $router->get('/', 'TakingsSummaryCtl@performanceSummary');
-    $router->get('/sales-chart', 'TakingsSummaryCtl@salesChart');
-    $router->get('/dept-chart', 'TakingsSummaryCtl@departmentChart');
-    // Dynamic route with (successive) optional subpatterns: /monthly-sales/shopid(/year(/month(/day)))
-    $router->get('/monthly-sales/(\d+)(/\d{4}(/\d{2}(/\d{2})?)?)?', 'TakingsSummaryCtl@salesByMonth');
-    $router->get('/quarterly-sales/(\d+)(/\d{4})?', 'TakingsSummaryCtl@salesByQuarter');
 });
 
 /*********************/

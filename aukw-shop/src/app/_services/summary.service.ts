@@ -9,7 +9,8 @@ import {
   SalesChartData,
 } from '@app/_models';
 
-const baseUrl = `${environment.apiUrl}/summary`;
+const baseUrl = `${environment.apiUrl}/report`;
+const salesTabletUrl = baseUrl + `/summarytable`;
 const salesChartUrl = baseUrl + `/sales-chart`;
 const deptChartUrl = baseUrl + `/dept-chart`;
 const monthlySalesChartUrl = baseUrl + `/monthly-sales`;
@@ -19,7 +20,7 @@ export class SummaryService {
   constructor(private http: HttpClient) {}
 
   getSummary() {
-    return this.http.get<Summary[]>(baseUrl);
+    return this.http.get<Summary[]>(salesTabletUrl);
   }
 
   getSalesChartData() {
