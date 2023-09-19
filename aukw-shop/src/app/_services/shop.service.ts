@@ -8,7 +8,7 @@ const baseUrl = `${environment.apiUrl}/shop`;
 
 /**
  * This class has a single method which returns a array of shops
- * 
+ *
  * Shop data is stored in the database.
  * See {@link ../_models/Shop}
  */

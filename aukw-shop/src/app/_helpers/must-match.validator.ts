@@ -2,7 +2,7 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 
 /**
  * Custom validator to check that two control fields match
- * 
+ *
  * @param controlName Name of first control to check
  * @param matchingControlName Name of second control to check
  * @returns If no match then return null, otherwise validate controls and exit

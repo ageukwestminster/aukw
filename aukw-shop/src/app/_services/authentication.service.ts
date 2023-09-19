@@ -34,10 +34,10 @@ export class AuthenticationService {
    */
   public user: Observable<User>;
 
-  /** 
+  /**
    * The windows Id of the timer that is set to expire 1 minute before the access token.
    * This timer is used to trigger the creatiopn of a new access token from the refresh token.
-  */
+   */
   private refreshTokenTimerId: number | undefined; //https://stackoverflow.com/a/54507207/6941165
 
   constructor(
@@ -49,7 +49,7 @@ export class AuthenticationService {
   }
 
   /**
-   * The userValue getter allows other components to quickly get the value of the current user 
+   * The userValue getter allows other components to quickly get the value of the current user
    * without having to subscribe to the user observable.
    */
   public get userValue(): User {
@@ -123,7 +123,7 @@ export class AuthenticationService {
         }),
       );
   }
-  
+
   /**
    * Start a timer that, when fired, will use the refresh token to generate a new
    * access token. The timeout is set for 1 moinute before the expiry of the access token.
@@ -154,6 +154,6 @@ export class AuthenticationService {
    */
   private stopRefreshTokenTimer() {
     //use of 'window' instead of Node timer: https://stackoverflow.com/a/54507207/6941165
-    window.clearTimeout(this.refreshTokenTimerId); 
+    window.clearTimeout(this.refreshTokenTimerId);
   }
 }
