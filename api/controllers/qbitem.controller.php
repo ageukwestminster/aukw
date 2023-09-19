@@ -5,8 +5,10 @@ namespace Controllers;
 use \Datetime;
 
 /**
- * [Description QBItemCtl]
- */
+ * Controller to accomplish QBO Item related tasks. 
+ *
+ * @category  Controller
+*/
 class QBItemCtl{
 
   /**

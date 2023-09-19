@@ -4,6 +4,11 @@ namespace Controllers;
 
 use \Datetime;
 
+/**
+ * Controller to accomplish QBO sales receipt related tasks. 
+ *
+ * @category  Controller
+*/
 class SalesReceiptCtl{
 
   const NOT_IN_QUICKBOOKS = 0;

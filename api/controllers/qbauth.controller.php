@@ -5,8 +5,10 @@ namespace Controllers;
 use Models\QuickbooksAuth;
 
 /**
- * Static class that provides methods to create and manage a 
+ * Controller that provides methods to create and manage a 
  * connection between the system and QBO.
+ * 
+ * @category  Controller
  */
 class QBAuthCtl{
 

@@ -2,7 +2,11 @@
 
 namespace Controllers;
 
-
+/**
+ * Controller to accomplish QBO report related tasks. 
+ *
+ * @category  Controller
+*/
 class QBReportCtl{
 
   public static function profit_and_loss(){  

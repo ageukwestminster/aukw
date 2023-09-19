@@ -3,12 +3,14 @@
 namespace Controllers;
 
 /**
- * Provide the read_one method to query QBO for transactions of type General Journal
- */
+ * Controller to accomplish QBO General Journal related tasks. 
+ *
+ * @category  Controller
+*/
 class QBJournalCtl{
 
-    /**
-   * Return details of the QBItem identified by $id
+  /**
+   * Return details of the QBO general journal identified by $id
    *
    * @param int $id
    * @return void 
