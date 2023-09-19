@@ -29,7 +29,7 @@
   <div class="row mb-1">
     <div class="col-sm-6 mb-1">
       <div class="input-group mb-1">
-        <span class="input-group-text col-4" id="bankpayerref-addon1"
+        <span class="input-group-text col-4" id="username-addon1"
           >Username
         </span>
         <input
@@ -41,7 +41,6 @@
           aria-label="Username"
           aria-describedby="username-addon1"
           placement="bottom"
-          autocomplete="username"
         />
         <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
           <div *ngIf="f.username.errors.required">Username is required</div>
