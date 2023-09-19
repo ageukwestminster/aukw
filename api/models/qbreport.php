@@ -7,6 +7,11 @@ use QuickBooksOnline\API\ReportService\ReportName;
 
 use DateTime;
 
+/**
+ * [Description QuickbooksReport]
+ * 
+ * @category Model
+ */
 class QuickbooksReport{
 
     public $startdate;

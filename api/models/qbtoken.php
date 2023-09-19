@@ -6,6 +6,8 @@ use \PDO;
 
 /**
  * Holds QB token information and has data persistance capability.
+ * 
+ * @category Model
  */
 class QuickbooksToken{
     /**

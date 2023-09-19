@@ -9,6 +9,8 @@ use DateTime;
 
 /**
  * Factory class that provides data about QBO General Journals.
+ * 
+ * @category Model
  */
 class QuickbooksJournal{
 

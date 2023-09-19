@@ -7,6 +7,11 @@ use QuickBooksOnline\API\Facades\SalesReceipt;
 
 use DateTime;
 
+/**
+ * [Description QuickbooksSalesReceipt]
+ * 
+ * @category Model
+ */
 class QuickbooksSalesReceipt{
 
 

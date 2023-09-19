@@ -4,6 +4,11 @@ namespace Models;
 
 use \PDO;
 
+/**
+ * [Description UserToken]
+ * 
+ * @category Model
+ */
 class UserToken{
     // database conn 
     private $conn;

@@ -16,6 +16,7 @@ use DateTimeZone;
 
 /**
  * 
+ * @category Model
  */
 class QuickbooksAuth{
 

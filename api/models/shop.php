@@ -3,6 +3,8 @@ namespace Models;
 use \PDO;
 /**
  * Defines a shop and has data persistance capbility.
+ * 
+ * @category Model
  */
 class Shop{
     /**

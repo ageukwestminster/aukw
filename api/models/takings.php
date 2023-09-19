@@ -4,6 +4,11 @@ namespace Models;
 
 use \PDO;
 
+/**
+ * [Description Takings]
+ * 
+ * @category Model
+ */
 class Takings{
     // database conn 
     private $conn;

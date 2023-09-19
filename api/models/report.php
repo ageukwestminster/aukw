@@ -8,6 +8,11 @@ use \PDO;
 use DateTime;
 use DateTimeZone;
 
+/**
+ * [Description Report]
+ * * 
+ * @category Model
+ */
 class Report{
 
     private $conn;

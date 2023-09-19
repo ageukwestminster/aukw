@@ -6,6 +6,11 @@ use \PDO;
 
 use DateTime;
 
+/**
+ * [Description TakingsSummary]
+ * 
+ * @category Model
+ */
 class TakingsSummary{
     // database conn 
     private $conn;

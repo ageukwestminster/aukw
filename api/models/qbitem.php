@@ -4,6 +4,8 @@ namespace Models;
 
 /**
  * Factory class that provides data about QBO Items. Items can also be known as Products.
+ * 
+ * @category Model
  */
 class QuickbooksItem{
  

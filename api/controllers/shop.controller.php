@@ -1,7 +1,11 @@
 <?php
 
 namespace Controllers;
-
+/**
+ * Controller to accomplish Shop related tasks. 
+ *
+ * @category  Controller
+*/
 class ShopCtl{
 
 

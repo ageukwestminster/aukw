@@ -4,6 +4,11 @@ namespace Models;
 
 use \PDO;
 
+/**
+ * 
+ * 
+ * @category Model
+ */
 class User{
     // database conn 
     private $conn;
