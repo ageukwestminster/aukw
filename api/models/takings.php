@@ -110,7 +110,7 @@ class Takings{
                     "cash_difference" => $cash_difference,
                     "total_after_expenses" => $total_after_expenses,
                     "daily_net_sales" => $total_after_expenses_and_donations,
-                    "comments" => html_entity_decode($comments),
+                    "comments" => html_entity_decode($comments ?? ''),
                     "quickbooks" => $quickbooks,
                 );
 

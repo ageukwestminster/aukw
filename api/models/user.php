@@ -67,12 +67,12 @@ class User{
                     $user_item=array(
                         "id" => $id,
                         "username" => $username,
-                        "firstname" => html_entity_decode($firstname),
-                        "surname" => html_entity_decode($surname),
+                        "firstname" => html_entity_decode($firstname ?? ''),
+                        "surname" => html_entity_decode($surname ?? ''),
                         "role" => $isAdmin?'Admin':'User',
                         "suspended" => $suspended?true:false,
-                        "email" => html_entity_decode($email),
-                        "title" => html_entity_decode($title),
+                        "email" => html_entity_decode($email ?? ''),
+                        "title" => html_entity_decode($title ?? ''),
                         "shopid" => $shopid
                     );
         
