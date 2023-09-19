@@ -4,11 +4,36 @@ namespace Core;
 
 use \PDO;
 
+/**
+ * Proivide open PDO database connection via $conn property.  
+ * Uses singleton pattern to ensure only one connection open at a time.
+ * 
+ * @category Core
+ */
 class Database{
-    public $conn;
 
-    // Singleton pattern from https://stackoverflow.com/a/2047999/6941165
+
+    /**
+     * Thhe PDO database connection. Null if connection closed or invalid.
+     *
+     * @var PDO|null
+     */
+    public PDO|null $conn;
+
+    /**
+     * Store a reference to the class instance
+     *
+     * @var Database
+     */
     private static $instance;
+
+
+    /**
+     * Singleton pattern derived from code at {@link https://stackoverflow.com/a/2047999/6941165}
+     *
+     * @return Database 
+     * 
+     */
     public static function getInstance() {
         if (!isset(self::$instance)) {
             $object = __CLASS__;
@@ -17,6 +42,10 @@ class Database{
         return self::$instance;
     }
 
+    /**
+     * Instantiate new Database class. As part of this process it test if a connection to the
+     * configured database can be opened. Database configuration is set in the config.php file.
+     */
     private function __construct(){
 
         $this->conn = null;
@@ -51,7 +80,17 @@ class Database{
         }
     }
 
-    private function testConnection($host, $port){
+
+    /**
+     * Test opening a connection to the database.
+     *
+     * @param string $host The location of the database server, often '127.0.0.1'
+     * @param int $port The mysql/mariadb port, usually 3306
+     * 
+     * @return bool 'true' if connection can be opened
+     * 
+     */
+    private function testConnection(string $host, int $port) : bool{
         $waitTimeoutInSeconds = 1;
         try {
             if ($fp = fsockopen($host,$port,$errCode,$errStr,$waitTimeoutInSeconds)) {
@@ -62,7 +101,7 @@ class Database{
                 return false;
             }
             fclose($fp);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo 'Caught exception: ',  $e->getMessage(), "\n";
             return false;
         }
