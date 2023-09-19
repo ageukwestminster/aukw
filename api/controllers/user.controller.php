@@ -38,8 +38,8 @@ class UserCtl{
     $user = array(
         "id" => $model->id,
         "username" => $model->username,
-        "firstname" => html_entity_decode($model->firstname),
-        "surname" => html_entity_decode($model->surname),
+        "firstname" => html_entity_decode($model->firstname ?? ''),
+        "surname" => html_entity_decode($model->surname ?? ''),
         "shopid" => $model->shopid,
         "role" => $model->role,
         "suspended" => $model->suspended,

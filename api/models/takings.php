@@ -100,7 +100,7 @@ class Takings{
                     "id" => $takingsid,
                     "date" => $date,
                     "shopid" => $shopid,
-                    "shopname" => html_entity_decode($shopname),
+                    "shopname" => html_entity_decode($shopname ?? ''),
                     "number_of_items_sold" => $number_of_items_sold,
                     "customers_num_total" => $customers_num_total,
                     "sales_total" => $sales_total,
