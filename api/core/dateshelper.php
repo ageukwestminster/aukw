@@ -5,9 +5,36 @@ namespace Core;
 use DateTime;
 use DateTimeZone;
 
+/**
+ * A class supplying helper functions to manage PHP dates and date ranges.
+ * 
+ * @category  Core
+ */
 class DatesHelper
 {
-    // Given two strings that represent dates (but one of them may be empty/null/unset)
+
+    /**
+     * Given two strings that represent dates (but one or both of them may be empty/null/unset),
+     * attempt to generate a sensible date range and return it.
+     * 
+     * Used in date range selectors for generating reports
+     * 
+     * Logic: 
+     * If both params are null then return todays date and the date a year ago from today.
+     * If start date is null but end date is not then return end date and a year ago from end date.
+     * If end date is null but start date is not then return start date and today.
+     * If neither are null then return the two dates
+     * 
+     * In all cases, before returning any values both start date and end date are validated 
+     * by the {@link validateDate} function. 
+     * 
+     *
+     * @param string $startdate
+     * @param string $enddate
+     * 
+     * @return array [ start_date, end_date ]
+     * 
+     */
     public static function sanitizeDateValues($startdate, $enddate)
     {
         $end = date('Y-m-d');
@@ -58,12 +85,30 @@ class DatesHelper
 
     }
 
-    public static function validateDate($date, $format = 'Y-m-d'){
+    /**
+     * Attempt to create a PHP DateTime object form the given parameters. If
+     * it can be successfully returned then return true, otherwise return false.
+     * 
+     *
+     * @param string $date A date in string format.
+     * @param string $format PHP date format string. Default value is 'Y-m-d'
+     * 
+     * @return bool
+     * 
+     */
+    public static function validateDate(string $date, string $format = 'Y-m-d') : bool{
         $d = DateTime::createFromFormat($format, $date);
         return $d && $d->format($format) === $date;
     }
 
-    public static function currentDateTime(){
+    /**
+     * Return the current date and time in MySql format
+     * ( yyyy-mm-dd h:m:s )
+     *
+     * @return string current date and time
+     * 
+     */
+    public static function currentDateTime() : string{
         $now = new DateTime();
         $now->setTimezone(new DateTimeZone('Europe/London'));
         return $now->format('Y-m-d H:i:s');    // MySQL datetime format

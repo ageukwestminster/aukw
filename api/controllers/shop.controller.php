@@ -9,6 +9,11 @@ namespace Controllers;
 class ShopCtl{
 
 
+  /**
+   * Return details of all Shops
+   * 
+   * @return void 
+   */
   public static function read_all(){  
 
     $model = new \Models\Shop();
@@ -17,7 +22,15 @@ class ShopCtl{
   }
 
 
-  public static function read_one($id){  
+  /**
+   * Return details of the Shop identified by $id
+   *
+   * @param int $id
+   * 
+   * @return [type]
+   * 
+   */
+  public static function read_one(int $id){  
 
     $model = new \Models\Shop();
     $model->id = $id;
@@ -26,7 +39,15 @@ class ShopCtl{
   }
 
 
-  public static function read_one_name($name){  
+  /**
+   * Return details of the Shop identified by $name
+   *
+   * @param string $name
+   * 
+   * @return void
+   * 
+   */
+  public static function read_one_name(string $name){  
 
     $model = new \Models\Shop();
     $model->name = $name;
