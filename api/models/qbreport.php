@@ -8,18 +8,43 @@ use QuickBooksOnline\API\ReportService\ReportName;
 use DateTime;
 
 /**
- * [Description QuickbooksReport]
+ * QBO Wrapper class that allows us to run seelcted QBO reports.
  * 
  * @category Model
  */
 class QuickbooksReport{
 
-    public $startdate;
-    public $enddate;
-    public $groupBy;
-    public $summarizeColumn;
-    public $item;
+    /**
+     * The start date of the report period.
+     *
+     * @var string
+     */
+    public string $startdate;
+    /**
+     * The end date of the report period.
+     *
+     * @var string
+     */
+    public string $enddate;
+    /**
+     * Summarize P&L report by this column
+     *
+     * @var string
+     */
+    public string $summarizeColumn;
+    /**
+     * Only calculate item sales for this item. Use 'null' for all items.
+     *
+     * @var int|null
+     */
+    public int|null $item;
 
+    /**
+     * Generate a Profit & Loss report
+     *
+     * @return array
+     * 
+     */
     public function profitAndLoss(){
 
         $auth = new QuickbooksAuth();
@@ -63,6 +88,12 @@ class QuickbooksReport{
 
     }
 
+    /**
+     * Generate a listing of sales by Item (aka Product)
+     *
+     * @return array
+     * 
+     */
     public function itemSales(){
 
         $auth = new QuickbooksAuth();

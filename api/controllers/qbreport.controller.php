@@ -3,12 +3,23 @@
 namespace Controllers;
 
 /**
- * Controller to accomplish QBO report related tasks. 
+ * Controller to accomplish QBO report related tasks.
+ * 
+ * The QBO API can only run reports that are in a pre-defined set. The available
+ * reports are found in \\QuickBooksOnline\API\ReportService\ReportName.php
  *
  * @category  Controller
 */
 class QBReportCtl{
 
+
+  /**
+   * Show a QBO P&L report.
+   * HTTP parameters are: start, end, summarizeColumn
+   *
+   * @return void Output is echoed directly to response
+   * 
+   */
   public static function profit_and_loss(){  
 
     $model = new \Models\QuickbooksReport();
@@ -34,16 +45,17 @@ class QBReportCtl{
     echo json_encode($model->profitAndLoss(), JSON_NUMERIC_CHECK);
   }
 
+  /**
+   * Show a QBO report that summarizes sales by a particuylar item.
+   * HTTP parameters are: start, end, summarizeColumn, item
+   *
+   * @return void Output is echoed directly to response
+   * 
+   */
   public static function sales_by_item(){  
 
     $model = new \Models\QuickbooksReport();
 
-    QBReportCtl::processParameters($model);
-
-    echo json_encode($model->itemSales(), JSON_NUMERIC_CHECK);
-  }
-
-  private static function processParameters($model) {
     if(isset($_GET['start']) || isset($_GET['end'])) {
       $start='';
       $end='';
@@ -59,14 +71,7 @@ class QBReportCtl{
     if (isset($_GET['summarizeColumn']) && !empty($_GET['summarizeColumn'])) {
         $model->summarizeColumn = $_GET['summarizeColumn'];
     } else {
-        $model->summarizeColumn = null;
-    }
-
-    
-    if (isset($_GET['groupBy']) && !empty($_GET['groupBy'])) {
-      $model->groupBy = $_GET['groupBy'];
-    } else {
-      $model->groupBy = null;
+        $model->summarizeColumn = '';
     }
 
     if (isset($_GET['item']) && !empty($_GET['item'])) {
@@ -74,6 +79,8 @@ class QBReportCtl{
     } else {
       $model->item = null;
     }
+
+    echo json_encode($model->itemSales(), JSON_NUMERIC_CHECK);
   }
 
 }

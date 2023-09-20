@@ -9,7 +9,7 @@ use \PDO;
 class Shop{
     /**
      * Database connection
-     * @var Database
+     * @var PDO|null
      */ 
     private $conn;
     /**

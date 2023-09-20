@@ -12,6 +12,15 @@
       "url": "http://localhost:4200",
       "webRoot": "${workspaceFolder}",
       "skipFiles": ["<node_modules>/**"]
+    },
+    {
+      "type": "msedge",
+      "request": "launch",
+      "name": "Launch MS Edge against localhost",
+      "preLaunchTask": "npm: start",
+      "url": "http://localhost:4200",
+      "webRoot": "${workspaceFolder}",
+      "skipFiles": ["<node_modules>/**"]
     }
   ]
 }

@@ -112,6 +112,8 @@ $router->mount('/qb', function () use ($router) {
 
     // Create a new sales receipt in QB
     $router->post('/salesreceipt', 'SalesReceiptCtl@create');
+    // Delete a new sales receipt in QB
+    $router->delete('/salesreceipt/(\w+)', 'SalesReceiptCtl@delete');
 
     // The param is the takingsid value in the takings table in MySQL dB
     $router->post('/salesreceipt/takings/(\d+)', 'SalesReceiptCtl@create_from_takings');

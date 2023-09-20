@@ -10,45 +10,63 @@ use \PDO;
  * @category Model
  */
 class Takings{
-    // database conn 
+    /**
+     * Database connection
+     * @var PDO|null
+     */ 
     private $conn;
-    // table name
+    /**
+     * The name of the table that holds the data
+     * @var string
+     */
     private $table_name = "takings";
 
+    /**
+     * Instantiate a new Takings object
+     */
     public function __construct(){
         $this->conn = \Core\Database::getInstance()->conn;
     }
 
-    // object properties
-    public $id;
-    public $date;
-    public $shopid;
-    public $clothing_num;
-    public $brica_num;
-    public $books_num;
-    public $linens_num;
-    public $donations_num;
-    public $other_num;
-    public $rag_num;
-    public $clothing;
-    public $brica;
-    public $books;
-    public $linens;
-    public $donations;
-    public $other;
-    public $rag;
-    public $customers_num_total;
-    public $cash_to_bank;
-    public $credit_cards;
-    public $operating_expenses;
-    public $volunteer_expenses;
-    public $other_adjustments;
-    public $cash_to_charity;
-    public $cash_difference;
-    public $comments;
-    public $rags_paid_in_cash;
-    public $timestamp;
-    public $quickbooks;
+    /**
+     * Takings identifier. Value of primary key of database table.
+     *
+     * @var int
+     */
+    public int $id;
+    /**
+     * The date the takings ocurred
+     *
+     * @var string
+     */
+    public string $date;
+    public int $shopid;
+    public int $clothing_num;
+    public int $brica_num;
+    public int $books_num;
+    public int $linens_num;
+    public int $donations_num;
+    public int $other_num;
+    public int $rag_num;
+    public float $clothing;
+    public float $brica;
+    public float $books;
+    public float $linens;
+    public float $donations;
+    public float $other;
+    public float $rag;
+    public int $customers_num_total;
+    public float $cash_to_bank;
+    public float $credit_cards;
+    public float $operating_expenses;
+    public float $volunteer_expenses;
+    public float $other_adjustments;
+    public float $cash_to_charity;
+    public float $cash_difference;
+    public string|null $comments;
+    public int $rags_paid_in_cash;
+    public string $timestamp;
+    public int $quickbooks;
 
     // Show takings data  for a given shop, between start and end dates
     public function summary($shopid, $startdate, $enddate){
@@ -165,9 +183,15 @@ class Takings{
         return $item_arr;
     }
 
-    // Set $quickbooks = 0 to see all takings that are not in QB, set to 1 to see all takings that are in QB
-    // No other values are valid
-    public function read_by_quickbooks_status($quickbooks){
+    /**
+     * List all takings that have the 'quickbooks' property matching the given value.
+     *
+     * @param bool $quickbooks 'true' means already booked into QBO, 'false' means yet to be booked in QBO.
+     * 
+     * @return array An array of Takings objects
+     * 
+     */
+    public function read_by_quickbooks_status(bool $quickbooks){
         $query = "SELECT
                     takingsid as `id`, `date`, shopid, clothing_num, brica_num,
                     books_num, linens_num, donations_num, other_num, rag_num, clothing,
@@ -207,7 +231,15 @@ class Takings{
         return $item_arr;
     }
 
-    public function read_most_recent($shopid){
+    /**
+     * [Description for read_most_recent]
+     *
+     * @param int $shopid
+     * 
+     * @return [type]
+     * 
+     */
+    public function read_most_recent(int $shopid){
         $query = "SELECT
                     takingsid as `id`, `date`, shopid, clothing_num, brica_num,
                     books_num, linens_num, donations_num, other_num, rag_num, clothing,
@@ -492,7 +524,7 @@ class Takings{
         $this->operating_expenses=htmlspecialchars(strip_tags($this->operating_expenses));
         $this->volunteer_expenses=htmlspecialchars(strip_tags($this->volunteer_expenses));
         $this->cash_difference=htmlspecialchars(strip_tags($this->cash_difference));
-        $this->comments=htmlspecialchars(strip_tags($this->comments));
+        $this->comments=htmlspecialchars(strip_tags($this->comments ?? ''));
         $this->quickbooks=htmlspecialchars(strip_tags($this->quickbooks));
         $this->rags_paid_in_cash=htmlspecialchars(strip_tags($this->rags_paid_in_cash));
 
@@ -520,12 +552,7 @@ class Takings{
         $stmt->bindParam(":operating_expenses", $this->operating_expenses);
         $stmt->bindParam(":volunteer_expenses", $this->volunteer_expenses);
         $stmt->bindParam(":cash_difference", $this->cash_difference);
-        if($this->comments == '') {            
-            $stmt->bindParam(":comments", $this->null, PDO::PARAM_STR);
-        }
-        else {
-            $stmt->bindParam(":comments", $this->comments);
-        }
+        $stmt->bindParam(":comments", $this->comments);
         $stmt->bindParam(":quickbooks", $this->quickbooks);
         $stmt->bindParam(":rags_paid_in_cash", $this->rags_paid_in_cash);
         

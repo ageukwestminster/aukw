@@ -8,13 +8,455 @@ use QuickBooksOnline\API\Facades\SalesReceipt;
 use DateTime;
 
 /**
- * [Description QuickbooksSalesReceipt]
+ * Create and retrieve QBO sales receipt objects.
  * 
  * @category Model
  */
 class QuickbooksSalesReceipt{
 
+  /**
+   * QBO Takings identifier. Not DocNumber.
+   *
+   * @var int
+   */
+  protected int $id;
+  /**
+   * The date the takings ocurred
+   *
+   * @var string
+   */
+  protected string $date;
+  /**
+   * The id of the charity shop
+   *
+   * @var int
+   */
+  protected int $shopid;
+  /**
+   * The number and value of clothing sales
+   *
+   * @var object
+   */
+  protected object $clothing;
+    /**
+   * The number and value of bric-a-brac sales
+   *
+   * @var object
+   */
+  protected object $brica;
+    /**
+   * The number and value of books sales
+   *
+   * @var object
+   */
+  protected object $books;
+    /**
+   * The number and value of linens sales
+   *
+   * @var object
+   */
+  protected object $linens;
+    /**
+   * The number and value of daily ragging sales
+   * Rarely used: usually recorded on a monthly basis nowadays
+   *
+   * @var object
+   */
+  protected object $ragging;
+    /**
+   * The number and value of donations
+   *
+   * @var object
+   */
+  protected object $donations;
+  /**
+   * The cost of volunteer expenses
+   *
+   * @var float
+   */
+  protected float $volunteerExpenses;
+  /**
+   * The cost of operating expenses
+   *
+   * @var float
+   */
+  protected float $operatingExpenses;
+  /**
+   * The amount of cash banked after expenses
+   *
+   * @var float
+   */
+  protected float $cash;
+  /**
+   * The amount of sales paid for by credit card
+   *
+   * @var float
+   */
+  protected float $creditCards;
+  /**
+   * Overage/underage. Can be positive or negative
+   *
+   * @var float
+   */
+  protected float $cashDiscrepancy;
+  /**
+   * The amount of cash given to the charity rather than banked.
+   * Rarely used.
+   *
+   * @var float
+   */
+  protected float $cashToCharity;
+  /**
+   * A comment or note about the days sales.
+   *
+   * @var string
+   */
+  protected string $privatenote;  
 
+  /**
+   * ID setter
+   */
+  public function setId(int $id) {
+    $this->id = $id;
+    return $this;
+  }
+  /**
+   * Date setter
+   */
+  public function setDate(string $date) {
+    $this->date = $date;
+    return $this;
+  }
+  /**
+   * ShopID setter
+   */
+  public function setShopid(int $shopid) {
+    $this->shopid = $shopid;
+    return $this;
+  }
+  /**
+   * Clothing setter
+   */
+  public function setClothing(object $clothing) {
+      $this->clothing = $clothing;
+      return $this;
+  }
+  /**
+   * Brica setter
+   */
+  public function setBrica(object $brica) {
+    $this->brica = $brica;
+    return $this;
+  }
+  /**
+   * Books setter
+   */
+  public function setBooks(object $books) {
+    $this->books = $books;
+    return $this;
+  }
+  /**
+   * Linens setter
+   */
+  public function setLinens(object $linens) {
+    $this->linens = $linens;
+    return $this;
+  }
+  /**
+   * Ragging setter
+   */
+  public function setRagging(object $ragging) {
+    $this->ragging = $ragging;
+    return $this;
+  }
+  /**
+   * Donations setter
+   */
+  public function setDonations(object $donations) {
+    $this->donations = $donations;
+    return $this;
+  }
+  /**
+   * Volunteer Expenses setter
+   */
+  public function setVolunteerExpenses(float $volunteerExpenses) {
+    $this->volunteerExpenses = $volunteerExpenses;
+    return $this;
+  }
+  /**
+   * Operating Expenses setter
+   */
+  public function setOperatingExpenses(float $operatingExpenses) {
+    $this->operatingExpenses = $operatingExpenses;
+    return $this;
+  }
+  /**
+   * Cash setter
+   */
+  public function setCash(float $cash) {
+    $this->cash = $cash;
+    return $this;
+  }
+  /**
+   * Credit Cards setter
+   */
+  public function setCreditCards(float $creditCards) {
+    $this->creditCards = $creditCards;
+    return $this;
+  }
+  /**
+   * Cash Discrepancy setter
+   */
+  public function setCashDiscrepancy(float $cashDiscrepancy) {
+    $this->cashDiscrepancy = $cashDiscrepancy;
+    return $this;
+  }
+  /**
+   * Cash To Charity setter
+   */
+  public function setCashToCharity(float $cashToCharity) {
+    $this->cashToCharity = $cashToCharity;
+    return $this;
+  }
+  /**
+   * Private Note setter. This is a comment field.
+   */
+  public function setPrivateNote(string $privatenote) {
+    $this->privatenote = $privatenote;
+    return $this;
+  }
+
+
+
+  /**
+   * Constructor
+   */
+  protected function __construct(){}
+
+  /**
+   * Static constructor / factory
+   */
+  public static function getInstance() {
+    return new self();
+  }
+
+  /**
+   * Check the provided values make sense.
+   */
+  public function validate(): bool {
+
+    // is transaction in balance?
+    // Sales = clothing+brica+books+linens+ragging+donations
+    // Money Received = cash + creditcards + vol expenses + op expenses
+    // Sales must equal Money Received + Cash Discrepancy
+    $balance = $this->donations->sales + $this->clothing->sales + $this->brica->sales;
+    $balance += $this->books->sales + $this->linens->sales + $this->ragging->sales;
+    $balance += $this->cashDiscrepancy + $this->cashToCharity + $this->creditCards;
+    $balance += $this->volunteerExpenses + $this->operatingExpenses + $this->cash;
+    
+    if (abs($balance) >= 0.005) {
+      return false;
+    }    
+
+    return true;
+  }
+
+
+  public function readOne(){
+
+      $auth = new QuickbooksAuth();
+      try{
+        $dataService = $auth->prepare();
+      }
+      catch (\Exception $e) {
+        http_response_code(401);  
+        echo json_encode(
+          array("message" =>  $e->getMessage() )
+        );
+        return;
+      }
+
+      if ($dataService == false) {
+        return;
+      }
+
+      $dataService->forceJsonSerializers();
+      $salesreceipt = $dataService->FindbyId('salesreceipt', $this->id);
+      $error = $dataService->getLastError();
+      if ($error) {
+          echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
+          echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
+          echo "The Response message is: " . $error->getResponseBody() . "\n";
+      }
+      else {
+          return $salesreceipt;
+      }
+  }
+
+
+  public function create(){
+
+    $docnumber = (new DateTime($this->date))->format('Ymd') . ($this->shopid==2?'C':'H'); //'H' is short for Harrow Road
+
+    $salesreceipt = array(
+      "TxnDate" => $this->date,
+      "DocNumber" => $docnumber,
+      "PrivateNote" => $this->privatenote??"",
+      "Line" => [],
+      "TxnTaxDetail"=> [
+        "TaxLine" => [
+          "Amount" => 0,
+          "DetailType" => "TaxLineDetail",
+          "TaxLineDetail" => [
+            "TaxRateRef" => $this->zero_rated_taxrate,
+            "PercentBased" => true,
+            "TaxPercent" => 0,
+            "NetAmountTaxable" => round($this->salesTotal(),2)
+          ]
+        ]
+          ],
+      "CustomerRef" => $this->customer,
+      "GlobalTaxCalculation" => "TaxExcluded",
+      "TotalAmt" => abs($this->cash),
+      "PrintStatus" => "NotSet",
+      "EmailStatus" => "NotSet"
+    );
+
+    $class = $this->shopid==1?$this->harrow_road_class:$this->church_street_class;
+
+    //&$line_array, $description, $amount, $item, $class, $quantity, $account, $taxcoderef)
+    // This code will only add the respective line if amount != 0
+    $this->salesreceipt_line($salesreceipt['Line'], "Daily sales of second-hand and donated clothing", 
+      $this->clothing->sales, $this->clothing_item, $class,
+      $this->clothing->number, $this->sales_account, $this->zero_rated_taxcode);
+    $this->salesreceipt_line($salesreceipt['Line'], "Sales of donated household goods", 
+      $this->brica->sales, $this->brica_item, $class,
+      $this->brica->number, $this->sales_account, $this->zero_rated_taxcode);
+    $this->salesreceipt_line($salesreceipt['Line'], "Sales of donated books and DVDs", 
+      $this->books->sales, $this->books_item, $class,
+      $this->books->number, $this->sales_account, $this->zero_rated_taxcode);
+    $this->salesreceipt_line($salesreceipt['Line'], "Sales of donated linen products", 
+      $this->linens->sales, $this->linens_item, $class,
+      $this->linens->number, $this->sales_account, $this->zero_rated_taxcode);
+    $this->salesreceipt_line($salesreceipt['Line'], "Cash donations to parent charity", 
+      $this->donations->sales, $this->donations_item, $class,
+      $this->donations->number, $this->donations_account, $this->no_vat_taxcode);      
+    $this->salesreceipt_line($salesreceipt['Line'], "Textile/book recycling", 
+      $this->ragging->sales, $this->ragging_item, $class,
+      $this->ragging->number, $this->ragging_account, $this->zero_rated_taxcode);    
+
+    $this->salesreceipt_line($salesreceipt['Line'], "Volunteer expenses paid in cash", 
+      $this->volunteerExpenses, $this->volexpenses_item, $class,
+      1, $this->volunteer_expenses_account, $this->no_vat_taxcode); //$quantity = 1
+    $this->salesreceipt_line($salesreceipt['Line'], "Minor operating expenses paid in cash", 
+      $this->operatingExpenses, $this->opexpenses_item, $class,
+      1, $this->other_expenses_account, $this->no_vat_taxcode); //$quantity = 1
+
+    $this->salesreceipt_line($salesreceipt['Line'], "Credit card payments received from customers", 
+      $this->creditCards, $this->ccards_item, $class,
+      1, $this->credit_card_account, $this->no_vat_taxcode); //$quantity = 1
+
+    $this->salesreceipt_line($salesreceipt['Line'], "Cash discrepancies between sales total and cash/credit card subtotals", 
+      $this->cashDiscrepancy, $this->overage_item, $class,
+      1, $this->cash_discrepancies_account, $this->no_vat_taxcode); //$quantity = 1
+
+    $this->salesreceipt_line($salesreceipt['Line'], "Cash that has gone to the parent charity without being deposited into the Enterprises bank account", 
+      $this->cashToCharity, $this->charitycash_item, $class,
+      1, $this->cash_to_charity_account, $this->no_vat_taxcode); //$quantity = 1
+
+    $theResourceObj = SalesReceipt::create($salesreceipt);
+    
+    $auth = new QuickbooksAuth();
+    $dataService = $auth->prepare();
+    if ($dataService == false) {
+      return false;
+    }
+    
+    $resultingObj = $dataService->Add($theResourceObj);
+
+    $error = $dataService->getLastError();
+    if ($error) {
+        echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
+        echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
+        echo "The Response message is: " . $error->getResponseBody() . "\n";
+        return false;
+    } else {      
+      return array(
+          "id" => $resultingObj->Id,
+          "date" => $resultingObj->TxnDate,
+          "label" => $resultingObj->DocNumber
+      );
+    }
+  }
+
+  private function salesreceipt_line(&$line_array, $description, $amount, $item, $class, $quantity, $account, $taxcoderef) {
+    if (abs($amount) <= 0.005) return;
+
+    array_push($line_array, array(
+      "Description" => $description,
+      "Amount" => $amount,
+      "DetailType" => "SalesItemLineDetail",
+      "SalesItemLineDetail" => [
+        "ItemRef" => $item,
+        "ClassRef" => $class,
+        "UnitPrice" => $quantity==1?$amount:$amount/$quantity,
+        "Qty" => $quantity,
+        "ItemAccountRef" => $account,
+        "TaxCodeRef" => $taxcoderef
+      ]
+    ));
+  }
+
+  /**
+   * Delete a QBO Sales receipt the QB system.
+   *
+   * @return bool 'true' if success.
+   * 
+   */
+  public function delete(): bool{
+    $auth = new QuickbooksAuth();
+    try{
+      $dataService = $auth->prepare();
+    }
+    catch (\Exception $e) {
+      http_response_code(401);  
+      echo json_encode(
+        array("message" =>  $e->getMessage() )
+      );
+      return false;
+    }
+
+    if ($dataService == false) {
+      return false;
+    }
+
+    // Do not use $dataService->FindbyId to create the entity to delete
+    // Use this simple representation instead
+    // The problem is that FindbyId forces use of JSON and that doesnt work 
+    // with the delete uri call
+    $salesreceipt = SalesReceipt::create([
+      "Id" => $this->id,
+      "SyncToken" => "0"
+    ]);
+    $resultingObj = $dataService->Delete($salesreceipt);
+
+    $error = $dataService->getLastError();
+    if ($error) {
+        echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
+        echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
+        echo "The Response message is: " . $error->getResponseBody() . "\n";
+        return false;
+    } else {      
+      return true;
+    }
+  }
+
+  private function salesTotal() : float {
+    return $this->clothing->sales + $this->brica->sales + 
+      $this->books->sales + $this->linens->sales + $this->ragging->sales;
+  }
+
+  // All these constant properties are set in the QBO company
   private $zero_rated_taxcode = [
     "value" => 4    
   ];
@@ -28,6 +470,10 @@ class QuickbooksSalesReceipt{
     "value" => 400000000000618070,
     "name" => "Harrow Rd"
   ];
+  private $church_street_class = [
+    "value" => 400000000000618073,
+    "name" => "Church St"
+  ];
   private $other_expenses_account = [
     "value" => 8,
     "name"=> "Other Staff Expenses"
@@ -36,11 +482,11 @@ class QuickbooksSalesReceipt{
     "value" => 86,
     "name" => "Volunteer Expenses"
   ];
-  private $cash_discrepencies_account = [
+  private $cash_discrepancies_account = [
     "value" => 93,
     "name" => "Office Expense:Cash Discrepancies"
   ];
-  private $ragging_discrepencies_account = [
+  private $ragging_discrepancies_account = [
     "value" => 93,
     "name" => "Office Expense:Cash Discrepancies"
   ];
@@ -116,173 +562,10 @@ class QuickbooksSalesReceipt{
     "value" => 48,
     "name" => "Daily Sales:Cash To Charity"
   ];
-
   private $customer = [
     "value" => 136,
     "name" => "Daily Sales"
   ];
 
 
-  public $id;
-  public $date;
-  
-  public $clothing;
-  public $brica;
-  public $books;
-  public $linens;
-  public $ragging;
-  public $donations;
-
-  public $volunteerExpenses;
-  public $operatingExpenses;
-
-  public $cash;
-  public $creditCards;
-  public $cashDiscrepency;
-  public $cashToCharity;
-
-  public $shopid; 
-  public $privatenote;  
-
-  public function readOne(){
-
-      $auth = new QuickbooksAuth();
-      try{
-        $dataService = $auth->prepare();
-      }
-      catch (\Exception $e) {
-        http_response_code(401);  
-        echo json_encode(
-          array("message" =>  $e->getMessage() )
-        );
-        return;
-      }
-
-      if ($dataService == false) {
-        return;
-      }
-
-      $dataService->forceJsonSerializers();
-      $journalentry = $dataService->FindbyId('salesreceipt', $this->id);
-      $error = $dataService->getLastError();
-      if ($error) {
-          echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
-          echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
-          echo "The Response message is: " . $error->getResponseBody() . "\n";
-      }
-      else {
-          return $journalentry;
-      }
-  }
-
-
-  public function create(){
-
-    $docnumber = (new DateTime($this->date))->format('Ymd') . 'H'; //'H' is short for Harrow Road
-
-    $salesreceipt = array(
-      "TxnDate" => $this->date,
-      "DocNumber" => $docnumber,
-      "PrivateNote" => $this->privatenote?$this->privatenote:"",
-      "Line" => [],
-      "TxnTaxDetail"=> [
-        "TaxLine" => [
-          "Amount" => 0,
-          "DetailType" => "TaxLineDetail",
-          "TaxLineDetail" => [
-            "TaxRateRef" => $this->zero_rated_taxrate,
-            "PercentBased" => true,
-            "TaxPercent" => 0,
-            "NetAmountTaxable" => round($this->sales,2)
-          ]
-        ]
-          ],
-      "CustomerRef" => $this->customer,
-      "GlobalTaxCalculation" => "TaxExcluded",
-      "TotalAmt" => abs($this->cash),
-      "PrintStatus" => "NotSet",
-      "EmailStatus" => "NotSet"
-    );
-
-    //&$line_array, $description, $amount, $item, $class, $quantity, $account, $taxcoderef)
-    // This code will only add the respective line if amount != 0
-    $this->salesreceipt_line($salesreceipt['Line'], "Daily sales of second-hand and donated clothing", 
-      $this->clothing->sales, $this->clothing_item, $this->harrow_road_class,
-      $this->clothing->number, $this->sales_account, $this->zero_rated_taxcode);
-    $this->salesreceipt_line($salesreceipt['Line'], "Sales of donated household goods", 
-      $this->brica->sales, $this->brica_item, $this->harrow_road_class,
-      $this->brica->number, $this->sales_account, $this->zero_rated_taxcode);
-    $this->salesreceipt_line($salesreceipt['Line'], "Sales of donated books and DVDs", 
-      $this->books->sales, $this->books_item, $this->harrow_road_class,
-      $this->books->number, $this->sales_account, $this->zero_rated_taxcode);
-    $this->salesreceipt_line($salesreceipt['Line'], "Sales of donated linen products", 
-      $this->linens->sales, $this->linens_item, $this->harrow_road_class,
-      $this->linens->number, $this->sales_account, $this->zero_rated_taxcode);
-    $this->salesreceipt_line($salesreceipt['Line'], "Cash donations to parent charity", 
-      $this->donations->sales, $this->donations_item, $this->harrow_road_class,
-      $this->donations->number, $this->donations_account, $this->no_vat_taxcode);      
-    $this->salesreceipt_line($salesreceipt['Line'], "Textile/book recycling", 
-      $this->ragging->sales, $this->ragging_item, $this->harrow_road_class,
-      $this->ragging->number, $this->ragging_account, $this->zero_rated_taxcode);    
-
-    $this->salesreceipt_line($salesreceipt['Line'], "Volunteer expenses paid in cash", 
-      $this->volunteerExpenses, $this->volexpenses_item, $this->harrow_road_class,
-      1, $this->volunteer_expenses_account, $this->no_vat_taxcode); //$quantity = 1
-    $this->salesreceipt_line($salesreceipt['Line'], "Minor operating expenses paid in cash", 
-      $this->operatingExpenses, $this->opexpenses_item, $this->harrow_road_class,
-      1, $this->other_expenses_account, $this->no_vat_taxcode); //$quantity = 1
-
-    $this->salesreceipt_line($salesreceipt['Line'], "Credit card payments received from customers", 
-      $this->creditCards, $this->ccards_item, $this->harrow_road_class,
-      1, $this->credit_card_account, $this->no_vat_taxcode); //$quantity = 1
-
-    $this->salesreceipt_line($salesreceipt['Line'], "Cash discrepancies between sales total and cash/credit card subtotals", 
-      $this->cashDiscrepency, $this->overage_item, $this->harrow_road_class,
-      1, $this->cash_discrepencies_account, $this->no_vat_taxcode); //$quantity = 1
-
-    $this->salesreceipt_line($salesreceipt['Line'], "Cash that has gone to the parent charity without being deposited into the Enterprises bank account", 
-      $this->cashToCharity, $this->charitycash_item, $this->harrow_road_class,
-      1, $this->cash_to_charity_account, $this->no_vat_taxcode); //$quantity = 1
-
-    $theResourceObj = SalesReceipt::create($salesreceipt);
-    
-    $auth = new QuickbooksAuth();
-    $dataService = $auth->prepare();
-    if ($dataService == false) {
-      return false;
-    }
-    $resultingObj = $dataService->Add($theResourceObj);
-
-    $error = $dataService->getLastError();
-    if ($error) {
-        echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
-        echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
-        echo "The Response message is: " . $error->getResponseBody() . "\n";
-        return false;
-    } else {      
-      return array(
-          "id" => $resultingObj->Id,
-          "date" => $resultingObj->TxnDate,
-          "label" => $resultingObj->DocNumber
-      );
-    }
-  }
-
-  private function salesreceipt_line(&$line_array, $description, $amount, $item, $class, $quantity, $account, $taxcoderef) {
-    if (abs($amount) <= 0.005) return;
-
-    array_push($line_array, array(
-      "Description" => $description,
-      "Amount" => $amount,
-      "DetailType" => "SalesItemLineDetail",
-      "SalesItemLineDetail" => [
-        "ItemRef" => $item,
-        "ClassRef" => $class,
-        "UnitPrice" => $quantity==1?$amount:$amount/$quantity,
-        "Qty" => $quantity,
-        "ItemAccountRef" => $account,
-        "TaxCodeRef" => $taxcoderef
-      ]
-    ));
-  }
 }

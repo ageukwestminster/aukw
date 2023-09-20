@@ -9,7 +9,6 @@ use QuickBooksOnline\API\Core\ServiceContext;
 
 use Models\JWTWrapper;
 use Models\QuickbooksToken;
-use Models\User;
 
 use DateTime;
 use DateTimeZone;

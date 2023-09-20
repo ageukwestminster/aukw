@@ -3,6 +3,9 @@
 namespace Controllers;
 
 use \Datetime;
+use \Models\QuickbooksSalesReceipt;
+use \Models\Takings;
+
 
 /**
  * Controller to accomplish QBO sales receipt related tasks. 
@@ -11,34 +14,43 @@ use \Datetime;
 */
 class SalesReceiptCtl{
 
-  const NOT_IN_QUICKBOOKS = 0;
 
-  public static function read_one($id){  
+  /**
+   * Return details of the sales receipt identified by $id
+   *
+   * @param int $id The QBO id, not the DocNumber
+   * @return void Output is echoed directly to response 
+   */
+  public static function read_one(int $id){  
 
-    $model = new \Models\QuickbooksSalesReceipt();
-    $model->id = $id;
+    $model = QuickbooksSalesReceipt::getInstance()->setId($id);
 
     echo json_encode($model->readone(), JSON_NUMERIC_CHECK);   
   }
 
-  public static function patch(){
-    $data = json_decode(file_get_contents("php://input"));
-    if(isset($data->method)){
+  /**
+   * Delete from QBO the sales receipt identified by $id
+   *
+   * @param int $id The QBO id, not the DocNumber
+   * @return void Output is echoed directly to response 
+   */
+  public static function delete(int $id){  
 
-      switch (strtolower($data->method)) {
-        case 'create_all':
-          SalesReceiptCtl::create_all_from_takings();
-            break;
-        default:
-        http_response_code(422);  
+    $model = QuickbooksSalesReceipt::getInstance()->setId($id);
+
+    if($model->delete()) {
+      echo json_encode(
+        array(
+          "message" => "Takings with id=$id was deleted.",
+          "id" => $id)
+          , JSON_NUMERIC_CHECK);
+    } else{
+        http_response_code(400);  
         echo json_encode(
           array(
-            "message" => "Unknown method",
-            "method" => $data->method
-          )
-        );
-
-      }
+            "message" => "Unable to DELETE row.",
+            "id" => $id)
+            , JSON_NUMERIC_CHECK);
     }
   }
 
@@ -57,35 +69,55 @@ class SalesReceiptCtl{
 
     $emptySales = (object) [ 'number' => 0, 'sales' => 0];
 
-    $model = new \Models\QuickbooksSalesReceipt();
     $data = json_decode(file_get_contents("php://input"));
-    $model->date = $data->date;          
-    $model->shopid = $data->shopid ?? 1;          
-    $model->donations = $data->donations ?? $emptySales;
-    $model->cashDiscrepency = $data->cashDiscrepency ?? 0;
-    $model->creditCards = $data->creditCards ?? 0;
-    $model->cash = $data->cash ?? 0;
-    $model->operatingExpenses = $data->operatingExpenses ?? 0;
-    $model->volunteerExpenses = $data->volunteerExpenses ?? 0;
-    $model->clothing = $data->clothing ?? $emptySales;
-    $model->brica = $data->brica ?? $emptySales;
-    $model->books = $data->books ?? $emptySales;
-    $model->linens = $data->linens ?? $emptySales;
-    $model->ragging = $data->ragging ?? $emptySales;
-    $model->cashToCharity = $data->cashToCharity ?? 0;  
-    $model->privatenote = $data->comments ?? '';  
 
-    $model->sales = $model->clothing->sales + $model->brica->sales + 
-              $model->books->sales + $model->linens->sales + $model->ragging->sales;
-    if ($model->sales < 0) {
-      http_response_code(400);
-      echo json_encode(
-        array("message" => "This transaction has a negative total amount.")
+    try {
+      $model = QuickbooksSalesReceipt::getInstance()
+        ->setDate($data->date)
+        ->setShopid($data->shopid ?? 1)
+        ->setClothing($data->clothing ?? $emptySales)
+        ->setBrica($data->brica ?? $emptySales)
+        ->setBooks($data->books ?? $emptySales)
+        ->setLinens($data->linens ?? $emptySales)
+        ->setRagging($data->ragging ?? $emptySales)
+        ->setDonations($data->donations ?? $emptySales)
+        ->setCashDiscrepancy($data->cashDiscrepancy ?? 0)
+        ->setCreditCards($data->creditCards ?? 0)
+        ->setCash($data->cash ?? 0)
+        ->setOperatingExpenses($data->operatingExpenses ?? 0)
+        ->setVolunteerExpenses($data->volunteerExpenses ?? 0)
+        ->setCashToCharity($data->cashToCharity ?? 0)
+        ->setPrivateNote($data->comments ?? ''
       );
-      exit(0);
-    }              
+    } catch (\TypeError $e) {
+      http_response_code(422);  
+      echo json_encode(
+        array(
+          "message" => "Unable to enter daily sales receipt in Quickbooks. ",
+          "extra" => $e->getMessage()
+           )
+          , JSON_NUMERIC_CHECK);
+      exit(1);
+    } catch (\Exception $e) {
+    http_response_code(400);  
+    echo json_encode(
+      array(
+        "message" => "Unable to enter daily sales receipt in Quickbooks. ",
+        "extra" => $e->getMessage()
+         )
+        , JSON_NUMERIC_CHECK);
+    exit(1);
+  }
 
-    SalesReceiptCtl::check_parameters($model);
+    if (!$model->validate()) {
+      http_response_code(400);  
+      echo json_encode(
+        array(
+          "message" => "Unable to enter daily journal in Quickbooks. Transaction is not in balance for '" .
+          $data->date . "'.")
+          , JSON_NUMERIC_CHECK);
+      exit(1);      
+    }
 
     $result = $model->create();
     if ($result) {
@@ -133,11 +165,32 @@ class SalesReceiptCtl{
     }
   }
 
+  public static function patch(){
+    $data = json_decode(file_get_contents("php://input"));
+    if(isset($data->method)){
+
+      switch (strtolower($data->method)) {
+        case 'create_all':
+          SalesReceiptCtl::create_all_from_takings();
+            break;
+        default:
+        http_response_code(422);  
+        echo json_encode(
+          array(
+            "message" => "Unknown method",
+            "method" => $data->method
+          )
+        );
+
+      }
+    }
+  }
+  
   private static function create_all_from_takings(){  
 
     // search for all the takings objects that are not yet entered into Quickbooks
     $takingsModel = new \Models\Takings();
-    $takingsArray = $takingsModel->read_by_quickbooks_status(self::NOT_IN_QUICKBOOKS);
+    $takingsArray = $takingsModel->read_by_quickbooks_status(false);
 
     // Empty array ?
     if ( count($takingsArray) == 0) {
@@ -152,11 +205,11 @@ class SalesReceiptCtl{
 
     foreach ($takingsArray as $takingsRow) {
 
-      $takings = new \Models\Takings();
+      $takings = new Takings();
       $takings->id = $takingsRow["id"];
       $takings->readOne();
       
-      $model = new \Models\QuickbooksSalesReceipt();
+      $model = new QuickbooksSalesReceipt();
 
       SalesReceiptCtl::transfer_parameters($model, $takings);
       SalesReceiptCtl::check_parameters($model);
@@ -184,7 +237,7 @@ class SalesReceiptCtl{
     $model->linens = (object) [ 'number' => $takings->linens_num, 'sales' => $takings->linens ] ;
     $model->donations = (object) [ 'number' => $takings->donations_num, 'sales' => $takings->donations ] ;
     $model->ragging = (object) [ 'number' => $takings->rag_num, 'sales' => $takings->rag ] ;
-    $model->cashDiscrepency = $takings->cash_difference;
+    $model->cashDiscrepancy = $takings->cash_difference;
     $model->creditCards = $takings->credit_cards*-1;
     $model->cash = $takings->cash_to_bank*-1;
     $model->operatingExpenses = $takings->operating_expenses*-1 + $takings->other_adjustments*-1;
@@ -197,7 +250,7 @@ class SalesReceiptCtl{
   private static function check_parameters($model)
   {
     $tests = array(
-      $model->cashDiscrepency,
+      $model->cashDiscrepancy,
       $model->cashToCharity,
       $model->creditCards,
       $model->volunteerExpenses,
@@ -230,7 +283,7 @@ class SalesReceiptCtl{
     // is transaction in balance?
     $balance = $model->donations->sales + $model->clothing->sales + $model->brica->sales;
     $balance += $model->books->sales + $model->linens->sales + $model->ragging->sales;
-    $balance += $model->cashDiscrepency + $model->cashToCharity + $model->creditCards;
+    $balance += $model->cashDiscrepancy + $model->cashToCharity + $model->creditCards;
     $balance += $model->volunteerExpenses + $model->operatingExpenses + $model->cash;
     
     if (abs($balance) >= 0.005) {
