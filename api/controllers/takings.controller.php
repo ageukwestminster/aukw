@@ -163,7 +163,7 @@ class TakingsCtl{
 
   /**
    * PATCH the takings with the given id. 
-   * At presenmt this only works for the quickbooks property.
+   * At present this only works for the quickbooks property.
    *
    * @param int $id The database id of the taking object.
    * 

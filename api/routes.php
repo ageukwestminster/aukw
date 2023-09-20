@@ -119,7 +119,7 @@ $router->mount('/qb', function () use ($router) {
     $router->post('/salesreceipt/takings/(\d+)', 'SalesReceiptCtl@create_from_takings');
     // take action on takings journal; Only 'create_all' implemented so far.
     // Create All adds to QB any takings which has Quickbooks=0 in the mariaDB
-    $router->patch('/salesreceipt/takings/', 'SalesReceiptCtl@patch');
+    $router->patch('/salesreceipt/takings/', 'SalesReceiptCtl@create_all_from_takings');
 
     // Returns the uri needed to start the QBO authorisation process
     $router->get('/auth', 'QBAuthCtl@oauth2_begin');    

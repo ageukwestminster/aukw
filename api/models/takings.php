@@ -574,7 +574,13 @@ class Takings{
         return false;
     }
 
-    function patch_quickbooks(){
+    /**
+     * [Description for patch_quickbooks]
+     *
+     * @return [type]
+     * 
+     */
+    public function patch_quickbooks(){
         $query = "UPDATE
                     " . $this->table_name . "
                     SET 

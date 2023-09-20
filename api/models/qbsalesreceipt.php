@@ -262,6 +262,14 @@ class QuickbooksSalesReceipt{
   }
 
 
+  /**
+   * Return details of the QBO sales receipt identified by $id
+   *
+   * @param int $id The QBO id of the Quickbooks sales receipt.
+   * 
+   * @return IPPIntuitEntity Returns a sales receipt  with specified Id.
+   * 
+   */
   public function readOne(){
 
       $auth = new QuickbooksAuth();
@@ -293,7 +301,12 @@ class QuickbooksSalesReceipt{
       }
   }
 
-
+  /**
+   * Add a new sales receipt to QBO
+   * 
+   * @return object
+   * 
+   */
   public function create(){
 
     $docnumber = (new DateTime($this->date))->format('Ymd') . ($this->shopid==2?'C':'H'); //'H' is short for Harrow Road
@@ -389,6 +402,23 @@ class QuickbooksSalesReceipt{
     }
   }
 
+
+  /**
+   * Push a new array describing a single line of a QBO sales receipt into the given array
+   * Helper function used in create.
+   *
+   * @param mixed $line_array The given array
+   * @param mixed $description
+   * @param mixed $amount
+   * @param mixed $item
+   * @param mixed $class
+   * @param mixed $quantity
+   * @param mixed $account
+   * @param mixed $taxcoderef
+   * 
+   * @return void
+   * 
+   */
   private function salesreceipt_line(&$line_array, $description, $amount, $item, $class, $quantity, $account, $taxcoderef) {
     if (abs($amount) <= 0.005) return;
 
