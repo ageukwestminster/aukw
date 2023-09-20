@@ -10,11 +10,20 @@ use \PDO;
  * @category Model
  */
 class User{
-    // database conn 
+    /**
+     * Database connection
+     * @var PDO|null
+     */ 
     private $conn;
-    // table name
+    /**
+     * The name of the table that holds the data
+     * @var string
+     */
     private $table_name = "user";
 
+    /**
+     * Instantiate a new User
+     */
     public function __construct(){
         $this->conn = \Core\Database::getInstance()->conn;
     }
@@ -32,7 +41,11 @@ class User{
     public $title;
     public $failedloginattempts;
 
-    // used by select drop-down list
+    /**
+     * Return details of all Users
+     * 
+     * @return array An array of Users
+     */
     public function read(){
 
         //select all data
@@ -85,7 +98,12 @@ class User{
         return $users_arr;
     }
 
-    // find the details of one user using $id
+  /**
+   * Retrieve from thje database details of the User
+   * 
+   * @return void
+   * 
+   */
     public function readOne(){
 
         //select all data
@@ -148,6 +166,12 @@ class User{
         return $stmt;
     }
 
+  /**
+   * Add a new User to the database.
+   * 
+   * @return bool 'true' if database update succeeded.
+   * 
+   */
     function create(){
         $query = "INSERT INTO
                     " . $this->table_name . "
@@ -204,6 +228,12 @@ class User{
         return false;
     }
 
+  /**
+   * Update an existing User in the database with new data.
+   * 
+   * @return bool 'true' if database update succeeded.
+   * 
+   */
     function update(){
         $query = "UPDATE
                     " . $this->table_name . "
@@ -264,7 +294,15 @@ class User{
         return false;
     }
 
-    function delete(){
+    /**
+     * Delete the user from the database that matches the given $id.
+     *
+     * @param int $id
+     * 
+     * @return void Output is echo'd directly to response
+     * 
+     */
+    public function delete(){
         $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
 
         $stmt = $this->conn->prepare($query);
@@ -279,7 +317,18 @@ class User{
         return false;
     }
 
-    function updateFailedAttempts($id, $failedloginattempts, bool $suspended){
+
+    /**
+     * Update 2 fields of the user: failedloginattempts and suspended.
+     *
+     * @param int $id The id of the user to update.
+     * @param int $failedloginattempts The number of failed attempts to login.
+     * @param bool $suspended If 'true' then the user is suspended.
+     * 
+     * @return bool 'true' if database update succeeded.
+     * 
+     */
+    public function updateFailedAttempts(int $id, int $failedloginattempts, bool $suspended){
         $query = "UPDATE
                     " . $this->table_name . "
                     SET 
@@ -305,7 +354,19 @@ class User{
     }
 
     
-    public function checkPassword($pwd, &$errors) {
+    /**
+     * Check the supplied password meet minimum standards:
+     *  - 8 or more characters
+     *  - Must include at least one number
+     *  - Must include ast least one letter
+     *
+     * @param string $pwd The password to test
+     * @param array $errors An array of errors. Empty if no errors.
+     * 
+     * @return bool 'true' if password passess the tests
+     * 
+     */
+    public function checkPassword(string $pwd, &$errors) {
         $errors_init = $errors;
     
         if (strlen($pwd) < 8) {

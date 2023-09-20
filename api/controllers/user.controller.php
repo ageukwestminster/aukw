@@ -25,7 +25,7 @@ class UserCtl{
     echo json_encode($model->read(), JSON_NUMERIC_CHECK);
   }
 
-    /**
+  /**
    * Return details of the User identified by $id
    *
    * @param int $id
@@ -63,7 +63,7 @@ class UserCtl{
     echo json_encode($user, JSON_NUMERIC_CHECK);
   }
 
-    /**
+  /**
    * Add a new User to the database. Parameters are supplied via POST data.
    * 
    * @return void Output is echo'd directly to response
