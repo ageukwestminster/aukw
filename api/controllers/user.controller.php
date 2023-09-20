@@ -13,6 +13,11 @@ namespace Controllers;
 */
 class UserCtl{
 
+  /**
+   * Return details of all Users
+   * 
+   * @return void Output is echo'd directly to response 
+   */
   public static function read_all(){  
 
     $model = new \Models\User();
@@ -20,6 +25,14 @@ class UserCtl{
     echo json_encode($model->read(), JSON_NUMERIC_CHECK);
   }
 
+    /**
+   * Return details of the User identified by $id
+   *
+   * @param int $id
+   * 
+   * @return [type]
+   * 
+   */
   public static function read_one($id){  
 
     $model = new \Models\User();
@@ -50,6 +63,12 @@ class UserCtl{
     echo json_encode($user, JSON_NUMERIC_CHECK);
   }
 
+    /**
+   * Add a new User to the database. Parameters are supplied via POST data.
+   * 
+   * @return void Output is echo'd directly to response
+   * 
+   */
   public static function create(){
     $model = new \Models\User();
 
@@ -88,6 +107,12 @@ class UserCtl{
     }
   }
 
+  /**
+   * Update an existing User in the database with new data. Parameters are supplied via POST data.
+   * 
+   * @return void Output is echo'd directly to response
+   * 
+   */
   public static function update($id){
     $model = new \Models\User();
 
@@ -136,7 +161,14 @@ class UserCtl{
     }
   }
 
-
+  /**
+   * Delete the user from the database that matches the given $id.
+   *
+   * @param int $id
+   * 
+   * @return void Output is echo'd directly to response
+   * 
+   */
   public static function delete($id){
     $model = new \Models\User();
 

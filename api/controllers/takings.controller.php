@@ -133,7 +133,7 @@ class TakingsCtl{
   }
 
   /**
-   * Delete the Takings object inthe database that matches the given $id.
+   * Delete the Takings object from the database that matches the given $id.
    *
    * @param int $id
    * 

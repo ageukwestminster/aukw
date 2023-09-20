@@ -481,6 +481,14 @@ class QuickbooksSalesReceipt{
     }
   }
 
+  /**
+   * Simple helper function to return total VAT-able sales for the sale receipt.
+   * 
+   * Formula is: sales = clothing+brica+books+linens+ragging
+   *
+   * @return float Total VAT-able sales
+   * 
+   */
   private function salesTotal() : float {
     return $this->clothing->sales + $this->brica->sales + 
       $this->books->sales + $this->linens->sales + $this->ragging->sales;
