@@ -24,6 +24,7 @@ include_once 'controllers/takings.controller.php';
 include_once 'controllers/user.controller.php';
 
 // Define models
+include_once 'models/departmentsales.php';
 include_once 'models/jwt.php';
 include_once 'models/qbauth.php';
 include_once 'models/qbitem.php';
