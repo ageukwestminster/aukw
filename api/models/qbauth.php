@@ -14,7 +14,7 @@ use DateTime;
 use DateTimeZone;
 
 /**
- * 
+ * Wrapper class that provides methods for QBO OAuth2.
  * @category Model
  */
 class QuickbooksAuth{
@@ -185,7 +185,8 @@ class QuickbooksAuth{
     }
 
     /**
-     * Prepare the dataService object for API calls
+     * Prepare the dataService object for API calls. Called before all QBO api calls.
+     * 
      * @return true if success
      */
     public function prepare(){
@@ -290,7 +291,8 @@ class QuickbooksAuth{
     }
 
     /**
-     * Store the access and refresh tokens in the database
+     * Store the access and refresh tokens in the database.
+     * Called by callback(), refresh() and prepare().
      * 
      * @param OAuth2AccessToken QB object that contains access and refresh token info
      */
