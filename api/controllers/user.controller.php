@@ -6,10 +6,6 @@ namespace Controllers;
  * Controller to acomplish User related tasks
  *
  * @category  Controller
- * @uses      
- * @version   0.0.1
- * @since     2021-02-27
- * @author    Neil Carthy <neil.carthy42@gmail.com>
 */
 class UserCtl{
 

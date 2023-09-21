@@ -9,27 +9,48 @@ use DateTime;
 use DateTimeZone;
 
 /**
- * [Description Report]
- * * 
+ * Build and execute the queries to retrive report data.
+ * 
  * @category Model
  */
 class Report{
-
+    /**
+     * Database connection
+     * @var PDO|null
+     */ 
     private $conn;
-    public $startdate;
-    public $enddate;
+    /**
+     * The start date of the report period.
+     *
+     * @var string
+     */
+    public string $startdate;
+    /**
+     * The end date of the report period.
+     *
+     * @var string
+     */
+    public string $enddate;
+    /**
+     * The id of the shop
+     * @var int
+     */
     public $shopID;
 
+    /**
+     * Instantiate object
+     */
     public function __construct(){
         $this->conn = \Core\Database::getInstance()->conn;
     }
 
     /**
       * Get data to build a histogram chart from net daily sales. HighCharts date format
-      * is UNIX epoch in miliseconds
-      * The addition of the 61.2million miliseconds is to force the date into the correct day, even during BST
+      * is UNIX epoch in miliseconds.
       */
     public function dailySalesHistogram(){
+        // The addition of the 61.2million miliseconds is to force the date into the correct day, even during BST
+        // The exact number (61.2m) does not really matter as the chart only shows data to the nearest day
         $query = "SELECT takingsid, UNIX_TIMESTAMP(`date`)*1000 +61200000 as sales_date,
                     (clothing+brica+books+linens+donations+other+rag-operating_expenses-volunteer_expenses-other_adjustments+cash_difference-donations) 
                        as total_after_expenses_and_donations
@@ -101,9 +122,11 @@ class Report{
       * 2) MariaDB windows frame method means moving average of start of data
       *    set will be incorrect. i.e. the rolling average numbers at the start of the
       *    series are incorrect until you have had enough data points to have the correct denominator
-      * 3) The addition of the 61.2million miliseconds is to force the date into the correct day, even during BST
+      * @return array
       */
-    public function dailySalesMovingAverage(){
+    public function dailySalesMovingAverage() : array{
+        // The addition of the 61.2million miliseconds is to force the date into the correct day, even during BST
+        // The exact number (61.2m) does not really matter as the chart only shows data to the nearest day
         $query = "SELECT `date`, UNIX_TIMESTAMP(`date`)*1000 + 61200000 as sales_timestamp
                     ,clothing+brica+books+linens+other-operating_expenses-volunteer_expenses-other_adjustments+cash_difference as net_sales
                     ,AVG(clothing+brica+books+linens+other-operating_expenses-volunteer_expenses-other_adjustments+cash_difference)
@@ -114,14 +137,6 @@ class Report{
                              OVER (order by date ASC ROWS 74 PRECEDING) as quarter_avg 
                     ,AVG(clothing+brica+books+linens+other-operating_expenses-volunteer_expenses-other_adjustments+cash_difference)
                              OVER (order by date ASC ROWS 299 PRECEDING) as year_avg " .
-                    /*    ,AVG(clothing) OVER (order by date ASC ROWS 9 PRECEDING) as clothing_ten_day_avg
-                        ,AVG(brica) OVER (order by date ASC ROWS 9 PRECEDING) as brica_ten_day_avg
-                        ,AVG(clothing) OVER (order by date ASC ROWS 19 PRECEDING) as clothing_twenty_day_avg
-                        ,AVG(brica) OVER (order by date ASC ROWS 19 PRECEDING) as brica_twenty_day_avg
-                        ,AVG(clothing) OVER (order by date ASC ROWS 74 PRECEDING) as clothing_quarter_avg
-                        ,AVG(brica) OVER (order by date ASC ROWS 74 PRECEDING) as brica_quarter_avg
-                        ,AVG(clothing) OVER (order by date ASC ROWS 299 PRECEDING) as clothing_year_avg
-                        ,AVG(brica) OVER (order by date ASC ROWS 299 PRECEDING) as brica_year_avg*/
                     "FROM takings
                     WHERE `date` >= :start " .
                     ($this->shopID ? ' AND shopID = :shopID ' : ' ') ;

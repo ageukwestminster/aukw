@@ -173,7 +173,26 @@ class ReportCtl{
   }
 
   /**
-   * Show takings data for a given shop, between start and end dates
+   * Show summarised takings data for a given shop, between start and end dates.
+   * 
+   * The values for a sample day would look like:
+   *   {
+   *     "id": 3934,
+   *     "date": "2023-02-28",
+   *     "shopid": 1,
+   *     "shopname": "Harrow Road",
+   *     "number_of_items_sold": 84,
+   *     "customers_num_total": 44,
+   *     "sales_total": 327.1,
+   *     "rag": 0,
+   *     "sales_total_inc_rag": 327.1,
+   *     "expenses": 1.6,
+   *     "cash_difference": -0.35,
+   *     "total_after_expenses": 325.5,
+   *     "daily_net_sales": 325.5,
+   *     "comments": "",
+   *     "quickbooks": 1
+   *   }
    *
    * @param int $shopid The id of the shop. Must be supplied.
    * 
