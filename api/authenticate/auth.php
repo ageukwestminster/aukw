@@ -1,8 +1,5 @@
-<?php
-
-header("Access-Control-Allow-Credentials: true");
-
-/**
+ <?php
+ /**
  * Check if the user credentials provided via POST match
  * any of the credentials saved in the database.
  * 
@@ -11,6 +8,8 @@ header("Access-Control-Allow-Credentials: true");
  * 
  * Called when logging in.
  */
+
+header("Access-Control-Allow-Credentials: true");
 
 // instantiate database and user object
 $db = \Core\Database::getInstance()->conn;

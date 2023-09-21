@@ -30,7 +30,7 @@ class UserCtl{
    *
    * @param int $id
    * 
-   * @return [type]
+   * @return void Output is echo'd directly to response 
    * 
    */
   public static function read_one($id){  

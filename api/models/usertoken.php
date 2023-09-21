@@ -37,7 +37,7 @@ class UserToken{
      * @param bool $status When 'false' the refresh token is invalid.
      * @param mixed $expiresAt Expiry of refresh token.
      * 
-     * @return [type]
+     * @return bool 'true' on success, 'false' otherwise
      * 
      */
     function store(int $iduser, string $accessTokenJti, string $refreshTokenJti

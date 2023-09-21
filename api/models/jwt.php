@@ -22,7 +22,7 @@ use Lcobucci\JWT\Validation\Constraint\PermittedFor;
  * Provide properties and methods to handle creation, validation 
  * and destruction of JWT access and refresh tokens as part of the authentication process.
  * 
- * Based on code provided at {@link https://lcobucci-jwt.readthedocs.io/en/stable/}
+ * Based on code provided at {@link https://lcobucci-jwt.readthedocs.io/en/stable/ lcobucci docs}.
  * 
  * @category Model
  */

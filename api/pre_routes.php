@@ -1,30 +1,32 @@
 <?php
 
-/*
-    These methods are called before the processor gets to any of the actual Routes.
-
-    This 'Pre'-Router logic attempts to enfore these rules:
-
-    * Only logged in users can access the api, except for requests to '/auth'.
-      Requests to '/auth' are to allow the presenting of credentials and return of tokens.
-
-    * If it is an 'auth' request then set 'Allow-Credentials' header
-
-    * Commands that affect data on the server (PUT/POST/DELETE etc.) require admin access,
-      with one exception: normal users can add new takings or update existing takings
-
-    Main routes are specified in 'routes.php'
-
-    Router logic supplied by bramus\router (https://github.com/bramus/router)
-*/
+/**
+ * This file defines actions taken before the router gets to any of the actual Routes.
+ * 
+ * This 'Pre'-Router logic attempts to enfore these rules:
+ * 1) Only logged in users can access the api, except for requests to '/auth'. 
+ * Requests to '/auth' are to allow the presenting of credentials and return of tokens.
+ * 
+ * 2) If it is an 'auth' request then set 'Allow-Credentials' header
+ * 
+ * 3) Commands that affect data on the server (PUT/POST/DELETE etc.) require admin access,
+ * with one exception: normal users can add new takings or update existing takings.
+ * 
+ * Main routes are specified in the file {@link files/api-routes.html routes.php}
+ * 
+ * Router logic supplied by {@link https://github.com/bramus/router bramus\router}.
+ */
 
 use \Core\Headers;
 
+/**************************************************************/
+/* Just return headers when OPTIONS call                      */
+/**************************************************************/
 $router->options('/(\S+)',function() {
     $path = Headers::stripped_path();
     $isAuthPath = Headers::path_is_auth($path);
     Headers::getHeaders();
-}); // just return headers when OPTIONS call
+});
 
 /**************************************************************/
 /* Before Router Middleware:                                  */

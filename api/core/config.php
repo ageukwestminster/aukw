@@ -1,5 +1,8 @@
 <?php
-
+ /**
+  * A list of api-wide constants, made available through the Config class.
+  */
+  
 namespace Core;
 
 // development
@@ -14,7 +17,7 @@ error_reporting(E_ALL);
 /**
  * A static class that holds application-level constants.
  * 
- * The config pattern that this classs uses is from {@link https://stackoverflow.com/a/2047999/6941165}
+ * The config pattern that this classs uses is from {@link https://stackoverflow.com/a/2047999/6941165 stackoverflow}
  * 
  * @category Core
  */

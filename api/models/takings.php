@@ -5,7 +5,7 @@ namespace Models;
 use \PDO;
 
 /**
- * [Description Takings]
+ * Defines a Takings and has data persistance capbility.
  * 
  * @category Model
  */
@@ -236,7 +236,7 @@ class Takings{
      *
      * @param int $shopid
      * 
-     * @return [type]
+     * @return mixed
      * 
      */
     public function read_most_recent(int $shopid){
@@ -577,7 +577,7 @@ class Takings{
     /**
      * [Description for patch_quickbooks]
      *
-     * @return [type]
+     * @return bool
      * 
      */
     public function patch_quickbooks(){

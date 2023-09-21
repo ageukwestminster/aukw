@@ -1,7 +1,5 @@
 <?php
 
-$jwt = new \Models\JWTWrapper();
-
 /**
  * If logged in then disable all tokens for the logged-in user
  * and delete the refresh token cookie.
@@ -9,6 +7,9 @@ $jwt = new \Models\JWTWrapper();
  * Called when logging out.
  * 
  */
+
+$jwt = new \Models\JWTWrapper();
+
 if(!$jwt->loggedIn){    
     // Keep status 200
     echo json_encode(

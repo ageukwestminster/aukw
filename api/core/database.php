@@ -5,7 +5,7 @@ namespace Core;
 use \PDO;
 
 /**
- * Proivide open PDO database connection via $conn property.  
+ * Provide open PDO database connection via $conn property.  
  * Uses singleton pattern to ensure only one connection open at a time.
  * 
  * @category Core
@@ -29,7 +29,7 @@ class Database{
 
 
     /**
-     * Singleton pattern derived from code at {@link https://stackoverflow.com/a/2047999/6941165}
+     * Singleton pattern derived from code at {@link https://stackoverflow.com/a/2047999/6941165 stackoverflow}
      *
      * @return Database 
      * 

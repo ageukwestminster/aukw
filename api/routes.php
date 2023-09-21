@@ -1,14 +1,15 @@
 <?php
 
-/*
-    Router logic supplied by bramus\router (https://github.com/bramus/router)
-
-    Using some example uses from https://github.com/wdekkers/raspberry-pi-app
-
-    Regex cheat sheet: https://courses.cs.washington.edu/courses/cse154/15sp/cheat-sheets/php-regex-cheat-sheet.pdf
-
-
-*/
+/**
+ * 
+ * Define endpoints and associated routes for the api
+ * 
+ * Router logic supplied by {@link https://github.com/bramus/router bramus\router}.
+ * 
+ * Using some example code from {@link https://github.com/wdekkers/raspberry-pi-app github}.
+ * 
+ * Regex cheat sheet: {@link https://courses.cs.washington.edu/courses/cse154/15sp/cheat-sheets/php-regex-cheat-sheet.pdf PDF File}.
+ */
 
 // General config
 $router->setNamespace('\Controllers'); // Allows us to omit '\Controllers' from method names
