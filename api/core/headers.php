@@ -3,7 +3,7 @@
 namespace Core;
 
 /**
- * A helper class that provides methoids to return HTTP headers.
+ * A helper class that provides methods to return HTTP headers.
  * @category Core
  */
 class Headers
@@ -12,7 +12,7 @@ class Headers
      * Return the part of the path that is after .../api/
      * Used to simplify the path before checking if (for example) it is a 'auth' path.
      * 
-     * @return string
+     * @return string The shortened path
      */
     public static function stripped_path() {
         $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -45,7 +45,7 @@ class Headers
      * 
      * @return bool 'true' if the path is for authentication purposes
      */
-    public static function path_is_auth($path = '')
+    public static function path_is_auth($path = '') : bool
     {
         if (empty($path)) {
             $path = Headers::stripped_path();
@@ -64,9 +64,9 @@ class Headers
      * Return 'true' if the path is either of these two routes:
      * POST 'takings/' or PUT  'takings/(\d+)'
      * 
-     * @return string
+     * @return bool 'true' if the path is for un-privilidged user data entry
      */
-    public static function path_is_takings_dataentry($path = '')
+    public static function path_is_takings_dataentry($path = '') : bool
     {
         if (empty($path)) {
             $path = Headers::stripped_path();

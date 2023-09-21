@@ -10,8 +10,13 @@ use DateTime;
  * @category  Controller
 */
 class ReportCtl{
-
  
+  /**
+   * Retrieve a data set for the histogram of daily sales chart.
+   *
+   * @return void Output is echoed directly to response.
+   * 
+   */
   public static function dailySalesHistogram(){  
 
     $model = new \Models\Report();
@@ -40,6 +45,12 @@ class ReportCtl{
     echo json_encode($model->dailySalesHistogram(), JSON_NUMERIC_CHECK);
   }
 
+  /**
+   * Retrieve a data set for the chart showing daily sales moving averages.
+   *
+   * @return void Output is echoed directly to response.
+   * 
+   */
   public static function dailySalesMovingAverage(){  
 
     $model = new \Models\Report();
@@ -58,6 +69,13 @@ class ReportCtl{
     echo json_encode($model->dailySalesMovingAverage(), JSON_NUMERIC_CHECK);
   }
 
+  /**
+   * Retrieve a data set for the table of daily/weekly/monthly sales that appears on the 
+   * app home page.
+   *
+   * @return void Output is echoed directly to response.
+   * 
+   */
   public static function performanceSummary(){  
 
     $model = new \Models\TakingsSummary();
@@ -65,6 +83,14 @@ class ReportCtl{
     echo json_encode($model->performanceSummary(NULL, NULL), JSON_NUMERIC_CHECK| JSON_UNESCAPED_SLASHES);
   }
 
+  /**
+   * Retrieve a data set for the chart showing monthly gross sales.
+   * 
+   * Used on home page of app.
+   *
+   * @return void Output is echoed directly to response.
+   * 
+   */  
   public static function salesChart(){  
 
     $model = new \Models\TakingsSummary();
@@ -72,6 +98,14 @@ class ReportCtl{
     echo json_encode($model->salesChart(1, NULL), JSON_NUMERIC_CHECK);
   }
 
+  /**
+   * Retrieve a data set for the chart showing the relative proportions of department sales.
+   * 
+   * Used on home page of app.
+   *
+   * @return void Output is echoed directly to response.
+   * 
+   */  
   public static function departmentChart(){  
 
     $model = new \Models\TakingsSummary();
@@ -79,16 +113,20 @@ class ReportCtl{
     echo json_encode($model->departmentChart(NULL, NULL), JSON_NUMERIC_CHECK);
   }
 
-  /*****
+  /**
+   * A report of sales by month, listing total sales and average daily sales.
+   * The average daily sales are broken down by department (clothing, brica, books, linens).
    * 
-   * A report of sales by month, listing total sales and average daily sales
-   * The average daily sales are broken down by department (clothing, brica, books, linens)
+   * If no date info provided then it defaults to 1st Jan 2021.
+   *
+   * @param mixed $shopid Must be supplied.
+   * @param null $year Used to specify when the tabulations begin.
+   * @param null $month Used to specify when the tabulations begin.
+   * @param null $day Used to specify when the tabulations begin.
    * 
-   * $shopid must be supplied
-   * $year, $month, $day can be used to specify when the tabulations begin
-   * If no date info provided then it defaults to 1st Jan 2021
+   * @return void Output is echoed directly to response.
    * 
-   ***/
+   */
   public static function salesByMonth($shopid, $year = null, $month = null, $day = null){  
 
     $model = new \Models\TakingsSummary();
@@ -108,16 +146,18 @@ class ReportCtl{
     echo json_encode($model->salesByMonth($shopid, $date), JSON_NUMERIC_CHECK);
   }
 
-  /*****
-   * 
+  /**
    * A report of sales by quarter, listing total sales and average daily sales
    * The average daily sales are broken down by department (clothing, brica, books, linens)
    * 
-   * $shopid must be supplied
-   * $year can be used to specify when the tabulations begin
    * If no year info provided then it defaults to 1st Jan 2021
+   *
+   * @param mixed $shopid The id of the shop. Must be supplied.
+   * @param null $year Can be used to specify when the tabulations begin.
    * 
-   ***/
+   * @return void Output is echoed directly to response.
+   * 
+   */
   public static function salesByQuarter($shopid, $year = null){  
 
     $model = new \Models\TakingsSummary();
@@ -132,7 +172,15 @@ class ReportCtl{
     echo json_encode($model->salesByQuarter($shopid, $date), JSON_NUMERIC_CHECK);
   }
 
-  public static function takingsSummary($shopid){  
+  /**
+   * Show takings data for a given shop, between start and end dates
+   *
+   * @param int $shopid The id of the shop. Must be supplied.
+   * 
+   * @return void Output is echoed directly to response 
+   * 
+   */
+  public static function takingsSummary(int $shopid){  
 
     $model = new \Models\Takings();
 
@@ -160,11 +208,20 @@ class ReportCtl{
     echo json_encode($model->summary($shopid, $startdate, $enddate), JSON_NUMERIC_CHECK);
   }
 
+  /**
+   * Show takings data for the last 'datapoints' days for a given shop
+   *
+   * @param mixed $shopid The id of the shop. Must be supplied.
+   * @param mixed $numdatapoints 
+   * 
+   * @return void Output is echoed directly to response 
+   * 
+   */
   public static function salesList($shopid, $numdatapoints){  
 
-    $model = new \Models\Takings();
+    //$model = new \Models\Takings();
 
-    echo json_encode($model->salesList($shopid, $numdatapoints), JSON_NUMERIC_CHECK);
+    //echo json_encode($model->salesList($shopid, $numdatapoints), JSON_NUMERIC_CHECK);
   }
   
 }
