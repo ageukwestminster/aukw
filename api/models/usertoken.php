@@ -5,21 +5,43 @@ namespace Models;
 use \PDO;
 
 /**
- * [Description UserToken]
+ * Defines a user's usertoken. Can be an access or refresh token.
  * 
  * @category Model
  */
 class UserToken{
-    // database conn 
+    /**
+     * Database connection
+     * @var PDO|null
+     */ 
     private $conn;
-    // table name
+    /**
+     * The name of the table that holds the data
+     * @var string
+     */
     private $table_name = "usertoken";
 
+    /**
+     * Instantiate a new UserToken
+     */
     public function __construct(){
         $this->conn = \Core\Database::getInstance()->conn;
     }
 
-    function store($iduser, $primaryKey, $secondaryKey, $status, $expiresAt){
+    /**
+     * Store the identifiers of the tokens (not the tokens themselves) into the database.
+     *
+     * @param int $iduser The id of the user
+     * @param string $accessTokenJti Unique identifier for the access token. Usuallly a GUID.
+     * @param string $refreshTokenJti Unique identifier for the refresh token. Usuallly a GUID.
+     * @param bool $status When 'false' the refresh token is invalid.
+     * @param mixed $expiresAt Expiry of refresh token.
+     * 
+     * @return [type]
+     * 
+     */
+    function store(int $iduser, string $accessTokenJti, string $refreshTokenJti
+                    ,bool $status, $expiresAt){
         $query = "INSERT INTO
                     " . $this->table_name . "
                     SET 
@@ -35,8 +57,8 @@ class UserToken{
 
         // bind values
         $stmt->bindParam(":iduser", $iduser, PDO::PARAM_INT);
-        $stmt->bindParam(":primaryKey", $primaryKey);
-        $stmt->bindParam(":secondaryKey", $secondaryKey);
+        $stmt->bindParam(":primaryKey", $accessTokenJti);
+        $stmt->bindParam(":secondaryKey", $refreshTokenJti);
         $stmt->bindParam(":status", $status, PDO::PARAM_INT);
         $stmt->bindParam(":expiresAt", $expiresAt);      
 
@@ -50,7 +72,7 @@ class UserToken{
 
     /**
      * Update the database valid/invalid flag for the user's token
-     * identified by $hash. CAn be an access or refresh token.
+     * identified by $hash. Can be an access or refresh token.
      * 
      * @param int $iduser The userid of the user
      * @param string $hash The cryptographic hash of the token

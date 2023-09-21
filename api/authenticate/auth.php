@@ -64,7 +64,7 @@ if($num>0){
         // Create a new access and refresh JWT pair, with claims of username and isAdmin  
         // Suspended is not a claim because you can't get to this point if user is suspended
         $jwt = new \Models\JWTWrapper();
-        $user_with_token = $jwt->getAccessToken($user);
+        $user_with_token = $jwt->getUserWithAccessToken($user);
         $jwt->setRefreshTokenCookieFor($user_with_token);
 
         $user->updateFailedAttempts($id, 0, false);

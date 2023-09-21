@@ -15,7 +15,7 @@ $token = $jwt->validateRefreshToken();
 
 if ($token && $token['id']) {
 
-    $jwt->disabeRefreshToken($token);
+    $jwt->disableRefreshToken($token);
 
     // read the details of user to be edited
     $user->id = $token['id'];
@@ -29,7 +29,7 @@ if ($token && $token['id']) {
     }
     
 
-    $user_with_token = $jwt->getAccessToken($user);    
+    $user_with_token = $jwt->getUserWithAccessToken($user);    
 
     $jwt->setRefreshTokenCookieFor($user_with_token, $token['expiry']);
 

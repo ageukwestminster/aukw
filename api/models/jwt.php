@@ -49,12 +49,12 @@ class JWTWrapper{
     public $role;
     public $loggedIn;
     public $expiry;
-    public $hash;
+    public $jti;
 
     // constructor
     public function __construct(){
 
-        $this->usertoken = new UserToken(\Core\Database::getInstance()->conn);
+        $this->usertoken = new UserToken();
 
         $this->config = Configuration::forSymmetricSigner(
             // You may use any HMAC variations (256, 384, and 512)
@@ -178,12 +178,12 @@ class JWTWrapper{
                 $this->isAdmin=$claims->get('role')=='Admin'?true:false;
                 $this->role=$claims->get('role');
                 $this->expiry = $claims->get('exp')->format("Y-m-d H:i:s");
-                $this->hash = $claims->get('jti');
+                $this->jti = $claims->get('jti');
 
                 // Check database for existance of the JWT for the given user
                 // By checking access token only this ensures refresh tokens cannot
                 // be used in place of access tokens
-                if ($this->usertoken->getAccessTokenStatus($this->id, $this->hash)) {
+                if ($this->usertoken->getAccessTokenStatus($this->id, $this->jti)) {
                     $this->loggedIn = true;
                 } else {
                     $this->initializeToken();
@@ -226,12 +226,12 @@ class JWTWrapper{
             if($this->config->validator()->validate($token, ...$constraints)){
                 $simplified_token=array(
                     "id" => $claims->get('sub'),
-                    "hash" => $claims->get('jti'),
+                    "jti" => $claims->get('jti'),
                     "expiry" => $claims->get('exp')
                 );
     
                 // Check database for existance of the JWT for the given user, and that it is not suspended
-                if ($this->usertoken->getRefreshTokenStatus($simplified_token['id'], $simplified_token['hash'])) {
+                if ($this->usertoken->getRefreshTokenStatus($simplified_token['id'], $simplified_token['jti'])) {
                     return $simplified_token;
                 } else {
                     // Someone has used a valid RefreshToken that has already been used (status = 0)
@@ -251,13 +251,13 @@ class JWTWrapper{
         }
     }
 
-    public function getAccessToken(User $user){
+    public function getUserWithAccessToken(User $user){
         
         $now = new DateTimeImmutable();
 
         $accessTokenExpiry = $now->modify(\Core\Config::read('token.accessExpiry')); // time limit on JWT session tokens
-        $accessHash = $this->GUIDv4();
-        $accessToken = $this->getToken($user->id, $accessHash, $now, 
+        $accessJti = $this->GUIDv4();
+        $accessToken = $this->getToken($user->id, $accessJti, $now, 
                                         $accessTokenExpiry, $user->username, $user->role);  
 
         $user_with_token=array(
@@ -266,7 +266,7 @@ class JWTWrapper{
             "role" => $user->role, 
             "fullname" => $user->firstname. ' ' . $user->surname,
             "accessToken" => (string)$accessToken,
-            "accessHash" => $accessHash
+            "accessJti" => $accessJti
         );
         return $user_with_token;
     }
@@ -276,22 +276,29 @@ class JWTWrapper{
      * 
      * @return bool If update succeeds then return true, else false.
      */
-    public function disabeRefreshToken($refresh_token){            
-        $this->usertoken->updateStatus($refresh_token['id'], $refresh_token['hash'], false);
+    public function disableRefreshToken($refresh_token){            
+        $this->usertoken->updateStatus($refresh_token['id'], $refresh_token['jti'], false);
     }
 
     /**
      * Disable all tokens for the given user and delete the refresh token cookie
      * 
+     * Called when user logs out
+     * 
      * @return bool If process succeeds then return true, else false.
      */
     public function disableAllTokens($userid){            
-        $this->usertoken->deleteAll($userid);
-        setcookie(\Core\Config::read('token.cookiename'), '', time() - 3600);
+        $result = $this->usertoken->deleteAll($userid);
+        return $result && setcookie(\Core\Config::read('token.cookiename'), '', time() - 3600);
     }
 
     /**
+     * Create a new refresh token and put it into a cookie. Store the identifier of
+     * the access and refresh tokens in the database to allow subsequent verification.
      * 
+     * Called when user logs in (auth.php) or uses refresh token (refresh.php)
+     * 
+     * @return bool If process succeeds then return true, else false.
      */
     public function setRefreshTokenCookieFor($user_with_token, $tokenExpiry = '') {
 
@@ -300,25 +307,31 @@ class JWTWrapper{
         if (empty($tokenExpiry)) {                
             $tokenExpiry = $now->modify(\Core\Config::read('token.refreshExpiry'));
         }
-        $hash = $this->GUIDv4();
-        $token = $this->getToken($user_with_token['id'], $hash, $now, $tokenExpiry);
+        $refreshJti = $this->GUIDv4();
+        $token = $this->getToken($user_with_token['id'], $refreshJti, $now, $tokenExpiry);
 
         setcookie($this->cookiename, $token, $tokenExpiry->getTimestamp()
             , $this->cookiepath, '', $this->cookiesecure, true); // 'true' = HttpOnly
 
-        $this->usertoken->store($user_with_token['id'], $user_with_token['accessHash'], $hash, 
+        return $this->usertoken->store($user_with_token['id'], $user_with_token['accessJti'], $refreshJti, 
                     true, $tokenExpiry->format("Y-m-d H:i:s")); // 'true' = isValid
 
     }
-
 
     /**
      * Get a string representation of a new JWT using
      * 
      * @param string $userid e.g. 'admin' or 'nsc'
-     * @param string $hash  
+     * @param string $jti The identifier of the token, usually a GUID  
+     * @param mixed $issuedAt The date and time the token was issued
+     * @param mixed $expiresAt The date and time the token expires
+     * @param string $username The username of the user
+     * @param string $role The role of the user, either 'Admin' or 'User'
+     * 
+     * @return string A string representation of the token, in JWT format
+     * 
      */
-    private function getToken($userid, $hash, $issuedAt, $expiresAt, $username = '', $role = ''){
+    private function getToken($userid, $jti, $issuedAt, $expiresAt, $username = '', $role = '') : string{
 
         $builder = $this->config->builder();
 
@@ -337,8 +350,8 @@ class JWTWrapper{
         $token = $token->withClaim('role', $role);
         }
 
-        $token = $token->identifiedBy($hash)
-                                ->getToken($this->config->signer(), $this->config->signingKey());
+        $token = $token->identifiedBy($jti)
+                       ->getToken($this->config->signer(), $this->config->signingKey());
         
         return $token->toString();
     }
@@ -346,7 +359,7 @@ class JWTWrapper{
     /**
      * Set the token properties to default states
      * 
-     * @return void Output is echo'd directly to response
+     * @return void
      */
     private function initializeToken(){
         $this->user = '';
@@ -355,11 +368,11 @@ class JWTWrapper{
         $this->loggedIn = false;
         $this->expiry = '';
         $this->id = 0;
-        $this->hash = '';
+        $this->jti = '';
     }
 
     /**
-    * Returns a GUIDv4 string
+    * Returns a GUIDv4 string. Used for token identifiers (aka jti claims).
     *
     * Uses the best cryptographically secure method
     * for all supported pltforms with fallback to an older,

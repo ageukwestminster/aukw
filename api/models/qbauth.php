@@ -47,6 +47,7 @@ class QuickbooksAuth{
         $this->config = array(
           'auth_mode' => \Core\Config::read('qb.authmode'),
           'authorizationRequestUrl' => \Core\Config::read('qb.authrequesturi'),
+          'baseUrl' => \Core\Config::read('qb.baseUrl'),
           'tokenEndPointUrl' => \Core\Config::read('qb.tokenendpointuri'),
           'ClientID' => getenv(\Core\Config::read('qb.clientid')),
           'ClientSecret' => getenv(\Core\Config::read('qb.clientsecret')),
@@ -220,7 +221,7 @@ class QuickbooksAuth{
             'accessTokenKey' => $this->tokenModel->accesstoken,
             'refreshTokenKey' => $this->tokenModel->refreshtoken,
             'QBORealmID' => $this->config['QBORealmID'],
-            'baseUrl' => "Production"
+            'baseUrl' => $this->config['baseUrl'],
         ));
 
         $OAuth2LoginHelper = $this->dataService->getOAuth2LoginHelper();

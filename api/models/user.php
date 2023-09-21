@@ -5,7 +5,7 @@ namespace Models;
 use \PDO;
 
 /**
- * 
+ * Defines a user and has data persistance capbility.
  * 
  * @category Model
  */
