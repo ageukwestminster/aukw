@@ -22,6 +22,8 @@ use Lcobucci\JWT\Validation\Constraint\PermittedFor;
  * Provide properties and methods to handle creation, validation 
  * and destruction of JWT access and refresh tokens as part of the authentication process.
  * 
+ * Based on code provided at {@link https://lcobucci-jwt.readthedocs.io/en/stable/}
+ * 
  * @category Model
  */
 class JWTWrapper{
@@ -51,7 +53,12 @@ class JWTWrapper{
     public $expiry;
     public $jti;
 
-    // constructor
+
+    /**
+     * Constructor. 
+     *
+     * Initializes the object and then runs the CheckAuth method
+     */
     public function __construct(){
 
         $this->usertoken = new UserToken();
@@ -59,9 +66,8 @@ class JWTWrapper{
         $this->config = Configuration::forSymmetricSigner(
             // You may use any HMAC variations (256, 384, and 512)
             new Sha256(),
-            // replace the value below with a key of your own!
-            InMemory::plainText( getenv(\Core\Config::read('token.envkeyname')) )
-            // You may also override the JOSE encoder/decoder if needed by providing extra arguments here
+            // Provide a secret key that is used to validate tokens
+            InMemory::plainText( getenv(\Core\Config::read('token.envkeyname')) )            
         );
 
         $clock = new FrozenClock(new DateTimeImmutable());
@@ -251,6 +257,14 @@ class JWTWrapper{
         }
     }
 
+    /**
+     * Append a completed access token property to a user
+     *
+     * @param User $user The user to
+     * 
+     * @return array The updated User
+     * 
+     */
     public function getUserWithAccessToken(User $user){
         
         $now = new DateTimeImmutable();
