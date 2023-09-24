@@ -71,8 +71,8 @@ class TakingsSummary{
                     "other" => $other,
                     "rag" => $rag,
                     "donations" => $donations,
-                    "start_date_format" => (new DateTime($start_date))->format('d/m/y'),
-                    "end_date_format" => (new DateTime($end_date))->format('d/m/y'),
+                    "start_date_format" => (new DateTime($start_date??''))->format('d/m/y'),
+                    "end_date_format" => (new DateTime($end_date??''))->format('d/m/y'),
                 );
 
                 // create un-keyed list
