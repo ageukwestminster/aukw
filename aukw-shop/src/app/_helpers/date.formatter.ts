@@ -1,4 +1,4 @@
-/*
+/**
  *  Formatter class that takes the internal representation of the selected date
  *  in a NgbDatePicker and displays it in the format "dd-MMM-yyyy"
  *

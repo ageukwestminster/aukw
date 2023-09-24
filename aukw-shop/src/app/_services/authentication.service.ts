@@ -14,18 +14,19 @@ import { Role, User } from '@app/_models';
  */
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
-  /* This pattern (private BehaviorSubject<object> & public 
-       Observable<object>) is likely being used because:
-        1. BehaviourSubject guarantees there is always a valid User
-        2. Using the asObservable() user public property exposes the
-           data from the subject, but at the same time prevents
-           having data inadvertently pushed into the subject
-        3. By having the userValue a public property of an injectable
-           service, the details of the logged-in user are available
-           throughout the app.
-
-    Further reading: https://medium.com/@benlesh/on-the-subject-of-subjects-in-rxjs-2b08b7198b93
-    */
+  /** 
+   * This pattern (private BehaviorSubject<object> & public 
+  *     Observable<object>) is likely being used because:
+  *      1. BehaviourSubject guarantees there is always a valid User
+  *      2. Using the asObservable() user public property exposes the
+  *         data from the subject, but at the same time prevents
+  *         having data inadvertently pushed into the subject
+  *      3. By having the userValue a public property of an injectable
+  *         service, the details of the logged-in user are available
+  *         throughout the app.
+  *
+  *  Further reading: {@link https://medium.com/@benlesh/on-the-subject-of-subjects-in-rxjs-2b08b7198b93 medium}
+  */
   private userSubject: BehaviorSubject<User>;
 
   /**
@@ -37,8 +38,10 @@ export class AuthenticationService {
   /**
    * The windows Id of the timer that is set to expire 1 minute before the access token.
    * This timer is used to trigger the creatiopn of a new access token from the refresh token.
+   * 
+   * Code from: {@link https://stackoverflow.com/a/54507207/6941165 stackoverflow}
    */
-  private refreshTokenTimerId: number | undefined; //https://stackoverflow.com/a/54507207/6941165
+  private refreshTokenTimerId: number | undefined;
 
   constructor(
     private router: Router,

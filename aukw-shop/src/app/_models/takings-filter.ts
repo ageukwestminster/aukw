@@ -10,8 +10,10 @@ export class TakingsFilter {
     this.sales_min = (obj && obj.sales_min) || null;
     this.sales_max = (obj && obj.sales_max) || null;
   }
-  /* overload toString */
-  /* From https://stackoverflow.com/a/35361695/6941165 */
+  /** 
+   * overload toString
+   * From {@link https://stackoverflow.com/a/35361695/6941165 stackoverflow}
+   */
   public toString = (): string => {
     var str = ``;
 
