@@ -84,7 +84,7 @@ Config::write('qb.tokenendpointuri', 'https://oauth.platform.intuit.com/oauth2/v
 Config::write('qb.clientid', 'QB_CLIENT_ID'); // env key name
 Config::write('qb.clientsecret', 'QB_CLIENT_SECRET'); // env key name
 Config::write('qb.authscope', 'com.intuit.quickbooks.accounting');
-Config::write('qb.redirecturl', 'https://8219-86-142-147-138.ngrok.io/api/auth/callback');
+Config::write('qb.redirecturl', 'https://c473-86-128-220-91.ngrok-free.app/api/qb/callback');
 Config::write('qb.realmid', '9130350604308576');
 Config::write('qb.responsetype', 'code');
 Config::write('qb.authstate', 'TEKP567ipruY9m'); // used to verify QBO callback
