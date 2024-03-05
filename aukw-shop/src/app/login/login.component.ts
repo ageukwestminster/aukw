@@ -65,4 +65,12 @@ export class LoginComponent implements OnInit {
         },
       });
   }
+
+  hover(element: HTMLImageElement) {
+    element.setAttribute('src', "assets/images/Sign_in_blue_btn_med_hover.svg");
+  }
+  
+  unhover(element: HTMLImageElement) {
+    element.setAttribute('src', "assets/images/Sign_in_blue_btn_med_default.svg");
+  }
 }
