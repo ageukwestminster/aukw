@@ -14,6 +14,7 @@ include_once 'core/dateshelper.php';
 
 // Define controllers
 include_once 'controllers/qbauth.controller.php';
+include_once 'controllers/qbemployee.controller.php';
 include_once 'controllers/qbitem.controller.php';
 include_once 'controllers/qbjournal.controller.php';
 include_once 'controllers/qbreport.controller.php';
@@ -26,6 +27,7 @@ include_once 'controllers/user.controller.php';
 // Define models
 include_once 'models/jwt.php';
 include_once 'models/qbauth.php';
+include_once 'models/qbemployee.php';
 include_once 'models/qbitem.php';
 include_once 'models/qbjournal.php';
 include_once 'models/qbsalesreceipt.php';

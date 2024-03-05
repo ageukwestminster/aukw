@@ -136,6 +136,10 @@ $router->mount('/qb', function () use ($router) {
     // QB item is for Products/Services
     $router->get('/item/(\w+)', 'QBItemCtl@read_one');
     $router->get('/items', 'QBItemCtl@read_all');
+    
+    // QB Employee
+    $router->get('/employee/(\w+)', 'QBEmployeeCtl@read_one');
+    $router->get('/employees', 'QBEmployeeCtl@read_all');
 });
 
 /***************/
