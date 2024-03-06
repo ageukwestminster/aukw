@@ -79,14 +79,19 @@ Config::write('token.cookiesecure', false);
 // Quickbooks SDKsettings
 Config::write('qb.authmode', 'oauth2');
 Config::write('qb.authrequesturi', 'https://appcenter.intuit.com/connect/oauth2');
-Config::write('qb.baseUrl', 'Production');
 Config::write('qb.tokenendpointuri', 'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer');
-Config::write('qb.clientid', 'QB_CLIENT_ID'); // env key name
-Config::write('qb.clientsecret', 'QB_CLIENT_SECRET'); // env key name
-Config::write('qb.authscope', 'com.intuit.quickbooks.accounting');
-Config::write('qb.redirecturl', 'https://9f7b-91-125-74-184.ngrok-free.app/api/qb/callback');
+Config::write('qb.authscope', 'com.intuit.quickbooks.accounting openid profile email');
+Config::write('qb.redirecturl', 'https://f204-91-125-74-184.ngrok-free.app' . '/callback');
 Config::write('qb.realmid', '123145825016867');
 Config::write('qb.responsetype', 'code');
 Config::write('qb.authstate', 'TEKP567ipruY9m'); // used to verify QBO callback
 Config::write('qb.enablelog', true);
 Config::write('qb.loglocation', 'B:\\logs');
+
+//Config::write('qb.baseUrl', 'Production');
+//Config::write('qb.clientid', 'QB_CLIENT_ID'); // env key name
+//Config::write('qb.clientsecret', 'QB_CLIENT_SECRET'); // env key name
+
+Config::write('qb.baseUrl', 'Development');
+Config::write('qb.clientid', 'QB_SANDBOX_CLIENT_ID'); // env key name
+Config::write('qb.clientsecret', 'QB_SANDBOX_CLIENT_SECRET'); // env key name

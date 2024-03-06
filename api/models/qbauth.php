@@ -63,11 +63,16 @@ class QuickbooksAuth{
     }
 
     /**
-     * Instantiate the QBO Dataservice from the config settings and 
+     * Instantiate the QBO Dataservice from the config settings 
      * Called from refresh, revoke and callback
      * @return void Output is echo'd directly to response
      */
-    private function init(){
+    private function init($realmId = ''){
+
+        if (!empty($realmId)) {
+            $this->config['QBORealmID'] = $realmId;
+        }
+
         $this->dataService = DataService::Configure($this->config);    
         $this->dataService->throwExceptionOnError(false);    
 
@@ -81,7 +86,7 @@ class QuickbooksAuth{
      */
     public function begin() {
 
-        $authUri=array();
+        $authUri=array();        
 
         if (empty($this->config['ClientID'])) {
             return $authUri;
@@ -103,8 +108,6 @@ class QuickbooksAuth{
     */
     public function callback(){
 
-        $this->init();
-    
         $code = $_GET['code'];        
         $realmId = $_GET['realmId'];
         $state = $_GET['state'];
@@ -116,6 +119,9 @@ class QuickbooksAuth{
             );
             exit(0);
         }
+
+        
+        $this->init($realmId);
             
         try {
             // The state value is used to verify that this is a legimiate callback, not a hoax
@@ -129,17 +135,25 @@ class QuickbooksAuth{
 
             $OAuth2LoginHelper = $this->dataService->getOAuth2LoginHelper();
             $accessTokenObj = $OAuth2LoginHelper->exchangeAuthorizationCodeForToken($code, $realmId);
+
+            $this->dataService->updateOAuth2Token($accessTokenObj);
+
+            $userInfo = $OAuth2LoginHelper->getUserInfo($accessTokenObj->getAccessToken(), 
+                                        strtolower($this->config['baseUrl']));
         }
         catch (\Exception $e) {
             http_response_code(400);  
             echo json_encode(
-              array("message" => "Unable to proceed with QB callback. Contact support.")
+              array("message" => "Unable to proceed with QB callback. Contact support.",
+              "details" => $e->getMessage())
             );
             exit(0);
         }
     
 
-        $this->dataService->updateOAuth2Token($accessTokenObj);
+
+
+
 
         $this->store_tokens_in_database($accessTokenObj);
 
@@ -216,7 +230,7 @@ class QuickbooksAuth{
         }
  
         $this->dataService = DataService::Configure(array(
-            'auth_mode' => 'oauth2',
+            'auth_mode' => $this->config['auth_mode'],
             'ClientID' => $this->config['ClientID'],
             'ClientSecret' => $this->config['ClientSecret'],
             'accessTokenKey' => $this->tokenModel->accesstoken,

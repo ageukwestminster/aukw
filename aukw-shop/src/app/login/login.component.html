@@ -41,9 +41,9 @@
             ></span>
             Login
           </button>
-          <a routerLink="/takings">
+          <a (click)="handleClick($event)">
             <img #hoverName class="mt-2" src="assets/images/Sign_in_blue_btn_med_default.svg"
-                 (mouseover)="hover(hoverName);" (mouseout)="unhover(hoverName);">
+                 (mouseover)="hoverOverIntuitButton(hoverName);" (mouseout)="unhoverOverIntuitButton(hoverName);">
           </a>
         </div>
         <div *ngIf="error" class="alert alert-danger mt-3 mb-0">

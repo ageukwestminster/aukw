@@ -17,6 +17,7 @@ class QBAuthCtl{
    * @return array The Uri to follow to make the link plus instructions on what to do
    */
   public static function oauth2_begin(){
+
     $model = new QuickbooksAuth();
 
     echo json_encode($model->begin(), JSON_NUMERIC_CHECK);

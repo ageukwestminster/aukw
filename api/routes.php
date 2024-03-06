@@ -34,6 +34,10 @@ $router->mount('/auth', function() use ($router) {
     $router->get('/refresh', function () {include 'authenticate/refresh.php'; } );
     // Logout
     $router->delete('/', function () {include 'authenticate/revoke.php'; } );
+    // Returns the uri needed to start the QBO authorisation process
+    $router->get('/qb/auth', 'QBAuthCtl@oauth2_begin');
+    // QBO callback endpoint for QBO authentication process
+    $router->get('/qb/callback', 'QBAuthCtl@oauth2_callback');
 });
 
 /***************/

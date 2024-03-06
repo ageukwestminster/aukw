@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { CallbackComponent } from './callback';
 import { HomeComponent } from './home';
 import { LoginComponent } from './login';
 import { AuthGuard } from './_helpers';
@@ -22,6 +23,10 @@ const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
+  },
+  {
+    path: 'callback',
+    component: CallbackComponent,
   },
   {
     path: 'reports',
@@ -57,7 +62,7 @@ const routes: Routes = [
  * <router-outlet></router-outlet> directive.
  */
 @NgModule({
-  imports: [RouterModule.forRoot(routes, {useHash: true})],
+  imports: [RouterModule.forRoot(routes, {useHash: false})],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

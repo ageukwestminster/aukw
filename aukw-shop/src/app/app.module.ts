@@ -14,9 +14,10 @@ import { LoginComponent } from './login';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '@app/shared/shared.module';
+import { CallbackComponent } from './callback/callback.component';
 
 @NgModule({
-  declarations: [AppComponent, HomeComponent, LoginComponent],
+  declarations: [AppComponent, HomeComponent, LoginComponent, CallbackComponent],
   imports: [
     BrowserModule,
     FormsModule,
