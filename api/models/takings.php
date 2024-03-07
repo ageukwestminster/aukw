@@ -415,7 +415,7 @@ class Takings{
         $this->operating_expenses=htmlspecialchars(strip_tags($this->operating_expenses));
         $this->volunteer_expenses=htmlspecialchars(strip_tags($this->volunteer_expenses));
         $this->cash_difference=htmlspecialchars(strip_tags($this->cash_difference));
-        $this->comments=htmlspecialchars(strip_tags($this->comments));
+        $this->comments=htmlspecialchars(strip_tags($this->comments ?? ''));
 
         // bind values
         $stmt->bindParam(":date", $this->date);
