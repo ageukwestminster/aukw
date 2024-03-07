@@ -157,6 +157,9 @@ $router->mount('/user', function () use ($router) {
     // return single user that has the given id
     $router->get('/(\d+)', 'UserCtl@read_one');
 
+    // return single user that has the given name an email address
+    $router->get('/search', 'UserCtl@read_one_by_name_and_email');
+
     // new user
     $router->post('/', 'UserCtl@create');
 

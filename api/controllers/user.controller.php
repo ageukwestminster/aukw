@@ -34,7 +34,7 @@ class UserCtl{
     $model = new \Models\User();
     $model->id = $id;
 
-    $model->readOne();
+    $model->readOneByUserID();
 
     if (empty($model->username) ) {
       http_response_code(400);   
@@ -44,16 +44,71 @@ class UserCtl{
       exit(1);
     }
 
+    // Done in this repetitive way to exclude 2 properties: password and failedloginattempts
     $user = array(
         "id" => $model->id,
         "username" => $model->username,
-        "firstname" => html_entity_decode($model->firstname ?? ''),
-        "surname" => html_entity_decode($model->surname ?? ''),
+        "firstname" => $model->firstname,
+        "surname" => $model->surname,
         "shopid" => $model->shopid,
         "role" => $model->role,
         "suspended" => $model->suspended,
         "email" => $model->email,
         "title" => $model->title,
+        "quickbooksUserId" => $model->quickbooksUserId,
+    );
+
+    echo json_encode($user, JSON_NUMERIC_CHECK);
+  }
+
+    /**
+   * Return details of the User identified by name and email address
+   *
+   * @param string $firstname The given name of the user
+   * @param string $surname The family name of the user
+   * @param string $email The email address of the user
+   * 
+   * @return void Output is echo'd directly to response 
+   * 
+   */
+  public static function read_one_by_name_and_email(){  
+
+    $model = new \Models\User();
+
+    if(!isset($_GET['firstname']) || !isset($_GET['surname']) || !isset($_GET['email'])) {
+      http_response_code(400);   
+      echo json_encode(
+          array("message" => "Please supply firstname, surname and email as parameters")
+      );
+      exit(1);
+    } 
+
+    $model->firstname = $_GET['firstname'];
+    $model->surname = $_GET['surname'];
+    $model->email = $_GET['email'];
+
+    $model->readOneByNameAndEmail();
+
+    if (empty($model->username) ) {
+      http_response_code(400);   
+      echo json_encode(
+          array("message" => "No User found with id = " . $model->id)
+      );
+      exit(1);
+    }
+
+    // Done in this repetitive way to exclude 2 properties: password and failedloginattempts
+    $user = array(
+        "id" => $model->id,
+        "username" => $model->username,
+        "firstname" => $model->firstname,
+        "surname" => $model->surname,
+        "shopid" => $model->shopid,
+        "role" => $model->role,
+        "suspended" => $model->suspended,
+        "email" => $model->email,
+        "title" => $model->title,
+        "quickbooksUserId" => $model->quickbooksUserId,
     );
 
     echo json_encode($user, JSON_NUMERIC_CHECK);

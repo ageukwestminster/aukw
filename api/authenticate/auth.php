@@ -28,7 +28,8 @@ if (isset($data)) {
 }
 
 // query database for a user with that username
-$stmt = $user->readOneRaw(strtolower($usernm));
+$user->username = strtolower($usernm);
+$stmt = $user->readOneByUsername();
 $num = $stmt->rowCount();
 
 // check if more than 0 records found

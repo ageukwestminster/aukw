@@ -124,7 +124,7 @@ class QuickbooksAuth{
         $this->init($realmId);
             
         try {
-            // The state value is used to verify that this is a legimiate callback, not a hoax
+            // The state value is used to verify that this is a legitimiate callback, not a hoax
             if ($state != $this->config['state']) {
                 http_response_code(400);  
                 echo json_encode(
@@ -140,6 +140,26 @@ class QuickbooksAuth{
 
             $userInfo = $OAuth2LoginHelper->getUserInfo($accessTokenObj->getAccessToken(), 
                                         strtolower($this->config['baseUrl']));
+
+            if (!$userInfo['emailVerified']) {
+                http_response_code(400);  
+                echo json_encode(
+                  array("message" => "Your Quickbooks email address is not verified. Please " . 
+                    "verify it at https://accounts.intuit.com/app/account-manager/security and try again.")
+                );
+                exit(0);
+            } else {
+                                
+                // Is user in database?
+
+                // Update Database with User Info
+                // - insert QB sub
+
+                // Generate user tokens
+
+                // Store QB tokens
+                $this->store_tokens_in_database($accessTokenObj);
+            }
         }
         catch (\Exception $e) {
             http_response_code(400);  
@@ -155,7 +175,7 @@ class QuickbooksAuth{
 
 
 
-        $this->store_tokens_in_database($accessTokenObj);
+        
 
         return true;
       }
@@ -310,10 +330,10 @@ class QuickbooksAuth{
      * 
      * @param OAuth2AccessToken QB object that contains access and refresh token info
      */
-    private function store_tokens_in_database($accessTokenObj){
+    private function store_tokens_in_database($userid, $accessTokenObj){
 
         $this->tokenModel = new QuickbooksToken();
-        $this->tokenModel->read();
+        $this->tokenModel->read($userid, $accessTokenObj->getRealmID());
 
         if ($this->tokenModel->accesstoken) {
             $isUpdate = true;
