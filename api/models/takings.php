@@ -440,12 +440,7 @@ class Takings{
         $stmt->bindParam(":operating_expenses", $this->operating_expenses);
         $stmt->bindParam(":volunteer_expenses", $this->volunteer_expenses);
         $stmt->bindParam(":cash_difference", $this->cash_difference);
-        if($this->comments == '') {            
-            $stmt->bindParam(":comments", $this->null, PDO::PARAM_STR);
-        }
-        else {
-            $stmt->bindParam(":comments", $this->comments);
-        }
+        $stmt->bindParam(":comments", $this->comments);
 
         // execute query
         try {
