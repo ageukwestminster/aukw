@@ -15,23 +15,34 @@ use DateTime;
 class QuickbooksJournal{
 
   /**
+   * The QBO id of the Quickbooks Journal.
+   *
+   * @var int
+   */
+  public int $id;
+
+  /**
+   * The QBO company ID
+   *
+   * @var string
+   */
+  public string $realmid;
+
+  /**
    * Return details of the QBO general journal identified by $id
-   * @param int $id The id of the ?journal to search for
    * @return IPPIntuitEntity Returns an journal with specified Id.
    * 
    */
-  public function readOne(int $id, string $realmid){
-
-
+  public function readOne(){
 
     $auth = new QuickbooksAuth();
-    $dataService = $auth->prepare($realmid);
+    $dataService = $auth->prepare($this->realmid);
     if ($dataService == false) {
       return;
     }
 
     $dataService->forceJsonSerializers();
-    $journalentry = $dataService->FindbyId('journalentry', $id);
+    $journalentry = $dataService->FindbyId('journalentry', $this->id);
     $error = $dataService->getLastError();
     if ($error) {
         echo "The Status code is: " . $error->getHttpStatusCode() . "\n";

@@ -112,6 +112,12 @@ class QuickbooksSalesReceipt{
    * @var string
    */
   protected string $privatenote;  
+  /**
+   * The QBO company ID
+   *
+   * @var string
+   */
+  protected string $realmid;
 
   /**
    * ID setter
@@ -225,6 +231,13 @@ class QuickbooksSalesReceipt{
     $this->privatenote = $privatenote;
     return $this;
   }
+    /**
+   * Private realmID setter.
+   */
+  public function setRealmID(string $realmid) {
+    $this->realmid = $realmid;
+    return $this;
+  }
 
 
 
@@ -274,7 +287,7 @@ class QuickbooksSalesReceipt{
 
       $auth = new QuickbooksAuth();
       try{
-        $dataService = $auth->prepare();
+        $dataService = $auth->prepare($this->realmid);
       }
       catch (\Exception $e) {
         http_response_code(401);  
@@ -380,7 +393,7 @@ class QuickbooksSalesReceipt{
     $theResourceObj = SalesReceipt::create($salesreceipt);
     
     $auth = new QuickbooksAuth();
-    $dataService = $auth->prepare();
+    $dataService = $auth->prepare($this->realmid);
     if ($dataService == false) {
       return false;
     }
@@ -446,7 +459,7 @@ class QuickbooksSalesReceipt{
   public function delete(): bool{
     $auth = new QuickbooksAuth();
     try{
-      $dataService = $auth->prepare();
+      $dataService = $auth->prepare($this->realmid);
     }
     catch (\Exception $e) {
       http_response_code(401);  

@@ -38,6 +38,12 @@ class QuickbooksReport{
      * @var int|null
      */
     public int|null $item;
+    /**
+     * The QBO company ID
+     *
+     * @var string
+     */
+    public string $realmid;
 
     /**
      * Generate a Profit & Loss report
@@ -48,12 +54,12 @@ class QuickbooksReport{
     public function profitAndLoss(){
 
         $auth = new QuickbooksAuth();
-        $dataService = $auth->prepare();
+        $dataService = $auth->prepare($this->realmid);
         if ($dataService == false) {
           return;
         }
         try{
-            $serviceContext = $auth->getServiceContext();
+            $serviceContext = $auth->getServiceContext($this->realmid);
         }
         catch (\Exception $e) {
             http_response_code(400);  
@@ -98,11 +104,11 @@ class QuickbooksReport{
     public function itemSales(){
 
         $auth = new QuickbooksAuth();
-        $dataService = $auth->prepare();
+        $dataService = $auth->prepare($this->realmid);
         if ($dataService == false) {
           return;
         }
-        $serviceContext = $auth->getServiceContext();
+        $serviceContext = $auth->getServiceContext($this->realmid);
         if ($serviceContext == false) {
             return;
         }

@@ -25,11 +25,11 @@ class QBJournalCtl{
       exit(1);
     } 
 
-    $realmid = $_GET['realmid'];
-
     $model = new \Models\QuickbooksJournal();
+    $model->id = $id;
+    $model->realmid = $_GET['realmid'];
 
-    echo json_encode($model->readone($id, $realmid), JSON_NUMERIC_CHECK);
+    echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
   }
 
 }

@@ -17,6 +17,13 @@ class QuickbooksItem{
   public int $id;
 
   /**
+   * The QBO company ID
+   *
+   * @var string
+   */
+  public string $realmid;
+
+  /**
    * Return details of the QBItem identified by $id
    *
    * @param int $id The QBO id of the Quickbooks Item.
@@ -27,7 +34,7 @@ class QuickbooksItem{
   public function readOne(){
 
       $auth = new QuickbooksAuth();
-      $dataService = $auth->prepare();
+      $dataService = $auth->prepare($this->realmid);
       if ($dataService == false) {
         return;
       }
@@ -54,7 +61,7 @@ class QuickbooksItem{
   public function readAll(){
 
     $auth = new QuickbooksAuth();
-    $dataService = $auth->prepare();
+    $dataService = $auth->prepare($this->realmid);
     if ($dataService == false) {
       return;
     }

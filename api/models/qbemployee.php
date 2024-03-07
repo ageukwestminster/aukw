@@ -15,6 +15,12 @@ class QuickbooksEmployee{
    * @var int
    */
   public int $id;
+  /**
+   * The QBO company ID
+   *
+   * @var string
+   */
+  public string $realmid;
 
   /**
    * Return details of the QBEmployee identified by $id
@@ -27,7 +33,7 @@ class QuickbooksEmployee{
   public function readOne(){
 
       $auth = new QuickbooksAuth();
-      $dataService = $auth->prepare();
+      $dataService = $auth->prepare($this->realmid);
       if ($dataService == false) {
         return;
       }
@@ -54,7 +60,7 @@ class QuickbooksEmployee{
   public function readAll(){
 
     $auth = new QuickbooksAuth();
-    $dataService = $auth->prepare();
+    $dataService = $auth->prepare($this->realmid);
     if ($dataService == false) {
       return;
     }

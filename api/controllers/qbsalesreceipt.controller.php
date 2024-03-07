@@ -23,7 +23,15 @@ class SalesReceiptCtl{
    */
   public static function read_one(int $id){  
 
-    $model = QuickbooksSalesReceipt::getInstance()->setId($id);
+    if(!isset($_GET['realmid']) ) {
+      http_response_code(400);   
+      echo json_encode(
+        array("message" => "Please supply a value for the 'realmid' parameter.")
+      );
+      exit(1);
+    } 
+
+    $model = QuickbooksSalesReceipt::getInstance()->setId($id)->setRealmID(($_GET['realmid']));
 
     echo json_encode($model->readone(), JSON_NUMERIC_CHECK);   
   }
@@ -278,7 +286,7 @@ class SalesReceiptCtl{
       echo json_encode(
         array(
           "message" => "Unable to enter sales receipt in Quickbooks. Transaction is not in balance for '" .
-          $data->date . "'.")
+          $takings->date . "'.")
           , JSON_NUMERIC_CHECK);
       exit(1);      
     }

@@ -252,6 +252,13 @@ class QuickbooksAuth{
     /**
      * Prepare the dataService object for API calls. Called before all QBO api calls.
      * 
+     * Process:
+     *      * Check for a valid refresh token. If none or expired then suggest re-authorising the app
+     *      * Check if access token expired. If yes then use refresh token to obtain new access token.
+     *      * Configure a new DataService object from the given realID and default values.
+     *      * Append the new or unexpired access token to the QBO DataService object
+     *      * Return this prepared DataService object
+     * 
      * @return DataService|null 
      */
     public function prepare($realmid){
@@ -275,7 +282,7 @@ class QuickbooksAuth{
             # Uh ooh, the refresh token has expired
             http_response_code(400);  
             echo json_encode(
-                array("message" => "refresh token has expired")
+                array("message" => "Refresh token has expired. Please re-authorise the app.")
             );
             exit();
         }

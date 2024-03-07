@@ -2,8 +2,6 @@
 
 namespace Controllers;
 
-use \Datetime;
-
 /**
  * Controller to accomplish QBO Employee related tasks. 
  *
@@ -19,8 +17,17 @@ class QBEmployeeCtl{
    */
   public static function read_one(int $id){  
 
+    if(!isset($_GET['realmid']) ) {
+      http_response_code(400);   
+      echo json_encode(
+        array("message" => "Please supply a value for the 'realmid' parameter.")
+      );
+      exit(1);
+    } 
+
     $model = new \Models\QuickbooksEmployee();
     $model->id = $id;
+    $model->realmid = $_GET['realmid'];
 
     echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
   }
