@@ -29,15 +29,24 @@ class QBAuthCtl{
    * system authorization codes. It does this by means of a callback uri. When the QBO
    * API calls the endpoint the system routes the request through here.
    * 
-   * @return void Output is echo'd directly to response Output is echo'd directly to response
+   * @return void Output is echo'd directly to response
    */
   public static function oauth2_callback(){
+
+    $code = $_GET['code'];        
+    $realmId = $_GET['realmId'];
+    $state = $_GET['state'];
+
+    if (empty($code) || empty($realmId) || empty($state) ) {
+        http_response_code(400);  
+        echo json_encode(
+          array("message" => "Unable to proceed with QB callback: provided parameters not as expected")
+        );
+        exit(0);
+    }
+
     $model = new QuickbooksAuth();
-    $model->callback();
-    echo json_encode(
-      array("status" => "success",
-      "message" => "The connection to Quickbooks is now online. You can close this window.")
-    );
+    $model->callback($code, $realmId, $state);
   }
 
   /**
@@ -47,7 +56,18 @@ class QBAuthCtl{
    */
   public static function oauth2_revoke(){
     $model = new QuickbooksAuth();
-    if ($model->revoke()) {
+
+    if(!isset($_GET['realmid']) ) {
+      http_response_code(400);   
+      echo json_encode(
+        array("message" => "Please supply a value for the 'realmid' parameter.")
+      );
+      exit(1);
+    } 
+
+    $realmid = $_GET['realmid'];
+
+    if ($model->revoke($realmid)) {
       echo json_encode(
       array("message" => "Your Quickbooks tokens have been revoked.")
       );
@@ -64,12 +84,23 @@ class QBAuthCtl{
   /**
    * Refresh the QB access token from the refresh token
    *
-   * @return bool 
+   * @return void 
    * 
    */
   public static function oauth2_refresh(){
     $model = new QuickbooksAuth();
-    if ($model->refresh()) {
+
+    if(!isset($_GET['realmid']) ) {
+      http_response_code(400);   
+      echo json_encode(
+          array("message" => "Please supply a value for the 'realmid' parameter.")
+      );
+      exit(1);
+    } 
+
+    $realmid = $_GET['realmid'];
+
+    if ($model->refresh($realmid)) {
     echo json_encode(
       array("message" => "Quickbooks Tokens refreshed.")
       );
@@ -90,9 +121,28 @@ class QBAuthCtl{
   public static function connection_details(){  
 
     $model = new \Models\QuickbooksToken();
-    $model->read();
 
-    echo json_encode($model, JSON_NUMERIC_CHECK);
+    if(!isset($_GET['userid']) || !isset($_GET['realmid']) ) {
+      http_response_code(400);   
+      echo json_encode(
+          array("message" => "Please supply user id and realmid as parameters. " 
+              . "The user id is the databse id not the QB uuid.")
+      );
+      exit(1);
+    } 
+
+    $userid = $_GET['userid'];
+    $realmid = $_GET['realmid'];
+    
+    $model->read($userid, $realmid);
+
+    if ($model->accesstoken) {
+      echo json_encode($model, JSON_NUMERIC_CHECK);
+    } else {
+      $model = new \stdClass();
+      echo json_encode($model, JSON_NUMERIC_CHECK);
+    }
+
   }
 
 

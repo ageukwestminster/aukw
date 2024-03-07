@@ -58,7 +58,8 @@ class QuickbooksReport{
         catch (\Exception $e) {
             http_response_code(400);  
             echo json_encode(
-              array("message" => "Unable to proceed with QB callback: 'state' does not match initial value.")
+              array("message" => "Unable to proceed with QB report.",
+                "details" => $e->getMessage())
             );
             exit(0);            
         }

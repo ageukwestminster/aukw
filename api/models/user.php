@@ -40,6 +40,8 @@ class User{
     public $shopid;
     public $title;
     public $failedloginattempts;
+    public $quickbooksUserId;
+
 
     /**
      * Return details of all Users
@@ -47,26 +49,14 @@ class User{
      * @return array An array of Users
      */
     public function read(){
-
-        //select all data
-        $query = "SELECT
-                    u.`id`, u.`username`, u.`password`, u.`shopid`,
-                    u.isAdmin, u.suspended, u.`firstname`, u.failedloginattempts, 
-                    u.`email`, u.`title`, u.`surname`
-                    FROM
-                    " . $this->table_name . " u " . 
-                    (isset($this->suspended)?'WHERE suspended = '.$this->suspended.' ':'');                    
-
-        $stmt = $this->conn->prepare( $query );
-        $stmt->execute();
+               
+        $stmt = User::prepareAndExecuteSelectStatement('BY_SUSPENDED');
 
         $num = $stmt->rowCount();
 
         $users_arr=array();
 
         if($num>0){
- 
-            
         
             // retrieve our table contents
             // fetch() is faster than fetchAll()
@@ -86,7 +76,8 @@ class User{
                         "suspended" => $suspended?true:false,
                         "email" => html_entity_decode($email ?? ''),
                         "title" => html_entity_decode($title ?? ''),
-                        "shopid" => $shopid
+                        "shopid" => $shopid,
+                        "quickbooksUserId" => html_entity_decode($quickbooksUserId ?? ''),
                     );
         
                     // create nonindexed array
@@ -98,80 +89,53 @@ class User{
         return $users_arr;
     }
 
-  /**
-   * Retrieve from thje database details of the User
-   * 
-   * @return void
-   * 
-   */
-    public function readOne(){
+    /**
+     * Retrieve from the database details of the User, specified by
+     * First Name, Surname and Email address
+     * 
+     * @return void
+     * 
+     */
+    public function readOneByNameAndEmail(){
 
-        //select all data
-        $query = "SELECT
-                    u.`id`, u.`username`, u.`password`, u.`shopid`,
-                    u.isAdmin, u.suspended, u.`firstname`, u.`failedloginattempts`,
-                    u.`email`, u.`title`, u.`surname`
-                    FROM
-                    " . $this->table_name . " u
-                    WHERE u.id = :id
-                    LIMIT 0,1";
-                
-        // prepare query statement
-        $stmt = $this->conn->prepare( $query );
+        $stmt = User::prepareAndExecuteSelectStatement('BY_NAMEANDEMAIL');
 
-        // bind id of product to be updated
-        $id = filter_var($this->id, FILTER_SANITIZE_NUMBER_INT);
-        $stmt->bindParam (":id", $id, PDO::PARAM_INT);
+        $this->transferPropertiestoModel($stmt);
+
+    }
+
+    /**
+     * Query for the details of one user using $username but return the results as a 
+     * MySQLi statement rather than a JSON string or an object
+     * 
+     * @return object Returns a MySQLi statement
+     */
+    public function readOneByUsername(){
+        return User::prepareAndExecuteSelectStatement('BY_USERNAME');
+    }
+
+    /**
+     * Retrieve from the database details of a User, queried using the 
+     * model property $id
+     * 
+     * @return void
+     * 
+     */
+    public function readOneByUserID(){
 
         // execute query
-        $stmt->execute();
+        $stmt = User::prepareAndExecuteSelectStatement('BY_USERID');
 
-        // get retrieved row
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        // set values to object properties
-        if ( !empty($row) ) {
-            $this->id = $row['id'];
-            $this->username = $row['username'];
-            $this->firstname = $row['firstname'];
-            $this->surname = $row['surname'];
-            $this->password = $row['password'];
-            $this->shopid = $row['shopid'];
-            $this->email = $row['email'];
-            $this->title = $row['title'];
-            $this->role = $row['isAdmin'] ? 'Admin' : 'User';
-            $this->suspended = $row['suspended']?true:false;
-            $this->failedloginattempts = $row['failedloginattempts'];
-        }
+        $this->transferPropertiestoModel($stmt);
     }
 
-    // find the details of one user using $username
-    public function readOneRaw($username){
 
-        //select all data
-        $query = "SELECT
-                    u.`id`, u.`username`, u.`password`, u.`surname`, u.`shopid`,
-                    u.isAdmin, u.suspended, u.`firstname`, u.`failedloginattempts`,
-                    CASE WHEN u.isAdmin THEN 'Admin' ELSE 'User' END as `role`,
-                    u.`email`, u.`title`
-                    FROM
-                    " . $this->table_name . " u
-                    WHERE username = ?
-                    LIMIT 0,1";
-                
-        $stmt = $this->conn->prepare( $query );
-        $stmt->bindParam(1, $username);
-        $stmt->execute();
-
-        return $stmt;
-    }
-
-  /**
-   * Add a new User to the database.
-   * 
-   * @return bool 'true' if database update succeeded.
-   * 
-   */
+    /**
+     * Add a new User to the database.
+     * 
+     * @return bool 'true' if database insert succeeded.
+     * 
+     */
     function create(){
         $query = "INSERT INTO
                     " . $this->table_name . "
@@ -184,8 +148,8 @@ class User{
                     email=:email,
                     title=:title,
                     suspended=:suspended,
-                    failedloginattempts=:failedloginattempts
-                    " . (isset($this->password)?',password=:password ':'');
+                    failedloginattempts=:failedloginattempts"
+                    . (isset($this->password)?',password=:password ':'');
         
         // prepare query
         $stmt = $this->conn->prepare($query);
@@ -199,6 +163,7 @@ class User{
         $this->role=htmlspecialchars(strip_tags($this->role));
         $this->failedloginattempts=filter_var($this->failedloginattempts, FILTER_SANITIZE_NUMBER_INT);
         $this->shopid=filter_var($this->shopid, FILTER_SANITIZE_NUMBER_INT);
+        $this->role=htmlspecialchars(strip_tags($this->role));
 
         $isadmin = ($this->role=='Admin') ? 1 : 0;
         $suspended = $this->suspended ? 1 : 0;
@@ -228,12 +193,12 @@ class User{
         return false;
     }
 
-  /**
-   * Update an existing User in the database with new data.
-   * 
-   * @return bool 'true' if database update succeeded.
-   * 
-   */
+    /**
+     * Update an existing User in the database with new data.
+     * 
+     * @return bool 'true' if database update succeeded.
+     * 
+     */
     function update(){
         $query = "UPDATE
                     " . $this->table_name . "
@@ -247,10 +212,10 @@ class User{
                     surname=:surname,
                     shopid=:shopid,
                     timestamp=NULL,
-                    failedloginattempts=:failedloginattempts
-                    " . (isset($this->password)?',password=:password ':'') ."
-                 WHERE
-                    id=:id";
+                    failedloginattempts=:failedloginattempts"
+                    . (isset($this->quickbooksUserId)?',quickbooksUserId=:quickbooksUserId ':'') 
+                    . (isset($this->password)?',password=:password ':'') 
+                    ." WHERE id=:id";
         
         // prepare query
         $stmt = $this->conn->prepare($query);
@@ -262,14 +227,20 @@ class User{
         $this->email=htmlspecialchars(strip_tags($this->email));
         $this->title=htmlspecialchars(strip_tags($this->title));
         $this->role=htmlspecialchars(strip_tags($this->role));
-        $this->failedloginattempts=filter_var($this->failedloginattempts, FILTER_SANITIZE_NUMBER_INT);
         $this->shopid=filter_var($this->shopid, FILTER_SANITIZE_NUMBER_INT);
+
+        $this->failedloginattempts=filter_var($this->failedloginattempts, FILTER_SANITIZE_NUMBER_INT);
+        $this->failedloginattempts = !empty($this->failedloginattempts) ? $this->failedloginattempts : 0;
+
         if(isset($this->password)) {
             $this->password=htmlspecialchars(strip_tags($this->password));
             $stmt->bindParam(":password", $this->password);
         }
+        if(isset($this->quickbooksUserId)) {
+            $this->quickbooksUserId=htmlspecialchars(strip_tags($this->quickbooksUserId));
+            $stmt->bindParam(":quickbooksUserId", $this->quickbooksUserId);
+        }
         
-        $this->failedloginattempts = !empty($this->failedloginattempts) ? $this->failedloginattempts : 0;
 
         $isadmin = ($this->role=='Admin') ? 1 : 0;
         $suspended = $this->suspended ? 1 : 0;        
@@ -295,11 +266,10 @@ class User{
     }
 
     /**
-     * Delete the user from the database that matches the given $id.
-     *
-     * @param int $id
+     * Delete the user from the database that matches the id property 
+     * of the user.
      * 
-     * @return void Output is echo'd directly to response
+     * @return bool 'true' if database delete succeeded.
      * 
      */
     public function delete(){
@@ -355,7 +325,7 @@ class User{
 
     
     /**
-     * Check the supplied password meet minimum standards:
+     * Check the supplied password meets minimum standards:
      *  - 8 or more characters
      *  - Must include at least one number
      *  - Must include ast least one letter
@@ -383,4 +353,93 @@ class User{
     
         return ($errors == $errors_init);
     }
+
+    /**
+     * Build and execute a MySQLi statement to query the database for a user or users. The
+     * query is customised by the where query specifier. This method was written to reduce
+     * code re-use in the various read... methods.
+     * 
+     * @param string $whereQuery One of '','BY_USERID', 'BY_USERNAME','BY_NAMEANDEMAIL','BY_SUSPENDED'
+     * 
+     * @return object Returns a MySQLi statement
+     */
+    private function prepareAndExecuteSelectStatement(string $whereQuery) {
+        
+        $query = "SELECT
+                    u.`id`, u.`username`, u.`password`, u.`surname`, u.`shopid`,
+                    u.isAdmin, u.suspended, u.`firstname`, u.`failedloginattempts`,
+                    CASE WHEN u.isAdmin THEN 'Admin' ELSE 'User' END as `role`,
+                    u.`email`, u.`title`, u.`quickbooksUserId`
+                    FROM
+                    " . $this->table_name . " u";
+                
+        switch ($whereQuery) {
+            case 'BY_USERID':
+                $query .= " WHERE u.id = :id";
+                break;
+            case 'BY_USERNAME':
+                $query .= " WHERE u.username = :username";
+                break;
+            case 'BY_NAMEANDEMAIL':
+                $query .= " WHERE u.firstname = :firstname AND " . 
+                                "u.surname = :surname AND u.email = :email";
+                break;                
+            case 'BY_SUSPENDED':
+                $query .= 
+                    (isset($this->suspended)?' WHERE suspended = '.$this->suspended.' ':'');   
+                break;            
+        }             
+
+        $stmt = $this->conn->prepare( $query );
+
+        switch ($whereQuery) {
+            case 'BY_USERID':
+                $id = filter_var($this->id, FILTER_SANITIZE_NUMBER_INT);
+                $stmt->bindParam (":id", $id, PDO::PARAM_INT);
+                break;
+            case 'BY_USERNAME':
+                $this->username=htmlspecialchars(strip_tags($this->username));
+                $stmt->bindParam(":username", $this->username);
+                break;
+            case 'BY_NAMEANDEMAIL':
+                $this->firstname=htmlspecialchars(strip_tags($this->firstname));
+                $this->surname=htmlspecialchars(strip_tags($this->surname));
+                $this->email=htmlspecialchars(strip_tags($this->email));
+                $stmt->bindParam(":firstname", $this->firstname);
+                $stmt->bindParam(":surname", $this->surname);
+                $stmt->bindParam(":email", $this->email);
+                break;                           
+        }   
+
+        $stmt->execute();
+
+        return $stmt;
+    }
+
+    /**
+     * Update the properties of the user model with the data from the database
+     * 
+     * @return void
+     */
+    private function transferPropertiestoModel($stmt) {
+        // get retrieved row
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        // set values to object properties
+        if ( !empty($row) ) {
+            $this->id = $row['id'];
+            $this->username = $row['username'];
+            $this->firstname = $row['firstname'];
+            $this->surname = $row['surname'];
+            $this->password = $row['password'];
+            $this->shopid = $row['shopid'];
+            $this->email = $row['email'];
+            $this->title = $row['title'];
+            $this->role = $row['isAdmin'] ? 'Admin' : 'User';
+            $this->suspended = $row['suspended']?true:false;
+            $this->failedloginattempts = $row['failedloginattempts'];
+            $this->quickbooksUserId = $row['quickbooksUserId'];
+        }
+    }
+
 }

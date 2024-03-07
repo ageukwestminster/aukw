@@ -29,6 +29,16 @@ class QuickbooksToken{
     }
 
     /**
+     * The ID of the user
+     * @var int
+     */
+    public $userid;
+    /**
+     * QBO realm ID, aka company ID
+     * @var string
+     */
+    public $realmid;
+    /**
      * QBO access token
      * @var string
      */
@@ -60,7 +70,9 @@ class QuickbooksToken{
     function insert(){
         $query = "INSERT INTO
                     " . $this->table_name . "
-                    SET 
+                    SET
+                    userid=:userid,
+                    realmid=:realmid,
                     accesstoken=:accesstoken, 
                     accesstokenexpiry=:accesstokenexpiry,
                     refreshtoken=:refreshtoken,
@@ -72,6 +84,8 @@ class QuickbooksToken{
         $stmt = $this->conn->prepare($query);
 
         // bind values
+        $stmt->bindParam(":userid", $this->userid, PDO::PARAM_INT);
+        $stmt->bindParam(":realmid", $this->realmid);
         $stmt->bindParam(":accesstoken", $this->accesstoken);
         $stmt->bindParam(":accesstokenexpiry", $this->accesstokenexpiry);
         $stmt->bindParam(":refreshtoken", $this->refreshtoken);
@@ -94,17 +108,21 @@ class QuickbooksToken{
     function update(){
         $query = "UPDATE
                     " . $this->table_name . "
-                    SET                     
+                    SET                  
                     accesstoken=:accesstoken, 
                     accesstokenexpiry=:accesstokenexpiry,
                     refreshtoken=:refreshtoken,
                     refreshtokenexpiry=:refreshtokenexpiry,
-                    `timestamp`=NULL";
+                    `timestamp`=NULL
+                    WHERE
+                        userid=:userid AND realmid=:realmid";
         
         // prepare query
         $stmt = $this->conn->prepare($query);
 
         // bind values
+        $stmt->bindParam(":userid", $this->userid, PDO::PARAM_INT);
+        $stmt->bindParam(":realmid", $this->realmid);
         $stmt->bindParam(":accesstoken", $this->accesstoken);
         $stmt->bindParam(":accesstokenexpiry", $this->accesstokenexpiry);
         $stmt->bindParam(":refreshtoken", $this->refreshtoken);
@@ -123,12 +141,16 @@ class QuickbooksToken{
      * 
      * @return void Output is echo'd directly to response
      */
-    function read(){
+    function read($userid, $realmid){
         $query = "SELECT `accesstoken`,`accesstokenexpiry`,`refreshtoken`,`refreshtokenexpiry`
-                    FROM " . $this->table_name;
+                        ,userid,realmid
+                    FROM " . $this->table_name . 
+                    " WHERE userid=:userid AND realmid=:realmid";
         
         // prepare query
         $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":userid", $userid, PDO::PARAM_INT);
+        $stmt->bindParam(":realmid", $realmid);
 
         // execute query
         $stmt->execute();
@@ -138,6 +160,8 @@ class QuickbooksToken{
 
         // set values to object properties
         if ( !empty($row) ) {
+            $this->userid = $row['userid'];
+            $this->realmid = $row['realmid'];
             $this->accesstoken = $row['accesstoken'];
             $this->accesstokenexpiry = $row['accesstokenexpiry'];
             $this->refreshtoken = $row['refreshtoken'];
@@ -151,9 +175,12 @@ class QuickbooksToken{
      * @return bool 'true' if operation succeeded
      */
     public function delete(){
-        $query = "DELETE FROM " . $this->table_name;
+        $query = "DELETE FROM " . $this->table_name . 
+            " WHERE userid=:userid AND realmid=:realmid";
 
         $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":userid", $this->userid, PDO::PARAM_INT);
+        $stmt->bindParam(":realmid", $this->realmid);
 
         // execute query
         if($stmt->execute()){

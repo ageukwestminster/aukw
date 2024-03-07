@@ -17,10 +17,19 @@ class QBJournalCtl{
    */
   public static function read_one(int $id){  
 
-    $model = new \Models\QuickbooksJournal();
-    $model->id = $id;
+    if(!isset($_GET['realmid']) ) {
+      http_response_code(400);   
+      echo json_encode(
+        array("message" => "Please supply a value for the 'realmid' parameter.")
+      );
+      exit(1);
+    } 
 
-    echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
+    $realmid = $_GET['realmid'];
+
+    $model = new \Models\QuickbooksJournal();
+
+    echo json_encode($model->readone($id, $realmid), JSON_NUMERIC_CHECK);
   }
 
 }

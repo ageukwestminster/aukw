@@ -54,7 +54,7 @@ Config::write('api.path', '/api/');
 // db
 Config::write('db.host', '192.168.1.146');
 Config::write('db.port', '3306');
-Config::write('db.name', 'dailytakings2');
+Config::write('db.name', 'dailytakings');
 Config::write('db.user', 'shop');
 Config::write('db.password', 'DB_PASSWORD'); // env key name
 
@@ -81,7 +81,7 @@ Config::write('qb.authmode', 'oauth2');
 Config::write('qb.authrequesturi', 'https://appcenter.intuit.com/connect/oauth2');
 Config::write('qb.tokenendpointuri', 'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer');
 Config::write('qb.authscope', 'com.intuit.quickbooks.accounting openid profile email');
-Config::write('qb.redirecturl', 'https://f204-91-125-74-184.ngrok-free.app' . '/callback');
+Config::write('qb.redirecturl', 'https://5129-91-125-74-184.ngrok-free.app' . '/api/auth/qb/callback');
 Config::write('qb.realmid', '123145825016867');
 Config::write('qb.responsetype', 'code');
 Config::write('qb.authstate', 'TEKP567ipruY9m'); // used to verify QBO callback
