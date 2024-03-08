@@ -89,9 +89,9 @@ export class LoginComponent implements OnInit {
     element.setAttribute('src', "assets/images/Sign_in_blue_btn_med_default.svg");
   }
 
-  handleClick(event : any) {
+
+  redirectToIntuitSSO(event : Event) {
     event.preventDefault();
-    console.log('Test');
     this.qbConnDetsService.getAuthUri().subscribe((uri: QBAuthUri) => {
       if (uri && uri.authUri) {
         // Open the QB Auth uri in a new tab or window
@@ -101,11 +101,4 @@ export class LoginComponent implements OnInit {
     return false;
   }
 
-  createOauthWindow(url: string, name = 'Authorization', width = 500, height = 900, left = 0, top = 0) {
-    if (url == null) {
-        return null;
-    }
-    const options = `width=${width},height=${height},left=${left},top=${top},popup=true`;
-    return window.open(url, name, options);
-}
 }

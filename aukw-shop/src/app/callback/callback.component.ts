@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { environment } from '@environments/environment';
 import { AlertService, AuthenticationService} from '@app/_services';
 
 @Component({
@@ -14,19 +15,29 @@ export class CallbackComponent implements OnInit {
     ) { }
 
   public ngOnInit():void {
-    console.log("Hello from callback");
+    
     const code = this.route.snapshot.queryParamMap.get('code');
     const realmId = this.route.snapshot.queryParamMap.get('realmId');
     const state = this.route.snapshot.queryParamMap.get('state');
 
     if (!code || !state || !realmId) {
-      this.alertService.error("Error: Empty callback parameters from Intuit.")
-      this.router.navigate(['/']);
+      console.error("Error: Invalid parameters passed to callback. To use "
+          + "this endpoint you must supply values for: " 
+          + "'code', 'realmId' and 'state'.");
+      window.location.href = environment.loginUrl;
     }
+
+    //Check that we have the correct company to proceed
+    if (realmId != environment.quickbooksRealmID) {
+      console.error("Error: 'realmId' does not match expected value.");
+        window.location.href = environment.loginUrl;
+    }
+    
+
 
     // Handle token
     // ...
-    window.location.href = "http://localhost:4200/";
+    window.location.href = environment.loginUrl;
     //this.router.navigate(['/']);
 }
 
