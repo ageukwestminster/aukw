@@ -454,7 +454,12 @@ class Takings{
             }
         }
         catch (\Exception $e) {
-            return false;
+            http_response_code(400); 
+            echo json_encode(
+                array("message" => "Unable to add takings to database. Possibly a duplicate?",
+                "error" => $e->getMessage())
+              );
+            exit(1);
         }
         
         return false;

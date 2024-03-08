@@ -43,8 +43,18 @@ class SalesReceiptCtl{
    * @return void Output is echoed directly to response 
    */
   public static function delete(int $id){  
+    
+    if(!isset($_GET['realmid']) ) {
+      http_response_code(400);   
+      echo json_encode(
+        array("message" => "Please supply a value for the 'realmid' parameter.")
+      );
+      exit(1);
+    } 
 
-    $model = QuickbooksSalesReceipt::getInstance()->setId($id);
+    $model = QuickbooksSalesReceipt::getInstance()
+        ->setId($id)
+        ->setRealmID($_GET['realmid']);
 
     if($model->delete()) {
       echo json_encode(
@@ -81,6 +91,13 @@ class SalesReceiptCtl{
    * 
    */
   public static function create(){  
+    if(!isset($_GET['realmid']) ) {
+      http_response_code(400);   
+      echo json_encode(
+        array("message" => "Please supply a value for the 'realmid' parameter.")
+      );
+      exit(1);
+    } 
 
     $emptySales = (object) [ 'number' => 0, 'sales' => 0];
 
@@ -102,7 +119,8 @@ class SalesReceiptCtl{
         ->setOperatingExpenses($data->operatingExpenses ?? 0)
         ->setVolunteerExpenses($data->volunteerExpenses ?? 0)
         ->setCashToCharity($data->cashToCharity ?? 0)
-        ->setPrivateNote($data->comments ?? ''
+        ->setPrivateNote($data->comments ?? '')
+        ->setRealmID($_GET['realmid']
       );
     } catch (\TypeError $e) {
       http_response_code(422);  
@@ -154,6 +172,14 @@ class SalesReceiptCtl{
    */
   public static function create_from_takings(int $takingsid){  
 
+    if(!isset($_GET['realmid']) ) {
+      http_response_code(400);   
+      echo json_encode(
+        array("message" => "Please supply a value for the 'realmid' parameter.")
+      );
+      exit(1);
+    } 
+
     $takings = new Takings();
     $takings->id = $takingsid;
     $takings->readOne();
@@ -175,7 +201,7 @@ class SalesReceiptCtl{
     }
 
     $model=SalesReceiptCtl::transfer_takings_data($takings);
-    
+    $model->setRealmID($_GET['realmid']);
     $result = $model->create();
     if ($result) {
       $takings->quickbooks = 1;

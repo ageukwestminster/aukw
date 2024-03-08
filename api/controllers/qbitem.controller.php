@@ -19,8 +19,17 @@ class QBItemCtl{
    */
   public static function read_one(int $id){  
 
+    if(!isset($_GET['realmid']) ) {
+      http_response_code(400);   
+      echo json_encode(
+        array("message" => "Please supply a value for the 'realmid' parameter.")
+      );
+      exit(1);
+    } 
+
     $model = new \Models\QuickbooksItem();
     $model->id = $id;
+    $model->realmid = $_GET['realmid'];
 
     echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
   }
@@ -32,7 +41,16 @@ class QBItemCtl{
    */
   public static function read_all(){  
 
+    if(!isset($_GET['realmid']) ) {
+      http_response_code(400);   
+      echo json_encode(
+        array("message" => "Please supply a value for the 'realmid' parameter.")
+      );
+      exit(1);
+    } 
+
     $model = new \Models\QuickbooksItem();
+    $model->realmid = $_GET['realmid'];
 
     echo json_encode($model->readAll(), JSON_NUMERIC_CHECK);
   }

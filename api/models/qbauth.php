@@ -58,7 +58,7 @@ class QuickbooksAuth{
           'ClientSecret' => getenv(\Core\Config::read('qb.clientsecret')),
           'scope' => \Core\Config::read('qb.authscope'),
           'redirectURI' => \Core\Config::read('qb.redirecturl'),
-          'QBORealmID' => \Core\Config::read('qb.realmid'),
+          //'QBORealmID' => \Core\Config::read('qb.realmid'),
           'response_type' => \Core\Config::read('qb.responsetype'),
           'state' => \Core\Config::read('qb.authstate'),
           'iduser' => $this->jwt->id,

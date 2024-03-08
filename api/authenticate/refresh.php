@@ -19,7 +19,7 @@ if ($token && $token['id']) {
 
     // read the details of user to be edited
     $user->id = $token['id'];
-    $user->readOne();
+    $user->readOneByUserID();
     if (empty($user->username) ) {
         http_response_code(400);   
         echo json_encode(

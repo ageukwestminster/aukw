@@ -63,7 +63,16 @@ class QBReportCtl{
    */
   public static function sales_by_item(){  
 
+    if(!isset($_GET['realmid']) ) {
+      http_response_code(400);   
+      echo json_encode(
+        array("message" => "Please supply a value for the 'realmid' parameter.")
+      );
+      exit(1);
+    } 
+
     $model = new \Models\QuickbooksReport();
+    $model->realmid = $_GET['realmid'];
 
     if(isset($_GET['start']) || isset($_GET['end'])) {
       $start='';
