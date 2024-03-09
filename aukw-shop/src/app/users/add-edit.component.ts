@@ -16,7 +16,7 @@ import {
   AlertService,
   AuthenticationService,
   ShopService,
-  QBConnectionDetailsService,
+  QBConnectionService,
 } from '@app/_services';
 import { MustMatch } from '@app/_helpers';
 import {
@@ -47,7 +47,7 @@ export class UserAddEditComponent implements OnInit {
     private alertService: AlertService,
     private authenticationService: AuthenticationService,
     private shopService: ShopService,
-    private qbConnDetsService: QBConnectionDetailsService,
+    private qbConnDetsService: QBConnectionService,
     private location: Location,
   ) {
     this.user = this.authenticationService.userValue;

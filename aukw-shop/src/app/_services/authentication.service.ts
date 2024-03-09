@@ -127,6 +127,20 @@ export class AuthenticationService {
       );
   }
 
+  callback(code: string, realmId: string, state: string) {
+    return this.http
+      .get<any>(
+        `${environment.apiUrl}/auth/qb/callback?code=${code}&realmId=${realmId}&state=${state}`)
+      .pipe(
+        map((user) => {
+          user.isAdmin = user && user.role && user.role === Role.Admin; // Add extra property
+          this.userSubject.next(user);
+          this.startRefreshTokenTimer();
+          return user;
+        }),
+      );
+  }
+
   /**
    * Start a timer that, when fired, will use the refresh token to generate a new
    * access token. The timeout is set for 1 moinute before the expiry of the access token.

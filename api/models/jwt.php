@@ -241,14 +241,19 @@ class JWTWrapper{
                     "expiry" => $claims->get('exp')
                 );
     
-                // Check database for existance of the JWT for the given user, and that it is not suspended
-                if ($this->usertoken->getRefreshTokenStatus($simplified_token['id'], $simplified_token['jti'])) {
+                // Check database for existance of the JWT for the given user
+                // and that the token is not suspended
+                if ($this->usertoken->getRefreshTokenStatus($simplified_token['id']
+                                                            , $simplified_token['jti'])) {
                     return $simplified_token;
                 } else {
-                    // Someone has used a valid RefreshToken that has already been used (status = 0)
-                    // Disable all tokens and force user to log in again
+                    // Someone has used a valid RefreshToken that has already been used (status = 0) or
+                    // the refresh token they are advancing is not in the database.
+                    //
+                    // Foul play?
+                    // If so disable all tokens and force user to log in again
 
-                    // TODO: This is being called too often
+                    // Commented Out: This is being called too often
                     //$this->disableAllTokens($simplified_token['id']);                        
                     return NULL;
                 }
@@ -319,7 +324,8 @@ class JWTWrapper{
      * 
      * @return bool If process succeeds then return true, else false.
      */
-    public function setRefreshTokenCookieFor($user_with_token, $tokenExpiry = '') {
+    public function setRefreshTokenCookieFor($user_with_token, $tokenExpiry = ''
+                , $cookieDomain ='', $cookiePath = '') {
 
         // Create New Token
         $now = new DateTimeImmutable();
@@ -330,7 +336,8 @@ class JWTWrapper{
         $token = $this->getToken($user_with_token['id'], $refreshJti, $now, $tokenExpiry);
 
         setcookie($this->cookiename, $token, $tokenExpiry->getTimestamp()
-            , $this->cookiepath, '', $this->cookiesecure, true); // 'true' = HttpOnly
+            , ''//empty($cookiePath)?$this->cookiepath:$cookiePath
+            , $cookieDomain, $this->cookiesecure, true); // 'true' = HttpOnly
 
         return $this->usertoken->store($user_with_token['id'], $user_with_token['accessJti'], $refreshJti, 
                     true, $tokenExpiry->format("Y-m-d H:i:s")); // 'true' = isValid

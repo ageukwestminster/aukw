@@ -134,8 +134,6 @@ $router->mount('/qb', function () use ($router) {
     $router->delete('/', 'QBAuthCtl@oauth2_revoke');
     // Retrieve details of the connection to QB (if any)
     $router->get('/connection', 'QBAuthCtl@connection_details');
-    // QBO callback endpoint for QBO authentication process
-    $router->get('/callback', 'QBAuthCtl@oauth2_callback');
 
     // QB item is for Products/Services
     $router->get('/item/(\w+)', 'QBItemCtl@read_one');

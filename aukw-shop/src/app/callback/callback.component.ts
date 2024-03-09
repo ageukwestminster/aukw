@@ -4,7 +4,7 @@ import { environment } from '@environments/environment';
 import { AlertService, AuthenticationService} from '@app/_services';
 
 @Component({
-  templateUrl: './callback.component.html'
+  template: ''
 })
 export class CallbackComponent implements OnInit {
 
@@ -15,7 +15,7 @@ export class CallbackComponent implements OnInit {
     ) { }
 
   public ngOnInit():void {
-    
+    console.log('Callback route: ' +this.router.url);
     const code = this.route.snapshot.queryParamMap.get('code');
     const realmId = this.route.snapshot.queryParamMap.get('realmId');
     const state = this.route.snapshot.queryParamMap.get('state');
@@ -28,17 +28,31 @@ export class CallbackComponent implements OnInit {
     }
 
     //Check that we have the correct company to proceed
-    if (realmId != environment.quickbooksRealmID) {
+    if (realmId != '9130350604308576') {
       console.error("Error: 'realmId' does not match expected value.");
         window.location.href = environment.loginUrl;
     }
-    
 
 
-    // Handle token
-    // ...
-    window.location.href = environment.loginUrl;
-    //this.router.navigate(['/']);
+
+
+    this.authenticationService.callback(code!, realmId!, state!)
+    .subscribe({
+      next: () => {
+        if (this.authenticationService.userValue) {
+          this.router.navigate(['/']);
+        }
+        else {
+          console.log('Unknown error.');
+        }
+      },
+      error: (error) => {
+        this.alertService.error('QB Callback failed: ' + error, {
+          autoClose: false,
+        });
+      },
+    });
+
 }
 
 }

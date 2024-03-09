@@ -33,7 +33,7 @@ class Headers
      */
     public static function getHeaders($path_is_auth = false) {
         if ($path_is_auth || Headers::path_is_auth()) {
-            Headers::cors_headers();
+            Headers::cors_headers(Headers::path_is_qbcallback());
         } else {
             Headers::normal_headers();
         }
@@ -49,11 +49,6 @@ class Headers
     {
         if (empty($path)) {
             $path = Headers::stripped_path();
-        }
-
-        // QBO callback when making connection
-        if (preg_match('/^qb\/callback/', $path)) {
-            return true;
         }
 
         // Normal login/logout auth path
@@ -73,7 +68,6 @@ class Headers
         }
 
         $method = $_SERVER['REQUEST_METHOD'];
-        $value = preg_match('/^takings\/(\d+)/', $path);
 
         return ($method === 'POST' && preg_match('/^takings/', $path)) ||
             ($method === 'PUT' && preg_match('/^takings\/(\d+)/', $path));
@@ -94,15 +88,34 @@ class Headers
         return preg_match('/^user/', $path);
     }
 
+    /** 
+     * Return 'true' if the path has  'qb/callback'. Used to determine if
+     * the route requested requires special authorization.
+     * 
+     * @return bool
+     * */
+    public static function path_is_qbcallback()
+    {
+        $test = $_SERVER['REQUEST_URI'];
+        return preg_match('/callback/', $_SERVER['REQUEST_URI']);
+    }
+
     /**
      * Respond with the raw CORS headers for authentication requests
      *      
      * @return void Output is echo'd directly to response
      */
-    private static function cors_headers()
+    private static function cors_headers(bool $qbcallback)
     {
-        header("Access-Control-Allow-Origin: ". \Core\Config::read('server'));
+        if ($qbcallback) {
+            header("Access-Control-Allow-Origin: ". \Core\Config::read('qb.redirectdomain'));
+        } else {
+            header("Access-Control-Allow-Origin: ". \Core\Config::read('server'));
+        }
+
+        // This header tells the browser to send cookies or authorization headers with the request.
         header("Access-Control-Allow-Credentials: true");
+        
         header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS");
         header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Content-Type, Access-Control-Allow-Headers, Authorization");
         header("Access-Control-Max-Age: 1728000");

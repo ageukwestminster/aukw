@@ -171,7 +171,12 @@ class QuickbooksAuth{
             // Generate user tokens
             $jwt = new \Models\JWTWrapper();
             $user_with_token = $jwt->getUserWithAccessToken($user);
-            $jwt->setRefreshTokenCookieFor($user_with_token);
+
+            //Create a new refresh token and put it into a cookie.
+            // Also store in databse
+            $jwt->setRefreshTokenCookieFor($user_with_token,'',\Core\Config::read('server'),'/callback');
+
+            // Return logged in info
             echo json_encode($user_with_token);            
             
         }

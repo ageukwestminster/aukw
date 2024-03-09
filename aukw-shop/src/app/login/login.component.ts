@@ -3,7 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { AuthenticationService,
-  QBConnectionDetailsService } from '@app/_services';
+  QBConnectionService } from '@app/_services';
 
   import {
     QBAuthUri,
@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private authenticationService: AuthenticationService,
-    private qbConnDetsService: QBConnectionDetailsService,
+    private qbConnService: QBConnectionService,
   ) {
     // redirect to home if already logged in
     if (this.authenticationService.userValue) {
@@ -62,8 +62,6 @@ export class LoginComponent implements OnInit {
       .login(this.f.username.value, this.f.password.value)
       .subscribe({
         next: () => {
-          // get return url from query parameters or default to home page
-          const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
           this.router.navigate([this.returnUrl]);
         },
         error: (error) => {
@@ -91,8 +89,9 @@ export class LoginComponent implements OnInit {
 
 
   redirectToIntuitSSO(event : Event) {
-    event.preventDefault();
-    this.qbConnDetsService.getAuthUri().subscribe((uri: QBAuthUri) => {
+    event.stopPropagation();
+    //event.preventDefault();
+    this.qbConnService.getAuthUri().subscribe((uri: QBAuthUri) => {
       if (uri && uri.authUri) {
         // Open the QB Auth uri in a new tab or window
         window.location.href = uri.authUri;
