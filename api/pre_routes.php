@@ -25,7 +25,7 @@ use \Core\Headers;
 $router->options('/(\S+)',function() {
     $path = Headers::stripped_path();
     $isAuthPath = Headers::path_is_auth($path);
-    Headers::getHeaders();
+    Headers::getHeaders($isAuthPath);
 });
 
 /**************************************************************/
@@ -75,7 +75,6 @@ $router->before('POST|PUT|DELETE|PATCH', '/.*', function() {
 
     $path = Headers::stripped_path();
     $isAuthPath = Headers::path_is_auth($path);
-    $isUserUpdate = Headers::path_is_user($path);
 
     // Don't do the is-admin check when it's an 'auth' path    
     if ( !$isAuthPath ) {
