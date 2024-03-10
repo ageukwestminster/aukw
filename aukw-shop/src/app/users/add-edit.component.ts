@@ -109,7 +109,7 @@ export class UserAddEditComponent implements OnInit {
         .pipe(
           switchMap((u: User) => {
             this.form.patchValue(u);
-            return this.qbConnDetsService.getDetails();
+            return this.qbConnDetsService.getDetails(u.id);
           }),
         )
         .subscribe((conn: any | null) => {
@@ -220,7 +220,7 @@ export class UserAddEditComponent implements OnInit {
       .revokeQBConnection()
       .pipe(
         switchMap(() => {
-          return this.qbConnDetsService.getDetails();
+          return this.qbConnDetsService.getDetails(this.user.id);
         }),
       )
       .subscribe((conn: QBConnectionDetails) => {

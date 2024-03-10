@@ -11,6 +11,7 @@ import {
 import { Observable } from 'rxjs';
 
 const baseUrl = `${environment.apiUrl}/takings`;
+const realmID = `${environment.quickbooksRealmID}`;
 
 @Injectable({ providedIn: 'root' })
 export class TakingsService {
@@ -60,7 +61,7 @@ export class TakingsService {
 
   addToQuickbooks(id: number): Observable<ApiMessage> {
     return this.http.post<ApiMessage>(
-      `${environment.apiUrl}/qb/salesreceipt/takings/${id}`,
+      `${environment.apiUrl}/qb/salesreceipt/takings/${id}?realmid=${realmID}`,
       null,
     );
   }

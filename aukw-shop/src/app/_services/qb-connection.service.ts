@@ -24,8 +24,8 @@ export class QBConnectionService {
    * Get details of the current connection to QuickBooks
    * @returns The uri needed to re-authorize the connection and the expiry date of the refresh token
    */
-  getDetails() {
-    return this.http.get<QBConnectionDetails>(`${baseUrl}?realmid=${realmID}&userid=${this.user.id}`);
+  getDetails(userid: number) {
+    return this.http.get<QBConnectionDetails>(`${baseUrl}?realmid=${realmID}&userid=${userid}`);
   }
 
   getAuthUri() {
