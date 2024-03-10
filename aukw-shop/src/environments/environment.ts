@@ -7,7 +7,7 @@ export const environment = {
   apiUrl: 'http://localhost/api',
   HARROWROAD_SHOPID: 1,
   loginUrl: 'http://localhost:4200/',
-  quickbooksRealmID: '9130350604308576' // Sandbox Company GB 2
+  quickbooksRealmID: '9130350604308576' // Age UK Enterprises
 };
 
 /*

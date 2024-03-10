@@ -35,7 +35,7 @@ export class CallbackComponent implements OnInit {
 
 
 
-
+    // use the auth service and the supplied token to log in
     this.authenticationService.callback(code!, realmId!, state!)
     .subscribe({
       next: () => {
