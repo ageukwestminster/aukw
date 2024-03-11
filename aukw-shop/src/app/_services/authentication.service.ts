@@ -111,6 +111,9 @@ export class AuthenticationService {
    * The method then starts a countdown timer by calling this.startRefreshTokenTimer() to auto
    * refresh the JWT token in the background (silent refresh) one minute before it expires so
    * the user stays logged in.
+   * 
+   * This method returns an empty User (rather than a 401/403 error) if called from /callback
+   * Done this way to allow QBO to callback into the app wiothout being authenticated
    *
    * @returns On success the api returns the user details including a JWT token
    */
