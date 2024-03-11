@@ -1,7 +1,7 @@
 ﻿import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { environment } from '@environments/environment';
@@ -115,6 +115,10 @@ export class AuthenticationService {
    * @returns On success the api returns the user details including a JWT token
    */
   refreshToken() {
+    
+    if(window.location.pathname=='/callback') {
+      return of(new User);
+    }
     return this.http
       .get<any>(`${environment.apiUrl}/auth/refresh`, { withCredentials: true })
       .pipe(

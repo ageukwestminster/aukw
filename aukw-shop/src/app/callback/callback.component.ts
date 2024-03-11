@@ -17,8 +17,12 @@ export class CallbackComponent implements OnInit {
   public ngOnInit():void {
     console.log('Callback route: ' +this.router.url);
     const code = this.route.snapshot.queryParamMap.get('code');
-    const realmId = this.route.snapshot.queryParamMap.get('realmId');
+    var realmId = this.route.snapshot.queryParamMap.get('realmId');
     const state = this.route.snapshot.queryParamMap.get('state');
+
+    if (!realmId) {
+      realmId = this.route.snapshot.queryParamMap.get('realmid');
+    }
 
     if (!code || !state || !realmId) {
       console.error("Error: Invalid parameters passed to callback. To use "
@@ -28,10 +32,10 @@ export class CallbackComponent implements OnInit {
     }
 
     //Check that we have the correct company to proceed
-    if (realmId != '9130350604308576') {
-      console.error("Error: 'realmId' does not match expected value.");
-        window.location.href = environment.loginUrl;
-    }
+    //if (realmId != '9130350604308576') {
+      //console.error("Error: 'realmId' does not match expected value.");
+       // window.location.href = environment.loginUrl;
+    //}
 
 
 
@@ -39,6 +43,7 @@ export class CallbackComponent implements OnInit {
     this.authenticationService.callback(code!, realmId!, state!)
     .subscribe({
       next: () => {
+        console.log('Logged in.');
         if (this.authenticationService.userValue) {
           this.router.navigate(['/']);
         }

@@ -3,7 +3,6 @@
 namespace Models;
 
 use QuickBooksOnline\API\DataService\DataService;
-use QuickBooksOnline\API\Core\OAuth\OAuth2\OAuth2LoginHelper;
 use QuickBooksOnline\API\Core\OAuth\OAuth2\OAuth2AccessToken;
 use QuickBooksOnline\API\Core\ServiceContext;
 
@@ -127,6 +126,9 @@ class QuickbooksAuth{
                 exit(0);
             }
 
+            //$accessTokenObj = QuickbooksDummyAuthProvider::getToken($this->config);
+            //$userInfo = QuickbooksDummyAuthProvider::getUserInfo();
+            
             $OAuth2LoginHelper = $this->dataService->getOAuth2LoginHelper();
             $accessTokenObj = $OAuth2LoginHelper->exchangeAuthorizationCodeForToken($code, $realmId);
 

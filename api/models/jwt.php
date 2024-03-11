@@ -312,8 +312,20 @@ class JWTWrapper{
      * @return bool If process succeeds then return true, else false.
      */
     public function disableAllTokens($userid){            
+        
         $result = $this->usertoken->deleteAll($userid);
-        return $result && setcookie(\Core\Config::read('token.cookiename'), '', time() - 3600);
+
+        if (isset($_COOKIE[\Core\Config::read('token.cookiename')])) {
+
+            unset($_COOKIE[\Core\Config::read('token.cookiename')]); 
+             
+            return $result && setcookie(\Core\Config::read('token.cookiename')
+                                , '', -1, \Core\Config::read('token.cookiepath'));
+        } else {
+
+            return false;
+            
+        }
     }
 
     /**
@@ -325,7 +337,7 @@ class JWTWrapper{
      * @return bool If process succeeds then return true, else false.
      */
     public function setRefreshTokenCookieFor($user_with_token, $tokenExpiry = ''
-                , $cookieDomain ='', $cookiePath = '') {
+                , $cookieDomain ='') {
 
         // Create New Token
         $now = new DateTimeImmutable();
@@ -336,7 +348,7 @@ class JWTWrapper{
         $token = $this->getToken($user_with_token['id'], $refreshJti, $now, $tokenExpiry);
 
         setcookie($this->cookiename, $token, $tokenExpiry->getTimestamp()
-            , $cookiePath, $cookieDomain, $this->cookiesecure, true); // 'true' = HttpOnly
+            , \Core\Config::read('token.cookiepath'), $cookieDomain, $this->cookiesecure, true); // 'true' = HttpOnly
 
         return $this->usertoken->store($user_with_token['id'], $user_with_token['accessJti'], $refreshJti, 
                     true, $tokenExpiry->format("Y-m-d H:i:s")); // 'true' = isValid

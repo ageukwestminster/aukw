@@ -33,7 +33,7 @@ class Headers
      */
     public static function getHeaders($path_is_auth = false) {
         if ($path_is_auth || Headers::path_is_auth()) {
-            Headers::cors_headers(Headers::path_is_qbcallback());
+            Headers::cors_headers();
         } else {
             Headers::normal_headers();
         }
@@ -105,13 +105,9 @@ class Headers
      *      
      * @return void Output is echo'd directly to response
      */
-    private static function cors_headers(bool $qbcallback)
+    private static function cors_headers()
     {
-        if ($qbcallback) {
-            header("Access-Control-Allow-Origin: ". \Core\Config::read('qb.redirectdomain'));
-        } else {
-            header("Access-Control-Allow-Origin: ". \Core\Config::read('server'));
-        }
+        header("Access-Control-Allow-Origin: ". \Core\Config::read('server'));        
 
         // This header tells the browser to send cookies or authorization headers with the request.
         header("Access-Control-Allow-Credentials: true");
