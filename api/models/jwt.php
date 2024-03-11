@@ -336,8 +336,7 @@ class JWTWrapper{
         $token = $this->getToken($user_with_token['id'], $refreshJti, $now, $tokenExpiry);
 
         setcookie($this->cookiename, $token, $tokenExpiry->getTimestamp()
-            , ''//empty($cookiePath)?$this->cookiepath:$cookiePath
-            , $cookieDomain, $this->cookiesecure, true); // 'true' = HttpOnly
+            , $cookiePath, $cookieDomain, $this->cookiesecure, true); // 'true' = HttpOnly
 
         return $this->usertoken->store($user_with_token['id'], $user_with_token['accessJti'], $refreshJti, 
                     true, $tokenExpiry->format("Y-m-d H:i:s")); // 'true' = isValid
