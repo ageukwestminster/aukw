@@ -166,7 +166,7 @@ class QBAuthCtl{
   }
 
   /**
-   * Get information abou the QBO company
+   * Get information about the QBO company
    * 
    * @return void Output is echo'd directly to response
    */
