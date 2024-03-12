@@ -132,8 +132,12 @@ $router->mount('/qb', function () use ($router) {
     $router->get('/refresh', 'QBAuthCtl@oauth2_refresh');
     // Delete QBO authorisation
     $router->delete('/', 'QBAuthCtl@oauth2_revoke');
-    // Retrieve details of the connection to QB (if any)
-    $router->get('/connection', 'QBAuthCtl@connection_details');
+    // Retrieve details of one of the connections to QB (if any)
+    $router->get('/connection/(\d+)', 'QBAuthCtl@connection_details');
+    // Retrieve details of the connections to QB (if any)
+    $router->get('/connections/(\d+)', 'QBAuthCtl@all_connection_details');
+    // Retrieve details of the QBO company
+    $router->get('/companyinfo', 'QBAuthCtl@companyInfo');
 
     // QB item is for Products/Services
     $router->get('/item/(\w+)', 'QBItemCtl@read_one');

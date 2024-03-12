@@ -170,6 +170,46 @@ class QuickbooksToken{
     }
 
     /**
+     * Refresh the instance properties with QB token information from the database
+     * 
+     * @return QuickbooksToken[] Array of 
+     */
+    function read_all($userid){
+        $query = "SELECT t.`accesstoken`,t.`accesstokenexpiry`,t.`refreshtoken`,t.`refreshtokenexpiry`
+                        ,t.userid,t.realmid, q.companyName
+                    FROM " . $this->table_name . " t JOIN qbrealm q ON t.realmid = q.realmid" .
+                    " WHERE userid=:userid";
+        
+        // prepare query
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":userid", $userid, PDO::PARAM_INT);
+
+        // execute query
+        $stmt->execute();
+
+        $num = $stmt->rowCount();
+
+        $item_arr=array();
+
+        if ($num>0) {
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                extract($row);
+                $item_arr[] = array(
+                    "userid" => $userid,
+                    "realmid" => $realmid,
+                    "companyName" => $companyName ?? '',
+                    "accesstoken" => $accesstoken,
+                    "accesstokenexpiry" => $accesstokenexpiry,
+                    "refreshtoken" => $refreshtoken,
+                    "refreshtokenexpiry" => $refreshtokenexpiry
+                );
+            }            
+        }
+
+        return $item_arr;
+    }
+
+    /**
      * Delete the QB access and refresh tokens from the database
      * 
      * @return bool 'true' if operation succeeded
@@ -189,5 +229,6 @@ class QuickbooksToken{
 
         return false;
     }
+
 
 }

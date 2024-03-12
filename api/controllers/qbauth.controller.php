@@ -114,25 +114,31 @@ class QBAuthCtl{
 
   /**
    * 
-   * Show details of the authenticated connection with QBO, if it exists.
+   * Show details of the authenticated connections with QBO, if any exist.
    * 
-   * @return QuickbooksToken Contains the access and refresh tokens for QBO
+   * @return QuickbooksToken[] Containing the access and refresh tokens for QBO
    */
-  public static function connection_details(){  
+  public static function connection_details($userid){  
 
     $model = new \Models\QuickbooksToken();
 
-    if(!isset($_GET['userid']) || !isset($_GET['realmid']) ) {
+    if( !isset($_GET['realmid']) ) {
       http_response_code(400);   
       echo json_encode(
-          array("message" => "Please supply user id and realmid as parameters. " 
-              . "The user id is the databse id not the QB uuid.")
+          array("message" => "Please supply realmid as a parameter.")
       );
       exit(1);
     } 
 
-    $userid = $_GET['userid'];
     $realmid = $_GET['realmid'];
+
+    if (!is_numeric($realmid)) {
+      http_response_code(400);   
+      echo json_encode(
+          array("message" => "Expecting a numeric format for the parameter realmid.")
+      );
+      exit(1);
+    }
     
     $model->read($userid, $realmid);
 
@@ -145,5 +151,39 @@ class QBAuthCtl{
 
   }
 
+  /**
+   * 
+   * Show details of all the authenticated connections with QBO for a given user.
+   * @param int The Id of the user
+   * 
+   * @return QuickbooksToken[] Containing the access and refresh tokens for QBO
+   */
+  public static function all_connection_details($userid){  
 
+    $model = new \Models\QuickbooksToken();
+
+    echo json_encode($model->read_all($userid), JSON_NUMERIC_CHECK);
+  }
+
+  /**
+   * Get information abou the QBO company
+   * 
+   * @return void Output is echo'd directly to response
+   */
+  public static function companyInfo(){  
+
+    if( !isset($_GET['realmid']) ) {
+      http_response_code(400);   
+      echo json_encode(
+          array("message" => "Please supply realmid as a parameter.")
+      );
+      exit(1);
+    } 
+
+    $realmid = $_GET['realmid'];
+
+    $model = new QuickbooksAuth();
+
+    echo json_encode($model->companyInfo($realmid), JSON_NUMERIC_CHECK);
+  }
 }

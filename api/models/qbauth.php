@@ -196,7 +196,6 @@ class QuickbooksAuth{
 
       /**
        * Refresh the QB access token from the refresh token
-       * @param int $userid The user id of the User
        * @param string $realmid The company ID for the QBO company.
        * @return true if success
        */
@@ -222,6 +221,48 @@ class QuickbooksAuth{
             $this->dataService->updateOAuth2Token($accessTokenObj);      
 
             $this->store_tokens_in_database($this->jwt->id, $accessTokenObj);
+        }
+        catch (\Exception $e) {
+            http_response_code(400);  
+            echo json_encode(
+              array("message" => "Unable to refresh Quickbooks tokens. ",
+              "details" => $e->getMessage())
+            );
+            exit(0);
+        }
+
+        return true;
+    }
+
+     /**
+       * Get information abou the company
+       * @param string $realmid The company ID for the QBO company.
+       * @return array info aboout the company
+       */
+      public function companyInfo($realmid) {
+
+        $this->init($realmid);
+
+        $this->tokenModel->read($this->jwt->id, $realmid);
+            
+        if ($this->tokenModel === NULL || $this->tokenModel->refreshtoken === NULL) {
+            return false;
+        }
+
+        try {
+            $OAuth2LoginHelper = $this->dataService->getOAuth2LoginHelper();
+            $accessTokenObj = $OAuth2LoginHelper->refreshAccessTokenWithRefreshToken(
+                $this->tokenModel->refreshtoken);
+                            
+            if (!$accessTokenObj->getRealmID()) {
+                $accessTokenObj->setRealmID($realmid);
+            }
+
+            $this->dataService->updateOAuth2Token($accessTokenObj);      
+
+            $this->store_tokens_in_database($this->jwt->id, $accessTokenObj);
+
+            return $this->dataService->getCompanyInfo();
         }
         catch (\Exception $e) {
             http_response_code(400);  

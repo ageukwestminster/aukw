@@ -1,0 +1,53 @@
+https://github.com/OfficeDev/Office-Add-in-samples/tree/main/Samples/excel-shared-runtime-scenario
+
+https://f204-91-125-74-184.ngrok-free.app/callback?code=AB117097635572s68pe4Jvlv27pOH6R5jP7j4We6wTeeGFd9mL&state=TEKP567ipruY9m&realmId=4620816365027844190
+
+
+Status: 200
+Connection: keep-alive
+Keep-Alive: timeout=5
+Strict-Transport-Security: max-age=15552000
+Cache-Control: no-cache, no-store
+Content-Type: application/json;charset=utf-8
+Server: nginx
+{
+ "sub": "3bdfb5a7-cbd0-4a0e-a801-74c560681fad",
+ "givenName": "Neil",
+ "familyName": "Carthy",
+ "email": "neil.carthy@ageukwestminster.org.uk",
+ "emailVerified": true
+}
+
+
+Angular ngrok command
+./ngrok.exe http --request-header-add='host: localhost' 4200
+./ngrok.exe http --host-header rewrite 4200
+
+./ngrok.exe http 80 --request-header-add='host: localhost'
+
+Redirect URI:
+For API / Postman:
+https://a6b8-91-125-74-184.ngrok-free.app/api/auth/qb/callback
+
+For Angular UI
+https://a6b8-91-125-74-184.ngrok-free.app/callback
+
+For Production
+https://aukw.org.uk/callback
+OLD STYLE: https://aukw.org.uk/api/auth/qb/callback
+
+
+SQL changes
+
+ALTER TABLE `user` ADD `quickbooksUserId` VARCHAR(50) NULL COMMENT 'The identifier for users’ Intuit accounts.' AFTER `title`;
+ALTER TABLE `qbtoken` ADD `userid` INT NOT NULL FIRST, ADD `realmid` VARCHAR(50) NOT NULL COMMENT 'QBO company ID' AFTER `userid`;
+Add unique constraint to the table, name of AK_user_userid_realmid
+ALTER TABLE `qbtoken` ADD CONSTRAINT `FK_user_id` FOREIGN KEY (`userid`) REFERENCES `user`(`id`);
+
+REALMID        
+Enterprises    9130350604308576
+Charity        123145825016867
+Sandbox US
+Sandbox GB     4620816365027844190
+
+http://localhost:4200/callback?code=123&realmid=4620816365027844190&state=TEKP567ipruY9m
