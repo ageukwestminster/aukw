@@ -1,6 +1,5 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { first } from 'rxjs/operators';
 import { AuthenticationService, UserService } from '@app/_services';
 import { User } from '@app/_models';
 

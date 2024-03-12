@@ -32,7 +32,7 @@ export class QBConnectionService {
    * Get details of all the current connections to QuickBooks
    * @returns The uri needed to re-authorize the connection and the expiry date of the refresh token
    */
-  getAllConnectionDetails(userid: number) {
+  getAll(userid: number) {
     return this.http.get<QBConnectionDetails[]>(`${baseUrl}s/${userid}`);
   }
 

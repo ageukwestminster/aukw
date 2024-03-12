@@ -31,13 +31,14 @@ import {
 export class UserAddEditComponent implements OnInit {
   form!: FormGroup;
   id!: number;
-  shops$!: Observable<Shop[]>;
-  refreshTokenExpiry: Date | null = null;
+  shops$!: Observable<Shop[]>;  
   formMode!: UserFormMode;
   loading = false;
   submitted = false;
   user!: User;
   windowHandle: any = null;
+  refreshTokenExpiry: Date | null = null;
+  connections$!: Observable<QBConnectionDetails[]>;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -52,6 +53,7 @@ export class UserAddEditComponent implements OnInit {
   ) {
     this.user = this.authenticationService.userValue;
     this.shops$ = this.shopService.getAll();
+    this.connections$ = this.qbConnDetsService.getAll(this.user.id);
   }
 
   ngOnInit() {
@@ -121,7 +123,6 @@ export class UserAddEditComponent implements OnInit {
 
   //
   private refreshQBConnectionDetails(conn: QBConnectionDetails) {
-    //this.qbconn = new QBConnectionDetails();
     if (conn && conn.refreshtokenexpiry) {
       const t: string[] = conn.refreshtokenexpiry.split(/[- :]/);
       const tokenExpiry = new Date(

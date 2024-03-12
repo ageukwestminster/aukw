@@ -1,0 +1,34 @@
+﻿<div class="row">
+  <div class="col-sm-6"><h1>Connections</h1></div>
+  <div class="col-sm-2">
+    <button
+      routerLink="add"
+      class="btn btn-sm btn-success m-1 mt-1"
+      *ngIf="user.isAdmin"
+    >
+      Add New Connection
+    </button>
+  </div>
+</div>
+<table class="table table-striped table-responsive">
+  <thead>
+    <tr>
+      <th style="width: 50%">Company Name</th>
+      <th style="width: 50%">Refresh Token Expiry</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr
+      *ngFor="let myConnection of connections"
+      qb-connection-row
+      [user]="myConnection"
+      (onUserDeleted)="connectionWasRevoked($event)"
+      routerLink="edit/{{ myConnection.realmid }}"
+    ></tr>
+    <tr *ngIf="!connections">
+      <td colspan="4" class="text-center">
+        <span class="spinner-border spinner-border-lg align-center"></span>
+      </td>
+    </tr>
+  </tbody>
+</table>
