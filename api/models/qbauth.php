@@ -199,11 +199,11 @@ class QuickbooksAuth{
        * @param string $realmid The company ID for the QBO company.
        * @return true if success
        */
-    public function refresh($realmid) {
+    public function refresh($userid, $realmid) {
 
         $this->init($realmid);
 
-        $this->tokenModel->read($this->jwt->id, $realmid);
+        $this->tokenModel->read($userid, $realmid);
 
         if ($this->tokenModel === NULL || $this->tokenModel->refreshtoken === NULL) {
             return false;
@@ -220,7 +220,7 @@ class QuickbooksAuth{
 
             $this->dataService->updateOAuth2Token($accessTokenObj);      
 
-            $this->store_tokens_in_database($this->jwt->id, $accessTokenObj);
+            $this->store_tokens_in_database($userid, $accessTokenObj);
         }
         catch (\Exception $e) {
             http_response_code(400);  

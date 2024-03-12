@@ -27,4 +27,5 @@ export class QBConnectionListComponent implements OnInit {
   connectionWasRevoked(connection: QBConnectionDetails): void {
     this.connections = this.connections.filter((x) => x.realmid !== connection.realmid);
   }
+  
 }

@@ -14,6 +14,7 @@ include_once 'core/dateshelper.php';
 
 // Define controllers
 include_once 'controllers/qbauth.controller.php';
+include_once 'controllers/qbcompany.controller.php';
 include_once 'controllers/qbemployee.controller.php';
 include_once 'controllers/qbitem.controller.php';
 include_once 'controllers/qbjournal.controller.php';

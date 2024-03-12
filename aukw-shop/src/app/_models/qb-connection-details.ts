@@ -8,6 +8,7 @@ export class QBConnectionDetails {
   refreshtokenexpiry: string;
   realmid: string;
   companyname: string;
+  isRevoking: boolean = false;
 
   constructor(obj?: any) {
     this.refreshtokenexpiry = (obj && obj.refreshtokenexpiry) || null;

@@ -37,8 +37,6 @@ export class UserAddEditComponent implements OnInit {
   submitted = false;
   user!: User;
   windowHandle: any = null;
-  refreshTokenExpiry: Date | null = null;
-  connections$!: Observable<QBConnectionDetails[]>;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -53,7 +51,6 @@ export class UserAddEditComponent implements OnInit {
   ) {
     this.user = this.authenticationService.userValue;
     this.shops$ = this.shopService.getAll();
-    this.connections$ = this.qbConnDetsService.getAll(this.user.id);
   }
 
   ngOnInit() {
@@ -108,32 +105,10 @@ export class UserAddEditComponent implements OnInit {
     if (this.formMode != UserFormMode.Add) {
       this.userService
         .getById(this.id)
-        .pipe(
-          switchMap((u: User) => {
-            this.form.patchValue(u);
-            return this.qbConnDetsService.getDetails(u.id);
-          }),
-        )
-        .subscribe((conn: any | null) => {
-          this.refreshQBConnectionDetails(conn);
+        .subscribe((u: User) => {
+          this.form.patchValue(u);
           this.loading = false;
         });
-    }
-  }
-
-  //
-  private refreshQBConnectionDetails(conn: QBConnectionDetails) {
-    if (conn && conn.refreshtokenexpiry) {
-      const t: string[] = conn.refreshtokenexpiry.split(/[- :]/);
-      const tokenExpiry = new Date(
-        Date.UTC(+t[0], +t[1] - 1, +t[2], +t[3], +t[4], +t[5]),
-      );
-      const nowDateAndTime = new Date();
-      if (tokenExpiry > nowDateAndTime) {
-        this.refreshTokenExpiry = tokenExpiry;
-      } else {
-        this.refreshTokenExpiry = null;
-      }
     }
   }
 
@@ -205,7 +180,7 @@ export class UserAddEditComponent implements OnInit {
   }
 
   // Connect the QB company file to this app
-  makeQBConnection() {
+  makeNewQBConnection() {
     this.qbConnDetsService.getAuthUri().subscribe((uri: QBAuthUri) => {
       if (uri && uri.authUri) {
         // Open the QB Auth uri in a new tab or window
@@ -215,19 +190,5 @@ export class UserAddEditComponent implements OnInit {
     return false;
   }
 
-  // Disconnect the QB Company file from this app
-  revokeQBConnection() {
-    this.qbConnDetsService
-      .revokeQBConnection()
-      .pipe(
-        switchMap(() => {
-          return this.qbConnDetsService.getDetails(this.user.id);
-        }),
-      )
-      .subscribe((conn: QBConnectionDetails) => {
-        this.refreshQBConnectionDetails(conn);
-        this.alertService.success('QB Connection deleted');
-      });
-    return false;
-  }
+
 }

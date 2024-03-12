@@ -8,8 +8,6 @@ import { Role, User } from '@app/_models';
 
 const baseUrl = `${environment.apiUrl}/qb/connection`;
 const authUrl = `${environment.apiUrl}/auth/qb/auth`;
-const revokeUrl = `${environment.apiUrl}/qb`;
-const realmID = `${environment.quickbooksRealmID}`;
 
 @Injectable({ providedIn: 'root' })
 export class QBConnectionService {
@@ -24,8 +22,8 @@ export class QBConnectionService {
    * Get details of the current connection to QuickBooks
    * @returns The uri needed to re-authorize the connection and the expiry date of the refresh token
    */
-  getDetails(userid: number) {
-    return this.http.get<QBConnectionDetails>(`${baseUrl}/${userid}?realmid=${realmID}`);
+  getDetails(userid: number, realmid: string) {
+    return this.http.get<QBConnectionDetails>(`${baseUrl}/${userid}?realmid=${realmid}`);
   }
 
   /**
@@ -40,12 +38,12 @@ export class QBConnectionService {
     return this.http.get<QBAuthUri>(`${authUrl}`);
   }
 
-  getAuthUriWithParameters(clientID: string, clientSecret: string, useSandbox: boolean = false) {
-    return this.http.post<QBAuthUri>(`${authUrl}`,{clientID, clientSecret, useSandbox});
+  getAuthUriWithParameters(realmid: string, clientID: string, clientSecret: string, useSandbox: boolean = false) {
+    return this.http.post<QBAuthUri>(`${authUrl}?realmid=${realmid}`,{clientID, clientSecret, useSandbox});
   }
 
-  revokeQBConnection() {
-    return this.http.delete<ApiMessage>(`${revokeUrl}`);
+  delete(userid : number, realmid : string) {
+    return this.http.delete<ApiMessage>(`${baseUrl}/${userid}?realmid=${realmid}`);
   }
 
 }

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { QBConnectionDetails, Role } from '@app/_models';
-import { UserService, AlertService } from '@app/_services';
+import { QBConnectionDetails, User } from '@app/_models';
+import { AlertService, AuthenticationService, QBConnectionService } from '@app/_services';
 /**
  * @UserRow: A component for the view of single User
  */
@@ -9,30 +9,30 @@ import { UserService, AlertService } from '@app/_services';
   templateUrl: './row.component.html',
 })
 export class QBConnectionRowComponent {
-  roles = Object.keys(Role).map((key: string) => Role[key as Role]);
-  roles2 = Role;
-
-  @Input() user!: User;
-  @Output() onUserDeleted: EventEmitter<User>;
+  user!: User;
+  @Input() connection!: QBConnectionDetails;
+  @Output() onConnectionRevoked: EventEmitter<QBConnectionDetails>;
 
   constructor(
-    private userService: UserService,
+    private connectionService: QBConnectionService,
     private alertService: AlertService,
+    private authenticationService: AuthenticationService
   ) {
-    this.onUserDeleted = new EventEmitter();
+    this.user = this.authenticationService.userValue;
+    this.onConnectionRevoked = new EventEmitter();
   }
 
-  deleteUser(e: Event) {
+  revokeConnection(e: Event) {
     e.stopPropagation(); // If click propagates it will open the edit member page
 
-    if (!this.user || !this.user.id) return;
+    if (!this.connection || !this.connection.accesstoken) return;
 
-    this.user.isDeleting = true;
-    this.userService.delete(this.user.id).subscribe(() => {
-      this.alertService.success('User deleted', {
+    this.connection.isRevoking = true;
+    this.connectionService.delete(this.user.id, this.connection.realmid).subscribe(() => {
+      this.alertService.success('Connection revoked for ' + this.connection.companyname, {
         keepAfterRouteChange: true,
       });
-      this.onUserDeleted.emit(this.user);
+      this.onConnectionRevoked.emit(this.connection);
     });
   }
 

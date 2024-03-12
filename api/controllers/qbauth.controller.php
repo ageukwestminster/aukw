@@ -51,10 +51,10 @@ class QBAuthCtl{
 
   /**
    * Break the link between this app and Quickbooks
-   * 
+   * @param int $userid The database id of the user whose token is being revoked
    * @return void Output is echo'd directly to response
    */
-  public static function oauth2_revoke(){
+  public static function oauth2_revoke($userid){
     $model = new QuickbooksAuth();
 
     if(!isset($_GET['realmid']) ) {
@@ -67,7 +67,7 @@ class QBAuthCtl{
 
     $realmid = $_GET['realmid'];
 
-    if ($model->revoke($realmid)) {
+    if ($model->revoke($userid, $realmid)) {
       echo json_encode(
       array("message" => "Your Quickbooks tokens have been revoked.")
       );
@@ -83,11 +83,11 @@ class QBAuthCtl{
 
   /**
    * Refresh the QB access token from the refresh token
-   *
+   * @param int $userid The database id of the user whose token is being refreshed
    * @return void 
    * 
    */
-  public static function oauth2_refresh(){
+  public static function oauth2_refresh($userid){
     $model = new QuickbooksAuth();
 
     if(!isset($_GET['realmid']) ) {
@@ -100,7 +100,7 @@ class QBAuthCtl{
 
     $realmid = $_GET['realmid'];
 
-    if ($model->refresh($realmid)) {
+    if ($model->refresh($userid, $realmid)) {
     echo json_encode(
       array("message" => "Quickbooks Tokens refreshed.")
       );
@@ -113,9 +113,9 @@ class QBAuthCtl{
   }
 
   /**
+   * Show details of authenticated connections with QBO for a given user.
    * 
-   * Show details of the authenticated connections with QBO, if any exist.
-   * 
+   * @param int $userid The database id of the user whose connections are being sought
    * @return QuickbooksToken[] Containing the access and refresh tokens for QBO
    */
   public static function connection_details($userid){  
@@ -165,25 +165,4 @@ class QBAuthCtl{
     echo json_encode($model->read_all($userid), JSON_NUMERIC_CHECK);
   }
 
-  /**
-   * Get information about the QBO company
-   * 
-   * @return void Output is echo'd directly to response
-   */
-  public static function companyInfo(){  
-
-    if( !isset($_GET['realmid']) ) {
-      http_response_code(400);   
-      echo json_encode(
-          array("message" => "Please supply realmid as a parameter.")
-      );
-      exit(1);
-    } 
-
-    $realmid = $_GET['realmid'];
-
-    $model = new QuickbooksAuth();
-
-    echo json_encode($model->companyInfo($realmid), JSON_NUMERIC_CHECK);
-  }
 }

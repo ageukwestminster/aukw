@@ -88,6 +88,13 @@ export class LoginComponent implements OnInit {
   }
 
 
+  /**
+   * Redirect the user to the QBO OAuth2 login screen. This begins the OAuth2 process.
+   * If the QBO login is successful the user will be directed back to the 
+   * callback component.
+   * @param event Click on the button
+   * @returns false
+   */
   redirectToIntuitSSO(event : Event) {
     event.stopPropagation();
     //event.preventDefault();
