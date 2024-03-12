@@ -39,6 +39,11 @@ class QuickbooksToken{
      */
     public $realmid;
     /**
+     * The name of the QBO company
+     * @var string
+     */
+    public $companyname;
+    /**
      * QBO access token
      * @var string
      */
@@ -142,10 +147,10 @@ class QuickbooksToken{
      * @return void Output is echo'd directly to response
      */
     function read($userid, $realmid){
-        $query = "SELECT `accesstoken`,`accesstokenexpiry`,`refreshtoken`,`refreshtokenexpiry`
-                        ,userid,realmid
-                    FROM " . $this->table_name . 
-                    " WHERE userid=:userid AND realmid=:realmid";
+        $query = "SELECT t.`accesstoken`,t.`accesstokenexpiry`,t.`refreshtoken`,t.`refreshtokenexpiry`
+                        ,t.userid,t.realmid, q.companyName
+                    FROM " . $this->table_name . " t JOIN qbrealm q ON t.realmid = q.realmid" .
+                    " WHERE t.userid=:userid AND t.realmid=:realmid";
         
         // prepare query
         $stmt = $this->conn->prepare($query);
@@ -162,6 +167,7 @@ class QuickbooksToken{
         if ( !empty($row) ) {
             $this->userid = $row['userid'];
             $this->realmid = $row['realmid'];
+            $this->companyname = $row['companyName'] ?? '';
             $this->accesstoken = $row['accesstoken'];
             $this->accesstokenexpiry = $row['accesstokenexpiry'];
             $this->refreshtoken = $row['refreshtoken'];
@@ -178,7 +184,7 @@ class QuickbooksToken{
         $query = "SELECT t.`accesstoken`,t.`accesstokenexpiry`,t.`refreshtoken`,t.`refreshtokenexpiry`
                         ,t.userid,t.realmid, q.companyName
                     FROM " . $this->table_name . " t JOIN qbrealm q ON t.realmid = q.realmid" .
-                    " WHERE userid=:userid";
+                    " WHERE t.userid=:userid";
         
         // prepare query
         $stmt = $this->conn->prepare($query);
@@ -197,7 +203,7 @@ class QuickbooksToken{
                 $item_arr[] = array(
                     "userid" => $userid,
                     "realmid" => $realmid,
-                    "companyName" => $companyName ?? '',
+                    "companyname" => $companyName ?? '',
                     "accesstoken" => $accesstoken,
                     "accesstokenexpiry" => $accesstokenexpiry,
                     "refreshtoken" => $refreshtoken,
