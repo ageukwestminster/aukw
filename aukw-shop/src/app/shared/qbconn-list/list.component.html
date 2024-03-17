@@ -1,31 +1,27 @@
-﻿<div class="row">
-  <div class="col-sm-6"><h1>Connections</h1></div>
-  <div class="col-sm-2">
-    <button
-      routerLink="add"
-      class="btn btn-sm btn-success m-1 mt-1"
-      *ngIf="user.isAdmin"
-    >
-      Add New Connection
-    </button>
-  </div>
-</div>
+﻿<h3 class="pt-3">Quickbooks Connections</h3>
+<p>
+  Quickbooks is the software we use to account for our profit and loss. A
+  connection is a link between this website and the Quickbooks online
+  system. A connection can only be made by someone with a valid login to the
+  Charity or Enterprises QB company files.
+</p>
 <table class="table table-striped table-responsive">
   <thead>
     <tr>
-      <th style="width: 50%">Company Name</th>
-      <th style="width: 50%">Refresh Token Expiry</th>
+      <th style="width: 25%">Company Name</th>
+      <th style="width: 5%">Online</th>
+      <th style="width: 10%">Token Expiry</th>
+      <th style="width: 25%">Actions</th>
     </tr>
   </thead>
   <tbody>
     <tr
-      *ngFor="let myConnection of connections"
+     *ngFor="let myRealm of realms"
       qb-connection-row
-      [user]="myConnection"
-      (onUserDeleted)="connectionWasRevoked($event)"
-      routerLink="edit/{{ myConnection.realmid }}"
+      [realm] = myRealm
+      (onConnectionRevoked)="connectionWasRevoked($event)"
     ></tr>
-    <tr *ngIf="!connections">
+    <tr *ngIf="!realms">
       <td colspan="4" class="text-center">
         <span class="spinner-border spinner-border-lg align-center"></span>
       </td>

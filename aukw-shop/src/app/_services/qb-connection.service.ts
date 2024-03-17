@@ -8,6 +8,7 @@ import { Role, User } from '@app/_models';
 
 const baseUrl = `${environment.apiUrl}/qb/connection`;
 const authUrl = `${environment.apiUrl}/auth/qb/auth`;
+const refreshUrl = `${environment.apiUrl}/qb/refresh`;
 
 @Injectable({ providedIn: 'root' })
 export class QBConnectionService {
@@ -44,6 +45,10 @@ export class QBConnectionService {
 
   delete(userid : number, realmid : string) {
     return this.http.delete<ApiMessage>(`${baseUrl}/${userid}?realmid=${realmid}`);
+  }
+
+  refresh(userid : number, realmid : string) {
+    return this.http.get<ApiMessage>(`${refreshUrl}/${userid}?realmid=${realmid}`);
   }
 
 }

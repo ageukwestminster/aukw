@@ -282,11 +282,11 @@ class QuickbooksAuth{
      * @param string $realmid The company ID for the QBO company.
      * @return true if success
      */
-    public function revoke($realmid){
+    public function revoke($userid, $realmid) {
 
         $this->init($realmid);
 
-        $this->tokenModel->read($this->jwt->id, $realmid);
+        $this->tokenModel->read($userid, $realmid);
 
         if ($this->tokenModel->accesstoken) {
             $this->remove_tokens_from_database();

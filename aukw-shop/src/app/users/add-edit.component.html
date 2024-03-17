@@ -225,44 +225,5 @@
 
   <div class="row mb-2"></div>
 
-  <div *ngIf="!isUserAdd && user.isAdmin">
-    <h3 class="pt-3">Quickbooks Connections</h3>
-    <p>
-      Quickbooks is the software we use to account for our profit and loss. A
-      connection is a link between this website and the Quickbooks online
-      system. A connection can only be made by someone with a valid login to the
-      Charity or Enterprises QB company files.
-    </p>
-    <p>
-      If you meet this condition, use the button below to authorise or revoke
-      the QB connection.
-    </p>
-    <div>
-      <div *ngIf="refreshTokenExpiry">
-        <p>
-          <strong>
-            Your QB Connection is valid. It will expire on
-            {{ refreshTokenExpiry | date: "mediumDate" }}.
-          </strong>
-        </p>
-      </div>
-      <div *ngIf="!refreshTokenExpiry">
-        <p>At present you do not have a valid QB Connection.</p>
-      </div>
-      <button
-        (click)="makeNewQBConnection()"
-        class="btn btn-sm btn-primary me-1 mb-1"
-        *ngIf="!refreshTokenExpiry"
-      >
-        Make QB Connection
-      </button>
-      <button
-        (click)="revokeQBConnection()"
-        class="btn btn-sm btn-info me-1 mb-1"
-        *ngIf="refreshTokenExpiry"
-      >
-        Revoke QB Connection
-      </button>
-    </div>
-  </div>
+  <qbconn-list *ngIf="!isUserAdd && user.isAdmin"></qbconn-list>
 </form>

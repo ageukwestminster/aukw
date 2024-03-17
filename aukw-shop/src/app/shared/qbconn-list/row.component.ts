@@ -1,16 +1,18 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { QBConnectionDetails, User } from '@app/_models';
+import { QBAuthUri, QBConnectionDetails, QBRealm, User } from '@app/_models';
 import { AlertService, AuthenticationService, QBConnectionService } from '@app/_services';
 /**
- * @UserRow: A component for the view of single User
+ * @QBConnectionRow: A component for the view of single QBO connection
  */
 @Component({
   selector: 'tr[qb-connection-row]',
   templateUrl: './row.component.html',
+  styleUrls: ['./row.component.css']
 })
 export class QBConnectionRowComponent {
   user!: User;
-  @Input() connection!: QBConnectionDetails;
+  windowHandle: any = null;
+  @Input() realm!: QBRealm;
   @Output() onConnectionRevoked: EventEmitter<QBConnectionDetails>;
 
   constructor(
@@ -22,23 +24,68 @@ export class QBConnectionRowComponent {
     this.onConnectionRevoked = new EventEmitter();
   }
 
+  isValidConnection(): boolean {
+    if (!this.realm || !this.realm.connection || !this.realm.connection.refreshtokenexpiry) {
+      return false;
+    } else {
+      
+      const refreshExpiry: Date = new Date(this.realm.connection.refreshtokenexpiry);
+      const today = new Date();
+
+      if (today > refreshExpiry)  return false;
+    }
+
+    return true;
+  }
+
   revokeConnection(e: Event) {
     e.stopPropagation(); // If click propagates it will open the edit member page
 
-    if (!this.connection || !this.connection.accesstoken) return;
+    if (!this.realm || !this.realm.connection || !this.realm.connection.accesstoken) return;
 
-    this.connection.isRevoking = true;
-    this.connectionService.delete(this.user.id, this.connection.realmid).subscribe(() => {
-      this.alertService.success('Connection revoked for ' + this.connection.companyname, {
+    const connection = this.realm.connection;
+
+    connection.isRevoking = true;
+    this.connectionService.delete(this.user.id, connection.realmid).subscribe(() => {
+      this.alertService.success('Connection revoked for ' + connection.companyname, {
         keepAfterRouteChange: true,
       });
-      this.onConnectionRevoked.emit(this.connection);
+      connection.isRevoking = false;
+      this.onConnectionRevoked.emit(connection);
+    });
+  }
+
+  refreshConnection(e: Event) {
+    e.stopPropagation(); // If click propagates it will open the edit member page
+
+    if (!this.realm || !this.realm.connection || !this.realm.connection.accesstoken) return;
+
+    const connection = this.realm.connection;
+
+    connection.isRefreshing = true;
+    this.connectionService.refresh(this.user.id, connection.realmid).subscribe(() => {
+      this.alertService.success('Connection refreshed for ' + connection.companyname, {
+        keepAfterRouteChange: true,
+      });
+      connection.isRefreshing = false;
     });
   }
 
 
+  addConnection(e: Event) {
+    e.stopPropagation();
+
+    this.connectionService.getAuthUri().subscribe((uri: QBAuthUri) => {
+      if (uri && uri.authUri) {
+        // Open the QB Auth uri in a new tab or window
+        this.windowHandle = window.open(uri.authUri);
+      }
+    });
+    return false;
+  }
+
   // Prevents the click event propagating back up to the table row
-  // which would open the edit user view
+  // with undesirable consequences
   onClickEvent(e: Event) {
     e.stopPropagation();
   }

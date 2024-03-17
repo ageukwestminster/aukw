@@ -9,19 +9,15 @@ import {
 } from '@angular/forms';
 
 import { Observable } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
 
 import {
   UserService,
   AlertService,
   AuthenticationService,
   ShopService,
-  QBConnectionService,
 } from '@app/_services';
 import { MustMatch } from '@app/_helpers';
 import {
-  QBAuthUri,
-  QBConnectionDetails,
   Shop,
   User,
   UserFormMode,
@@ -31,7 +27,7 @@ import {
 export class UserAddEditComponent implements OnInit {
   form!: FormGroup;
   id!: number;
-  shops$!: Observable<Shop[]>;  
+  shops$!: Observable<Shop[]>;
   formMode!: UserFormMode;
   loading = false;
   submitted = false;
@@ -46,7 +42,6 @@ export class UserAddEditComponent implements OnInit {
     private alertService: AlertService,
     private authenticationService: AuthenticationService,
     private shopService: ShopService,
-    private qbConnDetsService: QBConnectionService,
     private location: Location,
   ) {
     this.user = this.authenticationService.userValue;
@@ -178,17 +173,4 @@ export class UserAddEditComponent implements OnInit {
       })
       .add(() => (this.loading = false));
   }
-
-  // Connect the QB company file to this app
-  makeNewQBConnection() {
-    this.qbConnDetsService.getAuthUri().subscribe((uri: QBAuthUri) => {
-      if (uri && uri.authUri) {
-        // Open the QB Auth uri in a new tab or window
-        this.windowHandle = window.open(uri.authUri);
-      }
-    });
-    return false;
-  }
-
-
 }
