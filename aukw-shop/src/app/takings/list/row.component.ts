@@ -24,10 +24,16 @@ export class TakingsRowComponent {
     this.onTakingsAddedToQB = new EventEmitter();
   }
 
+  /** Used as a flag to determine if QB action buttons are enabled or not */
   get isProduction() {
     return environment.production;
   }
 
+  /**
+   * Delete a takings item from the database
+   * @param e 
+   * @returns 
+   */
   deleteTakings(e: Event) {
     e.stopPropagation(); // If click propagates it will open the edit member page
 
@@ -42,7 +48,11 @@ export class TakingsRowComponent {
     });
   }
 
-  // Add a Sales Receipt to QB based on the taking data in the dB
+  /**
+   * Add a Sales Receipt to QB based on the taking data in the dB
+   * @param e The click event when the button is pressed
+   * @returns void
+   */
   addToQuickbooks(e: Event) {
     e.stopPropagation(); // If click propagates it will open the edit member page
 
@@ -77,8 +87,11 @@ export class TakingsRowComponent {
       });
   }
 
-  // Prevents the click event propagating back up to the table row
-  // which would open the edit Takings view
+  /**
+   * Prevents the click event propagating back up to the table row which 
+   * would open the edit Takings view and we don't want that to happen.
+   * @param e The click event when the row is selected
+   */
   onClickEvent(e: Event) {
     e.stopPropagation();
   }
