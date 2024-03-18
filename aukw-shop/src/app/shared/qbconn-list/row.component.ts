@@ -1,13 +1,17 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { QBAuthUri, QBConnectionDetails, QBRealm, User } from '@app/_models';
-import { AlertService, AuthenticationService, QBConnectionService } from '@app/_services';
+import {
+  AlertService,
+  AuthenticationService,
+  QBConnectionService,
+} from '@app/_services';
 /**
  * @QBConnectionRow: A component for the view of single QBO connection
  */
 @Component({
   selector: 'tr[qb-connection-row]',
   templateUrl: './row.component.html',
-  styleUrls: ['./row.component.css']
+  styleUrls: ['./row.component.css'],
 })
 export class QBConnectionRowComponent {
   user!: User;
@@ -18,21 +22,26 @@ export class QBConnectionRowComponent {
   constructor(
     private connectionService: QBConnectionService,
     private alertService: AlertService,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
   ) {
     this.user = this.authenticationService.userValue;
     this.onConnectionRevoked = new EventEmitter();
   }
 
   isValidConnection(): boolean {
-    if (!this.realm || !this.realm.connection || !this.realm.connection.refreshtokenexpiry) {
+    if (
+      !this.realm ||
+      !this.realm.connection ||
+      !this.realm.connection.refreshtokenexpiry
+    ) {
       return false;
     } else {
-      
-      const refreshExpiry: Date = new Date(this.realm.connection.refreshtokenexpiry);
+      const refreshExpiry: Date = new Date(
+        this.realm.connection.refreshtokenexpiry,
+      );
       const today = new Date();
 
-      if (today > refreshExpiry)  return false;
+      if (today > refreshExpiry) return false;
     }
 
     return true;
@@ -41,36 +50,55 @@ export class QBConnectionRowComponent {
   revokeConnection(e: Event) {
     e.stopPropagation(); // If click propagates it will open the edit member page
 
-    if (!this.realm || !this.realm.connection || !this.realm.connection.accesstoken) return;
+    if (
+      !this.realm ||
+      !this.realm.connection ||
+      !this.realm.connection.accesstoken
+    )
+      return;
 
     const connection = this.realm.connection;
 
     connection.isRevoking = true;
-    this.connectionService.delete(this.user.id, connection.realmid).subscribe(() => {
-      this.alertService.success('Connection revoked for ' + connection.companyname, {
-        keepAfterRouteChange: true,
+    this.connectionService
+      .delete(this.user.id, connection.realmid)
+      .subscribe(() => {
+        this.alertService.success(
+          'Connection revoked for ' + connection.companyname,
+          {
+            keepAfterRouteChange: true,
+          },
+        );
+        connection.isRevoking = false;
+        this.onConnectionRevoked.emit(connection);
       });
-      connection.isRevoking = false;
-      this.onConnectionRevoked.emit(connection);
-    });
   }
 
   refreshConnection(e: Event) {
     e.stopPropagation(); // If click propagates it will open the edit member page
 
-    if (!this.realm || !this.realm.connection || !this.realm.connection.accesstoken) return;
+    if (
+      !this.realm ||
+      !this.realm.connection ||
+      !this.realm.connection.accesstoken
+    )
+      return;
 
     const connection = this.realm.connection;
 
     connection.isRefreshing = true;
-    this.connectionService.refresh(this.user.id, connection.realmid).subscribe(() => {
-      this.alertService.success('Connection refreshed for ' + connection.companyname, {
-        keepAfterRouteChange: true,
+    this.connectionService
+      .refresh(this.user.id, connection.realmid)
+      .subscribe(() => {
+        this.alertService.success(
+          'Connection refreshed for ' + connection.companyname,
+          {
+            keepAfterRouteChange: true,
+          },
+        );
+        connection.isRefreshing = false;
       });
-      connection.isRefreshing = false;
-    });
   }
-
 
   addConnection(e: Event) {
     e.stopPropagation();
@@ -89,5 +117,4 @@ export class QBConnectionRowComponent {
   onClickEvent(e: Event) {
     e.stopPropagation();
   }
-
 }

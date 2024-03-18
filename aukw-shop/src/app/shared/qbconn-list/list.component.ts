@@ -8,9 +8,9 @@ import {
 } from '@app/_services';
 import { QBConnectionDetails, QBRealm, User } from '@app/_models';
 
-@Component({ 
+@Component({
   selector: 'qbconn-list',
-  templateUrl: 'list.component.html' 
+  templateUrl: 'list.component.html',
 })
 export class QBConnectionListComponent implements OnInit {
   realms!: QBRealm[];
@@ -19,20 +19,18 @@ export class QBConnectionListComponent implements OnInit {
   constructor(
     private qbConnectionService: QBConnectionService,
     private authenticationService: AuthenticationService,
-    private qbRealmService: QBRealmService
+    private qbRealmService: QBRealmService,
   ) {
     this.user = this.authenticationService.userValue;
   }
 
   ngOnInit() {
-
     this.loadData();
-
   }
 
   connectionWasRevoked(connection: QBConnectionDetails): void {
-   // this.connections = this.connections.filter((x) => x.realmid !== connection.realmid);
-   this.loadData();
+    // this.connections = this.connections.filter((x) => x.realmid !== connection.realmid);
+    this.loadData();
   }
 
   loadData() {
@@ -42,26 +40,23 @@ export class QBConnectionListComponent implements OnInit {
       .pipe(
         concatMap((response: QBRealm[]) => {
           this.realms = response;
-          return this.qbConnectionService.getAll(
-            this.user.id
-          )
-        }),      
+          return this.qbConnectionService.getAll(this.user.id);
+        }),
         switchMap((dataArray: QBConnectionDetails[]) => {
           const obs = dataArray.map((x) => {
             return of(x);
           });
           return merge(...obs);
-        }),  
+        }),
       )
       .subscribe((conndetails: QBConnectionDetails) => {
         // Find the relevant realm and add the connection object
         for (let index = 0; index < this.realms.length; index++) {
           const realm = this.realms[index];
-          if (realm && realm.realmid == conndetails.realmid ) {
+          if (realm && realm.realmid == conndetails.realmid) {
             realm.connection = conndetails; // Add connection to realm
-          }          
+          }
         }
       });
   }
-  
 }

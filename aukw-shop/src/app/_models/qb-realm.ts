@@ -1,4 +1,4 @@
-import { QBConnectionDetails } from "./qb-connection-details";
+import { QBConnectionDetails } from './qb-connection-details';
 
 /**
  * A realm is another name for an individual QuickBooks Online company file.

@@ -14,19 +14,19 @@ import { Role, User } from '@app/_models';
  */
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
-  /** 
-   * This pattern (private BehaviorSubject<object> & public 
-  *     Observable<object>) is likely being used because:
-  *      1. BehaviourSubject guarantees there is always a valid User
-  *      2. Using the asObservable() user public property exposes the
-  *         data from the subject, but at the same time prevents
-  *         having data inadvertently pushed into the subject
-  *      3. By having the userValue a public property of an injectable
-  *         service, the details of the logged-in user are available
-  *         throughout the app.
-  *
-  *  Further reading: {@link https://medium.com/@benlesh/on-the-subject-of-subjects-in-rxjs-2b08b7198b93 medium}
-  */
+  /**
+   * This pattern (private BehaviorSubject<object> & public
+   *     Observable<object>) is likely being used because:
+   *      1. BehaviourSubject guarantees there is always a valid User
+   *      2. Using the asObservable() user public property exposes the
+   *         data from the subject, but at the same time prevents
+   *         having data inadvertently pushed into the subject
+   *      3. By having the userValue a public property of an injectable
+   *         service, the details of the logged-in user are available
+   *         throughout the app.
+   *
+   *  Further reading: {@link https://medium.com/@benlesh/on-the-subject-of-subjects-in-rxjs-2b08b7198b93 medium}
+   */
   private userSubject: BehaviorSubject<User>;
 
   /**
@@ -38,7 +38,7 @@ export class AuthenticationService {
   /**
    * The windows Id of the timer that is set to expire 1 minute before the access token.
    * This timer is used to trigger the creatiopn of a new access token from the refresh token.
-   * 
+   *
    * Code from: {@link https://stackoverflow.com/a/54507207/6941165 stackoverflow}
    */
   private refreshTokenTimerId: number | undefined;
@@ -111,16 +111,15 @@ export class AuthenticationService {
    * The method then starts a countdown timer by calling this.startRefreshTokenTimer() to auto
    * refresh the JWT token in the background (silent refresh) one minute before it expires so
    * the user stays logged in.
-   * 
+   *
    * This method returns an empty User (rather than a 401/403 error) if called from /callback
    * Done this way to allow QBO to callback into the app wiothout being authenticated
    *
    * @returns On success the api returns the user details including a JWT token
    */
   refreshToken() {
-    
-    if(window.location.pathname=='/callback') {
-      return of(new User);
+    if (window.location.pathname == '/callback') {
+      return of(new User());
     }
     return this.http
       .get<any>(`${environment.apiUrl}/auth/refresh`, { withCredentials: true })
@@ -137,7 +136,8 @@ export class AuthenticationService {
   callback(code: string, realmId: string, state: string) {
     return this.http
       .get<any>(
-        `${environment.apiUrl}/auth/qb/callback?code=${code}&realmId=${realmId}&state=${state}`)
+        `${environment.apiUrl}/auth/qb/callback?code=${code}&realmId=${realmId}&state=${state}`,
+      )
       .pipe(
         map((user) => {
           user.isAdmin = user && user.role && user.role === Role.Admin; // Add extra property

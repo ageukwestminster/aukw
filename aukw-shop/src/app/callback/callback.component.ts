@@ -1,21 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { environment } from '@environments/environment';
-import { AlertService, AuthenticationService} from '@app/_services';
+import { AlertService, AuthenticationService } from '@app/_services';
 
 @Component({
-  template: ''
+  template: '',
 })
 export class CallbackComponent implements OnInit {
-
-  constructor(private route: ActivatedRoute, 
+  constructor(
+    private route: ActivatedRoute,
     private router: Router,
     private alertService: AlertService,
     private authenticationService: AuthenticationService,
-    ) { }
+  ) {}
 
-  public ngOnInit():void {
-    console.log('Callback route: ' +this.router.url);
+  public ngOnInit(): void {
+    console.log('Callback route: ' + this.router.url);
     const code = this.route.snapshot.queryParamMap.get('code');
     var realmId = this.route.snapshot.queryParamMap.get('realmId');
     const state = this.route.snapshot.queryParamMap.get('state');
@@ -25,29 +25,27 @@ export class CallbackComponent implements OnInit {
     }
 
     if (!code || !state || !realmId) {
-      console.error("Error: Invalid parameters passed to callback. To use "
-          + "this endpoint you must supply values for: " 
-          + "'code', 'realmId' and 'state'.");
+      console.error(
+        'Error: Invalid parameters passed to callback. To use ' +
+          'this endpoint you must supply values for: ' +
+          "'code', 'realmId' and 'state'.",
+      );
       window.location.href = environment.loginUrl;
     }
 
     //Check that we have the correct company to proceed
     //if (realmId != '9130350604308576') {
-      //console.error("Error: 'realmId' does not match expected value.");
-       // window.location.href = environment.loginUrl;
+    //console.error("Error: 'realmId' does not match expected value.");
+    // window.location.href = environment.loginUrl;
     //}
 
-
-
     // use the auth service and the supplied token to log in
-    this.authenticationService.callback(code!, realmId!, state!)
-    .subscribe({
+    this.authenticationService.callback(code!, realmId!, state!).subscribe({
       next: () => {
         console.log('Logged in.');
         if (this.authenticationService.userValue) {
           this.router.navigate(['/']);
-        }
-        else {
+        } else {
           console.log('Unknown error.');
         }
       },
@@ -57,7 +55,5 @@ export class CallbackComponent implements OnInit {
         });
       },
     });
-
-}
-
+  }
 }

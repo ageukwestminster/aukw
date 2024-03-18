@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { environment } from '@environments/environment';
 import { ApiMessage, QBAuthUri, QBConnectionDetails } from '@app/_models';
-import { AuthenticationService} from '@app/_services';
+import { AuthenticationService } from '@app/_services';
 import { Role, User } from '@app/_models';
 
 const baseUrl = `${environment.apiUrl}/qb/connection`;
@@ -14,17 +14,21 @@ const refreshUrl = `${environment.apiUrl}/qb/refresh`;
 export class QBConnectionService {
   user!: User;
 
-  constructor(private http: HttpClient,
-    private authenticationService: AuthenticationService) {
-      this.user = this.authenticationService.userValue;
-    }
+  constructor(
+    private http: HttpClient,
+    private authenticationService: AuthenticationService,
+  ) {
+    this.user = this.authenticationService.userValue;
+  }
 
   /**
    * Get details of the current connection to QuickBooks
    * @returns The uri needed to re-authorize the connection and the expiry date of the refresh token
    */
   getDetails(userid: number, realmid: string) {
-    return this.http.get<QBConnectionDetails>(`${baseUrl}/${userid}?realmid=${realmid}`);
+    return this.http.get<QBConnectionDetails>(
+      `${baseUrl}/${userid}?realmid=${realmid}`,
+    );
   }
 
   /**
@@ -39,16 +43,28 @@ export class QBConnectionService {
     return this.http.get<QBAuthUri>(`${authUrl}`);
   }
 
-  getAuthUriWithParameters(realmid: string, clientID: string, clientSecret: string, useSandbox: boolean = false) {
-    return this.http.post<QBAuthUri>(`${authUrl}?realmid=${realmid}`,{clientID, clientSecret, useSandbox});
+  getAuthUriWithParameters(
+    realmid: string,
+    clientID: string,
+    clientSecret: string,
+    useSandbox: boolean = false,
+  ) {
+    return this.http.post<QBAuthUri>(`${authUrl}?realmid=${realmid}`, {
+      clientID,
+      clientSecret,
+      useSandbox,
+    });
   }
 
-  delete(userid : number, realmid : string) {
-    return this.http.delete<ApiMessage>(`${baseUrl}/${userid}?realmid=${realmid}`);
+  delete(userid: number, realmid: string) {
+    return this.http.delete<ApiMessage>(
+      `${baseUrl}/${userid}?realmid=${realmid}`,
+    );
   }
 
-  refresh(userid : number, realmid : string) {
-    return this.http.get<ApiMessage>(`${refreshUrl}/${userid}?realmid=${realmid}`);
+  refresh(userid: number, realmid: string) {
+    return this.http.get<ApiMessage>(
+      `${refreshUrl}/${userid}?realmid=${realmid}`,
+    );
   }
-
 }

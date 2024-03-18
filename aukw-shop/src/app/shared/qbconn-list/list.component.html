@@ -1,9 +1,9 @@
 ﻿<h3 class="pt-3">Quickbooks Connections</h3>
 <p>
   Quickbooks is the software we use to account for our profit and loss. A
-  connection is a link between this website and the Quickbooks online
-  system. A connection can only be made by someone with a valid login to the
-  Charity or Enterprises QB company files.
+  connection is a link between this website and the Quickbooks online system. A
+  connection can only be made by someone with a valid login to the Charity or
+  Enterprises QB company files.
 </p>
 <table class="table table-striped table-responsive">
   <thead>
@@ -16,9 +16,9 @@
   </thead>
   <tbody>
     <tr
-     *ngFor="let myRealm of realms"
+      *ngFor="let myRealm of realms"
       qb-connection-row
-      [realm] = myRealm
+      [realm]="myRealm"
       (onConnectionRevoked)="connectionWasRevoked($event)"
     ></tr>
     <tr *ngIf="!realms">

@@ -17,11 +17,7 @@ import {
   ShopService,
 } from '@app/_services';
 import { MustMatch } from '@app/_helpers';
-import {
-  Shop,
-  User,
-  UserFormMode,
-} from '@app/_models';
+import { Shop, User, UserFormMode } from '@app/_models';
 
 @Component({ templateUrl: 'add-edit.component.html' })
 export class UserAddEditComponent implements OnInit {
@@ -98,12 +94,10 @@ export class UserAddEditComponent implements OnInit {
     );
 
     if (this.formMode != UserFormMode.Add) {
-      this.userService
-        .getById(this.id)
-        .subscribe((u: User) => {
-          this.form.patchValue(u);
-          this.loading = false;
-        });
+      this.userService.getById(this.id).subscribe((u: User) => {
+        this.form.patchValue(u);
+        this.loading = false;
+      });
     }
   }
 

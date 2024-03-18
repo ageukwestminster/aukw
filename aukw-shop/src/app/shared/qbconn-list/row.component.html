@@ -1,8 +1,12 @@
 <td>{{ realm.name }}</td>
-<td><span class="logged-in" *ngIf="isValidConnection">●</span>
-  <span class="logged-out" *ngIf="!isValidConnection">●</span></td>
 <td>
-  {{ this.realm!.connection && this.realm!.connection!.refreshtokenexpiry | date}}
+  <span class="logged-in" *ngIf="isValidConnection">●</span>
+  <span class="logged-out" *ngIf="!isValidConnection">●</span>
+</td>
+<td>
+  {{
+    this.realm!.connection && this.realm!.connection!.refreshtokenexpiry | date
+  }}
 </td>
 <td style="white-space: nowrap">
   <button
@@ -21,7 +25,10 @@
       *ngIf="this.realm!.connection && this.realm!.connection!.isRefreshing"
       class="spinner-border spinner-border-sm"
     ></span>
-    <span *ngIf="!this.realm!.connection || !this.realm!.connection!.isRefreshing">Refresh</span>
+    <span
+      *ngIf="!this.realm!.connection || !this.realm!.connection!.isRefreshing"
+      >Refresh</span
+    >
   </button>
   <button
     (click)="revokeConnection($event)"
@@ -32,6 +39,8 @@
       *ngIf="this.realm!.connection && this.realm!.connection!.isRevoking"
       class="spinner-border spinner-border-sm"
     ></span>
-    <span *ngIf="!this.realm!.connection || !this.realm!.connection!.isRevoking">Delete</span>
+    <span *ngIf="!this.realm!.connection || !this.realm!.connection!.isRevoking"
+      >Delete</span
+    >
   </button>
 </td>

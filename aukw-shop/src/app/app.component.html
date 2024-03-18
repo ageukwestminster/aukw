@@ -51,6 +51,9 @@
           <a class="nav-item nav-link" routerLink="/reports">Reports</a>
         </li>
         <li [ngbNavItem]="3" *ngIf="user.isAdmin">
+          <a class="nav-item nav-link" routerLink="/payroll">Payroll</a>
+        </li>
+        <li [ngbNavItem]="3" *ngIf="user.isAdmin">
           <a class="nav-item nav-link" routerLink="/users">Users</a>
         </li>
         <li [ngbNavItem]="5" ngbDropdown class="nav-item">

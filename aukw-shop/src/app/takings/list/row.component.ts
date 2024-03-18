@@ -31,8 +31,8 @@ export class TakingsRowComponent {
 
   /**
    * Delete a takings item from the database
-   * @param e 
-   * @returns 
+   * @param e
+   * @returns
    */
   deleteTakings(e: Event) {
     e.stopPropagation(); // If click propagates it will open the edit member page
@@ -88,7 +88,7 @@ export class TakingsRowComponent {
   }
 
   /**
-   * Prevents the click event propagating back up to the table row which 
+   * Prevents the click event propagating back up to the table row which
    * would open the edit Takings view and we don't want that to happen.
    * @param e The click event when the row is selected
    */

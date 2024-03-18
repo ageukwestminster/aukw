@@ -2,12 +2,9 @@
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { AuthenticationService,
-  QBConnectionService } from '@app/_services';
+import { AuthenticationService, QBConnectionService } from '@app/_services';
 
-  import {
-    QBAuthUri,
-  } from '@app/_models';
+import { QBAuthUri } from '@app/_models';
 
 @Component({
   templateUrl: 'login.component.html',
@@ -76,26 +73,28 @@ export class LoginComponent implements OnInit {
    * @param element The img element for the Intuit button
    */
   hoverOverIntuitButton(element: HTMLImageElement) {
-    element.setAttribute('src', "assets/images/Sign_in_blue_btn_med_hover.svg");
+    element.setAttribute('src', 'assets/images/Sign_in_blue_btn_med_hover.svg');
   }
-  
+
   /**
    * Change back to the default image when hovering ends
    * @param element The img element for the Intuit button
    */
   unhoverOverIntuitButton(element: HTMLImageElement) {
-    element.setAttribute('src', "assets/images/Sign_in_blue_btn_med_default.svg");
+    element.setAttribute(
+      'src',
+      'assets/images/Sign_in_blue_btn_med_default.svg',
+    );
   }
-
 
   /**
    * Redirect the user to the QBO OAuth2 login screen. This begins the OAuth2 process.
-   * If the QBO login is successful the user will be directed back to the 
+   * If the QBO login is successful the user will be directed back to the
    * callback component.
    * @param event Click on the button
    * @returns false
    */
-  redirectToIntuitSSO(event : Event) {
+  redirectToIntuitSSO(event: Event) {
     event.stopPropagation();
     //event.preventDefault();
     this.qbConnService.getAuthUri().subscribe((uri: QBAuthUri) => {
@@ -106,5 +105,4 @@ export class LoginComponent implements OnInit {
     });
     return false;
   }
-
 }
