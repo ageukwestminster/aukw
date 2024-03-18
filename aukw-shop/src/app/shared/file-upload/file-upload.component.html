@@ -1,0 +1,17 @@
+<input type="file" class="file-input"
+       (change)="onFileSelected($event)" #fileUpload>
+
+<div class="file-upload">
+
+   {{fileName || "No file uploaded yet."}}
+
+    <div class="col-sm-2">
+        <button
+        (click)="fileUpload.click()"
+          class="btn btn-sm btn-success m-1 mt-1"
+        >
+          Upload File <i class="fa-solid fa-paperclick"></i>
+        </button>
+        <i class="fa-solid fa-paperclick"></i>
+      </div>
+</div>

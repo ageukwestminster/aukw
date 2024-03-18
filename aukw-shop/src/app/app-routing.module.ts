@@ -11,6 +11,8 @@ const usersModule = () =>
   import('./users/users.module').then((x) => x.UsersModule);
 const takingsModule = () =>
   import('./takings/takings.module').then((x) => x.TakingsModule);
+const payrollModule = () =>
+  import('./payroll/payroll.module').then((x) => x.PayrollModule);
 const reportsModule = () =>
   import('./reports/reports.module').then((x) => x.ReportsModule);
 
@@ -32,6 +34,12 @@ const routes: Routes = [
     path: 'reports',
     loadChildren: reportsModule,
     canActivate: [AuthGuard],
+  },
+  {
+    path: 'payroll',
+    loadChildren: payrollModule,
+    canActivate: [AuthGuard],
+    data: { roles: [Role.Admin] },
   },
   {
     path: 'users',

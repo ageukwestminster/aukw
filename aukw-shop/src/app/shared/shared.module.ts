@@ -6,6 +6,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AlertComponent } from './alert-component/alert.component';
 import { SalesChartComponent } from './sales-chart/sales-chart.component';
 import { DepartmentChartComponent } from './dept-chart/dept-chart.component';
+import { FileUploadComponent } from './file-upload/file-upload.component';
 import { MoneyInputComponent } from './money-input/money-input.component';
 import { MonthlySalesChartComponent } from './monthly-sales-chart/monthly-sales-chart.component';
 import { QBConnectionListComponent } from './qbconn-list/list.component';
@@ -19,6 +20,7 @@ import { MovingAverageChartComponent } from './moving-avg-chart/moving-avg-chart
   declarations: [
     AlertComponent,
     DepartmentChartComponent,
+    FileUploadComponent,
     MoneyInputComponent,
     SalesChartComponent,
     MonthlySalesChartComponent,
@@ -31,6 +33,7 @@ import { MovingAverageChartComponent } from './moving-avg-chart/moving-avg-chart
   exports: [
     AlertComponent,
     DepartmentChartComponent,
+    FileUploadComponent,
     MoneyInputComponent,
     MonthlySalesChartComponent,
     MovingAverageChartComponent,
