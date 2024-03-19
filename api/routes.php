@@ -177,5 +177,12 @@ $router->mount('/user', function () use ($router) {
     $router->put('/(\d+)', 'UserCtl@update');
 });
 
+/***************/
+/* Xlxs Routes */
+/***************/
+$router->mount('/xlsx', function () use ($router) {
 
+    // new user
+    $router->post('/', 'XlsxCtl@decrypt');
+});
 

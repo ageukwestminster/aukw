@@ -73,10 +73,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "aukw-shop:build:production"
+              "buildTarget": "aukw-shop:build:production"
             },
             "development": {
-              "browserTarget": "aukw-shop:build:development"
+              "buildTarget": "aukw-shop:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -84,7 +84,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "aukw-shop:build"
+            "buildTarget": "aukw-shop:build"
           }
         },
         "test": {

@@ -25,8 +25,10 @@ include_once 'controllers/report.controller.php';
 include_once 'controllers/shop.controller.php';
 include_once 'controllers/takings.controller.php';
 include_once 'controllers/user.controller.php';
+include_once 'controllers/xlsx.controller.php';
 
 // Define models
+include_once 'models/encryptedxlsx.php';
 include_once 'models/jwt.php';
 include_once 'models/qbauth.php';
 include_once 'models/qbemployee.php';
