@@ -182,7 +182,16 @@ $router->mount('/user', function () use ($router) {
 /***************/
 $router->mount('/xlsx', function () use ($router) {
 
-    // new user
+    // Upload spreadsheet
+    $router->post('/upload', 'XlsxCtl@upload');
+
+    // Decrypt file
     $router->post('/', 'XlsxCtl@decrypt');
+
+    // Parse file
+    $router->get('/parse', 'XlsxCtl@parse');
+
+    // Determine Worksheets of interest
+    $router->get('/listws', 'XlsxCtl@parse_worksheets');
 });
 

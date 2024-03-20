@@ -66,6 +66,11 @@ Config::write('db.password', 'DB_PASSWORD'); // env key name
 // number of allowed password attempts
 Config::write('password_attempts', 5);
 
+// file upload settings
+Config::write('file.uploaddir', './uploads/');
+Config::write('file.decryptedfilename', 'payroll.xlsx');
+Config::write('file.encryptedfilename', 'payroll_encrypted.xlsx');
+
 // token settings
 Config::write('token.accessExpiry', '+15 minute');
 Config::write('token.refreshExpiry', '+7 day');

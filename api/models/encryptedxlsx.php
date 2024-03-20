@@ -5,7 +5,11 @@ namespace Models;
 use OLE;
 
 /**
- * Manipulate Encrypted Xlsx files
+ * A class that can decrypt encrypted Xlsx files. 
+ * 
+ * A normal Xlsx file is in Office OpenXML format. An encrypted
+ * file is actually an encrypted OPC zip package inside a
+ * compound OLE document.
  * 
  * @category Model
  */
@@ -71,7 +75,9 @@ class EncryptedXlsx{
 
   /**
    * Decrypt an encrypted Excel xlsx file and save as a decrypted file.
-   * Uses PEAR/OLE
+   * (Requires PEAR/OLE to open the file and extract the encryption data and payload.)
+   * 
+   * Code is from https://github.com/jaydadhania08/PHPDecryptXLSXWithPassword
    */
   public function decrypt() {
     $oleObj = new OLE();
@@ -80,6 +86,11 @@ class EncryptedXlsx{
     // parse info from XML
     {
       $xmlstr = substr($this->getDataByName($oleObj, 'EncryptionInfo'), 8);
+
+      if (!$xmlstr) {
+        throw new \Exception('This file ('. $this->encryptedFilePath .') is not encrypted.');
+      }
+
       $xml =  new \SimpleXMLElement($xmlstr);
 
       $info = [];
@@ -168,7 +179,7 @@ class EncryptedXlsx{
   }
 
   /**
-   * Get data from asn OLE object with the specified name. This is used
+   * Get a stream of data from an OLE file with the specified stream name. This is used
    * in the decrypt function to extract EncryptionInfo (details of the encryption
    * algorithim) and EncryptedPackage (the encrypted payload).
    */

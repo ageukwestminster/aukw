@@ -3,6 +3,7 @@
 namespace Controllers;
 
 use Models\EncryptedXlsx;
+use Models\PayrollXlsx;
 
 /**
  * Controller to acomplish Excel spreadsheet related tasks
@@ -11,36 +12,134 @@ use Models\EncryptedXlsx;
 */
 class XlsxCtl{
 
+  /**
+   * Receive an uploaded spreadsheet
+   * 
+   * @return void Output is echo'd directly to response 
+   * 
+   */
+  public static function upload(){  
+
+    $uploaddir = XlsxCtl::getUploadDirectory();
+
+    // Clean upload directory
+    XlsxCtl::delete_all_spreadsheets($uploaddir); 
+
+    // Check that a file has been uploaded
+    if (!$_FILES || !array_key_exists('file', $_FILES) || !$_FILES['file']) {
+        http_response_code(400);   
+        echo json_encode(
+            array("message" => "Uploaded file collection (_FILES) is empty or is missing the key named 'file'.")
+        );
+        exit(1);
+    }
+
+    // Set the new file name
+    $uploadfile = $uploaddir . XlsxCtl::getUploadedFilename(isset($_GET['filename'])?$_GET['filename']:'');
+
+    // Move file from PHP temp folder to upload directory
+    if(move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile))
+    {
+        echo "The file has been uploaded successfully.";
+    }
+    else
+    {
+        http_response_code(400);
+        array("message" => "There was an error uploading the file.");
+    }
+
+  }
 
   /**
-   * Return details of the User identified by $id
-   *
-   * @param int $id
+   * 
+   * 
+   * @return void Output is echo'd directly to response 
+   * 
+   */
+  public static function parse(){  
+
+    $uploaddir = XlsxCtl::getUploadDirectory();
+
+    $decryptedFilePath = $uploaddir . \Core\Config::read('file.decryptedfilename');
+
+    try {
+        if (!is_file($decryptedFilePath)) {
+            throw new \Exception('File not found. File name: ('. $decryptedFilePath .')');
+        }
+
+        PayrollXlsx::getInstance()
+        ->setFilePath($decryptedFilePath)
+        ->parse(); 
+        
+        http_response_code(200);   
+        echo json_encode(
+            array("message" => "Spreadsheet parsed.")
+        );
+    }
+    catch (\Exception $e){
+        http_response_code(400);   
+        echo json_encode(
+            array("message" => "Decryption of spreadsheet failed.",
+            "details" => $e->getMessage())
+        );
+        exit(1);
+    }
+  }
+
+    /**
+   * 
+   * 
+   * @return void Output is echo'd directly to response 
+   * 
+   */
+  public static function parse_worksheets(){  
+
+    $uploaddir = XlsxCtl::getUploadDirectory();
+
+    $decryptedFilePath = $uploaddir . \Core\Config::read('file.decryptedfilename');
+
+    try {
+        if (!is_file($decryptedFilePath)) {
+            throw new \Exception('File not found. File name: ('. $decryptedFilePath .')');
+        }
+
+        $model = PayrollXlsx::getInstance()
+        ->setFilePath($decryptedFilePath); 
+
+        $worksheets = $model->parse_worksheets();
+
+        $list = array();
+        $list['pensions'] = $worksheets["pensions"]->getTitle();
+        $list['summary'] = $worksheets['summary']->getTitle();
+
+        echo json_encode($list, JSON_NUMERIC_CHECK);
+        
+    }
+    catch (\Exception $e){
+        http_response_code(400);   
+        echo json_encode(
+            array("message" => "Decryption of spreadsheet failed.",
+            "details" => $e->getMessage())
+        );
+        exit(1);
+    }
+  }
+
+  /**
+   * Decrypt a spreadsheet using the data provided in the POST body.
    * 
    * @return void Output is echo'd directly to response 
    * 
    */
   public static function decrypt(){  
 
+    $uploaddir = XlsxCtl::getUploadDirectory();
+
+    $encryptedFilePath = $uploaddir . XlsxCtl::getUploadedFilename($_GET['filename']);
+
+    $decryptedFilePath = $uploaddir . \Core\Config::read('file.decryptedfilename');
+
     $data = json_decode(file_get_contents("php://input"));
-
-    if(!$data || !$data->encryptedFilePath || !file_exists($data->encryptedFilePath)) {
-        http_response_code(400);   
-        echo json_encode(
-            array("message" => "Encrypted file not found. Path: '" . 
-                empty($data->encryptedFilePath)?'<empty>':$data->encryptedFilePath . "'")
-        );
-        exit(1);
-    }
-
-    if(!$data->decryptedFilePath) {
-        http_response_code(400);   
-        echo json_encode(
-            array("message" => "Decrypted file path not provided.")
-        );
-        exit(1);
-    }
-
     if(!$data->password) {
         http_response_code(400);   
         echo json_encode(
@@ -50,13 +149,77 @@ class XlsxCtl{
     }
 
     $model = EncryptedXlsx::getInstance()
-        ->setEncryptedFilePath($data->encryptedFilePath)
+        ->setEncryptedFilePath($encryptedFilePath)
         ->setPassword($data->password)
-        ->setDecryptedFilePath($data->decryptedFilePath);
+        ->setDecryptedFilePath($decryptedFilePath);
 
-    $model->decrypt();        
+    try {
+
+        $model->decrypt();       
+        
+        // delete encrypted file
+        if(is_file($encryptedFilePath)) {
+            unlink($encryptedFilePath);
+        }
+
+        if (is_file($decryptedFilePath)) {
+            http_response_code(200);   
+            echo json_encode(
+                array("message" => "Spreadsheet decrypted.")
+            );
+        } else {
+            http_response_code(400);   
+            echo json_encode(
+                array("message" => "File not found. Decryption of spreadsheet failed.")
+            );
+        }
+    }
+    catch (\Exception $e){
+        http_response_code(400);   
+        echo json_encode(
+            array("message" => "Decryption of spreadsheet failed.",
+            "details" => $e->getMessage())
+        );
+        exit(1);
+    }
   }
 
+  
+  /**
+   * Helper function to get directory path of location to save uploaded files
+   * @return string The directory path
+   */
+  private static function getUploadDirectory() {
+    return \Core\Config::read('file.uploaddir') ?? "./uploads/";
+  }
+  
+  /**
+   * Helper function to get the file name of the uplaoded file
+   * @param string $filename 
+   * @return string
+   */
+  private static function getUploadedFilename(string $filename = '') {
+    // Set the new file name
+    if(!empty($filename) ) {
+        return $filename;
+    } else {
+        return \Core\Config::read('file.encryptedfilename');
+    }
+  }
+
+  /**
+   * Helper function to delete all files that end with 'xlsx' in the specified directory
+   * @param string $directory_name The directory to search for files to delete
+   * @return void
+   */
+  private static function delete_all_spreadsheets(string $directory_name) {
+    $files = glob($directory_name.'*xlsx'); // get xlsx file names in upload dir
+    foreach($files as $file){ // iterate files
+        if(is_file($file)) {
+            unlink($file); // delete each spreadsheet
+        }
+    }
+  }
    
 
 }

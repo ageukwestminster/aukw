@@ -5,6 +5,7 @@
         "lcobucci/clock": "^3.1",
         "quickbooks/v3-php-sdk": "^6.1",
         "pear/ole": "^1.0",
-        "pear/pear": "^1.10"
+        "pear/pear": "^1.10",
+        "phpoffice/phpspreadsheet": "^2.0"
     }
 }

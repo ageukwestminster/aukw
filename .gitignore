@@ -4,3 +4,4 @@ aukw-shop/.htaccess
 ~$KW_Technical_Documentation_2023.docx
 phpDocumentor.phar
 .phpdoc/
+api/uploads/
