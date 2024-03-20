@@ -67,19 +67,16 @@ class XlsxCtl{
             throw new \Exception('File not found. File name: ('. $decryptedFilePath .')');
         }
 
-        PayrollXlsx::getInstance()
-        ->setFilePath($decryptedFilePath)
-        ->parse(); 
+        $model = PayrollXlsx::getInstance()
+        ->setFilePath($decryptedFilePath); 
+
+        echo json_encode($model->parse(), JSON_NUMERIC_CHECK);
         
-        http_response_code(200);   
-        echo json_encode(
-            array("message" => "Spreadsheet parsed.")
-        );
     }
     catch (\Exception $e){
         http_response_code(400);   
         echo json_encode(
-            array("message" => "Decryption of spreadsheet failed.",
+            array("message" => "Listing worksheets of spreadsheet failed.",
             "details" => $e->getMessage())
         );
         exit(1);
@@ -106,13 +103,7 @@ class XlsxCtl{
         $model = PayrollXlsx::getInstance()
         ->setFilePath($decryptedFilePath); 
 
-        $worksheets = $model->parse_worksheets();
-
-        $list = array();
-        $list['pensions'] = $worksheets["pensions"]->getTitle();
-        $list['summary'] = $worksheets['summary']->getTitle();
-
-        echo json_encode($list, JSON_NUMERIC_CHECK);
+        echo json_encode($model->parse_worksheets(), JSON_NUMERIC_CHECK);
         
     }
     catch (\Exception $e){

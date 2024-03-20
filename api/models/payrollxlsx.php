@@ -20,6 +20,20 @@ class PayrollXlsx{
    * @var string
    */
   protected string $filePath;
+
+  /**
+   * The WorkSheet object for the EE Summary sheet
+   *
+   * @var object
+   */
+  protected object $summaryWorkSheet;
+
+  /**
+   * The WorkSheet object for the Pensions sheet
+   *
+   * @var object
+   */
+  protected object $pensionsWorkSheet;
  
   /**
    * Encrypted File Path setter
@@ -45,9 +59,17 @@ class PayrollXlsx{
 
 
   public function parse(): bool {
+    if (!isset($this->pensionsWorkSheet) || !isset($this->summaryWorkSheet)) {
+      $this->parse_worksheets();
+    }
     return false;
   }
 
+  /**
+   * Open the spreadsheet file specified in the FilePath property and
+   * store references to the pensions and summary worksheets.
+   * @return object list of worksheet namesc
+   */
   public function parse_worksheets() {
 
     /**  Create a new Reader of the type defined in $inputFileType  **/
@@ -62,9 +84,11 @@ class PayrollXlsx{
 
     foreach ($names as $name) {
       if (preg_match('/pensions report/i', $name)) {
-        $worksheets['pensions'] = $spreadsheet->getSheetByName($name);
+        $this->pensionsWorkSheet = $spreadsheet->getSheetByName($name);
+        $worksheets['pensions'] = $this->pensionsWorkSheet->getTitle();
       } else if (preg_match('/ee summary/i', $name)) {
-        $worksheets['summary'] = $spreadsheet->getSheetByName($name);
+        $this->summaryWorkSheet = $spreadsheet->getSheetByName($name);
+        $worksheets['summary'] = $this->summaryWorkSheet->getTitle();
       }
     }
 
