@@ -51,7 +51,7 @@ class XlsxCtl{
   }
 
   /**
-   * 
+   * Extract all relevent data from the Payrol lspreadsheet and then delete it.
    * 
    * @return void Output is echo'd directly to response 
    * 
@@ -68,15 +68,30 @@ class XlsxCtl{
         }
 
         $model = PayrollXlsx::getInstance()
-        ->setFilePath($decryptedFilePath); 
+            ->setFilePath($decryptedFilePath); 
 
-        echo json_encode($model->parse(), JSON_NUMERIC_CHECK);
+        if($model->parse()) {
+            // delete decrypted file
+            if(is_file($decryptedFilePath)) {
+                unlink($decryptedFilePath);
+            }
+
+            echo json_encode(
+                array("message" => "Success. Spreadsheet parsed and deleted. ")
+            );            
+
+        } else {
+            http_response_code(400);   
+            echo json_encode(
+                array("message" => "Unable to parse spreadsheet for unknown reason.")
+            );
+        }
         
     }
     catch (\Exception $e){
         http_response_code(400);   
         echo json_encode(
-            array("message" => "Listing worksheets of spreadsheet failed.",
+            array("message" => "Unable to parse spreadsheet.",
             "details" => $e->getMessage())
         );
         exit(1);
@@ -97,7 +112,7 @@ class XlsxCtl{
 
     try {
         if (!is_file($decryptedFilePath)) {
-            throw new \Exception('File not found. File name: ('. $decryptedFilePath .')');
+            throw new \Exception('Decrypted file not found. File name: ('. $decryptedFilePath .')');
         }
 
         $model = PayrollXlsx::getInstance()
@@ -109,7 +124,7 @@ class XlsxCtl{
     catch (\Exception $e){
         http_response_code(400);   
         echo json_encode(
-            array("message" => "Decryption of spreadsheet failed.",
+            array("message" => "Listing of WorkSheets failed.",
             "details" => $e->getMessage())
         );
         exit(1);

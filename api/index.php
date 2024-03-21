@@ -31,6 +31,7 @@ include_once 'controllers/xlsx.controller.php';
 include_once 'models/encryptedxlsx.php';
 include_once 'models/jwt.php';
 include_once 'models/payrollxlsx.php';
+include_once 'models/payslip.php';
 include_once 'models/qbauth.php';
 include_once 'models/qbemployee.php';
 include_once 'models/qbitem.php';
