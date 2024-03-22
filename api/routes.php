@@ -149,10 +149,10 @@ $router->mount('/qb', function () use ($router) {
     $router->get('/items', 'QBItemCtl@read_all');
     
     // QB Employee
-    $router->get('/employee/(\w+)', 'QBEmployeeCtl@read_one');
+    $router->get('/employee/(\d+)', 'QBEmployeeCtl@read_one');
     $router->get('/employees', 'QBEmployeeCtl@read_all');
 
-    // QB Employee
+    // QB Recurring Transactions
     $router->get('/recurringtransaction/(\w+)', 'QBRecurringTransactionCtl@read_one');
     $router->get('/recurringtransactions', 'QBRecurringTransactionCtl@read_all');
 });
