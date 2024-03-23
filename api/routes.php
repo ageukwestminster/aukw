@@ -71,6 +71,7 @@ $router->mount('/takings', function () use ($router) {
 $router->mount('/report', function () use ($router) {
     $router->get('/histogram', 'ReportCtl@dailySalesHistogram');
     $router->get('/moving-avg', 'ReportCtl@dailySalesMovingAverage');
+    $router->get('/generalledger', 'QBReportCtl@general_ledger');
     $router->get('/profitandloss', 'QBReportCtl@profit_and_loss');
     $router->get('/salesbyitem', 'QBReportCtl@sales_by_item');
     $router->get('/summarytable', 'ReportCtl@performanceSummary');
@@ -108,7 +109,9 @@ $router->mount('/qb', function () use ($router) {
     // The param is the Quickbooks Journal Id. This number is not easily seen on 
     // the normal QB website but it can been seen in Audit Log.
     // It is not the DocNumber which can be seen when adding/editing on QBO.
-    $router->get('/journal/(\w+)', 'QBJournalCtl@read_one');                                                      
+    $router->get('/journal/(\d+)', 'QBJournalCtl@read_one');
+    // Get a list of journals whose DocNumber starts with the given string                                    
+    $router->get('/journal/docnumber/(\w+)', 'QBJournalCtl@query_by_docnumber');
 
     // The param is the Quickbooks Journal Id. This number is not easily seen on 
     // the normal QB website but it can been seen in Audit Log.
