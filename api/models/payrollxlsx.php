@@ -66,7 +66,7 @@ class PayrollXlsx{
     $this->paymentDate = $paymentDate;
     return $this;
   }
-    /**
+  /**
    * Payment date getter
    * @return DateTime
    */
@@ -74,6 +74,14 @@ class PayrollXlsx{
     return $this->paymentDate;
   }
 
+  /**
+   * Payslips getter
+   * @return Array
+   */
+  public function getPayslips():Array {
+    // array_values converts from ['1':{}, '2':{}, ...] to [{},{}...]
+    return array_values($this->payslips);
+  }
 
   /**
    * Constructor
@@ -197,7 +205,7 @@ class PayrollXlsx{
       $employeeId = (int) trim($salaryData[$i][0]); // '0' = column A
       $payslip = Payslip::getInstance()
         ->setEmployeeId($employeeId) 
-        ->setEmployeeName($salaryData[$i][2]) // '2' = column C
+        ->setEmployeeName(trim($salaryData[$i][2])) // '2' = column C
         ->setTotalPay(round(((float)$salaryData[$i][7])*100,2)) // '7' = col H, money is stored in pence
         ->setPAYE(round(((float)$salaryData[$i][8])*100,2)) // '8' = col I, money is stored in pence
         ->setEmployeeNI(round(((float)$salaryData[$i][9])*100,2)) // '9' = col J, money is stored in pence

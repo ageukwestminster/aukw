@@ -71,20 +71,21 @@ class XlsxCtl{
             ->setFilePath($decryptedFilePath); 
 
         if($model->parse()) {
-            // delete decrypted file
-            if(is_file($decryptedFilePath)) {
-                unlink($decryptedFilePath);
+            if( !isset($_GET['keep_decrypted_file']) ) {
+                // delete decrypted file
+                if(is_file($decryptedFilePath)) {
+                    unlink($decryptedFilePath);
+                }
             }
-
-            echo json_encode(
-                array("message" => "Success. Spreadsheet parsed and deleted. ")
-            );            
+           
+            echo json_encode($model->getPayslips());
 
         } else {
             http_response_code(400);   
             echo json_encode(
                 array("message" => "Unable to parse spreadsheet for unknown reason.")
             );
+            exit(1);
         }
         
     }

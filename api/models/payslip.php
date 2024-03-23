@@ -9,7 +9,7 @@ namespace Models;
  * 
  * @category Model
  */
-class Payslip{
+class Payslip implements \JsonSerializable{
 
   /**
    * The ID of the employee
@@ -253,7 +253,13 @@ class Payslip{
     return new self();
   }
 
-
+  /**
+   * Override the jsonSerialize funciton to list the inner properties
+   */
+  public function jsonSerialize():mixed
+  {
+      return get_object_vars($this);
+  }
 
 
 }
