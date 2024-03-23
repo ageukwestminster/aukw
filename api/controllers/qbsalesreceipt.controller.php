@@ -12,7 +12,7 @@ use \Models\Takings;
  *
  * @category  Controller
 */
-class SalesReceiptCtl{
+class QBSalesReceiptCtl{
 
 
   /**
@@ -200,7 +200,7 @@ class SalesReceiptCtl{
       exit(0);
     }
 
-    $model=SalesReceiptCtl::transfer_takings_data($takings);
+    $model=QBSalesReceiptCtl::transfer_takings_data($takings);
     $model->setRealmID($_GET['realmid']);
     $result = $model->create();
     if ($result) {
@@ -242,7 +242,7 @@ class SalesReceiptCtl{
       $takings->id = $takingsRow["id"];
       $takings->readOne();
       
-      $model=SalesReceiptCtl::transfer_takings_data($takings);
+      $model=QBSalesReceiptCtl::transfer_takings_data($takings);
 
       // TODO: USe QBO Batch https://intuit.github.io/QuickBooks-V3-PHP-SDK/quickstart.html#batch-request
 

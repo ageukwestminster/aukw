@@ -116,18 +116,18 @@ $router->mount('/qb', function () use ($router) {
     // The param is the Quickbooks Journal Id. This number is not easily seen on 
     // the normal QB website but it can been seen in Audit Log.
     // It is not the DocNumber which can be seen when adding/editing on QBO.
-    $router->get('/salesreceipt/(\w+)', 'SalesReceiptCtl@read_one');
+    $router->get('/salesreceipt/(\w+)', 'QBSalesReceiptCtl@read_one');
 
     // Create a new sales receipt in QB
-    $router->post('/salesreceipt', 'SalesReceiptCtl@create');
+    $router->post('/salesreceipt', 'QBSalesReceiptCtl@create');
     // Delete a new sales receipt in QB
-    $router->delete('/salesreceipt/(\w+)', 'SalesReceiptCtl@delete');
+    $router->delete('/salesreceipt/(\w+)', 'QBSalesReceiptCtl@delete');
 
     // The param is the takingsid value in the takings table in MySQL dB
-    $router->post('/salesreceipt/takings/(\d+)', 'SalesReceiptCtl@create_from_takings');
+    $router->post('/salesreceipt/takings/(\d+)', 'QBSalesReceiptCtl@create_from_takings');
     // take action on takings journal; Only 'create_all' implemented so far.
     // Create All adds to QB any takings which has Quickbooks=0 in the mariaDB
-    $router->patch('/salesreceipt/takings/', 'SalesReceiptCtl@create_all_from_takings');
+    $router->patch('/salesreceipt/takings/', 'QBSalesReceiptCtl@create_all_from_takings');
 
     // Returns the uri needed to start the QBO authorisation process
     $router->get('/auth', 'QBAuthCtl@oauth2_begin');    
