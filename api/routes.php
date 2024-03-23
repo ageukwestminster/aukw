@@ -150,6 +150,10 @@ $router->mount('/qb', function () use ($router) {
     // QB item is for Products/Services
     $router->get('/item/(\w+)', 'QBItemCtl@read_one');
     $router->get('/items', 'QBItemCtl@read_all');
+
+    // QB Class
+    $router->get('/class/(\w+)', 'QBClassCtl@read_one');
+    $router->get('/classes', 'QBClassCtl@read_all');
     
     // QB Employee
     $router->get('/employee/(\d+)', 'QBEmployeeCtl@read_one');
