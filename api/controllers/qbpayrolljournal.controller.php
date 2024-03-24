@@ -90,36 +90,76 @@ class QBPayrollJournalCtl{
     $model->id = \Core\Config::read('qb.allocationsid');
     $model->realmid = $_GET['realmid'];
 
-
-
     $response = $model->readone();
 
     if (isset($response) && isset($response->RecurringTransaction) && 
                     isset($response->RecurringTransaction->JournalEntry)) {
+
         $allocationTxnArray = $response->RecurringTransaction->JournalEntry->Line;
-        $return = array();
-        foreach ($allocationTxnArray as $line) {
+        
+        try {
+
+          $returnObj = array();
+
+          foreach ($allocationTxnArray as $line) {
+
             if (!isset($line->Description) || !preg_match('/ignore/i', $line->Description)) {
-                $allocation = $line->JournalEntryLineDetail;
-                $amount = $line->Amount;
-                $employee = $allocation->Entity->EntityRef;
-                $account = $allocation->AccountRef;
-                $class = $allocation->ClassRef;
 
-                if (!array_key_exists($employee->value, $return)) {
-                    $return[$employee->value]= array();
-                }
+              $amount = $line->Amount;
+              
+              $employee = $line->JournalEntryLineDetail->Entity->EntityRef;
+              $account = $line->JournalEntryLineDetail->AccountRef;
+              $class = $line->JournalEntryLineDetail->ClassRef;
 
-                $return[$employee->value][]= (object) [ 
-                    'percentage' => $amount, 
-                    'account' => $account,
-                    'class' => $class
-                ];
-                
+              if (!array_key_exists($employee->value, $returnObj)) {
+                  $returnObj[$employee->value] = array();
+                  $returnObj[$employee->value]['id'] = $employee->value;
+                  $returnObj[$employee->value]['name'] = $employee->name ?? '';
+                  $returnObj[$employee->value]['allocations'] = array();
+              }
+
+              $returnObj[$employee->value]['allocations'][] = (object) [
+                  'percentage' => $amount, 
+                  'account' => $account,
+                  'class' => $class
+              ];
             }
           }
-          echo json_encode($return, JSON_NUMERIC_CHECK); 
-    };
+
+          // Check allocations sum up to 100 for each employee
+          foreach ($returnObj as $employeeAllocationsObj) {  
+            $sum = 0;     
+            foreach ($employeeAllocationsObj['allocations'] as $allocation) {
+              $sum += $allocation->percentage;
+            }     
+            if (abs($sum - 100) > 0.0005) {
+              throw new \Exception("Sum of percentage allocations for employee named '" 
+                . $employeeAllocationsObj->name . "' (QBO id = " 
+                . $employeeAllocationsObj->id . ") do not add up to 100.");
+            }
+          }
+
+          // array_values converts associative array to normal array
+          echo json_encode(array_values($returnObj), JSON_NUMERIC_CHECK); 
+
+        } catch (\Exception $e) {
+          http_response_code(400);   
+          echo json_encode(
+              array("message" => "Unable to parse recurring transaction to obtain employee allocations.",
+              "details" => $e->getMessage())
+          );
+          exit(1);
+        }
+          
+        
+    } else {
+      http_response_code(400);   
+      echo json_encode(
+          array("message" => "Recurring transaction that is used to obtain employee allocations not found.",
+          "details" => "QBO ID of recurring transaciton = " . $model->id)
+      );
+      exit(1);
+    }
     
 
   }
