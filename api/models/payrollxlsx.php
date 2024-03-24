@@ -206,13 +206,13 @@ class PayrollXlsx{
       $payslip = Payslip::getInstance()
         ->setEmployeeId($employeeId) 
         ->setEmployeeName(trim($salaryData[$i][2])) // '2' = column C
-        ->setTotalPay(round(((float)$salaryData[$i][7])*100,2)) // '7' = col H, money is stored in pence
-        ->setPAYE(round(((float)$salaryData[$i][8])*100,2)) // '8' = col I, money is stored in pence
-        ->setEmployeeNI(round(((float)$salaryData[$i][9])*100,2)) // '9' = col J, money is stored in pence
-        ->setOtherDeductions(round(((float)$salaryData[$i][10])*100,2)) // '10' = col K, money is stored in pence
-        ->setStudentLoan(round(((float)$salaryData[$i][12])*100,2)) // '12' = col M, money is stored in pence
-        ->setNetPay(round(((float)$salaryData[$i][13])*100,2)) // '13' = col N, money is stored in pence
-        ->setEmployerNI(round(((float)$salaryData[$i][14])*100,2)); // '14' = col O, money is stored in pence        
+        ->setTotalPay(round(((float)$salaryData[$i][7]),2)) // '7' = col H
+        ->setPAYE(round(((float)$salaryData[$i][8]),2)) // '8' = col I
+        ->setEmployeeNI(round(((float)$salaryData[$i][9]),2)) // '9' = col J
+        ->setOtherDeductions(round(((float)$salaryData[$i][10]),2)) // '10' = col K
+        ->setStudentLoan(round(((float)$salaryData[$i][12]),2)) // '12' = col M
+        ->setNetPay(round(((float)$salaryData[$i][13]),2)) // '13' = col N
+        ->setEmployerNI(round(((float)$salaryData[$i][14]),2)); // '14' = col O        
 
         $this->payslips[$employeeId] = $payslip;
     }    
@@ -241,11 +241,11 @@ class PayrollXlsx{
             // Extract values from worksheet
             $employeeId = (int)$value;
             $employerPension = round(((float)$worksheet->getCell([8, $rowindex])
-                ->getValue())*100,2);
+                ->getValue()),2);
             $employeePension = round(((float)$worksheet->getCell([9, $rowindex])
-                ->getValue())*100,2);
+                ->getValue()),2);
             $salarySacrifice = round(((float)$worksheet->getCell([10, $rowindex])
-                ->getValue())*100,2);
+                ->getValue()),2);
 
 
             // Found an employee Id, now try to find their payslip

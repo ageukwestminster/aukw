@@ -24,65 +24,65 @@ class Payslip implements \JsonSerializable{
    */
   protected string $employeeName;
   /**
-   * Gross salary for the month, in pence  
+   * Gross salary for the month.  
    *
-   * @var int
+   * @var float
    */
-  protected int $totalPay;
+  protected float $totalPay;
     /**
-   * Income tax for the month, in pence  
+   * Income tax for the month.  
    *
-   * @var int
+   * @var float
    */
-  protected int $paye;
+  protected float $paye;
   /**
-   * Employee NI for the month, in pence  
+   * Employee NI for the month.  
    *
-   * @var int
+   * @var float
    */
-  protected int $employeeNI;
+  protected float $employeeNI;
     /**
-   * Other deductions for the month, in pence  
+   * Other deductions for the month.  
    *
-   * @var int
+   * @var float
    */
-  protected int $otherDeductions;
+  protected float $otherDeductions;
     /**
-   * Salary sacrificed towards pension for the month, in pence  
+   * Salary sacrificed towards pension for the month.  
    *
-   * @var int
+   * @var float
    */
-  protected int $salarySacrifice=0;
+  protected float $salarySacrifice=0;
     /**
-   * Gross salary for the month, in pence  
+   * Gross salary for the month.  
    *
-   * @var int
+   * @var float
    */
-  protected int $studentLoan;
+  protected float $studentLoan;
     /**
-   * Net salary for the month, in pence  
+   * Net salary for the month.  
    *
-   * @var int
+   * @var float
    */
-  protected int $netPay;
+  protected float $netPay;
     /**
-   * Employer's NI for the month, in pence  
+   * Employer's NI for the month.  
    *
-   * @var int
+   * @var float
    */
-  protected int $employerNI;
+  protected float $employerNI;
   /**
-   * Pension contribution from employer, in pence  
+   * Pension contribution from employer.  
    *
-   * @var int
+   * @var float
    */
-  protected int $employerPension=0;
+  protected float $employerPension=0;
   /**
-   * Pension contribution from employee, in pence  
+   * Pension contribution from employee.  
    *
-   * @var int
+   * @var float
    */
-  protected int $employeePension=0;
+  protected float $employeePension=0;
  
     /**
    * Employee ID getter
@@ -97,68 +97,68 @@ class Payslip implements \JsonSerializable{
     return $this->employeeName;
   }
   /**
-   * Pension contribution from employee for the month getter. Amount is in pence.
+   * Pension contribution from employee for the month getter.
    */
-  public function getEmployeePension():int {
+  public function getEmployeePension():float {
     return $this->employeePension;
   }
     /**
-   * Pension contribution from employer getter. Amount is in pence.
+   * Pension contribution from employer getter.
    */
-  public function getEmployerPension():int {
+  public function getEmployerPension():float {
     return $this->employerPension;
   }
     /**
-   * Employer NI getter. Amount is in pence.
+   * Employer NI getter.
    */
-  public function getEmployerNI():int {
+  public function getEmployerNI():float {
     return $this->employerNI;
   }
     /**
-   * Employee NI getter. Amount is in pence.
+   * Employee NI getter.
    */
-  public function getEmployeeNI():int {
+  public function getEmployeeNI():float {
     return $this->employeeNI;
   }
     /**
-   * Net pay for the month getter. Amount is in pence.
+   * Net pay for the month getter.
    */
-  public function getNetPay():int {
+  public function getNetPay():float {
     return $this->netPay;
   }
     /**
-   * Student loan repayment getter. Amount is in pence.
+   * Student loan repayment getter.
    */
-  public function getStudentLoan():int {
+  public function getStudentLoan():float {
     return $this->studentLoan;
   }  /**
-  * Total pay for the month getter. Amount is in pence.
+  * Total pay for the month getter.
   */
- public function getPAYE():int {
+ public function getPAYE():float {
    return $this->paye;
  }
    /**
-   *Other deductions getter. Amount is in pence.
+   *Other deductions getter.
    */
-  public function getOtherDeductions():int {
+  public function getOtherDeductions():float {
     return $this->otherDeductions;
   }
   /**
-   * Salary sacrifice getter. Amount is in pence.
+   * Salary sacrifice getter.
    */
-  public function getSalarySacrifice():int {
+  public function getSalarySacrifice():float {
     return $this->salarySacrifice;
   }
     /**
-   * Total pay getter. Amount is in pence.
+   * Total pay getter.
    */
-  public function getTotalPay(): int {
+  public function getTotalPay(): float {
     return $this->totalPay;
   }
   /**
    * Employee ID setter
    */
-  public function setEmployeeId(int $employeeId) {
+  public function setEmployeeId(float $employeeId) {
     $this->employeeId = $employeeId;
     return $this;
   }
@@ -170,71 +170,71 @@ class Payslip implements \JsonSerializable{
     return $this;
   }
   /**
-   * Pension contribution from employee for the month setter. Amount is in pence.
+   * Pension contribution from employee for the month setter.
    */
-  public function setEmployeePension(int $employeePension) {
+  public function setEmployeePension(float $employeePension) {
     $this->employeePension = $employeePension;
     return $this;
   }
     /**
-   * Pension contribution from employer setter. Amount is in pence.
+   * Pension contribution from employer setter.
    */
-  public function setEmployerPension(int $employerPension) {
+  public function setEmployerPension(float $employerPension) {
     $this->employerPension = $employerPension;
     return $this;
   }
     /**
-   * Employer NI setter. Amount is in pence.
+   * Employer NI setter.
    */
-  public function setEmployerNI(int $employerNI) {
+  public function setEmployerNI(float $employerNI) {
     $this->employerNI = $employerNI;
     return $this;
   }
     /**
-   * Employee NI setter. Amount is in pence.
+   * Employee NI setter.
    */
-  public function setEmployeeNI(int $employeeNI) {
+  public function setEmployeeNI(float $employeeNI) {
     $this->employeeNI = $employeeNI;
     return $this;
   }
     /**
-   * Net pay for the month setter. Amount is in pence.
+   * Net pay for the month setter.
    */
-  public function setNetPay(int $netPay) {
+  public function setNetPay(float $netPay) {
     $this->netPay = $netPay;
     return $this;
   }
     /**
-   * Student loan repayment setter. Amount is in pence.
+   * Student loan repayment setter.
    */
-  public function setStudentLoan(int $studentLoan) {
+  public function setStudentLoan(float $studentLoan) {
     $this->studentLoan = $studentLoan;
     return $this;
   }  /**
-  * Total pay for the month setter. Amount is in pence.
+  * Total pay for the month setter.
   */
- public function setPAYE(int $paye) {
+ public function setPAYE(float $paye) {
    $this->paye = $paye;
    return $this;
  }
    /**
-   *Other deductions setter. Amount is in pence.
+   *Other deductions setter.
    */
-  public function setOtherDeductions(int $otherDeductions) {
+  public function setOtherDeductions(float $otherDeductions) {
     $this->otherDeductions = $otherDeductions;
     return $this;
   }
   /**
-   * Salary sacrifice setter. Amount is in pence.
+   * Salary sacrifice setter.
    */
-  public function setSalarySacrifice(int $salarySacrifice) {
+  public function setSalarySacrifice(float $salarySacrifice) {
     $this->salarySacrifice = $salarySacrifice;
     return $this;
   }
     /**
-   * Total pay setter. Amount is in pence.
+   * Total pay setter.
    */
-  public function setTotalPay(int $totalPay) {
+  public function setTotalPay(float $totalPay) {
     $this->totalPay = $totalPay;
     return $this;
   }
