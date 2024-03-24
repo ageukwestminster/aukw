@@ -2,10 +2,7 @@
 
 namespace Models;
 
-use QuickBooksOnline\API\DataService\DataService;
 use QuickBooksOnline\API\Facades\JournalEntry;
-
-use DateTime;
 
 /**
  * Factory class that provides data about QBO General Journals.
@@ -78,6 +75,51 @@ class QuickbooksJournal{
     }
     else {
         return $journalarray;
+    }
+  }
+
+    /**
+   * Delete a journal from the QB system.
+   *
+   * @return bool 'true' if success.
+   * 
+   */
+  public function delete(): bool{
+    $auth = new QuickbooksAuth();
+    try{
+      $dataService = $auth->prepare($this->realmid);
+    }
+    catch (\Exception $e) {
+      http_response_code(401);  
+      echo json_encode(
+        array("message" =>  $e->getMessage() )
+      );
+      return false;
+    }
+
+    if ($dataService == false) {
+      return false;
+    }
+
+    // Do not use $dataService->FindbyId to create the entity to delete
+    // Use this simple representation instead
+    // The problem is that FindbyId forces use of JSON and that doesnt work 
+    // with the delete uri call
+    $salesreceipt = JournalEntry::create([
+      "Id" => $this->id,
+      "SyncToken" => "0"
+    ]);
+    
+    $dataService->Delete($salesreceipt);
+
+    $error = $dataService->getLastError();
+    if ($error) {
+        echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
+        echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
+        echo "The Response message is: " . $error->getResponseBody() . "\n";
+        return false;
+    } else {      
+      return true;
     }
   }
 }

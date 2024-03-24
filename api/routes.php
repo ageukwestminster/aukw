@@ -112,6 +112,8 @@ $router->mount('/qb', function () use ($router) {
     $router->get('/journal/(\d+)', 'QBJournalCtl@read_one');
     // Get a list of journals whose DocNumber starts with the given string                                    
     $router->get('/journal/docnumber/(\w+)', 'QBJournalCtl@query_by_docnumber');
+    // QB Payroll Journal
+    $router->post('/journal/payroll', 'QBPayrollJournalCtl@create');
 
     // The param is the Quickbooks Journal Id. This number is not easily seen on 
     // the normal QB website but it can been seen in Audit Log.

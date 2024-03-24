@@ -5,3 +5,5 @@ aukw-shop/.htaccess
 phpDocumentor.phar
 .phpdoc/
 api/uploads/
+documentation/payroll_journals.json
+documentation/ScratchPad.txt

@@ -54,4 +54,39 @@ class QBJournalCtl{
     echo json_encode($model->query_by_docnumber($doc_number), JSON_NUMERIC_CHECK);
   }
 
+    /**
+   * Delete from QBO the journal identified by $id
+   *
+   * @param int $id The QBO id, not the DocNumber
+   * @return void Output is echoed directly to response 
+   */
+  public static function delete(int $id){  
+    
+    if(!isset($_GET['realmid']) ) {
+      http_response_code(400);   
+      echo json_encode(
+        array("message" => "Please supply a value for the 'realmid' parameter.")
+      );
+      exit(1);
+    } 
+
+    $model = new \Models\QuickbooksJournal();
+    $model->id = $id;
+    $model->realmid = $_GET['realmid'];
+
+    if($model->delete()) {
+      echo json_encode(
+        array(
+          "message" => "Journal entry with id=$id was deleted.",
+          "id" => $id)
+          , JSON_NUMERIC_CHECK);
+    } else{
+        http_response_code(400);  
+        echo json_encode(
+          array(
+            "message" => "Unable to DELETE QB journal.",
+            "id" => $id)
+            , JSON_NUMERIC_CHECK);
+    }
+  }
 }
