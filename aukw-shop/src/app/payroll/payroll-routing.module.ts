@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { PayrollLayoutComponent } from './layout.component';
+import { PayslipListComponent } from './list.component';
 
 
 const routes: Routes = [

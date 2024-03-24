@@ -1,17 +1,22 @@
-<input type="file" class="file-input"
-       (change)="onFileSelected($event)" #fileUpload>
+<input type="file" class="file-input" 
+  accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" 
+  (change)="onChange($event)"
+>
 
-<div class="file-upload">
-
-   {{fileName || "No file uploaded yet."}}
+<div class="file-section">
 
     <div class="col-sm-2">
         <button
-        (click)="fileUpload.click()"
+        (click)="onUpload()"
           class="btn btn-sm btn-success m-1 mt-1"
         >
           Upload File <i class="fa-solid fa-paperclick"></i>
         </button>
-        <i class="fa-solid fa-paperclick"></i>
       </div>
+    <section [ngSwitch]="status">
+      <p *ngSwitchCase="'uploading'">⏳ Uploading...</p>
+      <p *ngSwitchCase="'success'">✅ Done!</p>
+      <p *ngSwitchCase="'fail'">❌ Error!</p>
+      <p *ngSwitchDefault>😶 Waiting to upload...</p>
+    </section>
 </div>

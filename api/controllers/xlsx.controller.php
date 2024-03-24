@@ -40,12 +40,16 @@ class XlsxCtl{
     // Move file from PHP temp folder to upload directory
     if(move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile))
     {
-        echo "The file has been uploaded successfully.";
+        echo json_encode(
+            array("message" => "The file has been uploaded successfully.")
+        );
     }
     else
     {
         http_response_code(400);
-        array("message" => "There was an error uploading the file.");
+        echo json_encode(
+            array("message" => "There was an error uploading the file.")
+        );
     }
 
   }

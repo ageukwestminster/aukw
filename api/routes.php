@@ -200,7 +200,7 @@ $router->mount('/xlsx', function () use ($router) {
     $router->post('/upload', 'XlsxCtl@upload');
 
     // Decrypt file
-    $router->post('/', 'XlsxCtl@decrypt');
+    $router->post('/decrypt', 'XlsxCtl@decrypt');
 
     // Parse file
     $router->get('/parse', 'XlsxCtl@parse');

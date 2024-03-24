@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-
-//declare var require: any;
-//const officeCrypto = require('officecrypto-tool');
+import { throwError } from 'rxjs';
+import { FileService } from '@app/_services';
 
 @Component({
   selector: 'file-upload',
@@ -10,42 +8,37 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./file-upload.component.css']
 })
 export class FileUploadComponent {
-  fileName: string = '';
+  status: "initial" | "uploading" | "success" | "fail" = "initial";
+  file:File|null = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(private fileService: FileService) {}
 
-  onFileSelected(event: Event) {
+  onChange(event: Event) {
 
     if (!event) return;
 
-    console.log(event!.target!);
     const files:FileList|null = (event.target as HTMLInputElement).files;
-    const file:File = files![0];
+    if (files && files.length) {
+      this.status = "initial";
+      this.file = files![0];
+    }
+  }
 
-    let reader = new FileReader();
+  onUpload() {
 
-    reader.onloadend = function() {
-      let base64data = reader.result;
-      console.log('base64data-', base64data);
-      // how to return here?
-    };
+    if (!this.file) return;
     
-    const input = reader.readAsArrayBuffer(files![0]);
-    //const isEncrypted = officeCrypto.isEncrypted(input);
+    const upload$ = this.fileService.upload(this.file);
+    this.status = 'uploading';
 
-    /*const file:File = {};//event!.target!.files[0];
-
-    if (file) {
-
-        this.fileName = file.name;
-
-        const formData = new FormData();
-
-        formData.append("thumbnail", file);
-
-        const upload$ = this.http.post("/api/thumbnail-upload", formData);
-
-        upload$.subscribe();
-    }*/
+    upload$.subscribe({
+      next: () => {
+        this.status = 'success';
+      },
+      error: (error: any) => {
+        this.status = 'fail';
+        return throwError(() => error);
+      },
+    })
 }
 }
