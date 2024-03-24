@@ -16,14 +16,7 @@ class QBPayrollJournalCtl{
    * Sales items should be positive, Expenses and cash/credit cards are negative.
    * 
    * Sample data:
-   *  { "date": "2022-04-29", "donations": { "number": 0, "sales": 0 }, 
-   *   "cashDiscrepency": 0.05,"creditCards": -381.2,"cash": -183.30,
-   *   "operatingExpenses": -1.3,"volunteerExpenses": -5,
-   *   "clothing": { "number": 53, "sales": 310.50 },
-   *   "brica": { "number": 75, "sales": 251.75 },
-   *   "books": { "number": 4, "sales": 3.5 },
-   *   "linens": { "number": 1, "sales": 5 },
-   *   "cashToCharity": 0, "shopid": 1
+   *  { "date": "2022-04-29", 
    *  }
    *
    * @return void Output is echoed directly to response 
@@ -77,6 +70,59 @@ class QBPayrollJournalCtl{
     }
   }
 
- 
+   /**
+   * Return details of the QBO recurring transaction identified by $id
+   *
+   * @param int $id
+   * @return void Output is echo'd directly to response 
+   */
+  public static function read_employee_allocations(){  
+
+    if(!isset($_GET['realmid']) ) {
+      http_response_code(400);   
+      echo json_encode(
+        array("message" => "Please supply a value for the 'realmid' parameter.")
+      );
+      exit(1);
+    } 
+
+    $model = new \Models\QuickbooksRecurringTransaction();
+    $model->id = \Core\Config::read('qb.allocationsid');
+    $model->realmid = $_GET['realmid'];
+
+
+
+    $response = $model->readone();
+
+    if (isset($response) && isset($response->RecurringTransaction) && 
+                    isset($response->RecurringTransaction->JournalEntry)) {
+        $allocationTxnArray = $response->RecurringTransaction->JournalEntry->Line;
+        $return = array();
+        foreach ($allocationTxnArray as $line) {
+            if (!isset($line->Description) || !preg_match('/ignore/i', $line->Description)) {
+                $allocation = $line->JournalEntryLineDetail;
+                $amount = $line->Amount;
+                $employee = $allocation->Entity->EntityRef;
+                $account = $allocation->AccountRef;
+                $class = $allocation->ClassRef;
+
+                if (!array_key_exists($employee->value, $return)) {
+                    $return[$employee->value]= array();
+                }
+
+                $return[$employee->value][]= (object) [ 
+                    'percentage' => $amount, 
+                    'account' => $account,
+                    'class' => $class
+                ];
+                
+            }
+          }
+          echo json_encode($return, JSON_NUMERIC_CHECK); 
+    };
+    
+
+  }
+  
 
 }

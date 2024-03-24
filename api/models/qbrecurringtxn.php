@@ -67,7 +67,6 @@ class QuickbooksRecurringTransaction{
       return;
     }
                         
-    //$dataService->forceJsonSerializers();
     $transactions = $dataService->recurringTransaction('SELECT * FROM RecurringTransaction');
     $error = $dataService->getLastError();
     if ($error) {
