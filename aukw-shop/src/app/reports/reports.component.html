@@ -9,27 +9,41 @@
   </div>
 </div>
 <div class="row">
-  <ngb-accordion>
-    <ngb-panel title="Sales Drill-down">
-      <ng-template ngbPanelContent>
-        <ul>
-          <li>
-            <a routerLink="sales-list">Sales Data</a>
-          </li>
-          <li>
-            <a routerLink="sales-histogram">Sales Histogram</a>
-          </li>
-        </ul>
-      </ng-template>
-    </ngb-panel>
-    <ngb-panel title="Security & Audit">
-      <ng-template ngbPanelContent>
-        <ul>
-          <li>
-            <a routerLink="/users/suspended/true">List of suspended users</a>
-          </li>
-        </ul>
-      </ng-template>
-    </ngb-panel>
-  </ngb-accordion>
+  <div ngbAccordion>
+    <div ngbAccordionItem [collapsed]="false">
+      <h2 ngbAccordionHeader>
+        <button ngbAccordionButton>Sales Drill-down</button>
+      </h2>
+      <div ngbAccordionCollapse>
+        <div ngbAccordionBody>
+          <ng-template>
+            <ul>
+              <li>
+                <a routerLink="sales-list">Sales Data</a>
+              </li>
+              <li>
+                <a routerLink="sales-histogram">Sales Histogram</a>
+              </li>
+            </ul>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+    <div ngbAccordionItem>
+      <h2 ngbAccordionHeader>
+        <button ngbAccordionButton>Security & Audit</button>
+      </h2>
+      <div ngbAccordionCollapse>
+        <div ngbAccordionBody>
+          <ng-template>
+            <ul>
+              <li>
+                <a routerLink="/users/suspended/true">List of suspended users</a>
+              </li>
+            </ul>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
