@@ -206,6 +206,7 @@ class PayrollXlsx{
       $payslip = Payslip::getInstance()
         ->setEmployeeId($employeeId) 
         ->setEmployeeName(trim($salaryData[$i][2])) // '2' = column C
+        ->setPayrollDate($this->paymentDate->format('Y-m-d'))
         ->setTotalPay(round(((float)$salaryData[$i][7]),2)) // '7' = col H
         ->setPAYE(round(((float)$salaryData[$i][8]),2)) // '8' = col I
         ->setEmployeeNI(round(((float)$salaryData[$i][9]),2)) // '9' = col J

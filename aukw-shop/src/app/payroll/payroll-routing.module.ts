@@ -10,7 +10,7 @@ const routes: Routes = [
     path: '',
     component: PayrollLayoutComponent,
     children: [
-      /*{ path: '', component: UserListComponent },
+      { path: '', component: PayslipListComponent }/*
       { path: 'add', component: UserAddEditComponent },
       { path: 'edit/:id', component: UserAddEditComponent },
       { path: 'suspended/:suspended', component: UserListComponent },*/

@@ -24,6 +24,12 @@ class Payslip implements \JsonSerializable{
    */
   protected string $employeeName;
   /**
+   * The date of the payroll run
+   *
+   * @var string
+   */
+  protected string $payrollDate;
+  /**
    * Gross salary for the month.  
    *
    * @var float
@@ -84,7 +90,7 @@ class Payslip implements \JsonSerializable{
    */
   protected float $employeePension=0;
  
-    /**
+  /**
    * Employee ID getter
    */
   public function getEmployeeId():int {
@@ -96,6 +102,12 @@ class Payslip implements \JsonSerializable{
   public function getEmployeeName():string {
     return $this->employeeName;
   }
+  /**
+   * Payroll run date getter
+   */
+  public function getPayrollDate():int {
+    return $this->payrollDate;
+  }  
   /**
    * Pension contribution from employee for the month getter.
    */
@@ -169,6 +181,13 @@ class Payslip implements \JsonSerializable{
     $this->employeeName = $employeeName;
     return $this;
   }
+  /**
+   * Payroll date setter
+   */
+  public function setPayrollDate(string $payrollDate) {
+    $this->payrollDate = $payrollDate;
+    return $this;
+  }  
   /**
    * Pension contribution from employee for the month setter.
    */

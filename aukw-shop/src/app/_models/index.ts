@@ -5,6 +5,7 @@ export * from './date-range';
 export * from './date-range.enum';
 export * from './department.enum';
 export * from './form-mode.enum';
+export * from './irispayslip';
 export * from './qb-auth-uri';
 export * from './qb-connection-details';
 export * from './qb-realm';

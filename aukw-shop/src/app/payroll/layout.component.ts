@@ -2,5 +2,5 @@
 
 @Component({ templateUrl: 'layout.component.html' })
 export class PayrollLayoutComponent {
-    
+
 }

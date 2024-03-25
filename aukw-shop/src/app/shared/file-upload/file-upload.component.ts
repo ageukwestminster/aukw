@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
-import { throwError } from 'rxjs';
+import { Component, EventEmitter, Output } from '@angular/core';
+import { throwError, concatMap } from 'rxjs';
 import { FileService } from '@app/_services';
+import { IrisPayslip } from '@app/_models';
 
 @Component({
   selector: 'file-upload',
@@ -8,10 +9,13 @@ import { FileService } from '@app/_services';
   styleUrls: ['./file-upload.component.css']
 })
 export class FileUploadComponent {
-  status: "initial" | "uploading" | "success" | "fail" = "initial";
+  status: "initial" | "uploading" | "reading" | "success" | "fail" = "initial";
   file:File|null = null;
+  @Output() onFileUploaded: EventEmitter<IrisPayslip[]>;
 
-  constructor(private fileService: FileService) {}
+  constructor(private fileService: FileService) {
+    this.onFileUploaded = new EventEmitter();
+  }
 
   onChange(event: Event) {
 
@@ -22,17 +26,24 @@ export class FileUploadComponent {
       this.status = "initial";
       this.file = files![0];
     }
-  }
-
-  onUpload() {
 
     if (!this.file) return;
     
-    const upload$ = this.fileService.upload(this.file);
+    const upload$ = this.fileService.upload(this.file)
+      .pipe(
+        concatMap(() => {   
+          this.status = 'reading';       
+          return this.fileService.decrypt('FMP804');
+        }),
+        concatMap(() => { 
+          return this.fileService.parse();
+        }),
+      );
     this.status = 'uploading';
 
     upload$.subscribe({
-      next: () => {
+      next: (response:IrisPayslip[]) => {        
+        this.onFileUploaded.emit(response);
         this.status = 'success';
       },
       error: (error: any) => {

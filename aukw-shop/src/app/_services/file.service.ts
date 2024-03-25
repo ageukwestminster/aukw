@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
 import { environment } from '@environments/environment';
+import { ApiMessage, IrisPayslip } from '@app/_models';
 
-const baseUrl = `${environment.apiUrl}/xlsx/upload`;
+const baseUrl = `${environment.apiUrl}/xlsx`;
 
 /**
  * Used to upload files to the API
@@ -26,6 +27,14 @@ export class FileService {
       reportProgress: true,
     };
 
-    return this.http.post(baseUrl,formData, options);
+    return this.http.post<ApiMessage>(`${baseUrl}/upload`,formData, options);
+  }
+
+  decrypt(password:string) {
+    return this.http.post<ApiMessage>(`${baseUrl}/decrypt`,{ "password" : password });
+  }
+
+  parse() {
+    return this.http.get<IrisPayslip[]>(`${baseUrl}/parse`);
   }
 }

@@ -146,7 +146,8 @@ class XlsxCtl{
 
     $uploaddir = XlsxCtl::getUploadDirectory();
 
-    $encryptedFilePath = $uploaddir . XlsxCtl::getUploadedFilename($_GET['filename']);
+    $encryptedFilePath = $uploaddir . 
+        XlsxCtl::getUploadedFilename(isset($_GET['filename'])?$_GET['filename']:'');
 
     $decryptedFilePath = $uploaddir . \Core\Config::read('file.decryptedfilename');
 
