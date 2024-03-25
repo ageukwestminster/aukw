@@ -17,8 +17,8 @@ export class QBRealmService {
   constructor(private http: HttpClient) {}
 
   /**
-   * Get a list of the names of all available shops
-   * @returns Array of shop objects
+   * Get a list of the names of all available QBO realms
+   * @returns Array of QBO realms
    */
   getAll() {
     return this.http.get<QBRealm[]>(baseUrl);
