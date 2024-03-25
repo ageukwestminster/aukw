@@ -12,6 +12,7 @@ export class PayslipListComponent {
   xlsxWasUploaded(payslips:IrisPayslip[]): void {
     this.payslips = payslips;
 
+    this.total = new IrisPayslip();
     payslips.forEach(element => {
       this.total = this.total.add(element);
     });
@@ -24,5 +25,14 @@ export class PayslipListComponent {
   get payrollDate():string {
     return (this.payslips && this.payslips[0])?
                       this.payslips[0].payrollDate:'';
+  }
+
+  updateQBO() {
+    if (this.payslips && this.payslips[0]) {
+    this.payslips[0].inQBO = true; }
+  }
+
+  employerNI() {
+    
   }
 }

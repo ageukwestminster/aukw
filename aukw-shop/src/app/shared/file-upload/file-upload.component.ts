@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { throwError, concatMap } from 'rxjs';
+import { throwError, concatMap, iif, tap } from 'rxjs';
 import { FileService } from '@app/_services';
-import { IrisPayslip } from '@app/_models';
+import { IrisPayslip,UploadResponse } from '@app/_models';
 
 @Component({
   selector: 'file-upload',
@@ -28,17 +28,22 @@ export class FileUploadComponent {
     }
 
     if (!this.file) return;
+
+    const decrypt_and_parse$ = this.fileService.decrypt('FMP804')
+      .pipe(
+        concatMap(() => { 
+          return this.fileService.parse();
+        })
+      );
+      const just_parse$ = this.fileService.parse();
     
     const upload$ = this.fileService.upload(this.file)
       .pipe(
-        concatMap(() => {   
-          this.status = 'reading';       
-          return this.fileService.decrypt('FMP804');
-        }),
-        concatMap(() => { 
-          return this.fileService.parse();
-        }),
+        tap(() => {this.status = 'reading';}),
+        concatMap((response: UploadResponse) => iif(() => 
+              response.isEncrypted,decrypt_and_parse$,just_parse$))
       );
+      
     this.status = 'uploading';
 
     upload$.subscribe({

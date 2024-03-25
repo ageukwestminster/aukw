@@ -32,6 +32,7 @@ export class IrisPayslip {
   employerNI: number;
   employerPension: number;
   employeePension: number;
+  inQBO: boolean
 
   add(obj:IrisPayslip):IrisPayslip {
     this.totalPay += (obj && obj.totalPay) || 0;
@@ -43,7 +44,7 @@ export class IrisPayslip {
     this.netPay += (obj && obj.netPay) || 0;
     this.employerNI += (obj && obj.employerNI) || 0;
     this.employerPension += (obj && obj.employerPension) || 0;
-    this.employeePension += (obj && obj.employeePension) || 0;    
+    this.employeePension += (obj && obj.employeePension) || 0;     
     return this;
   }
 
@@ -61,5 +62,6 @@ export class IrisPayslip {
     this.employerNI = (obj && obj.employerNI) || 0;
     this.employerPension = (obj && obj.employerPension) || 0;
     this.employeePension = (obj && obj.employeePension) || 0;
+    this.inQBO = (obj && obj.inQBO) || false;
   }
 }

@@ -10,3 +10,13 @@ export class ApiMessage {
     this.message = (obj && obj.message) || null;
   }
 }
+
+export class UploadResponse {
+ isEncrypted: boolean;
+ message: string;
+
+ constructor(obj?: any) {
+   this.isEncrypted = (obj && obj.isEncrypted) || false;
+   this.message = (obj && obj.message) || null;
+ }
+}

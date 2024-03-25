@@ -72,6 +72,39 @@ class EncryptedXlsx{
     return new self();
   }
 
+    /**
+   * Decrypt an encrypted Excel xlsx file and save as a decrypted file.
+   * (Requires PEAR/OLE to open the file and extract the encryption data and payload.)
+   * 
+   * Code is from https://github.com/jaydadhania08/PHPDecryptXLSXWithPassword
+   */
+  public function isEncrypted():bool {
+    $oleObj = new OLE();
+
+    if (!is_file($this->encryptedFilePath)) {
+      throw new \Exception('File not found. File name: ('. $this->encryptedFilePath??'<empty>' .')');
+    }
+
+    try {
+      $oleObj -> read($this->encryptedFilePath);
+      
+      // Look for the Encryption Info
+      $xmlstr = substr($this->getDataByName($oleObj, 'EncryptionInfo'), 8);
+
+      if ($xmlstr) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (\Exception $e) {
+      http_response_code(400);   
+      echo json_encode(
+          array("message" => "Unable to check spreadsheet for encryption.",
+          "details" => $e->getMessage())
+      );
+      exit(1);
+    }
+  }
 
   /**
    * Decrypt an encrypted Excel xlsx file and save as a decrypted file.

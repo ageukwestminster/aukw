@@ -1,67 +1,98 @@
 ﻿<div>
   <file-upload (onFileUploaded)="xlsxWasUploaded($event)"></file-upload>
 </div>
-
-<ngb-accordion>
-  <ngb-panel title="Payroll Drill-down">
-    <ng-template ngbPanelContent>
-      <table class="table table-striped table-responsive">
-        <thead>
-          <tr>
-            <th style="width: 5%">No.</th>
-            <th style="width: 26%">Name</th>
-            <th style="width: 8%">Gross</th>
-            <th style="width: 8%">PAYE</th>
-            <th style="width: 8%">E'ee NI</th>
-            <th style="width: 8%">Other</th>
-            <th style="width: 8%">Pens</th>
-            <th style="width: 8%">Loan</th>
-            <th style="width: 8%">Net</th>
-            <th style="width: 8%">E'er NI</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            *ngFor="let payslip of payslips"
-          >
-            <td>{{ payslip.employeeId }}</td>
-            <td>{{ payslip.employeeName }}</td>
-            <td>{{ payslip.totalPay | number: "1.2-2" }}</td>
-            <td>{{ payslip.paye | number: "1.2-2" }}</td>
-            <td>{{ payslip.employeeNI | number: "1.2-2" }}</td>
-            <td>{{ payslip.otherDeductions | number: "1.2-2" }}</td>
-            <td>{{ payslip.salarySacrifice+payslip.employeePension | number: "1.2-2" }}</td>
-            <td>{{ payslip.studentLoan | number: "1.2-2" }}</td>
-            <td>{{ payslip.netPay | number: "1.2-2" }}</td>
-            <td>{{ payslip.employerNI | number: "1.2-2" }}</td>
-          </tr>
-          <tr
-            *ngIf="total && total.totalPay" style="font-weight: bold">
-              <td></td>
-              <td>Total:</td>
-              <td>{{ total.totalPay | number: "1.2-2" }}</td>
-              <td>{{ total.paye | number: "1.2-2" }}</td>
-              <td>{{ total.employeeNI | number: "1.2-2" }}</td>
-              <td>{{ total.otherDeductions | number: "1.2-2" }}</td>
-              <td>{{ total.salarySacrifice+total.employeePension | number: "1.2-2" }}</td>
-              <td>{{ total.studentLoan | number: "1.2-2" }}</td>
-              <td>{{ total.netPay | number: "1.2-2" }}</td>
-              <td>{{ total.employerNI | number: "1.2-2" }}</td>
-          </tr>    
-          <tr *ngIf="!payslips">
-            <td colspan="12" class="text-center">
-              <span class="spinner-border spinner-border-lg align-center"></span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-    </ng-template>
-  </ngb-panel>            
-  <ngb-panel title="Pensions Drill-down">
-    <ng-template ngbPanelContent>      
-      <p *ngIf="total && total.totalPay">Total pension payment: {{ 
-        total.salarySacrifice+total.employeePension+total.employerPension | number: "1.2-2" }}</p>
-    </ng-template>
-  </ngb-panel>
-</ngb-accordion>
+<div>
+  <div class="d-flex flex-row" *ngIf="total && total.totalPay">
+    <button
+    (click)="updateQBO()"
+      class="btn btn-sm btn-success m-1 mt-1"
+  >
+    Update Mehfuz
+  </button>
+  <button
+  (click)="employerNI()"
+    class="btn btn-sm btn-success m-1 mt-1"
+>
+  Employer NI
+</button>
+</div>
+</div>
+<div ngbAccordion>
+	<div ngbAccordionItem [collapsed]="false">
+		<h2 ngbAccordionHeader>
+			<button ngbAccordionButton>Payroll Drill-down</button>
+		</h2>
+		<div ngbAccordionCollapse>
+			<div ngbAccordionBody>
+				<ng-template>
+          <div class="d-flex flex-row justify-content-between" *ngIf="total && total.totalPay">
+            <div class="p-2">
+              <p >{{this.payslips.length}} employees</p>
+            </div>
+            <div class="p-2">
+              <p>Payroll Date: {{this.payslips[0].payrollDate | date: "dd MMM yyyy"}}</p>
+            </div>
+            <div class="p-2">
+              <p>Total pension payment: {{ 
+                total.salarySacrifice+total.employeePension+total.employerPension | number: "1.2-2" }}</p>
+            </div>
+          </div>
+          <table class="table table-striped table-responsive">
+            <thead>
+              <tr>
+                <th style="width: 5%">No.</th>
+                <th style="width: 22%">Name</th>
+                <th style="width: 8%">Gross</th>
+                <th style="width: 8%">PAYE</th>
+                <th style="width: 8%">E'ee NI</th>
+                <th style="width: 8%">Other</th>
+                <th style="width: 8%">Pens</th>
+                <th style="width: 8%">S Loan</th>
+                <th style="width: 8%">Net</th>
+                <th style="width: 8%">E'er NI</th>
+                <th style="width: 6%">QBO?</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let payslip of payslips"
+              >
+                <td>{{ payslip.employeeId }}</td>
+                <td>{{ payslip.employeeName }}</td>
+                <td>{{ payslip.totalPay | number: "1.2-2" }}</td>
+                <td>{{ payslip.paye | number: "1.2-2" }}</td>
+                <td>{{ payslip.employeeNI | number: "1.2-2" }}</td>
+                <td>{{ payslip.otherDeductions | number: "1.2-2" }}</td>
+                <td>{{ payslip.salarySacrifice+payslip.employeePension | number: "1.2-2" }}</td>
+                <td>{{ payslip.studentLoan | number: "1.2-2" }}</td>
+                <td>{{ payslip.netPay | number: "1.2-2" }}</td>
+                <td>{{ payslip.employerNI | number: "1.2-2" }}</td>
+                <td *ngIf="payslip.inQBO" class="text-center"><i class="fas fa-check"></i></td>
+                <td *ngIf="!payslip.inQBO" class="text-center"><i class="fas fa-times"></i></td>
+              </tr>
+              <tr
+                *ngIf="total && total.totalPay" style="font-weight: bold">
+                  <td></td>
+                  <td>Total for {{this.payslips.length}} employees:</td>
+                  <td>{{ total.totalPay | number: "1.2-2" }}</td>
+                  <td>{{ total.paye | number: "1.2-2" }}</td>
+                  <td>{{ total.employeeNI | number: "1.2-2" }}</td>
+                  <td>{{ total.otherDeductions | number: "1.2-2" }}</td>
+                  <td>{{ total.salarySacrifice+total.employeePension | number: "1.2-2" }}</td>
+                  <td>{{ total.studentLoan | number: "1.2-2" }}</td>
+                  <td>{{ total.netPay | number: "1.2-2" }}</td>
+                  <td>{{ total.employerNI | number: "1.2-2" }}</td>
+                  <td></td>
+              </tr>    
+              <tr *ngIf="!payslips">
+                <td colspan="13" class="text-center">
+                  <span class="spinner-border spinner-border-lg align-center"></span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+				</ng-template>
+			</div>
+		</div>
+	</div>
+</div>
