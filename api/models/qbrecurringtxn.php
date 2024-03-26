@@ -50,7 +50,7 @@ class QuickbooksRecurringTransaction{
         echo "The Response message is: " . $error->getResponseBody() . "\n";
     }
     else {
-        return $recurringTransaction->RecurringTransaction;
+        return $recurringTransaction;
     }
   }
 

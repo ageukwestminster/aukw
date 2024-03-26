@@ -1,4 +1,5 @@
 ﻿export * from './alert';
+export * from './allocation';
 export * from './apimessage';
 export * from './chart_data';
 export * from './date-range';

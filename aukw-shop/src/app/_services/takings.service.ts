@@ -28,7 +28,7 @@ export class TakingsService {
   }
 
   /* return an array of the numdatapoints most recent sales */
-  getSimpleSalesList(shopid: number, numdatapoints: number) {
+  getSimpleSalesList(shopid: number, numdatapoints: number): Observable<HistogramChartData> {
     return this.http.get<HistogramChartData>(
       `${environment.apiUrl}/report/saleslist/shop/${shopid}/datapoints/${numdatapoints}`,
     );
@@ -38,7 +38,7 @@ export class TakingsService {
     return this.http.get<Takings>(`${baseUrl}/${id}`);
   }
 
-  getMostRecent(shopid: number) {
+  getMostRecent(shopid: number): Observable<Takings> {
     return this.http.get<Takings>(`${baseUrl}/most-recent/${shopid}`);
   }
 
