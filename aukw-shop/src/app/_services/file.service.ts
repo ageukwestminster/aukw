@@ -11,12 +11,9 @@ const baseUrl = `${environment.apiUrl}/xlsx`;
  */
 @Injectable({ providedIn: 'root' })
 export class FileService {
-  
   constructor(private http: HttpClient) {}
 
-
   upload(file: File) {
-
     let formData = new FormData();
     formData.append('file', file, file.name);
 
@@ -27,11 +24,17 @@ export class FileService {
       reportProgress: true,
     };
 
-    return this.http.post<UploadResponse>(`${baseUrl}/upload`,formData, options);
+    return this.http.post<UploadResponse>(
+      `${baseUrl}/upload`,
+      formData,
+      options,
+    );
   }
 
-  decrypt(password:string) {
-    return this.http.post<ApiMessage>(`${baseUrl}/decrypt`,{ "password" : password });
+  decrypt(password: string) {
+    return this.http.post<ApiMessage>(`${baseUrl}/decrypt`, {
+      password: password,
+    });
   }
 
   parse() {

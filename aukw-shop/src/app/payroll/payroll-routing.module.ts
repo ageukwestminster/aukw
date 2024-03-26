@@ -4,16 +4,15 @@ import { Routes, RouterModule } from '@angular/router';
 import { PayrollLayoutComponent } from './layout.component';
 import { PayslipListComponent } from './list.component';
 
-
 const routes: Routes = [
   {
     path: '',
     component: PayrollLayoutComponent,
     children: [
-      { path: '', component: PayslipListComponent }/*
+      { path: '', component: PayslipListComponent } /*
       { path: 'add', component: UserAddEditComponent },
       { path: 'edit/:id', component: UserAddEditComponent },
-      { path: 'suspended/:suspended', component: UserListComponent },*/
+      { path: 'suspended/:suspended', component: UserListComponent },*/,
     ],
   },
 ];

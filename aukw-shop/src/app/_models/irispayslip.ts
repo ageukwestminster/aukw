@@ -1,4 +1,3 @@
-
 /**
  * Define the properties of an employee payslip
  */
@@ -21,7 +20,7 @@
 export class IrisPayslip {
   employeeId: number;
   employeeName: string;
-  payrollDate: string
+  payrollDate: string;
   totalPay: number;
   paye: number;
   employeeNI: number;
@@ -32,9 +31,9 @@ export class IrisPayslip {
   employerNI: number;
   employerPension: number;
   employeePension: number;
-  inQBO: boolean
+  inQBO: boolean;
 
-  add(obj:IrisPayslip):IrisPayslip {
+  add(obj: IrisPayslip): IrisPayslip {
     this.totalPay += (obj && obj.totalPay) || 0;
     this.paye += (obj && obj.paye) || 0;
     this.employeeNI += (obj && obj.employeeNI) || 0;
@@ -44,7 +43,7 @@ export class IrisPayslip {
     this.netPay += (obj && obj.netPay) || 0;
     this.employerNI += (obj && obj.employerNI) || 0;
     this.employerPension += (obj && obj.employerPension) || 0;
-    this.employeePension += (obj && obj.employeePension) || 0;     
+    this.employeePension += (obj && obj.employeePension) || 0;
     return this;
   }
 

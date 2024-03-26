@@ -1,19 +1,21 @@
-<input type="file" class="file-input" 
-  accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" 
+<input
+  type="file"
+  class="file-input"
+  accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
   (change)="onChange($event)"
   #fileUpload
->
+/>
 
 <div class="file-section">
-  {{(file && file.name) || "No file uploaded yet."}}
+  {{ (file && file.name) || "No file uploaded yet." }}
   <div class="col-sm-2">
-      <button
-        (click)="fileUpload.click()"
-        class="btn btn-sm btn-success m-1 mt-1"
-      >
-        Upload File
-      </button>
-    </div>
+    <button
+      (click)="fileUpload.click()"
+      class="btn btn-sm btn-success m-1 mt-1"
+    >
+      Upload File
+    </button>
+  </div>
   <section [ngSwitch]="status">
     <p *ngSwitchCase="'uploading'">⏳ Uploading...</p>
     <p *ngSwitchCase="'reading'">🔄 Reading File</p>

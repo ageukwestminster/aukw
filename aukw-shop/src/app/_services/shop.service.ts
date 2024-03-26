@@ -14,7 +14,6 @@ const baseUrl = `${environment.apiUrl}/shop`;
  */
 @Injectable({ providedIn: 'root' })
 export class ShopService {
-  
   constructor(private http: HttpClient) {}
 
   /**

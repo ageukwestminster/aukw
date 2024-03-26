@@ -15,15 +15,16 @@ const allocationsUrl = `${environment.apiUrl}/qb/employees/allocations`;
 export class QBPayrollService {
   constructor(private http: HttpClient) {}
 
-  getAllocations(realmID: string) : Observable<EmployeeAllocation[]>{
+  getAllocations(realmID: string): Observable<EmployeeAllocation[]> {
     return this.http.get<EmployeeAllocation[]>(
-      `${allocationsUrl}?realmid=${realmID}`
-      );
+      `${allocationsUrl}?realmid=${realmID}`,
+    );
   }
 
-  createEmployerNIJournal(params:any, realmID: string) {
+  createEmployerNIJournal(params: any, realmID: string) {
     return this.http.post<any>(
       `${baseUrl}/journal/employerni?realmid=${realmID}`,
-      params);
+      params,
+    );
   }
 }

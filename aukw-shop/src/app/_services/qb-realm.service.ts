@@ -20,33 +20,35 @@ export class QBRealmService {
   constructor(
     private http: HttpClient,
     private qbConnectionService: QBConnectionService,
-    ) {}
+  ) {}
 
   /**
-   * Get a list of the names of all available QBO realms, with associated 
+   * Get a list of the names of all available QBO realms, with associated
    * QBConnection details, if any.
    * @returns Obs of Array of QBO realms, with connection property populated.
    */
-  getAll(userid:number) {
-
+  getAll(userid: number) {
     // forkJoin accepts an array of Observables and emits an array of the
     // last values of each Observable.
     //  'zip' is similar but emits intermediate values
     return forkJoin({
       realmArray: this.http.get<QBRealm[]>(baseUrl),
-      qbconnArray: this.qbConnectionService.getAll(userid)
-    })
-    .pipe(
+      qbconnArray: this.qbConnectionService.getAll(userid),
+    }).pipe(
       map((value) => {
-        value.realmArray.forEach((realm:QBRealm) => {
-          value.qbconnArray.forEach(element => {
-            if (element && element.realmid && realm.realmid == element.realmid) {
+        value.realmArray.forEach((realm: QBRealm) => {
+          value.qbconnArray.forEach((element) => {
+            if (
+              element &&
+              element.realmid &&
+              realm.realmid == element.realmid
+            ) {
               realm.connection = element;
             }
           });
         });
         return value.realmArray;
-      })
+      }),
     );
   }
 }

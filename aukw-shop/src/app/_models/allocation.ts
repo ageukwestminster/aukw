@@ -1,4 +1,3 @@
-
 /**
  * Define the properties of an employee allocation
  */

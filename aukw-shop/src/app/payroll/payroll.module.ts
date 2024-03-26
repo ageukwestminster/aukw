@@ -21,7 +21,7 @@ import { PayslipRowComponent } from './row.component';
   declarations: [
     PayrollLayoutComponent,
     PayslipListComponent,
-    PayslipRowComponent
+    PayslipRowComponent,
   ],
 })
 export class PayrollModule {}
