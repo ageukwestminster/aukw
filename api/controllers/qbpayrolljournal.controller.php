@@ -70,10 +70,34 @@ class QBPayrollJournalCtl{
     }
   }
 
+  /**
+   * Enter the journal txn for employer ni, v vm, v, 
+   */
+  public static function create_employerni(){
+    if(!isset($_GET['realmid']) ) {
+      http_response_code(400);   
+      echo json_encode(
+        array("message" => "Please supply a value for the 'realmid' parameter.")
+      );
+      exit(1);
+    } 
+
+    $model = new \Models\QuickbooksRecurringTransaction();
+    $model->id = \Core\Config::read('qb.allocationsid');
+    $model->realmid = $_GET['realmid'];
+
+    $response = $model->readone();
+
+    if (isset($response) && isset($response->RecurringTransaction) && 
+                    isset($response->RecurringTransaction->JournalEntry)) {
+                    
+      $newJournal = $response->RecurringTransaction->JournalEntry;
+    }
+  }
+
    /**
    * Return details of the QBO recurring transaction identified by $id
    *
-   * @param int $id
    * @return void Output is echo'd directly to response 
    */
   public static function read_employee_allocations(){  
@@ -161,7 +185,6 @@ class QBPayrollJournalCtl{
       exit(1);
     }
     
-
   }
   
 
