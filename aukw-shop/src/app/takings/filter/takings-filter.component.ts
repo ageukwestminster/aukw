@@ -1,7 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { KeyValue } from '@angular/common';
-import { NgbPanelChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '@environments/environment';
 import { Observable, BehaviorSubject } from 'rxjs';
 
@@ -41,10 +40,6 @@ export class TakingsFilterComponent implements OnInit {
 
   get f() {
     return this.form.controls;
-  }
-
-  beforeChange($event: NgbPanelChangeEvent) {
-    this.panelOpen = $event.nextState;
   }
 
   ngOnInit(): void {

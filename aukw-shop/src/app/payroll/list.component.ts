@@ -1,7 +1,9 @@
 ﻿import { Component, OnInit } from '@angular/core';
+import { throwError } from 'rxjs';
 import { concatMap } from 'rxjs/operators';
 
 import {
+  AlertService,
   AuthenticationService,
   QBPayrollService,
   QBRealmService,
@@ -18,6 +20,7 @@ export class PayslipListComponent implements OnInit {
   user!: User;
 
   constructor(
+    private alertService: AlertService,
     private qbRealmService: QBRealmService,
     private authenticationService: AuthenticationService,
     private qbPayrollService: QBPayrollService,
@@ -56,8 +59,15 @@ export class PayslipListComponent implements OnInit {
           );
         }),
       )
-      .subscribe((response: EmployeeAllocation[]) => {
-        this.allocations = response;
+      .subscribe({
+        next: (response: EmployeeAllocation[]) => {
+          this.allocations = response;
+        },
+        error: (error: any) => {
+          this.alertService.error('File not uploaded. ' + error, {
+            autoClose: false,
+          });
+        }              
       });
   }
 
