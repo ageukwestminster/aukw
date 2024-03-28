@@ -37,7 +37,7 @@ export class AuthenticationService {
 
   /**
    * The windows Id of the timer that is set to expire 1 minute before the access token.
-   * This timer is used to trigger the creatiopn of a new access token from the refresh token.
+   * This timer is used to trigger the creation of a new access token from the refresh token.
    *
    * Code from: {@link https://stackoverflow.com/a/54507207/6941165 stackoverflow}
    */
@@ -115,7 +115,7 @@ export class AuthenticationService {
    * This method returns an empty User (rather than a 401/403 error) if called from /callback
    * Done this way to allow QBO to callback into the app wiothout being authenticated
    *
-   * @returns On success the api returns the user details including a JWT token
+   * @returns On success returns the user details including a JWT token
    */
   refreshToken() {
     if (window.location.pathname == '/callback') {
@@ -133,6 +133,13 @@ export class AuthenticationService {
       );
   }
 
+  /**
+   * Provides an endpoint for the QBO/Intuit OAuth2 authorization flow.
+   * @param code A code that can be exchanged for access and refresh tokens
+   * @param realmId The id of the QBO company
+   * @param state A user-supplied string that is used to check for man-in-the-middle attacks
+   * @returns On success returns the user details including a JWT token
+   */
   callback(code: string, realmId: string, state: string) {
     return this.http
       .get<any>(
