@@ -110,6 +110,10 @@ class QBPayrollJournalCtl{
       exit(1);
     } 
 
+    $employeeModel = new \Models\QuickbooksEmployee();
+    $employeeModel->realmid = $_GET['realmid'];
+    $employees = $employeeModel->readAll();
+
     $model = new \Models\QuickbooksRecurringTransaction();
     $model->id = \Core\Config::read('qb.allocationsid');
     $model->realmid = $_GET['realmid'];
@@ -135,23 +139,21 @@ class QBPayrollJournalCtl{
               $account = $line->JournalEntryLineDetail->AccountRef;
               $class = $line->JournalEntryLineDetail->ClassRef;
 
-              if (!array_key_exists($employee->value, $returnObj)) {
-                  $returnObj[$employee->value] = array();
-                  $returnObj[$employee->value]['id'] = $employee->value;
-                  $returnObj[$employee->value]['name'] = $employee->name ?? '';
-                  $returnObj[$employee->value]['allocations'] = array();
-              }
-
-              $returnObj[$employee->value]['allocations'][] = (object) [
+              $returnObj[] = (object) [
+                  'id' => $employee->value,
+                  'name' => $employee->name ?? '',
+                  'payrollNumber' => 
+                      array_key_exists($employee->value, $employees)?
+                          $employees[$employee->value]['payrollNumber']:null,
                   'percentage' => $amount, 
-                  'account' => $account,
-                  'class' => $class
+                  'account' => $account->value,
+                  'class' => $class->value
               ];
             }
           }
 
           // Check allocations sum up to 100 for each employee
-          foreach ($returnObj as $employeeAllocationsObj) {  
+          /*foreach ($returnObj as $employeeAllocationsObj) {  
             $sum = 0;     
             foreach ($employeeAllocationsObj['allocations'] as $allocation) {
               $sum += $allocation->percentage;
@@ -161,10 +163,10 @@ class QBPayrollJournalCtl{
                 . $employeeAllocationsObj->name . "' (QBO id = " 
                 . $employeeAllocationsObj->id . ") do not add up to 100.");
             }
-          }
+          }*/
 
           // array_values converts associative array to normal array
-          echo json_encode(array_values($returnObj), JSON_NUMERIC_CHECK); 
+          echo json_encode($returnObj, JSON_NUMERIC_CHECK); 
 
         } catch (\Exception $e) {
           http_response_code(400);   
