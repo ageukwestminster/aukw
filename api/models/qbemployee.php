@@ -65,7 +65,6 @@ class QuickbooksEmployee{
       return;
     }
 
-    //$dataService->forceJsonSerializers();
     $items = $dataService->FindAll('Employee');
     $error = $dataService->getLastError();
     if ($error) {
@@ -74,7 +73,18 @@ class QuickbooksEmployee{
         echo "The Response message is: " . $error->getResponseBody() . "\n";
     }
     else {
-        return $items;
+
+        $employeeArray = array();
+        foreach ($items as $item) {
+          $employee = array(
+            "quickbooksId" => $item->Id,
+            "name" => $item->DisplayName,
+            "payrollNumber" => $item->EmployeeNumber
+          );
+          $employeeArray[] = $employee;
+        }
+
+        return $employeeArray;
     }
 }
 
