@@ -18,7 +18,7 @@ export class AuthenticationService {
    * This pattern (private BehaviorSubject<object> & public
    *     Observable<object>) is likely being used because:
    *      1. BehaviourSubject guarantees there is always a valid User
-   *      2. Using the asObservable() user public property exposes the
+   *      2. Using the Observable() user public property exposes the
    *         data from the subject, but at the same time prevents
    *         having data inadvertently pushed into the subject
    *      3. By having the userValue a public property of an injectable

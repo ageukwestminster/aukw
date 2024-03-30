@@ -33,7 +33,8 @@ export class ErrorInterceptor implements HttpInterceptor {
       catchError((err) => {
         if (
           [401, 403].includes(err.status) &&
-          this.authenticationService.userValue
+          this.authenticationService.userValue &&
+          !/\/qb\//.test(request.url) // do not logout for 401 errors from Quickbooks
         ) {
           // auto logout if 401 or 403 response returned from api
           this.authenticationService.logout();
