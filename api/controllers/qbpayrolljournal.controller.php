@@ -112,7 +112,8 @@ class QBPayrollJournalCtl{
 
       if ($result) {
         echo json_encode(
-            array("message" => "Employer NI journal '". $result['label']  ."' has been added for " . $result['date'] . ".",
+            array("message" => "Employer NI journal '". $result['label'] .
+                        "' has been added for " . $result['date'] . ".",
                 "id" => $result['id'])
           );
       }
