@@ -78,7 +78,7 @@ class QuickbooksJournal{
     }
   }
 
-    /**
+  /**
    * Delete a journal from the QB system.
    *
    * @return bool 'true' if success.

@@ -7,7 +7,7 @@ export class EmployeeAllocation {
   name: string;
   percentage: number;
   account: number;
-  class: number;
+  class: string;
   payrollNumber: number;
 
   constructor(obj?: any) {

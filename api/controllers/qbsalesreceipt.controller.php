@@ -30,7 +30,9 @@ class QBSalesReceiptCtl{
       exit(1);
     } 
 
-    $model = QuickbooksSalesReceipt::getInstance()->setId($id)->setRealmID(($_GET['realmid']));
+    $model = QuickbooksSalesReceipt::getInstance()
+                ->setId($id)
+                ->setRealmID(($_GET['realmid']));
 
     echo json_encode($model->readone(), JSON_NUMERIC_CHECK);   
   }

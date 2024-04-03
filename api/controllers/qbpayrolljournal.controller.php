@@ -2,6 +2,7 @@
 
 namespace Controllers;
 
+use DateTime;
 use \Models\QuickbooksPayrollJournal;
 
 /**
@@ -61,7 +62,7 @@ class QBPayrollJournalCtl{
       exit(1);      
     }
 
-    $result = $model->create();
+    $result = $model->create_employee_journal();
     if ($result) {
         echo json_encode(
             array("message" => "Payroll journal with reference number '". $result['label']  ."' has been added for " . $result['date'] . ".",
@@ -71,7 +72,7 @@ class QBPayrollJournalCtl{
   }
 
   /**
-   * Enter the journal txn for employer ni, v vm, v, 
+   * Enter the journal txn for employer NI
    */
   public static function create_employerni(){
     if(!isset($_GET['realmid']) ) {
@@ -80,19 +81,54 @@ class QBPayrollJournalCtl{
         array("message" => "Please supply a value for the 'realmid' parameter.")
       );
       exit(1);
-    } 
-
-    $model = new \Models\QuickbooksRecurringTransaction();
-    $model->id = \Core\Config::read('qb.allocationsid');
-    $model->realmid = $_GET['realmid'];
-
-    $response = $model->readone();
-
-    if (isset($response) && isset($response->RecurringTransaction) && 
-                    isset($response->RecurringTransaction->JournalEntry)) {
-                    
-      $newJournal = $response->RecurringTransaction->JournalEntry;
     }
+    
+    if(!isset($_GET['payrolldate']) || 
+            !\Core\DatesHelper::validateDate($_GET['payrolldate'])) {
+      http_response_code(400);   
+      echo json_encode(
+        array("message" => "Please supply a valid value for the 'payrolldate' parameter.")
+      );
+      exit(1);
+    } else {
+      $payrollDate = $_GET['payrolldate'];
+      $d = DateTime::createFromFormat('Y-m-d', $payrollDate);
+      $docNumber = 'Payroll_' . $d->format('Y_m') . '-NI';
+    }
+
+    $data = json_decode(file_get_contents("php://input"));
+
+    //echo json_encode($data);
+    //exit(0);
+
+    try {
+
+      $model = QuickbooksPayrollJournal::getInstance()
+        ->setDocNumber($docNumber)
+        ->setTxnDate($payrollDate)
+        ->setRealmID($_GET['realmid']);
+
+      $result = $model->create_employerNI_journal($data);
+
+      if ($result) {
+        echo json_encode(
+            array("message" => "Employer NI journal '". $result['label']  ."' has been added for " . $result['date'] . ".",
+                "id" => $result['id'])
+          );
+      }
+
+    } catch (\Exception $e) {
+    http_response_code(400);  
+    echo json_encode(
+      array(
+        "message" => "Unable to enter payroll journal in Quickbooks. ",
+        "extra" => $e->getMessage()
+         )
+        , JSON_NUMERIC_CHECK);
+    exit(1);
+  }
+
+    
   }
 
    /**
@@ -147,7 +183,7 @@ class QBPayrollJournalCtl{
                           $employees[$employee->value]['payrollNumber']:null,
                   'percentage' => $amount, 
                   'account' => $account->value,
-                  'class' => $class->value
+                  'class' => (string)$class->value
               ];
             }
           }
@@ -166,7 +202,7 @@ class QBPayrollJournalCtl{
           }*/
 
           // array_values converts associative array to normal array
-          echo json_encode($returnObj, JSON_NUMERIC_CHECK); 
+          echo json_encode($returnObj); 
 
         } catch (\Exception $e) {
           http_response_code(400);   

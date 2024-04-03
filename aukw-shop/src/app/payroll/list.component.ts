@@ -67,7 +67,7 @@ export class PayslipListComponent implements OnInit {
         })
       )
       .subscribe({
-        next: (response: EmployeeAllocation[]) => {
+        next: (response: any) => {
           this.allocations = response;
         },
         error: (error: any) => {
@@ -94,43 +94,44 @@ export class PayslipListComponent implements OnInit {
   }
 
   employerNI() {
-    if (!this.payslips || !this.payslips.length) return;
+    if (!this.payslips || !this.payslips.length) {
+      this.alertService.error("No payslips found!");
+      return;
+    }
 
     const employerNIArray: EmployerNIEntry[] = [];
 
     this.payslips.forEach(payslip => {
-      if (payslip.employeeId==45) {
-        //console.log(payslip.employeeName);
-      }
       const allocations = this.allocations.filter((x) => x.payrollNumber == payslip.employeeId);
       let sum:number= 0;
-      if (allocations.length > 1) {
-        for (let index = 0; index < allocations.length-1; index++) {
-          const alloc = allocations[index];
-          const entry = new EmployerNIEntry();
-          entry.employeeId = alloc.id;
-          entry.class = alloc.class;
-          entry.account = alloc.account;
-          entry.amount = Number((Math.round(payslip.employerNI*alloc.percentage)/100).toFixed(2));
+      if (allocations.length) {
+        for (const [i, v] of allocations.entries()) {
+          const entry = new EmployerNIEntry({
+            "employeeId": v.id,
+            "class": v.class,
+            "account": v.account,
+            "amount": Number((Math.round(payslip.employerNI*v.percentage)/100).toFixed(2))
+          });
+
+          // The sum of the allocated amounts must equal the starting total
+          // If there is a discrepanc then adjust the final allocated amount.
           sum += entry.amount;
+          if (i == (allocations.length-1) && sum != payslip.employerNI) {
+            entry.amount += payslip.employerNI - sum;
+
+            // Round to avoid numbers like 65.4000000000004
+            entry.amount = Number(entry.amount.toFixed(2)); 
+          }
           if (entry.amount) employerNIArray.push(entry);
         }
-      } 
-      const alloc = allocations[allocations.length-1];
-      const entry = new EmployerNIEntry();
-      entry.employeeId = alloc.id;
-      entry.class = alloc.class;
-      entry.account = alloc.account;
-      entry.amount = Number((payslip.employerNI - sum).toFixed(2));
-      if (entry.amount) employerNIArray.push(entry);
+      }
 
     });
 
-
-    console.log(JSON.stringify(employerNIArray,null,2));
-    return;
+    // Create QBO Journal entry via api call
     this.qbPayrollService
-      .createEmployerNIJournal(employerNIArray, this.charityRealm.realmid!)
+      .createEmployerNIJournal(this.charityRealm.realmid!, employerNIArray, 
+          this.payrollDate)
       .subscribe((x: any) => {
         console.log(x);
       });
@@ -146,10 +147,5 @@ export class PayslipListComponent implements OnInit {
       };
     });
 
-    this.qbPayrollService
-      .createEmployerNIJournal(employerNIArray, this.charityRealm.realmid!)
-      .subscribe((x: any) => {
-        console.log(x);
-      });
   }
 }
