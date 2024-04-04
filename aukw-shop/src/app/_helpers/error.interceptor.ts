@@ -1,9 +1,8 @@
-import { Injectable } from '@angular/core';
+import { inject } from '@angular/core';
 import {
   HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor,
+  HttpHandlerFn,
+  HttpEvent
 } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -15,40 +14,33 @@ import { AuthenticationService, AlertService } from '@app/_services';
  * If there is a 401 Unauthorized or 403 Forbidden response the user is automatically logged out
  * of the application, all other errors are re-thrown up to the calling service to be handled.
  *
- * To intercept and inspect HTTP responses returned to the Angular app, the ErrorInterceptor
- * class implements the HttpInterceptor interface and intercept() method.
+ * From: https://jasonwatmore.com/angular-15-16-free-course-7-migrate-to-standalone-components-and-functional-interceptors
  */
-@Injectable()
-export class ErrorInterceptor implements HttpInterceptor {
-  constructor(
-    private authenticationService: AuthenticationService,
-    private alertService: AlertService,
-  ) {}
+export function errorInterceptor (
+  request: HttpRequest<any>,
+  next: HttpHandlerFn,
+): Observable<HttpEvent<any>> {
+  const authenticationService = inject(AuthenticationService);
+  const alertService = inject(AlertService);
+  return next(request).pipe(
+    catchError((err) => {
+      if (
+        [401, 403].includes(err.status) &&
+        authenticationService.userValue &&
+        !/\/qb\//.test(request.url) // do not logout for 401 errors from Quickbooks
+      ) {
+        // auto logout if 401 or 403 response returned from api
+        authenticationService.logout();
+      }
 
-  intercept(
-    request: HttpRequest<any>,
-    next: HttpHandler,
-  ): Observable<HttpEvent<any>> {
-    return next.handle(request).pipe(
-      catchError((err) => {
-        if (
-          [401, 403].includes(err.status) &&
-          this.authenticationService.userValue &&
-          !/\/qb\//.test(request.url) // do not logout for 401 errors from Quickbooks
-        ) {
-          // auto logout if 401 or 403 response returned from api
-          this.authenticationService.logout();
-        }
+      const error = err.error?.message || err.statusText;
 
-        const error = (err && err.error && err.error.message) || err.statusText;
+      if (err.status === 422) {
+        alertService.error(error);
+      }
 
-        if (err.status === 422) {
-          this.alertService.error(error);
-        }
-
-        console.error(err);
-        return throwError(() => new Error(error));
-      }),
-    );
-  }
+      console.error(err);
+      return throwError(() => error);
+    }),
+  );
 }

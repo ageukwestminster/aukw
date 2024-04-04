@@ -1,12 +1,12 @@
 import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { JwtInterceptor, ErrorInterceptor, appInitializer } from './_helpers';
+import { jwtInterceptor, errorInterceptor, appInitializer } from './_helpers';
 import { AuthenticationService } from './_services';
 
 import { HomeComponent } from './home';
@@ -27,7 +27,6 @@ import { CallbackComponent } from './callback/callback.component';
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule,
     AppRoutingModule,
     NgbModule,
     SharedModule,
@@ -39,8 +38,12 @@ import { CallbackComponent } from './callback/callback.component';
       multi: true,
       deps: [AuthenticationService],
     },
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    provideHttpClient(
+      withInterceptors([
+          jwtInterceptor, 
+          errorInterceptor
+      ])
+  )
   ],
   bootstrap: [AppComponent],
 })
