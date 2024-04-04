@@ -1,5 +1,5 @@
 <td>{{ realm.name }}</td>
-<td>
+<td style="text-align: center">
   <span class="logged-in" *ngIf="isValidConnection">●</span>
   <span class="logged-out" *ngIf="!isValidConnection">●</span>
 </td>
@@ -9,38 +9,42 @@
   }}
 </td>
 <td style="white-space: nowrap">
-  <button
-    (click)="addConnection($event)"
-    class="btn btn-sm btn-success me-1"
-    *ngIf="user.isAdmin && !isValidConnection"
-  >
-    <span>Add</span>
-  </button>
-  <button
-    (click)="refreshConnection($event)"
-    class="btn btn-sm btn-primary me-1"
-    [disabled]="!this.realm!.connection || this.realm!.connection!.isRefreshing"
-  >
-    <span
-      *ngIf="this.realm!.connection && this.realm!.connection!.isRefreshing"
-      class="spinner-border spinner-border-sm"
-    ></span>
-    <span
-      *ngIf="!this.realm!.connection || !this.realm!.connection!.isRefreshing"
-      >Refresh</span
+  <div *ngIf="user.isAdmin"><!-- Don't display is user is not an admin-->
+    <button
+      (click)="addConnection($event)"
+      class="btn btn-sm btn-success me-1"
+      *ngIf="!isValidConnection"
     >
-  </button>
-  <button
-    (click)="revokeConnection($event)"
-    class="btn btn-sm btn-danger"
-    [disabled]="!this.realm!.connection || this.realm!.connection!.isRevoking"
-  >
-    <span
-      *ngIf="this.realm!.connection && this.realm!.connection!.isRevoking"
-      class="spinner-border spinner-border-sm"
-    ></span>
-    <span *ngIf="!this.realm!.connection || !this.realm!.connection!.isRevoking"
-      >Delete</span
+      <span>Add</span>
+    </button>
+    <button
+      (click)="refreshConnection($event)"
+      class="btn btn-sm btn-primary me-1"
+      [disabled]="!this.realm!.connection || this.realm!.connection!.isRefreshing"
+      *ngIf="isValidConnection"
     >
-  </button>
+      <span
+        *ngIf="this.realm!.connection && this.realm!.connection!.isRefreshing"
+        class="spinner-border spinner-border-sm"
+      ></span>
+      <span
+        *ngIf="!this.realm!.connection || !this.realm!.connection!.isRefreshing"
+        >Refresh</span
+      >
+    </button>
+    <button
+      (click)="revokeConnection($event)"
+      class="btn btn-sm btn-danger"
+      [disabled]="!this.realm!.connection || this.realm!.connection!.isRevoking"
+      *ngIf="isValidConnection"
+    >
+      <span
+        *ngIf="this.realm!.connection && this.realm!.connection!.isRevoking"
+        class="spinner-border spinner-border-sm"
+      ></span>
+      <span *ngIf="!this.realm!.connection || !this.realm!.connection!.isRevoking"
+        >Delete</span
+      >
+    </button>
+  </div>
 </td>

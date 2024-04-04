@@ -1,20 +1,19 @@
-﻿import { Component, OnInit } from '@angular/core';
-import { AuthenticationService, QBRealmService } from '@app/_services';
-import { QBConnectionDetails, QBRealm, User } from '@app/_models';
+﻿import { Component, OnInit, Input } from '@angular/core';
+import { QBRealmService } from '@app/_services';
+import { QBConnectionDetails, QBRealm } from '@app/_models';
 
 @Component({
   selector: 'qbconn-list',
   templateUrl: 'list.component.html',
 })
 export class QBConnectionListComponent implements OnInit {
+  @Input() userID: number = 0;
+
   realms!: QBRealm[];
-  user!: User;
 
   constructor(
-    private authenticationService: AuthenticationService,
     private qbRealmService: QBRealmService,
   ) {
-    this.user = this.authenticationService.userValue;
   }
 
   ngOnInit() {
@@ -26,8 +25,9 @@ export class QBConnectionListComponent implements OnInit {
   }
 
   reloadQBRealms() {
+    if (!this.userID) return;
     this.qbRealmService
-      .getAll(this.user.id)
+      .getAll(this.userID)
       .subscribe((response: QBRealm[]) => {
         this.realms = response;
       });

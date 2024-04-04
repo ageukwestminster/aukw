@@ -28,16 +28,16 @@ export class QBConnectionRowComponent {
     this.onConnectionRevoked = new EventEmitter();
   }
 
-  isValidConnection(): boolean {
+  get isValidConnection(): boolean {
     if (
       !this.realm ||
       !this.realm.connection ||
-      !this.realm.connection.refreshtokenexpiry
+      !this.realm.connection!.refreshtokenexpiry
     ) {
       return false;
     } else {
       const refreshExpiry: Date = new Date(
-        this.realm.connection.refreshtokenexpiry,
+        this.realm.connection!.refreshtokenexpiry,
       );
       const today = new Date();
 
