@@ -4,7 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { CallbackComponent } from './callback';
 import { HomeComponent } from './home';
 import { LoginComponent } from './login';
-import { AuthGuard } from './_helpers';
+import { authGuard } from './_helpers';
 import { Role } from './_models';
 
 const usersModule = () =>
@@ -20,7 +20,7 @@ const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
   },
   {
     path: 'login',
@@ -33,25 +33,25 @@ const routes: Routes = [
   {
     path: 'reports',
     loadChildren: reportsModule,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
   },
   {
     path: 'payroll',
     loadChildren: payrollModule,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     data: { roles: [Role.Admin] },
   },
   {
     path: 'users',
     loadChildren: usersModule,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     data: { roles: [Role.Admin] },
   },
 
   {
     path: 'takings',
     loadChildren: takingsModule,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
   },
 
   // otherwise redirect to home
