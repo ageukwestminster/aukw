@@ -1,6 +1,8 @@
 ﻿import { Component, OnInit } from '@angular/core';
+import { NgIf, NgClass } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AuthenticationService, QBConnectionService } from '@app/_services';
 
@@ -9,6 +11,8 @@ import { QBAuthUri } from '@app/_models';
 @Component({
   templateUrl: 'login.component.html',
   styles: ['img { max-width:340px; max-height:240px;}'],
+  standalone: true,
+  imports: [FormsModule, NgIf, NgClass, ReactiveFormsModule]
 })
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
@@ -96,10 +100,9 @@ export class LoginComponent implements OnInit {
    */
   redirectToIntuitSSO(event: Event) {
     event.stopPropagation();
-    //event.preventDefault();
     this.qbConnService.getAuthUri().subscribe((uri: QBAuthUri) => {
       if (uri && uri.authUri) {
-        // Open the QB Auth uri in a new tab or window
+        // Open the QB Auth uri in this window or tab
         window.location.href = uri.authUri;
       }
     });
