@@ -19,7 +19,6 @@ import { CallbackComponent } from './callback/callback.component';
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
     LoginComponent,
     CallbackComponent,
   ],
@@ -29,6 +28,7 @@ import { CallbackComponent } from './callback/callback.component';
     ReactiveFormsModule,
     AppRoutingModule,
     NgbModule,
+    HomeComponent,
     SharedModule,
   ],
   providers: [
