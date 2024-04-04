@@ -92,14 +92,11 @@ class QBPayrollJournalCtl{
       exit(1);
     } else {
       $payrollDate = $_GET['payrolldate'];
-      $d = DateTime::createFromFormat('Y-m-d', $payrollDate);
-      $docNumber = 'Payroll_' . $d->format('Y_m') . '-NI';
+      $docNumber = QBPayrollJournalCtl::payrollDocNumber($payrollDate);
+      $docNumber .= '-NI';
     }
 
     $data = json_decode(file_get_contents("php://input"));
-
-    //echo json_encode($data);
-    //exit(0);
 
     try {
 
@@ -122,7 +119,7 @@ class QBPayrollJournalCtl{
     http_response_code(400);  
     echo json_encode(
       array(
-        "message" => "Unable to enter payroll journal in Quickbooks. ",
+        "message" => "Unable to enter payroll journal in Quickbooks.",
         "extra" => $e->getMessage()
          )
         , JSON_NUMERIC_CHECK);
@@ -226,5 +223,14 @@ class QBPayrollJournalCtl{
     
   }
   
-
+  /**
+   * Helper function to regularise the DocNumber for payroll transactions
+   * @param string $payrollDate A string representation of the date of the 
+   * payroll in 'YYYY-mm-dd' format.
+   * @return string 
+   */
+  private static function payrollDocNumber(string $payrollDate) : string {
+    $d = DateTime::createFromFormat('Y-m-d', $payrollDate);
+    return 'Payroll_' . $d->format('Y_m');
+  }
 }
