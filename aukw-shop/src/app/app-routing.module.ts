@@ -7,8 +7,7 @@ import { LoginComponent } from './login';
 import { authGuard } from './_helpers';
 import { Role } from './_models';
 
-const usersModule = () =>
-  import('./users/users.module').then((x) => x.UsersModule);
+const usersRoutes = () => import('./users/users.routes').then(x => x.USERS_ROUTES);
 const takingsModule = () =>
   import('./takings/takings.module').then((x) => x.TakingsModule);
 const payrollModule = () =>
@@ -43,7 +42,7 @@ const routes: Routes = [
   },
   {
     path: 'users',
-    loadChildren: usersModule,
+    loadChildren: usersRoutes,
     canActivate: [authGuard],
     data: { roles: [Role.Admin] },
   },
