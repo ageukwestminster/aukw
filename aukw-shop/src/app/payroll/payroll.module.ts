@@ -8,7 +8,6 @@ import { SharedModule } from '@app/shared/shared.module';
 
 import { PayrollLayoutComponent } from './layout.component';
 import { PayslipListComponent } from './list.component';
-import { PayslipRowComponent } from './row.component';
 
 @NgModule({
   imports: [
@@ -20,8 +19,7 @@ import { PayslipRowComponent } from './row.component';
   ],
   declarations: [
     PayrollLayoutComponent,
-    PayslipListComponent,
-    PayslipRowComponent,
+    PayslipListComponent
   ],
 })
 export class PayrollModule {}
