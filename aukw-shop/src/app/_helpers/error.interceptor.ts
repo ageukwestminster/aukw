@@ -14,7 +14,7 @@ import { AuthenticationService, AlertService } from '@app/_services';
  * If there is a 401 Unauthorized or 403 Forbidden response the user is automatically logged out
  * of the application, all other errors are re-thrown up to the calling service to be handled.
  *
- * From: https://jasonwatmore.com/angular-15-16-free-course-7-migrate-to-standalone-components-and-functional-interceptors
+ * From: {@link https://jasonwatmore.com/angular-15-16-free-course-7-migrate-to-standalone-components-and-functional-interceptors}
  */
 export function errorInterceptor (
   request: HttpRequest<any>,

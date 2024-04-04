@@ -14,7 +14,7 @@ import { AuthenticationService } from '@app/_services';
  * to add JWT authentication credentials to the Authorization header if the user is 
  * logged in and the request is to the application api url (environment.apiUrl).
  * 
- * From: https://jasonwatmore.com/angular-15-16-free-course-7-migrate-to-standalone-components-and-functional-interceptors
+ * From: {@link https://jasonwatmore.com/angular-15-16-free-course-7-migrate-to-standalone-components-and-functional-interceptors}
  */
 export function jwtInterceptor(
   request: HttpRequest<any>,

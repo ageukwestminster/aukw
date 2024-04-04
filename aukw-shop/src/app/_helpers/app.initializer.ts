@@ -11,7 +11,7 @@ import { AuthenticationService } from '@app/_services';
  *
  * Logic from: {@link https://jasonwatmore.com/post/2022/12/09/angular-execute-an-init-function-before-app-startup-with-an-angular-app-initializer}
  *
- * @param authenticationService service that can authenticate users
+ * @param authenticationService A service that can authenticate users
  * @returns A completed Observable
  */
 export function appInitializer(authenticationService: AuthenticationService) {
