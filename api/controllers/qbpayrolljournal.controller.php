@@ -23,7 +23,7 @@ class QBPayrollJournalCtl{
    * @return void Output is echoed directly to response 
    * 
    */
-  public static function create(){  
+  public static function create_employee_payslip_journal(){  
 
     if(!isset($_GET['realmid']) ) {
       http_response_code(400);   
@@ -31,7 +31,19 @@ class QBPayrollJournalCtl{
         array("message" => "Please supply a value for the 'realmid' parameter.")
       );
       exit(1);
-    } 
+    }
+    
+    if(!isset($_GET['payrolldate']) || 
+            !\Core\DatesHelper::validateDate($_GET['payrolldate'])) {
+      http_response_code(400);   
+      echo json_encode(
+        array("message" => "Please supply a valid value for the 'payrolldate' parameter.")
+      );
+      exit(1);
+    } else {
+      $payrollDate = $_GET['payrolldate'];
+      $docNumber = QBPayrollJournalCtl::payrollDocNumber($payrollDate);
+    }
 
     $data = json_decode(file_get_contents("php://input"));
 
@@ -74,7 +86,7 @@ class QBPayrollJournalCtl{
   /**
    * Enter the journal txn for employer NI
    */
-  public static function create_employerni(){
+  public static function create_employer_ni_journal(){
     if(!isset($_GET['realmid']) ) {
       http_response_code(400);   
       echo json_encode(

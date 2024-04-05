@@ -1,6 +1,7 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
-import { concatMap } from 'rxjs/operators';
+import { Observable, from } from 'rxjs';
+import { concatMap, filter, mergeMap, map } from 'rxjs/operators';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import {
@@ -11,7 +12,7 @@ import {
 } from '@app/_services';
 import {
   EmployeeAllocation,
-  EmployerNIEntry,
+  PayrollJournalEntry,
   IrisPayslip,
   QBRealm,
   User,
@@ -29,7 +30,8 @@ export class PayslipListComponent implements OnInit {
   charityRealm!: QBRealm;
   enterpriseRealm!: QBRealm;
   allocations!: EmployeeAllocation[];
-  user!: User;
+  user!: User;  
+  employeeJournalEntries$!: Observable<PayrollJournalEntry[]>;
 
   constructor(
     private alertService: AlertService,
@@ -47,6 +49,12 @@ export class PayslipListComponent implements OnInit {
     payslips.forEach((element) => {
       this.total = this.total.add(element);
     });
+
+    this.employeeJournalEntries$ = from(this.payslips).pipe(
+      filter((p:IrisPayslip) => p.employeeId == 34), //Test using Vesna
+      filter(p => !p.payslipJournalInQBO), // Only add if not already in QBO
+      map((p:IrisPayslip) => this.convertPayslipToQBOFormat(p)) // map into allocated classes
+    );
   }
 
   /**
@@ -104,7 +112,7 @@ export class PayslipListComponent implements OnInit {
       return;
     }
 
-    const employerNIArray: EmployerNIEntry[] = [];
+    const employerNIArray: PayrollJournalEntry[] = [];
 
     this.payslips.forEach((payslip) => {
       const allocations = this.allocations.filter(
@@ -113,7 +121,7 @@ export class PayslipListComponent implements OnInit {
       let sum: number = 0;
       if (allocations.length) {
         for (const [i, v] of allocations.entries()) {
-          const entry = new EmployerNIEntry({
+          const entry = new PayrollJournalEntry({
             employeeId: v.id,
             class: v.class,
             account: v.account,
@@ -148,6 +156,19 @@ export class PayslipListComponent implements OnInit {
       });
   }
 
+  makeEmployeeJournalEntries() {
+
+    this.employeeJournalEntries$.pipe(
+      mergeMap ((v) => this.qbPayrollService.createEmployeeJournal(
+        this.charityRealm.realmid!,
+        v,
+        this.payrollDate
+      ))
+    ).subscribe((x:any) => console.log(x) );
+
+
+  }
+
   pensionBill() {
     if (!this.payslips || !this.payslips.length) return;
 
@@ -157,5 +178,77 @@ export class PayslipListComponent implements OnInit {
         employerNI: p.employerNI,
       };
     });
+  }
+
+  /**
+   * Given an employee's patyslip numbers, convert them into an array that can be used
+   * to create a journal in QBO.
+   * @param p The detailed salary and deduction amounts form an employee's payslip
+   * @returns 
+   */
+  convertPayslipToQBOFormat(p:IrisPayslip) : PayrollJournalEntry[] {
+    const employeeEntry: PayrollJournalEntry[] = [];
+        const allocations = this.allocations.filter(
+          (x) => x.payrollNumber == p.employeeId,
+        );
+        let sum: number = 0;
+        for (const [i, v] of allocations.entries()) {
+          const entry = new PayrollJournalEntry({
+            employeeId: v.id,
+            class: v.class,
+            account: null,
+            description: 'Gross Salary',
+            amount: Number(
+              (Math.round(p.totalPay * v.percentage) / 100).toFixed(2),
+            ),
+          });
+
+          // The sum of the allocated amounts must equal the starting total
+          // If there is a discrepancy then adjust the final allocated amount.
+          sum += entry.amount;
+          if (i == allocations.length - 1 && sum != p.totalPay) {
+            entry.amount += p.totalPay - sum;
+
+            // Round to avoid numbers like 65.4000000000004
+            entry.amount = Number(entry.amount.toFixed(2));
+          }
+          if (entry.amount) employeeEntry.push(entry);
+        }
+
+        // Now add all the deductions
+        if (p.paye) employeeEntry.push(new PayrollJournalEntry({
+          employeeId: allocations[0].id,
+          description: 'PAYE',
+          amount: p.paye
+        }));
+        if (p.employeeNI) employeeEntry.push(new PayrollJournalEntry({
+          employeeId: allocations[0].id,
+          description: 'Employee NI',
+          amount: p.employeeNI
+        }));
+        if (p.salarySacrifice) employeeEntry.push(new PayrollJournalEntry({
+          employeeId: allocations[0].id,
+          description: 'Salary Sacrifice',
+          amount: p.salarySacrifice
+        }));
+        if (p.studentLoan) employeeEntry.push(new PayrollJournalEntry({
+          employeeId: allocations[0].id,
+          description: 'Student Loan',
+          amount: p.studentLoan
+        }));        
+        if (p.otherDeductions) employeeEntry.push(new PayrollJournalEntry({
+          employeeId: allocations[0].id,
+          description: 'Other Deductions',
+          amount: p.otherDeductions
+        }));
+
+        // Now add the net pay side
+        if (p.netPay) employeeEntry.push(new PayrollJournalEntry({
+          employeeId: allocations[0].id,
+          description: 'Net Pay',
+          amount: p.netPay
+        }));
+
+        return employeeEntry;
   }
 }
