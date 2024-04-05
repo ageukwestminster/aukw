@@ -32,6 +32,10 @@ export class IrisPayslip {
   employerPension: number;
   employeePension: number;
   inQBO: boolean;
+  niJournalInQBO: boolean = false;
+  pensionBillInQBO: boolean = false;
+  shopJournalInQBO: boolean = false;
+  payslipJournalInQBO: boolean = false;
 
   add(obj: IrisPayslip): IrisPayslip {
     this.totalPay += (obj && obj.totalPay) || 0;
