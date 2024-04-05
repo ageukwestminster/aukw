@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
-import { AlertComponent } from './alert-component/alert.component';
 import { SalesChartComponent } from './sales-chart/sales-chart.component';
 import { DepartmentChartComponent } from './dept-chart/dept-chart.component';
 import { FileUploadComponent } from './file-upload/file-upload.component';
@@ -18,7 +17,6 @@ import { MovingAverageChartComponent } from './moving-avg-chart/moving-avg-chart
 @NgModule({
   imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbModule],
   declarations: [
-    AlertComponent,
     DepartmentChartComponent,
     FileUploadComponent,
     MoneyInputComponent,
@@ -31,7 +29,6 @@ import { MovingAverageChartComponent } from './moving-avg-chart/moving-avg-chart
     SummaryTableComponent,
   ],
   exports: [
-    AlertComponent,
     DepartmentChartComponent,
     FileUploadComponent,
     MoneyInputComponent,

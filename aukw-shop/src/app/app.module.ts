@@ -15,6 +15,7 @@ import { LoginComponent } from './login';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '@app/shared/shared.module';
 import { CallbackComponent } from './callback/callback.component';
+import { AlertComponent } from './shared/alert-component';
 
 @NgModule({
   declarations: [AppComponent, CallbackComponent],
@@ -27,6 +28,7 @@ import { CallbackComponent } from './callback/callback.component';
     HomeComponent,
     LoginComponent,
     SharedModule,
+    AlertComponent,
   ],
   providers: [
     {

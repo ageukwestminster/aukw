@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 
 import { AuthenticationService } from './_services';
 import { User } from './_models';
+import { AlertComponent } from './shared/alert-component';
 
 @Component({ selector: 'app', templateUrl: 'app.component.html' })
 export class AppComponent {

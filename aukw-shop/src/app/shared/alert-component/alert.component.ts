@@ -1,11 +1,17 @@
 ﻿import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { NgFor } from '@angular/common';
 import { Router, NavigationStart } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { Alert, AlertType } from '@app/_models';
 import { AlertService } from '@app/_services';
 
-@Component({ selector: 'alert', templateUrl: 'alert.component.html' })
+@Component({ 
+  selector: 'alert', 
+  templateUrl: 'alert.component.html',
+  standalone: true,
+  imports: [ NgFor ] 
+})
 export class AlertComponent implements OnInit, OnDestroy {
   @Input() id = 'default-alert';
   @Input() fade = true;
