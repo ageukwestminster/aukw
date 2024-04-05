@@ -1,4 +1,3 @@
-
 export class EmployerNIEntry {
   employeeId: number;
   amount: number;

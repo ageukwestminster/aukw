@@ -58,7 +58,7 @@ export class FileUploadComponent {
     });
   }
 
-  get loading():boolean {
+  get loading(): boolean {
     return this.status == 'reading' || this.status == 'uploading';
   }
 }

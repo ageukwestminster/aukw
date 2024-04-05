@@ -1,6 +1,7 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { concatMap, map } from 'rxjs/operators';
-import { from } from 'rxjs';
+import { NgFor, NgIf } from '@angular/common';
+import { concatMap } from 'rxjs/operators';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import {
   AlertService,
@@ -8,15 +9,20 @@ import {
   QBPayrollService,
   QBRealmService,
 } from '@app/_services';
-import { 
-  EmployeeAllocation, 
-  EmployerNIEntry, 
-  IrisPayslip, 
-  QBRealm, 
-  User 
+import {
+  EmployeeAllocation,
+  EmployerNIEntry,
+  IrisPayslip,
+  QBRealm,
+  User,
 } from '@app/_models';
+import { SharedModule } from '@app/shared/shared.module';
 
-@Component({ templateUrl: 'list.component.html' })
+@Component({
+  templateUrl: 'list.component.html',
+  standalone: true,
+  imports: [NgFor, NgIf, NgbModule, SharedModule],
+})
 export class PayslipListComponent implements OnInit {
   payslips: IrisPayslip[] = [];
   total: IrisPayslip = new IrisPayslip();
@@ -47,7 +53,6 @@ export class PayslipListComponent implements OnInit {
    * initialize the object by populating the 2 realm properties
    */
   ngOnInit() {
-
     this.qbRealmService
       .getAll(this.user.id)
       .pipe(
@@ -64,7 +69,7 @@ export class PayslipListComponent implements OnInit {
           return this.qbPayrollService.getAllocations(
             this.charityRealm.realmid!,
           );
-        })
+        }),
       )
       .subscribe({
         next: (response: any) => {
@@ -74,7 +79,7 @@ export class PayslipListComponent implements OnInit {
           this.alertService.error('QB Realms not loaded. ' + error, {
             autoClose: false,
           });
-        }              
+        },
       });
   }
 
@@ -95,43 +100,49 @@ export class PayslipListComponent implements OnInit {
 
   employerNI() {
     if (!this.payslips || !this.payslips.length) {
-      this.alertService.error("No payslips found!");
+      this.alertService.error('No payslips found!');
       return;
     }
 
     const employerNIArray: EmployerNIEntry[] = [];
 
-    this.payslips.forEach(payslip => {
-      const allocations = this.allocations.filter((x) => x.payrollNumber == payslip.employeeId);
-      let sum:number= 0;
+    this.payslips.forEach((payslip) => {
+      const allocations = this.allocations.filter(
+        (x) => x.payrollNumber == payslip.employeeId,
+      );
+      let sum: number = 0;
       if (allocations.length) {
         for (const [i, v] of allocations.entries()) {
           const entry = new EmployerNIEntry({
-            "employeeId": v.id,
-            "class": v.class,
-            "account": v.account,
-            "amount": Number((Math.round(payslip.employerNI*v.percentage)/100).toFixed(2))
+            employeeId: v.id,
+            class: v.class,
+            account: v.account,
+            amount: Number(
+              (Math.round(payslip.employerNI * v.percentage) / 100).toFixed(2),
+            ),
           });
 
           // The sum of the allocated amounts must equal the starting total
-          // If there is a discrepanc then adjust the final allocated amount.
+          // If there is a discrepancy then adjust the final allocated amount.
           sum += entry.amount;
-          if (i == (allocations.length-1) && sum != payslip.employerNI) {
+          if (i == allocations.length - 1 && sum != payslip.employerNI) {
             entry.amount += payslip.employerNI - sum;
 
             // Round to avoid numbers like 65.4000000000004
-            entry.amount = Number(entry.amount.toFixed(2)); 
+            entry.amount = Number(entry.amount.toFixed(2));
           }
           if (entry.amount) employerNIArray.push(entry);
         }
       }
-
     });
 
     // Create QBO Journal entry via api call
     this.qbPayrollService
-      .createEmployerNIJournal(this.charityRealm.realmid!, employerNIArray, 
-          this.payrollDate)
+      .createEmployerNIJournal(
+        this.charityRealm.realmid!,
+        employerNIArray,
+        this.payrollDate,
+      )
       .subscribe((x: any) => {
         console.log(x);
       });
@@ -146,6 +157,5 @@ export class PayslipListComponent implements OnInit {
         employerNI: p.employerNI,
       };
     });
-
   }
 }

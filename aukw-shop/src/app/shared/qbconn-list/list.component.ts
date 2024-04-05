@@ -11,10 +11,7 @@ export class QBConnectionListComponent implements OnInit {
 
   realms!: QBRealm[];
 
-  constructor(
-    private qbRealmService: QBRealmService,
-  ) {
-  }
+  constructor(private qbRealmService: QBRealmService) {}
 
   ngOnInit() {
     this.reloadQBRealms();
@@ -26,10 +23,8 @@ export class QBConnectionListComponent implements OnInit {
 
   reloadQBRealms() {
     if (!this.userID) return;
-    this.qbRealmService
-      .getAll(this.userID)
-      .subscribe((response: QBRealm[]) => {
-        this.realms = response;
-      });
+    this.qbRealmService.getAll(this.userID).subscribe((response: QBRealm[]) => {
+      this.realms = response;
+    });
   }
 }

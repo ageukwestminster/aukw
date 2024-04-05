@@ -16,11 +16,11 @@ import { DateRangeAdapter } from '@app/_helpers';
 import { concatMap } from 'rxjs/operators';
 import { SharedModule } from '@app/shared/shared.module';
 
-@Component({ 
+@Component({
   templateUrl: 'home.component.html',
   standalone: true,
-  imports: [SharedModule]
- })
+  imports: [SharedModule],
+})
 export class HomeComponent implements OnInit {
   loading = false;
   user: User;

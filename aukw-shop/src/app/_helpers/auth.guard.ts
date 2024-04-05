@@ -13,7 +13,10 @@ import { AuthenticationService } from '@app/_services';
  * If the method returns true the route is activated (allowed to proceed), otherwise
  * if the method returns false the route is blocked.
  */
-export function authGuard(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+export function authGuard(
+  route: ActivatedRouteSnapshot,
+  state: RouterStateSnapshot,
+) {
   const router = inject(Router);
   const authenticationService = inject(AuthenticationService);
   const user = authenticationService.userValue;

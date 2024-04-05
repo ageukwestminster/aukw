@@ -11,7 +11,7 @@ import { UserService, AlertService } from '@app/_services';
   selector: 'tr[user-row]',
   standalone: true,
   templateUrl: './row.component.html',
-  imports: [FormsModule, NgFor, NgIf, RouterLink]
+  imports: [FormsModule, NgFor, NgIf, RouterLink],
 })
 export class UserRowComponent {
   roles = Object.keys(Role).map((key: string) => Role[key as Role]);

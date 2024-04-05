@@ -21,11 +21,11 @@ import { MustMatch } from '@app/_helpers';
 import { Shop, User, UserFormMode } from '@app/_models';
 import { SharedModule } from '@app/shared/shared.module';
 
-@Component({ 
+@Component({
   templateUrl: 'add-edit.component.html',
   standalone: true,
-  imports: [NgIf, NgClass, RouterLink, SharedModule]
- })
+  imports: [NgIf, NgClass, RouterLink, SharedModule],
+})
 export class UserAddEditComponent implements OnInit {
   form!: FormGroup;
   id!: number;

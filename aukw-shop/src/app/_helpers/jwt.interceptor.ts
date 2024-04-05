@@ -1,9 +1,5 @@
 import { inject } from '@angular/core';
-import {
-  HttpRequest,
-  HttpHandlerFn,
-  HttpEvent,
-} from '@angular/common/http';
+import { HttpRequest, HttpHandlerFn, HttpEvent } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '@environments/environment';
@@ -11,9 +7,9 @@ import { AuthenticationService } from '@app/_services';
 
 /**
  * The JWT Interceptor intercepts http requests from the application and modifies them
- * to add JWT authentication credentials to the Authorization header if the user is 
+ * to add JWT authentication credentials to the Authorization header if the user is
  * logged in and the request is to the application api url (environment.apiUrl).
- * 
+ *
  * From: {@link https://jasonwatmore.com/angular-15-16-free-course-7-migrate-to-standalone-components-and-functional-interceptors}
  */
 export function jwtInterceptor(

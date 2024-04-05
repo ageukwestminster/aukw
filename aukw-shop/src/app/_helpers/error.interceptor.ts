@@ -1,9 +1,5 @@
 import { inject } from '@angular/core';
-import {
-  HttpRequest,
-  HttpHandlerFn,
-  HttpEvent
-} from '@angular/common/http';
+import { HttpRequest, HttpHandlerFn, HttpEvent } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -16,7 +12,7 @@ import { AuthenticationService, AlertService } from '@app/_services';
  *
  * From: {@link https://jasonwatmore.com/angular-15-16-free-course-7-migrate-to-standalone-components-and-functional-interceptors}
  */
-export function errorInterceptor (
+export function errorInterceptor(
   request: HttpRequest<any>,
   next: HttpHandlerFn,
 ): Observable<HttpEvent<any>> {

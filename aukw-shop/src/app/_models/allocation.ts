@@ -19,4 +19,3 @@ export class EmployeeAllocation {
     this.payrollNumber = (obj && obj.payrollNumber) || null;
   }
 }
-

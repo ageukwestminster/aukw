@@ -12,7 +12,7 @@ import { QBAuthUri } from '@app/_models';
   templateUrl: 'login.component.html',
   styles: ['img { max-width:340px; max-height:240px;}'],
   standalone: true,
-  imports: [FormsModule, NgIf, NgClass, ReactiveFormsModule]
+  imports: [FormsModule, NgIf, NgClass, ReactiveFormsModule],
 })
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;

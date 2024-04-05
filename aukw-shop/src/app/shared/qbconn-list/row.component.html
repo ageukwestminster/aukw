@@ -9,7 +9,8 @@
   }}
 </td>
 <td style="white-space: nowrap">
-  <div *ngIf="user.isAdmin"><!-- Don't display is user is not an admin-->
+  <div *ngIf="user.isAdmin">
+    <!-- Don't display is user is not an admin-->
     <button
       (click)="addConnection($event)"
       class="btn btn-sm btn-success me-1"
@@ -20,7 +21,9 @@
     <button
       (click)="refreshConnection($event)"
       class="btn btn-sm btn-primary me-1"
-      [disabled]="!this.realm!.connection || this.realm!.connection!.isRefreshing"
+      [disabled]="
+        !this.realm!.connection || this.realm!.connection!.isRefreshing
+      "
       *ngIf="isValidConnection"
     >
       <span
@@ -42,7 +45,8 @@
         *ngIf="this.realm!.connection && this.realm!.connection!.isRevoking"
         class="spinner-border spinner-border-sm"
       ></span>
-      <span *ngIf="!this.realm!.connection || !this.realm!.connection!.isRevoking"
+      <span
+        *ngIf="!this.realm!.connection || !this.realm!.connection!.isRevoking"
         >Delete</span
       >
     </button>

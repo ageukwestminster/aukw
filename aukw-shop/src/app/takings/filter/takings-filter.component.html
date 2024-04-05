@@ -15,7 +15,9 @@
                   #selectList
                   (change)="onDateRangeChanged(selectList.value)"
                 >
-                  <option disabled selected [ngValue]="null">-- select --</option>
+                  <option disabled selected [ngValue]="null">
+                    -- select --
+                  </option>
                   <option
                     *ngFor="let item of DateRange | keyvalue: originalOrder"
                     value="{{ item.value }}"

@@ -17,10 +17,7 @@ import { SharedModule } from '@app/shared/shared.module';
 import { CallbackComponent } from './callback/callback.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    CallbackComponent,
-  ],
+  declarations: [AppComponent, CallbackComponent],
   imports: [
     BrowserModule,
     FormsModule,
@@ -38,12 +35,7 @@ import { CallbackComponent } from './callback/callback.component';
       multi: true,
       deps: [AuthenticationService],
     },
-    provideHttpClient(
-      withInterceptors([
-          jwtInterceptor, 
-          errorInterceptor
-      ])
-  )
+    provideHttpClient(withInterceptors([jwtInterceptor, errorInterceptor])),
   ],
   bootstrap: [AppComponent],
 })
