@@ -231,7 +231,7 @@ class QuickbooksSalesReceipt{
     $this->privatenote = $privatenote;
     return $this;
   }
-    /**
+  /**
    * Private realmID setter.
    */
   public function setRealmID(string $realmid) {
@@ -409,8 +409,8 @@ class QuickbooksSalesReceipt{
     } else {      
       return array(
           "id" => $resultingObj->Id,
-          "date" => $resultingObj->TxnDate,
-          "label" => $resultingObj->DocNumber
+          "date" => $this->date,
+          "label" => $docnumber
       );
     }
   }

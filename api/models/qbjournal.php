@@ -105,12 +105,12 @@ class QuickbooksJournal{
     // Use this simple representation instead
     // The problem is that FindbyId forces use of JSON and that doesnt work 
     // with the delete uri call
-    $salesreceipt = JournalEntry::create([
+    $journal = JournalEntry::create([
       "Id" => $this->id,
       "SyncToken" => "0"
     ]);
     
-    $dataService->Delete($salesreceipt);
+    $dataService->Delete($journal);
 
     $error = $dataService->getLastError();
     if ($error) {
