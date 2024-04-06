@@ -72,6 +72,27 @@ class QuickbooksBill{
   }
 
   /**
+   * Reference number getter.
+   */
+  public function getDocNumber() : string {
+    return $this->DocNumber;
+  }
+
+  /**
+   * Transaction Date getter.
+   */
+  public function getrealmId() : string {
+      return $this->realmid;
+  }
+
+  /**
+   * Transaction Date getter.
+   */
+  public function getTxnDate() : string {
+      return $this->TxnDate;
+  }
+
+  /**
    * Constructor
    */
   protected function __construct(){}
@@ -84,7 +105,7 @@ class QuickbooksBill{
   }
 
   /**
-   * Return details of the QBClass identified by $id
+   * Return details of the Bill identified by $id
    * 
    * @return IPPIntuitEntity Returns an item of specified Id.
    * 
