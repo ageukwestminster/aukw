@@ -2,6 +2,7 @@
 
 namespace Models;
 
+use Core\QuickbooksConstants as QBO;
 use QuickBooksOnline\API\Facades\JournalEntry;
 
 /**
@@ -32,11 +33,11 @@ class QuickbooksPayrollJournal extends QuickbooksJournal{
     protected string $DocNumber;  
 
     /**
-     * The total amount of salary.
+     * The total amount of salary, split into allocations
      *
-     * @var float
+     * @var Array
      */
-    protected float $grossSalary;  
+    protected Array $grossSalary;  
 
     /**
      * The amount actually paid to the employee.
@@ -95,6 +96,14 @@ class QuickbooksPayrollJournal extends QuickbooksJournal{
     protected float $salarySacrifice;
 
     /**
+     * Employee Number (QBO) setter.
+     */
+    public function setEmployeeNumber(string $employeeNumber) {
+      $this->employeeNumber = $employeeNumber;
+      return $this;
+    }
+
+    /**
      * Transaction Date setter.
      */
     public function setTxnDate(string $txnDate) {
@@ -110,6 +119,59 @@ class QuickbooksPayrollJournal extends QuickbooksJournal{
         return $this;
     }
 
+    /**
+     * Gross Salary setter.
+     */
+    public function setGrossSalary(Array $grossSalary) {
+      $this->grossSalary = $grossSalary;
+      return $this;
+    }
+
+    /**
+     * Net Salary setter.
+     */
+    public function setNetSalary(float $netSalary) {
+      $this->netSalary = $netSalary;
+      return $this;
+    }
+    /**
+     * PAYE (income tax) setter.
+     */
+    public function setPAYE(float $paye) {
+      $this->paye = $paye;
+      return $this;
+    }
+    
+    /**
+     * Employee NI setter.
+     */
+    public function setEmployeeNI(float $employeeNI) {
+      $this->employeeNI = $employeeNI;
+      return $this;
+    }
+
+    /**
+     * Other Deductions setter.
+     */
+    public function setOtherDeduction(float $otherDeduction) {
+      $this->otherDeduction = $otherDeduction;
+      return $this;
+    }
+    /**
+     * Salary Sacrifice setter.
+     */
+    public function setSalarySacrifice(float $salarySacrifice) {
+      $this->salarySacrifice = $salarySacrifice;
+      return $this;
+    }
+    /**
+     * Student Loan setter.
+     */
+    public function setStudentLoan(float $studentLoan) {
+      $this->studentLoan = $studentLoan;
+      return $this;
+    }
+      
     /**
      * Reference number getter.
      */
@@ -161,22 +223,38 @@ class QuickbooksPayrollJournal extends QuickbooksJournal{
             "TotalAmt" => 0
         );
 
-        //&$line_array, $description, $amount, $item, $class, $quantity, $account, $taxcoderef)
-        // This code will only add the respective line if amount != 0
-        $this->payrolljournal_line($payrolljournal['Line'], "Gross Salary", 
-            2080, 145, 1400000000000130700,65);
+        // For each line below it will only add the respective line if amount != 0
+
+        foreach($this->grossSalary as $grossSalaryAllocation) {
+          //&$line_array, $description, $amount, $item, $class, $quantity, $account, $taxcoderef)
+          $this->payrolljournal_line($payrolljournal['Line'], "Gross Salary", 
+            $grossSalaryAllocation->amount, $this->employeeNumber, 
+            $grossSalaryAllocation->class,$grossSalaryAllocation->account);
+        }
+
         $this->payrolljournal_line($payrolljournal['Line'], "PAYE", 
-            -198, 145, 1400000000000130710 ,256);
+          $this->paye, $this->employeeNumber, QBO::ADMIN_CLASS,
+          QBO::TAX_ACCOUNT);
+
         $this->payrolljournal_line($payrolljournal['Line'], "Employee NI", 
-            -99.04, 145, 1400000000000130710,256);
+          $this->employeeNI, $this->employeeNumber, QBO::ADMIN_CLASS,
+          QBO::TAX_ACCOUNT);
+
         $this->payrolljournal_line($payrolljournal['Line'], "Salary Sacrifice", 
-            -41.6, 145, 1400000000000130710,375);
+          $this->salarySacrifice, $this->employeeNumber, QBO::ADMIN_CLASS,
+          QBO::SALARY_SACRIFICE_ACCOUNT);
+
+        $this->payrolljournal_line($payrolljournal['Line'], "Other Deductions", 
+          $this->otherDeduction, $this->employeeNumber, QBO::ADMIN_CLASS,
+          QBO::OTHER_DEDUCTIONS_ACCOUNT);
+
+        $this->payrolljournal_line($payrolljournal['Line'], "Student Loan Deductions", 
+          $this->studentLoan, $this->employeeNumber, QBO::ADMIN_CLASS,
+          QBO::TAX_ACCOUNT);     
+
         $this->payrolljournal_line($payrolljournal['Line'], "Net Pay", 
-            -1741.36, 145, 1400000000000130710,98);
-        $this->payrolljournal_line($payrolljournal['Line'], "Employer NI", 
-            176.69, 145, 1400000000000130700,65);
-        $this->payrolljournal_line($payrolljournal['Line'], "Employer NI", 
-            -176.69, 145, 1400000000000130710,256);
+            $this->netSalary, $this->employeeNumber, QBO::ADMIN_CLASS,
+            QBO::NET_PAY_ACCOUNT);
 
 
         $theResourceObj = JournalEntry::create($payrolljournal);
@@ -218,13 +296,13 @@ class QuickbooksPayrollJournal extends QuickbooksJournal{
         //&$line_array, $description, $amount, $employee, $class, $account)
         // This code will only add the respective line if amount != 0
         $this->payrolljournal_line($payrolljournal['Line'], "", 
-            $line->amount, $line->employeeId, $line->class,$line->account);
+            $line->amount, $line->employeeId, $line->class, $line->account);
         
         $sum -= $line->amount;
       }
 
       $this->payrolljournal_line($payrolljournal['Line'], "", 
-        $sum, '', $this->admin_class['value'],$this->tax_account['value']);
+        $sum, '', QBO::ADMIN_CLASS, QBO::TAX_ACCOUNT);
     
       $theResourceObj = JournalEntry::create($payrolljournal);
   
@@ -286,18 +364,20 @@ class QuickbooksPayrollJournal extends QuickbooksJournal{
 
   
   /**
-   * Check the provided values make sense.
+   * Check the provided values make sense. Is transaction in balance?
    */
   public function validate(): bool {
 
-    // is transaction in balance?
-    // Sales = clothing+brica+books+linens+ragging+donations
-    // Money Received = cash + creditcards + vol expenses + op expenses
-    // Sales must equal Money Received + Cash Discrepancy
-    $balance = 0;//$this->donations->sales + $this->clothing->sales + $this->brica->sales;
-    //$balance += $this->books->sales + $this->linens->sales + $this->ragging->sales;
-    //$balance += $this->cashDiscrepancy + $this->cashToCharity + $this->creditCards;
-    //$balance += $this->volunteerExpenses + $this->operatingExpenses + $this->cash;
+    if (!$this->grossSalary || !count($this->grossSalary)) return false;
+
+    // Sum of Gross Salary
+    $grossSalary = 0;
+    foreach ($this->grossSalary as $salaryAllocation) {
+      $grossSalary += $salaryAllocation->amount;
+    }
+    
+    $balance = $grossSalary+$this->paye+$this->employeeNI+$this->otherDeduction
+                    +$this->salarySacrifice+$this->studentLoan+$this->netSalary; 
     
     if (abs($balance) >= 0.005) {
       return false;
@@ -306,16 +386,4 @@ class QuickbooksPayrollJournal extends QuickbooksJournal{
     return true;
   }
 
-  private $unrestricted_class = [
-    "value" => 1400000000000130700,
-    "name" => "01 Unrestricted"
-  ];
-  private $admin_class = [
-    "value" => 1400000000000130710,
-    "name" => "04 Administration"
-  ];
-  private $tax_account = [
-    "value" => 256,
-    "name" => "Net Pay & PAYE:Tax and National Insurance"
-  ];
 }

@@ -49,8 +49,16 @@ class QBPayrollJournalCtl{
 
     try {
       $model = QuickbooksPayrollJournal::getInstance()
-        ->setDocNumber($data->DocNumber)
-        ->setTxnDate($data->TxnDate)
+        ->setDocNumber($docNumber.'-'.$data->employeeId)
+        ->setTxnDate($payrollDate)
+        ->setEmployeeNumber($data->employeeId)
+        ->setGrossSalary($data->totalPay)
+        ->setPAYE(empty($data->paye)?0:$data->paye)
+        ->setEmployeeNI(empty($data->employeeNI)?0:$data->employeeNI)
+        ->setOtherDeduction(empty($data->otherDeductions)?0:$data->otherDeductions)
+        ->setSalarySacrifice(empty($data->salarySacrifice)?0:$data->salarySacrifice)
+        ->setStudentLoan(empty($data->studentLoan)?0:$data->studentLoan)
+        ->setNetSalary($data->netPay)
         ->setRealmID($_GET['realmid']
       );
     } catch (\Exception $e) {

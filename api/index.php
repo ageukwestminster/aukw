@@ -11,6 +11,7 @@ include_once 'core/config.php';
 include_once 'core/database.php';
 include_once 'core/headers.php';
 include_once 'core/dateshelper.php';
+include_once 'core/qboconstants.php';
 
 // Define controllers
 include_once 'controllers/qbauth.controller.php';
