@@ -42,14 +42,17 @@ class QBPayrollJournalCtl{
       exit(1);
     } else {
       $payrollDate = $_GET['payrolldate'];
-      $docNumber = QBPayrollJournalCtl::payrollDocNumber($payrollDate);
     }
 
     $data = json_decode(file_get_contents("php://input"));
 
+    // The Ref No. that appears on QBO ui. 
+    // Format is "Payroll_YYY_MM-`${employee_number}`" 
+    $docNumber = QBPayrollJournalCtl::payrollDocNumber($payrollDate).'-'.$data->employeeId;
+
     try {
       $model = QuickbooksPayrollJournal::getInstance()
-        ->setDocNumber($docNumber.'-'.$data->employeeId)
+        ->setDocNumber($docNumber)
         ->setTxnDate($payrollDate)
         ->setEmployeeNumber($data->employeeId)
         ->setGrossSalary($data->totalPay)
@@ -57,6 +60,7 @@ class QBPayrollJournalCtl{
         ->setEmployeeNI(empty($data->employeeNI)?0:$data->employeeNI)
         ->setOtherDeduction(empty($data->otherDeductions)?0:$data->otherDeductions)
         ->setSalarySacrifice(empty($data->salarySacrifice)?0:$data->salarySacrifice)
+        ->setEmployeePension(empty($data->employeePension)?0:$data->employeePension)
         ->setStudentLoan(empty($data->studentLoan)?0:$data->studentLoan)
         ->setNetSalary($data->netPay)
         ->setRealmID($_GET['realmid']
@@ -77,7 +81,7 @@ class QBPayrollJournalCtl{
       echo json_encode(
         array(
           "message" => "Unable to enter payroll journal in Quickbooks. Transaction is not in balance for '" .
-          $data->date . "'.")
+          $data->name . "'.")
           , JSON_NUMERIC_CHECK);
       exit(1);      
     }
@@ -85,7 +89,7 @@ class QBPayrollJournalCtl{
     $result = $model->create_employee_journal();
     if ($result) {
         echo json_encode(
-            array("message" => "Payroll journal with reference number '". $result['label']  ."' has been added for " . $result['date'] . ".",
+            array("message" => "Payroll journal for '". $data->name  ."' has been added for " . $result['date'] . ".",
                 "id" => $result['id'])
           );
     }

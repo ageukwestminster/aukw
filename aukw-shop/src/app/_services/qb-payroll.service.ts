@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { environment } from '@environments/environment';
-import { EmployeeAllocation, PayrollJournalEntry } from '@app/_models';
+import { EmployeeAllocation, EmployerNIEntry, PayrollJournalEntry } from '@app/_models';
 import { Observable } from 'rxjs';
 
 const baseUrl = `${environment.apiUrl}/qb`;
@@ -23,7 +23,7 @@ export class QBPayrollService {
 
   createEmployerNIJournal(
     realmID: string,
-    params: PayrollJournalEntry[],
+    params: EmployerNIEntry[],
     payrollDate: string,
   ) {    
     return this.http.post<any>(
@@ -34,10 +34,10 @@ export class QBPayrollService {
 
   createEmployeeJournal(
     realmID: string,
-    params: PayrollJournalEntry[],
+    params: PayrollJournalEntry,
     payrollDate: string,
   ) {
-    console.log(JSON.stringify(params,null,2));
+    //console.log(JSON.stringify(params,null,2));
     return this.http.post<any>(
       `${baseUrl}/journal/employee?realmid=${realmID}&payrolldate=${payrollDate}`,
       params,

@@ -171,7 +171,15 @@ class QuickbooksPayrollJournal extends QuickbooksJournal{
       $this->studentLoan = $studentLoan;
       return $this;
     }
-      
+
+    /**
+     * Pension contribution from employee for the month setter.
+     */
+    public function setEmployeePension(float $employeePensionContribution) {
+      $this->employeePensionContribution = $employeePensionContribution;
+      return $this;
+    }
+
     /**
      * Reference number getter.
      */
@@ -243,6 +251,10 @@ class QuickbooksPayrollJournal extends QuickbooksJournal{
         $this->payrolljournal_line($payrolljournal['Line'], "Salary Sacrifice", 
           $this->salarySacrifice, $this->employeeNumber, QBO::ADMIN_CLASS,
           QBO::SALARY_SACRIFICE_ACCOUNT);
+
+        $this->payrolljournal_line($payrolljournal['Line'], "Employee Pension Contribution", 
+          $this->employeePensionContribution, $this->employeeNumber, QBO::ADMIN_CLASS,
+          QBO::EMPLOYEE_PENSION_CONTRIB_ACCOUNT);
 
         $this->payrolljournal_line($payrolljournal['Line'], "Other Deductions", 
           $this->otherDeduction, $this->employeeNumber, QBO::ADMIN_CLASS,
@@ -377,6 +389,7 @@ class QuickbooksPayrollJournal extends QuickbooksJournal{
     }
     
     $balance = $grossSalary+$this->paye+$this->employeeNI+$this->otherDeduction
+                    +$this->employeePensionContribution
                     +$this->salarySacrifice+$this->studentLoan+$this->netSalary; 
     
     if (abs($balance) >= 0.005) {

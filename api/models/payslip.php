@@ -250,15 +250,13 @@ class Payslip implements \JsonSerializable{
     $this->salarySacrifice = $salarySacrifice;
     return $this;
   }
-    /**
+  /**
    * Total pay setter.
    */
   public function setTotalPay(float $totalPay) {
     $this->totalPay = $totalPay;
     return $this;
   }
- 
-
 
   /**
    * Constructor

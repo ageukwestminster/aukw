@@ -1,7 +1,7 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import { Observable, from } from 'rxjs';
-import { concatMap, filter, mergeMap, map } from 'rxjs/operators';
+import { concatMap, filter, mergeMap, map, tap } from 'rxjs/operators';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import {
@@ -12,10 +12,12 @@ import {
 } from '@app/_services';
 import {
   EmployeeAllocation,
+  EmployerNIEntry,
   PayrollJournalEntry,
   IrisPayslip,
   QBRealm,
   User,
+  TotalPayAllocation,
 } from '@app/_models';
 import { SharedModule } from '@app/shared/shared.module';
 
@@ -31,7 +33,9 @@ export class PayslipListComponent implements OnInit {
   enterpriseRealm!: QBRealm;
   allocations!: EmployeeAllocation[];
   user!: User;  
-  employeeJournalEntries$!: Observable<PayrollJournalEntry[]>;
+  employeeJournalEntries$!: Observable<PayrollJournalEntry>;
+  currentPayslip: number =0;
+  showProgressBar:boolean = false;
 
   constructor(
     private alertService: AlertService,
@@ -51,9 +55,9 @@ export class PayslipListComponent implements OnInit {
     });
 
     this.employeeJournalEntries$ = from(this.payslips).pipe(
-      filter((p:IrisPayslip) => p.employeeId == 34), //Test using Vesna
       filter(p => !p.payslipJournalInQBO), // Only add if not already in QBO
-      map((p:IrisPayslip) => this.convertPayslipToQBOFormat(p)) // map into allocated classes
+      map((p:IrisPayslip) => this.convertPayslipToQBOFormat(p)), // map into allocated classes
+      tap(() => this.currentPayslip++) // used to fill progress bar
     );
   }
 
@@ -112,7 +116,7 @@ export class PayslipListComponent implements OnInit {
       return;
     }
 
-    const employerNIArray: PayrollJournalEntry[] = [];
+    const employerNIArray: EmployerNIEntry[] = [];
 
     this.payslips.forEach((payslip) => {
       const allocations = this.allocations.filter(
@@ -121,7 +125,7 @@ export class PayslipListComponent implements OnInit {
       let sum: number = 0;
       if (allocations.length) {
         for (const [i, v] of allocations.entries()) {
-          const entry = new PayrollJournalEntry({
+          const entry = new EmployerNIEntry({
             employeeId: v.id,
             class: v.class,
             account: v.account,
@@ -158,13 +162,16 @@ export class PayslipListComponent implements OnInit {
 
   makeEmployeeJournalEntries() {
 
+    this.currentPayslip = 0;
+    this.showProgressBar = true;
+
     this.employeeJournalEntries$.pipe(
       mergeMap ((v) => this.qbPayrollService.createEmployeeJournal(
         this.charityRealm.realmid!,
         v,
         this.payrollDate
       ))
-    ).subscribe((x:any) => console.log(x) );
+    ).subscribe(() => this.showProgressBar = false );
 
 
   }
@@ -186,69 +193,47 @@ export class PayslipListComponent implements OnInit {
    * @param p The detailed salary and deduction amounts form an employee's payslip
    * @returns 
    */
-  convertPayslipToQBOFormat(p:IrisPayslip) : PayrollJournalEntry[] {
-    const employeeEntry: PayrollJournalEntry[] = [];
-        const allocations = this.allocations.filter(
-          (x) => x.payrollNumber == p.employeeId,
-        );
-        let sum: number = 0;
-        for (const [i, v] of allocations.entries()) {
-          const entry = new PayrollJournalEntry({
-            employeeId: v.id,
-            class: v.class,
-            account: null,
-            description: 'Gross Salary',
-            amount: Number(
-              (Math.round(p.totalPay * v.percentage) / 100).toFixed(2),
-            ),
-          });
+  convertPayslipToQBOFormat(p:IrisPayslip) : PayrollJournalEntry {
 
-          // The sum of the allocated amounts must equal the starting total
-          // If there is a discrepancy then adjust the final allocated amount.
-          sum += entry.amount;
-          if (i == allocations.length - 1 && sum != p.totalPay) {
-            entry.amount += p.totalPay - sum;
+    const allocations = this.allocations.filter(
+      (x) => x.payrollNumber == p.employeeId,
+    );
 
-            // Round to avoid numbers like 65.4000000000004
-            entry.amount = Number(entry.amount.toFixed(2));
-          }
-          if (entry.amount) employeeEntry.push(entry);
-        }
+    const entry = new PayrollJournalEntry({
+      employeeId: allocations[0].id,
+      totalPay: [],
+      paye: p.paye,
+      employeeNI: p.employeeNI,
+      otherDeductions: p.otherDeductions,
+      salarySacrifice: -p.salarySacrifice,
+      employeePension: -p.employeePension,
+      studentLoan: p.studentLoan,
+      netPay: -p.netPay,
+      name: p.employeeName        
+    });
 
-        // Now add all the deductions
-        if (p.paye) employeeEntry.push(new PayrollJournalEntry({
-          employeeId: allocations[0].id,
-          description: 'PAYE',
-          amount: p.paye
-        }));
-        if (p.employeeNI) employeeEntry.push(new PayrollJournalEntry({
-          employeeId: allocations[0].id,
-          description: 'Employee NI',
-          amount: p.employeeNI
-        }));
-        if (p.salarySacrifice) employeeEntry.push(new PayrollJournalEntry({
-          employeeId: allocations[0].id,
-          description: 'Salary Sacrifice',
-          amount: p.salarySacrifice
-        }));
-        if (p.studentLoan) employeeEntry.push(new PayrollJournalEntry({
-          employeeId: allocations[0].id,
-          description: 'Student Loan',
-          amount: p.studentLoan
-        }));        
-        if (p.otherDeductions) employeeEntry.push(new PayrollJournalEntry({
-          employeeId: allocations[0].id,
-          description: 'Other Deductions',
-          amount: p.otherDeductions
-        }));
+    let sum: number = 0;
+    for (const [i, v] of allocations.entries()) {
+      const alloc = new TotalPayAllocation({
+        class: v.class,
+        account: v.account,
+        amount: Number(
+          (Math.round(p.totalPay * v.percentage) / 100).toFixed(2),
+        ),
+      });
 
-        // Now add the net pay side
-        if (p.netPay) employeeEntry.push(new PayrollJournalEntry({
-          employeeId: allocations[0].id,
-          description: 'Net Pay',
-          amount: p.netPay
-        }));
+      // The sum of the allocated amounts must equal the starting total
+      // If there is a discrepancy then adjust the final allocated amount.
+      sum += alloc.amount;
+      if (i == allocations.length - 1 && sum != p.totalPay) {
+        alloc.amount += p.totalPay - sum;
 
-        return employeeEntry;
+        // Round to avoid numbers like 65.4000000000004
+        alloc.amount = Number(alloc.amount.toFixed(2));
+      }
+      if (alloc.amount) entry.totalPay.push(alloc);
+    }
+
+    return entry;
   }
 }

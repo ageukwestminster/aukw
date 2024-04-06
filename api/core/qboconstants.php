@@ -12,6 +12,7 @@ namespace Core;
  */
 class QuickbooksConstants {
 
+  const EMPLOYEE_PENSION_CONTRIB_ACCOUNT = "66";
   const SALARY_SACRIFICE_ACCOUNT = "375";
   const NET_PAY_ACCOUNT = "98";
   const OTHER_DEDUCTIONS_ACCOUNT = "503";

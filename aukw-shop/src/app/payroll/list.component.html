@@ -20,6 +20,21 @@
     </button>
   </div>
 </div>
+<div class="progress" *ngIf="payslips && payslips!.length && showProgressBar">
+  <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" 
+      role="progressbar" 
+      [style.width.%]="(100 * currentPayslip)/payslips!.length" 
+      [attr.aria-valuenow]="currentPayslip" aria-valuemin="0" 
+      [attr.aria-valuemax]="payslips!.length">
+  </div>
+  <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" 
+      role="progressbar" 
+      [style.width.%]="(100 * (payslips!.length-currentPayslip))/payslips!.length" 
+      attr.aria-valuenow="{{payslips!.length-currentPayslip}}" 
+      aria-valuemin="0" 
+      attr.aria-valuemax="{{payslips!.length}}">
+  </div>
+</div>
 <div ngbAccordion>
   <div ngbAccordionItem [collapsed]="false">
     <h2 ngbAccordionHeader>
@@ -78,7 +93,7 @@
                 <td>{{ payslip.otherDeductions | number: "1.2-2" }}</td>
                 <td>
                   {{
-                    payslip.salarySacrifice + payslip.employeePension
+                    -payslip.salarySacrifice - payslip.employeePension
                       | number: "1.2-2"
                   }}
                 </td>
@@ -101,7 +116,7 @@
                 <td>{{ total.otherDeductions | number: "1.2-2" }}</td>
                 <td>
                   {{
-                    total.salarySacrifice + total.employeePension
+                    -total.salarySacrifice - total.employeePension
                       | number: "1.2-2"
                   }}
                 </td>
