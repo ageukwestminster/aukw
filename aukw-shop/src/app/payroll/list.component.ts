@@ -32,10 +32,10 @@ export class PayslipListComponent implements OnInit {
   charityRealm!: QBRealm;
   enterpriseRealm!: QBRealm;
   allocations!: EmployeeAllocation[];
-  user!: User;  
+  user!: User;
   employeeJournalEntries$!: Observable<PayrollJournalEntry>;
-  currentPayslip: number =0;
-  showProgressBar:boolean = false;
+  currentPayslip: number = 0;
+  showProgressBar: boolean = false;
 
   constructor(
     private alertService: AlertService,
@@ -55,9 +55,9 @@ export class PayslipListComponent implements OnInit {
     });
 
     this.employeeJournalEntries$ = from(this.payslips).pipe(
-      filter(p => !p.payslipJournalInQBO), // Only add if not already in QBO
-      map((p:IrisPayslip) => this.convertPayslipToQBOFormat(p)), // map into allocated classes
-      tap(() => this.currentPayslip++) // used to fill progress bar
+      filter((p) => !p.payslipJournalInQBO), // Only add if not already in QBO
+      map((p: IrisPayslip) => this.convertPayslipToQBOFormat(p)), // map into allocated classes
+      tap(() => this.currentPayslip++), // used to fill progress bar
     );
   }
 
@@ -161,40 +161,49 @@ export class PayslipListComponent implements OnInit {
   }
 
   makeEmployeeJournalEntries() {
-
     this.currentPayslip = 0;
     this.showProgressBar = true;
 
-    this.employeeJournalEntries$.pipe(
-      mergeMap ((v) => this.qbPayrollService.createEmployeeJournal(
-        this.charityRealm.realmid!,
-        v,
-        this.payrollDate
-      ))
-    ).subscribe(() => this.showProgressBar = false );
-
-
+    this.employeeJournalEntries$
+      .pipe(
+        mergeMap((v) =>
+          this.qbPayrollService.createEmployeeJournal(
+            this.charityRealm.realmid!,
+            v,
+            this.payrollDate,
+          ),
+        ),
+      )
+      .subscribe(() => (this.showProgressBar = false));
   }
 
   pensionBill() {
     if (!this.payslips || !this.payslips.length) return;
 
-    const employerNIArray = this.payslips.map((p: IrisPayslip) => {
-      return {
-        employeeId: p.employeeId,
-        employerNI: p.employerNI,
-      };
-    });
+    this.qbPayrollService
+      .createPensionBill(
+        this.charityRealm.realmid!,
+        {
+          salarySacrificeTotal: this.total.salarySacrifice.toFixed(2),
+          employeePensionTotal: this.total.employeePension.toFixed(2),
+          total: (
+            this.total.employeePension +
+            this.total.salarySacrifice +
+            this.total.employerPension
+          ).toFixed(2),
+        },
+        this.payrollDate,
+      )
+      .subscribe((x) => console.log(x));
   }
 
   /**
    * Given an employee's patyslip numbers, convert them into an array that can be used
    * to create a journal in QBO.
    * @param p The detailed salary and deduction amounts form an employee's payslip
-   * @returns 
+   * @returns
    */
-  convertPayslipToQBOFormat(p:IrisPayslip) : PayrollJournalEntry {
-
+  convertPayslipToQBOFormat(p: IrisPayslip): PayrollJournalEntry {
     const allocations = this.allocations.filter(
       (x) => x.payrollNumber == p.employeeId,
     );
@@ -209,7 +218,7 @@ export class PayslipListComponent implements OnInit {
       employeePension: -p.employeePension,
       studentLoan: p.studentLoan,
       netPay: -p.netPay,
-      name: p.employeeName        
+      name: p.employeeName,
     });
 
     let sum: number = 0;

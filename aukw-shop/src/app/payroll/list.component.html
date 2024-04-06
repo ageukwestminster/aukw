@@ -12,7 +12,10 @@
     >
       Employer NI
     </button>
-    <button (click)="makeEmployeeJournalEntries()" class="btn btn-sm btn-success m-1 mt-1">
+    <button
+      (click)="makeEmployeeJournalEntries()"
+      class="btn btn-sm btn-success m-1 mt-1"
+    >
       Employee GJ
     </button>
     <button (click)="pensionBill()" class="btn btn-sm btn-success m-1 mt-1">
@@ -21,19 +24,24 @@
   </div>
 </div>
 <div class="progress" *ngIf="payslips && payslips!.length && showProgressBar">
-  <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" 
-      role="progressbar" 
-      [style.width.%]="(100 * currentPayslip)/payslips!.length" 
-      [attr.aria-valuenow]="currentPayslip" aria-valuemin="0" 
-      [attr.aria-valuemax]="payslips!.length">
-  </div>
-  <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" 
-      role="progressbar" 
-      [style.width.%]="(100 * (payslips!.length-currentPayslip))/payslips!.length" 
-      attr.aria-valuenow="{{payslips!.length-currentPayslip}}" 
-      aria-valuemin="0" 
-      attr.aria-valuemax="{{payslips!.length}}">
-  </div>
+  <div
+    class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+    role="progressbar"
+    [style.width.%]="(100 * currentPayslip) / payslips!.length"
+    [attr.aria-valuenow]="currentPayslip"
+    aria-valuemin="0"
+    [attr.aria-valuemax]="payslips!.length"
+  ></div>
+  <div
+    class="progress-bar progress-bar-striped progress-bar-animated bg-danger"
+    role="progressbar"
+    [style.width.%]="
+      (100 * (payslips!.length - currentPayslip)) / payslips!.length
+    "
+    attr.aria-valuenow="{{ payslips!.length - currentPayslip }}"
+    aria-valuemin="0"
+    attr.aria-valuemax="{{ payslips!.length }}"
+  ></div>
 </div>
 <div ngbAccordion>
   <div ngbAccordionItem [collapsed]="false">

@@ -2,7 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { environment } from '@environments/environment';
-import { EmployeeAllocation, EmployerNIEntry, PayrollJournalEntry } from '@app/_models';
+import {
+  EmployeeAllocation,
+  EmployerNIEntry,
+  PayrollJournalEntry,
+} from '@app/_models';
 import { Observable } from 'rxjs';
 
 const baseUrl = `${environment.apiUrl}/qb`;
@@ -25,7 +29,7 @@ export class QBPayrollService {
     realmID: string,
     params: EmployerNIEntry[],
     payrollDate: string,
-  ) {    
+  ) {
     return this.http.post<any>(
       `${baseUrl}/journal/employerni?realmid=${realmID}&payrolldate=${payrollDate}`,
       params,
@@ -37,9 +41,16 @@ export class QBPayrollService {
     params: PayrollJournalEntry,
     payrollDate: string,
   ) {
-    //console.log(JSON.stringify(params,null,2));
     return this.http.post<any>(
       `${baseUrl}/journal/employee?realmid=${realmID}&payrolldate=${payrollDate}`,
+      params,
+    );
+  }
+
+  createPensionBill(realmID: string, params: any, payrollDate: string) {
+    console.log(JSON.stringify(params, null, 2));
+    return this.http.post<any>(
+      `${baseUrl}/bill/pensions?realmid=${realmID}&payrolldate=${payrollDate}`,
       params,
     );
   }

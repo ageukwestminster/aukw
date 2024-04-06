@@ -6,11 +6,11 @@ import { Subscription } from 'rxjs';
 import { Alert, AlertType } from '@app/_models';
 import { AlertService } from '@app/_services';
 
-@Component({ 
-  selector: 'alert', 
+@Component({
+  selector: 'alert',
   templateUrl: 'alert.component.html',
   standalone: true,
-  imports: [ NgFor ] 
+  imports: [NgFor],
 })
 export class AlertComponent implements OnInit, OnDestroy {
   @Input() id = 'default-alert';

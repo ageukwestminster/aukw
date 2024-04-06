@@ -36,7 +36,6 @@ export class PayrollJournalEntry {
   netPay: number;
   name: string;
 
-
   constructor(obj?: any) {
     this.employeeId = (obj && obj.employeeId) || null;
     this.name = (obj && obj.name) || null;
