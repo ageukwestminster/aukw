@@ -26,6 +26,65 @@ class QuickbooksJournal{
   public string $realmid;
 
   /**
+   * The transaction date of the Journal entry
+   *
+   * @var string
+   */
+  protected string $TxnDate;  
+
+  /**
+   * The Reference number for the transaction. Does not have to be unique.
+   *
+   * @var string
+   */
+  protected string $DocNumber;
+
+      /**
+     * Transaction Date setter.
+     */
+    public function setTxnDate(string $txnDate) {
+      $this->TxnDate = $txnDate;
+      return $this;
+  }
+
+  /**
+   * Reference number setter.
+   */
+  public function setDocNumber(string $docNumber) {
+      $this->DocNumber = $docNumber;
+      return $this;
+  }
+
+  /**
+   * Private realmID setter.
+   */
+  public function setRealmID(string $realmid) {
+    $this->realmid = $realmid;
+    return $this;
+  }
+
+  /**
+   * Reference number getter.
+   */
+  public function getDocNumber() : string {
+      return $this->DocNumber;
+  }
+
+  /**
+   * Transaction Date getter.
+   */
+  public function getrealmId() : string {
+      return $this->realmid;
+  }
+
+  /**
+   * Transaction Date getter.
+   */
+  public function getTxnDate() : string {
+      return $this->TxnDate;
+  }
+
+  /**
    * Return details of the QBO general journal identified by $id
    * @return IPPIntuitEntity Returns an journal with specified Id.
    * 
@@ -121,5 +180,38 @@ class QuickbooksJournal{
     } else {      
       return true;
     }
+  }
+
+  /**
+   * Push a new array describing a single line of a QBO journal into the given array
+   * Helper function used in create.
+   *
+   * @param mixed $line_array The given array
+   * @param mixed $description
+   * @param mixed $amount
+   * @param mixed $employee
+   * @param mixed $class
+   * @param mixed $account
+   * 
+   * @return void
+   * 
+   */
+  protected function payrolljournal_line(&$line_array, $description, $amount, $employee, $class, $account) {
+    if (abs($amount) <= 0.005) return;
+
+    array_push($line_array, array(
+      "Description" => $description,
+      "Amount" => abs($amount),
+      "DetailType" => "JournalEntryLineDetail",
+      "JournalEntryLineDetail" => [
+        "PostingType" => ($amount<0?"Credit":"Debit"),
+        "Entity" => [
+            "Type" => "Employee",
+            "EntityRef" => $employee
+        ],
+        "AccountRef" => $account,
+        "ClassRef" => $class,
+      ]
+    ));
   }
 }

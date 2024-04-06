@@ -3,6 +3,7 @@
 namespace Controllers;
 
 use DateTime;
+use \Models\QuickbooksEmployerNIJournal;
 use \Models\QuickbooksPayrollJournal;
 
 /**
@@ -124,7 +125,7 @@ class QBPayrollJournalCtl{
 
     try {
 
-      $model = QuickbooksPayrollJournal::getInstance()
+      $model = QuickbooksEmployerNIJournal::getInstance()
         ->setDocNumber($docNumber)
         ->setTxnDate($payrollDate)
         ->setRealmID($_GET['realmid']);
