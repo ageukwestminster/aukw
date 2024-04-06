@@ -15,6 +15,7 @@ include_once 'core/qboconstants.php';
 
 // Define controllers
 include_once 'controllers/qbauth.controller.php';
+include_once 'controllers/qbbill.controller.php';
 include_once 'controllers/qbclass.controller.php';
 include_once 'controllers/qbcompany.controller.php';
 include_once 'controllers/qbemployee.controller.php';
@@ -37,6 +38,7 @@ include_once 'models/jwt.php';
 include_once 'models/payrollxlsx.php';
 include_once 'models/payslip.php';
 include_once 'models/qbauth.php';
+include_once 'models/qbbill.php';
 include_once 'models/qbclass.php';
 include_once 'models/qbemployee.php';
 include_once 'models/qbitem.php';

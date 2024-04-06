@@ -155,6 +155,11 @@ $router->mount('/qb', function () use ($router) {
     $router->get('/item/(\w+)', 'QBItemCtl@read_one');
     $router->get('/items', 'QBItemCtl@read_all');
 
+    // QB item is for Products/Services
+    $router->get('/bill/(\w+)', 'QBBillCtl@read_one');
+    // QB Bill fopr Pension payments
+    $router->post('/bill/pensions', 'QBBillCtl@create_pensions_bill');
+
     // QB Class
     $router->get('/class/(\w+)', 'QBClassCtl@read_one');
     $router->get('/classes', 'QBClassCtl@read_all');
