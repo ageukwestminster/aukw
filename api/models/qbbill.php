@@ -40,6 +40,20 @@ class QuickbooksBill{
   protected string $DocNumber;  
 
   /**
+   * Salary sacrifice total
+   *
+   * @var float
+   */
+  protected float $salarySacrificeTotal;  
+
+  /**
+   * Employee pension Contribution total
+   *
+   * @var float
+   */
+  protected float $employeePensContribTotal; 
+
+  /**
    * ID setter
    */
   public function setId(int $id) {
@@ -68,6 +82,22 @@ class QuickbooksBill{
    */
   public function setRealmID(string $realmid) {
     $this->realmid = $realmid;
+    return $this;
+  }
+
+  /**
+   * Salary Sacrifice Total setter
+   */
+  public function setSalarySacrificeTotal(float $salarySacrificeTotal) {
+    $this->salarySacrificeTotal = $salarySacrificeTotal;
+    return $this;
+  }
+
+  /**
+   * Employee Pension Contribution Total setter
+   */
+  public function setEmployeePensContribTotal(float $employeePensContribTotal) {
+    $this->employeePensContribTotal = $employeePensContribTotal;
     return $this;
   }
 
@@ -129,6 +159,37 @@ class QuickbooksBill{
       else {
           return $item;
       }
+  }
+
+  /**
+   * Push a new array describing a single line of a QBO bill into the given array
+   * Helper function used in create.
+   *
+   * @param mixed $line_array The given array
+   * @param string $description
+   * @param float $amount
+   * @param string $class
+   * @param string $account
+   * @param string $taxcode
+   * 
+   * @return void
+   * 
+   */
+  protected function bill_line(&$line_array, $description, $amount, 
+                                            $class, $account, $taxcode) {
+
+    if (abs($amount) <= 0.005) return;
+
+    array_push($line_array, array(
+      "Description" => $description,
+      "Amount" => $amount,
+      "DetailType" => "AccountBasedExpenseLineDetail",
+      "AccountBasedExpenseLineDetail" => [
+        "AccountRef" => $account,
+        "ClassRef" => $class,
+        "TaxCodeRef" => $taxcode
+      ]
+    ));
   }
 
   /**

@@ -180,7 +180,7 @@ class QuickbooksPayrollJournal extends QuickbooksJournal{
    * Create a general journal in QBO
    */
   public function create_employee_journal() {
-    
+
     $payrolljournal = array(
         "TxnDate" => $this->TxnDate,
         "DocNumber" => $this->DocNumber,
@@ -191,7 +191,7 @@ class QuickbooksPayrollJournal extends QuickbooksJournal{
     // For each line below it will only add the respective line if amount != 0
 
     foreach($this->grossSalary as $grossSalaryAllocation) {
-      //&$line_array, $description, $amount, $item, $class, $quantity, $account, $taxcoderef)
+      //&$line_array, $description, $amount, $emploee, $class, $account)
       $this->payrolljournal_line($payrolljournal['Line'], "Gross Salary", 
         $grossSalaryAllocation->amount, $this->employeeNumber, 
         $grossSalaryAllocation->class,$grossSalaryAllocation->account);

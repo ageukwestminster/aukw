@@ -2,7 +2,7 @@
 
 namespace Controllers;
 
-use DateTime;
+use Core\QuickbooksConstants as QBO;
 use \Models\QuickbooksEmployerNIJournal;
 use \Models\QuickbooksPayrollJournal;
 
@@ -48,8 +48,8 @@ class QBPayrollJournalCtl{
     $data = json_decode(file_get_contents("php://input"));
 
     // The Ref No. that appears on QBO ui. 
-    // Format is "Payroll_YYY_MM-`${employee_number}`" 
-    $docNumber = QBPayrollJournalCtl::payrollDocNumber($payrollDate).'-'.$data->employeeId;
+    // Format is "Payroll_YYYY_MM-`${employee_number}`" 
+    $docNumber = QBO::payrollDocNumber($payrollDate).'-'.$data->employeeId;
 
     try {
       $model = QuickbooksPayrollJournal::getInstance()
@@ -117,7 +117,7 @@ class QBPayrollJournalCtl{
       exit(1);
     } else {
       $payrollDate = $_GET['payrolldate'];
-      $docNumber = QBPayrollJournalCtl::payrollDocNumber($payrollDate);
+      $docNumber = QBO::payrollDocNumber($payrollDate);
       $docNumber .= '-NI';
     }
 
@@ -248,14 +248,5 @@ class QBPayrollJournalCtl{
     
   }
   
-  /**
-   * Helper function to regularise the DocNumber for payroll transactions
-   * @param string $payrollDate A string representation of the date of the 
-   * payroll in 'YYYY-mm-dd' format.
-   * @return string 
-   */
-  private static function payrollDocNumber(string $payrollDate) : string {
-    $d = DateTime::createFromFormat('Y-m-d', $payrollDate);
-    return 'Payroll_' . $d->format('Y_m');
-  }
+
 }

@@ -45,6 +45,7 @@ include_once 'models/qbitem.php';
 include_once 'models/qbjournal.php';
 include_once 'models/qbnijournal.php'; // Depends on qbjournal.php
 include_once 'models/qbpayrolljournal.php'; // Depends on qbjournal.php
+include_once 'models/qbpensionbill.php'; // Depends on qbbill.php
 include_once 'models/qbsalesreceipt.php';
 include_once 'models/qbrealm.php';
 include_once 'models/qbrecurringtxn.php';
