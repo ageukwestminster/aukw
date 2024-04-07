@@ -1,11 +1,21 @@
-﻿<div>
-  <file-upload (onFileUploaded)="xlsxWasUploaded($event)"></file-upload>
+﻿<div class="d-flex">
+  <div class="w-25 p-2 m-2">
+    Blah
+  </div>
+  <div class="p-2 m-2 border border-secondary">
+    <div>
+      <file-upload (onFileUploaded)="xlsxWasUploaded($event)"></file-upload>
+    </div>
+  </div>
+  <div>
+    Blah
+  </div>
 </div>
 <div>
+  <button (click)="updateQBO()" class="btn btn-sm btn-success m-1 mt-1" *ngIf="total && total.totalPay">
+    Query QBO
+  </button>
   <div class="d-flex flex-row" *ngIf="total && total.totalPay">
-    <button (click)="updateQBO()" class="btn btn-sm btn-success m-1 mt-1">
-      Query QBO
-    </button>
     <button
       (click)="employerNI()"
       class="btn btn-sm btn-success m-1 mt-1 #employerNI"
@@ -119,13 +129,13 @@
                 <th style="width: 5%">No.</th>
                 <th style="width: 22%">Name</th>
                 <th style="width: 8%">Gross</th>
-                <th style="width: 8%">PAYE</th>
-                <th style="width: 8%">E'ee NI</th>
-                <th style="width: 8%">Other</th>
-                <th style="width: 8%">Pens</th>
-                <th style="width: 8%">S Loan</th>
-                <th style="width: 8%">Net</th>
-                <th style="width: 8%">E'er NI</th>
+                <th style="width: 8%" class="d-none d-sm-table-cell">PAYE</th>
+                <th style="width: 8%" class="d-none d-sm-table-cell">E'ee NI</th>
+                <th style="width: 8%" class="d-none d-sm-table-cell">Other</th>
+                <th style="width: 8%" class="d-none d-sm-table-cell">Pens</th>
+                <th style="width: 8%" class="d-none d-sm-table-cell">S Loan</th>
+                <th style="width: 8%" class="d-none d-sm-table-cell">Net</th>
+                <th style="width: 8%" class="d-none d-sm-table-cell">E'er NI</th>
                 <th style="width: 6%">QBO?</th>
               </tr>
             </thead>
@@ -134,18 +144,18 @@
                 <td>{{ payslip.employeeId }}</td>
                 <td>{{ payslip.employeeName }}</td>
                 <td>{{ payslip.totalPay | number: "1.2-2" }}</td>
-                <td>{{ payslip.paye | number: "1.2-2" }}</td>
-                <td>{{ payslip.employeeNI | number: "1.2-2" }}</td>
-                <td>{{ payslip.otherDeductions | number: "1.2-2" }}</td>
-                <td>
+                <td class="d-none d-sm-table-cell">{{ payslip.paye | number: "1.2-2" }}</td>
+                <td class="d-none d-sm-table-cell">{{ payslip.employeeNI | number: "1.2-2" }}</td>
+                <td class="d-none d-sm-table-cell">{{ payslip.otherDeductions | number: "1.2-2" }}</td>
+                <td class="d-none d-sm-table-cell">
                   {{
                     -payslip.salarySacrifice - payslip.employeePension
                       | number: "1.2-2"
                   }}
                 </td>
-                <td>{{ payslip.studentLoan | number: "1.2-2" }}</td>
-                <td>{{ payslip.netPay | number: "1.2-2" }}</td>
-                <td>{{ payslip.employerNI | number: "1.2-2" }}</td>
+                <td class="d-none d-sm-table-cell">{{ payslip.studentLoan | number: "1.2-2" }}</td>
+                <td class="d-none d-sm-table-cell">{{ payslip.netPay | number: "1.2-2" }}</td>
+                <td class="d-none d-sm-table-cell">{{ payslip.employerNI | number: "1.2-2" }}</td>
                 <td *ngIf="payslip.inQBO" class="text-center">
                   <i class="fas fa-check"></i>
                 </td>
@@ -157,18 +167,18 @@
                 <td></td>
                 <td>Total for {{ this.payslips.length }} employees:</td>
                 <td>{{ total.totalPay | number: "1.2-2" }}</td>
-                <td>{{ total.paye | number: "1.2-2" }}</td>
-                <td>{{ total.employeeNI | number: "1.2-2" }}</td>
-                <td>{{ total.otherDeductions | number: "1.2-2" }}</td>
-                <td>
+                <td class="d-none d-sm-table-cell">{{ total.paye | number: "1.2-2" }}</td>
+                <td class="d-none d-sm-table-cell">{{ total.employeeNI | number: "1.2-2" }}</td>
+                <td class="d-none d-sm-table-cell">{{ total.otherDeductions | number: "1.2-2" }}</td>
+                <td class="d-none d-sm-table-cell">
                   {{
                     -total.salarySacrifice - total.employeePension
                       | number: "1.2-2"
                   }}
                 </td>
-                <td>{{ total.studentLoan | number: "1.2-2" }}</td>
-                <td>{{ total.netPay | number: "1.2-2" }}</td>
-                <td>{{ total.employerNI | number: "1.2-2" }}</td>
+                <td class="d-none d-sm-table-cell">{{ total.studentLoan | number: "1.2-2" }}</td>
+                <td class="d-none d-sm-table-cell">{{ total.netPay | number: "1.2-2" }}</td>
+                <td class="d-none d-sm-table-cell">{{ total.employerNI | number: "1.2-2" }}</td>
                 <td></td>
               </tr>
               <tr *ngIf="!payslips">
