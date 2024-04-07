@@ -36,9 +36,9 @@ class QuickbooksPensionBill extends QuickbooksBill{
   /**
    * Costs of employee pensions, split into allocations
    *
-   * @var Arra
+   * @var Array
    */
-  protected float $pensionCosts; 
+  protected Array $pensionCosts; 
 
   /**
    * Total setter
