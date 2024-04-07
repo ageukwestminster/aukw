@@ -12,7 +12,7 @@ export class EmployerNIEntry {
   }
 }
 
-import { Allocation } from './allocation'
+import { Allocation } from './allocation';
 
 export class PayrollJournalEntry {
   employeeId: number;

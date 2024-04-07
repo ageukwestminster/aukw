@@ -1,12 +1,7 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import { Observable } from 'rxjs';
-import {
-  concatMap,
-  mergeMap,
-  tap,
-  toArray,
-} from 'rxjs/operators';
+import { concatMap, mergeMap, tap, toArray } from 'rxjs/operators';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import {
@@ -122,23 +117,23 @@ export class PayslipListComponent implements OnInit {
 
     this.busyOnEmployerNI = true;
 
-    this.payrollService.employerNIAllocatedCosts(this.payslips, this.allocations)
+    this.payrollService
+      .employerNIAllocatedCosts(this.payslips, this.allocations)
       .pipe(
         toArray(),
-        mergeMap((v) => this.qbPayrollService
-          .createEmployerNIJournal(
+        mergeMap((v) =>
+          this.qbPayrollService.createEmployerNIJournal(
             this.charityRealm.realmid!,
             v,
             this.payrollDate,
-          )
-        )
+          ),
+        ),
       )
       .subscribe({
         next: () => this.alertService.info('Employer NI journal added.'),
         error: (e) => this.alertService.error(e),
         complete: () => (this.busyOnEmployerNI = false),
       });
-
   }
 
   makeEmployeeJournalEntries() {
@@ -173,7 +168,8 @@ export class PayslipListComponent implements OnInit {
 
     this.busyOnPensions = true;
 
-    this.payrollService.pensionAllocatedCosts(this.payslips, this.allocations)
+    this.payrollService
+      .pensionAllocatedCosts(this.payslips, this.allocations)
       .pipe(
         toArray(), // convert to an array, this will form body of post call
         mergeMap((costs) => {
@@ -206,14 +202,13 @@ export class PayslipListComponent implements OnInit {
 
     this.busyOnShopJournals = true;
 
-    this.payrollService.shopPayslips(this.payslips, this.allocations)
-      .pipe(
-        tap((x) => console.log(x))
-      )
+    this.payrollService
+      .shopPayslips(this.payslips, this.allocations)
+      .pipe(tap((x) => console.log(x)))
       .subscribe({
         next: () => this.alertService.info('Shop jopurnals added.'),
         error: (e) => this.alertService.error(e),
         complete: () => (this.busyOnShopJournals = false),
       });
-    }
+  }
 }

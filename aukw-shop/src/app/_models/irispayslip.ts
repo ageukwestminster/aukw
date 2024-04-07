@@ -31,7 +31,7 @@ export class IrisPayslip {
   employerNI: number;
   employerPension: number;
   employeePension: number;
-  
+
   inQBO: boolean;
   niJournalInQBO: boolean = false;
   pensionBillInQBO: boolean = false;

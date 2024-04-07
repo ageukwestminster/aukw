@@ -1,12 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, from } from 'rxjs';
-import {
-  concatMap,
-  filter,
-  first,
-  map,
-  scan,
-} from 'rxjs/operators';
+import { concatMap, filter, first, map, scan } from 'rxjs/operators';
 
 import {
   Allocation,
@@ -36,13 +30,17 @@ export class PayrollService {
    * Return an Observable of allocated employer NI costs
    * @param payslips An array of payslips, detailing each employee's salary and ni
    * @param allocations An array of allocation objects that show how to split costs between classes
-   * @returns 
+   * @returns
    */
   employerNIAllocatedCosts(
     payslips: IrisPayslip[],
     allocations: EmployeeAllocation[],
-  ): Observable<Allocation>  {
-    return this.entries(payslips, allocations, (p:IrisPayslip) => p.employerNI);
+  ): Observable<Allocation> {
+    return this.entries(
+      payslips,
+      allocations,
+      (p: IrisPayslip) => p.employerNI,
+    );
   }
 
   /**
@@ -54,22 +52,26 @@ export class PayrollService {
   pensionAllocatedCosts(
     payslips: IrisPayslip[],
     allocations: EmployeeAllocation[],
-  ): Observable<Allocation>  {
-    return this.entries(payslips, allocations, (p:IrisPayslip) => p.employerPension);
+  ): Observable<Allocation> {
+    return this.entries(
+      payslips,
+      allocations,
+      (p: IrisPayslip) => p.employerPension,
+    );
   }
 
-    /**
+  /**
    * Return an Observable of allocated salary costs
    * @param payslips An array of payslips, detailing each employee's salary and ni
    * @param allocations An array of allocation objects that show how to split costs between classes
    * @returns Observable<Allocation>
    */
-    grossSalaryAllocatedCosts(
-      payslips: IrisPayslip[],
-      allocations: EmployeeAllocation[],
-    ): Observable<Allocation>  {
-      return this.entries(payslips, allocations, (p:IrisPayslip) => p.totalPay);
-    }
+  grossSalaryAllocatedCosts(
+    payslips: IrisPayslip[],
+    allocations: EmployeeAllocation[],
+  ): Observable<Allocation> {
+    return this.entries(payslips, allocations, (p: IrisPayslip) => p.totalPay);
+  }
 
   /**
    * Return an Observable of allocations. This is a private function.
@@ -81,14 +83,13 @@ export class PayrollService {
   private entries(
     payslips: IrisPayslip[],
     allocations: EmployeeAllocation[],
-    property: (p:IrisPayslip) => number
+    property: (p: IrisPayslip) => number,
   ): Observable<Allocation> {
     return from(payslips).pipe(
       filter((p) => !p.niJournalInQBO && property(p) != 0), // Only add if not already in QBO
       concatMap((p) =>
         // this will split each payslip into one or more allocations
         from(allocations.filter((x) => x.payrollNumber == p.employeeId)).pipe(
-          
           filter((x) => x.percentage != 0), // Ignore any allocations of 0%
 
           // loop through each allocation, computing the correct £ amount from the percentage supplied
@@ -105,13 +106,13 @@ export class PayrollService {
 
               // Make first attempt at calcualted amount, from percentage and pension amount
               let calculatedAllocatedAmount = Number(
-                (
-                  Math.round(property(p) * allocation.percentage) / 100
-                ).toFixed(2),
+                (Math.round(property(p) * allocation.percentage) / 100).toFixed(
+                  2,
+                ),
               );
 
               // abs(Amount) can never exceed abs(remainder)
-              if(property(p) < 0 ) {                
+              if (property(p) < 0) {
                 calculatedAllocatedAmount = Math.max(
                   calculatedAllocatedAmount,
                   remainder,
@@ -158,20 +159,21 @@ export class PayrollService {
    * Return an Observable of allocated employer NI costs
    * @param payslips An array of payslips, detailing each employee's salary and ni
    * @param allocations An array of allocation objects that show how to split costs between classes
-   * @returns 
+   * @returns
    */
   shopPayslips(
     payslips: IrisPayslip[],
     allocations: EmployeeAllocation[],
-  ): Observable<IrisPayslip>  {
-
-    const shopEmployees = allocations.filter((x) => x.isShopEmployee).map((x) => Number(x.payrollNumber));
+  ): Observable<IrisPayslip> {
+    const shopEmployees = allocations
+      .filter((x) => x.isShopEmployee)
+      .map((x) => Number(x.payrollNumber));
 
     return from(payslips).pipe(
-      filter((p) => !p.shopJournalInQBO ), // Only add if not already in QBO
-      filter ((p) => shopEmployees.includes(p.employeeId))
+      filter((p) => !p.shopJournalInQBO), // Only add if not already in QBO
+      filter((p) => shopEmployees.includes(p.employeeId)),
     );
-  } 
+  }
 
   /**
    * Given an employee's payslip numbers, convert them into an array that can be used
