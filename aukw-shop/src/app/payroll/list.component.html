@@ -10,15 +10,27 @@
       (click)="employerNI()"
       class="btn btn-sm btn-success m-1 mt-1 #employerNI"
     >
+      <span
+        *ngIf="busyOnEmployerNI"
+        class="spinner-border spinner-border-sm"
+      ></span>
       Employer NI
     </button>
     <button
       (click)="makeEmployeeJournalEntries()"
       class="btn btn-sm btn-success m-1 mt-1"
     >
+      <span
+        *ngIf="busyOnEmployeeJournals"
+        class="spinner-border spinner-border-sm"
+      ></span>
       Employee GJ
     </button>
     <button (click)="pensionBill()" class="btn btn-sm btn-success m-1 mt-1">
+      <span
+        *ngIf="busyOnPensions"
+        class="spinner-border spinner-border-sm"
+      ></span>
       Pension Bill
     </button>
   </div>

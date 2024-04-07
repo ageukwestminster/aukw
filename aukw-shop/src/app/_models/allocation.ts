@@ -25,12 +25,14 @@ export class EmployeeAllocation {
  */
 
 export class PensionAllocation {
+  id: number;
   name: string;
   amount: number;
   account: number;
   class: string;
 
   constructor(obj?: any) {
+    this.id = (obj && obj.id) || null;
     this.name = (obj && obj.name) || null;
     this.amount = (obj && obj.amount) || null;
     this.account = (obj && obj.account) || null;
