@@ -127,7 +127,7 @@ class QBPayrollJournalCtl{
   }
 
   public static function create_enterprises_journal() {
-
+return;
     QBPayrollJournalCtl::checkRealmId();
     QBPayrollJournalCtl::checkPayrollDate();
 
@@ -147,7 +147,7 @@ class QBPayrollJournalCtl{
 
       if ($result) {
         echo json_encode(
-            array("message" => "Employer NI journal '". $result['label'] .
+            array("message" => "Payroll journal for shop" .
                         "' has been added for " . $result['date'] . ".",
                 "id" => $result['id'])
           );
@@ -157,7 +157,7 @@ class QBPayrollJournalCtl{
       http_response_code(400);  
       echo json_encode(
         array(
-          "message" => "Unable to enter payroll journal in Quickbooks.",
+          "message" => "Unable to enter shop payroll journal in Quickbooks.",
           "extra" => $e->getMessage()
           )
           , JSON_NUMERIC_CHECK);

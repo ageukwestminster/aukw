@@ -2,7 +2,6 @@
  * The name and id numbers of an employee
  */
 export class EmployeeName {
-
   /**
    * The id of the Employee in Quickbooks. This will vary by realm.
    */

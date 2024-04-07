@@ -50,7 +50,7 @@ class QBEmployeeCtl{
     $model = new \Models\QuickbooksEmployee();
     $model->realmid = $_GET['realmid'];
 
-    echo json_encode($model->readAll(), JSON_NUMERIC_CHECK);
+    echo json_encode(array_values($model->readAll()), JSON_NUMERIC_CHECK);
   }
 
 }

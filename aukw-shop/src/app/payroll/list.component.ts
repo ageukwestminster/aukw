@@ -1,22 +1,21 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import { Observable, forkJoin } from 'rxjs';
-import { concatMap, mergeMap, tap, toArray } from 'rxjs/operators';
+import { concatMap, map, mergeMap, tap, toArray } from 'rxjs/operators';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import {
   AlertService,
   AuthenticationService,
   PayrollService,
+  QBEmployeeService,
   QBPayrollService,
   QBRealmService,
 } from '@app/_services';
 import {
   EmployeeAllocation,
-  EmployerNIEntry,
   PayrollJournalEntry,
   IrisPayslip,
-  Allocation,
   QBRealm,
   User,
 } from '@app/_models';
@@ -49,6 +48,7 @@ export class PayslipListComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private qbPayrollService: QBPayrollService,
     private payrollService: PayrollService,
+    private qbEmployeeService: QBEmployeeService,
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -192,7 +192,10 @@ export class PayslipListComponent implements OnInit {
       )
       .subscribe({
         next: () => this.alertService.info('Pension bill added.'),
-        error: (e) => this.alertService.error(e),
+        error: (e) => {
+          this.busyOnPensions = false;
+          this.alertService.error(e);
+        },
         complete: () => (this.busyOnPensions = false),
       });
   }
@@ -202,19 +205,45 @@ export class PayslipListComponent implements OnInit {
 
     this.busyOnShopJournals = true;
 
-    const data$ = forkJoin({
+    forkJoin({
       payslips: this.payrollService
-                  .shopPayslips(this.payslips, this.allocations)
-                  .pipe(toArray()),
-      employees: 
+        .shopPayslips(this.payslips, this.allocations)
+        .pipe(toArray()),
+      employees: this.qbEmployeeService.getAll(this.enterpriseRealm!.realmid!),
     })
+      .pipe(
+        map((x) => {
+          let returnArray: Array<object> = [];
 
-    this.payrollService
-      .shopPayslips(this.payslips, this.allocations)
-      .pipe(tap((x) => console.log(x)))
+          x.payslips.forEach((payslip) => {
+            const employeeName = x.employees.filter(
+              (emp) => emp.payrollNumber == payslip.employeeId,
+            )[0];
+
+            returnArray.push({
+              quickbooksId: employeeName.quickbooksId,
+              totalPay: payslip.totalPay,
+              employerNI: payslip.employerNI,
+              employerPension: payslip.employerPension,
+            });
+          });
+
+          return returnArray;
+        }),
+        mergeMap((data) => {
+          return this.qbPayrollService.createShopJournal(
+            this.enterpriseRealm!.realmid!,
+            data,
+            this.payrollDate,
+          );
+        }),
+      )
       .subscribe({
         next: () => this.alertService.info('Shop jopurnals added.'),
-        error: (e) => this.alertService.error(e),
+        error: (e) => {
+          this.busyOnShopJournals = false;
+          this.alertService.error(e);
+        },
         complete: () => (this.busyOnShopJournals = false),
       });
   }

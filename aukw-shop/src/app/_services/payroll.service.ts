@@ -165,7 +165,6 @@ export class PayrollService {
     payslips: IrisPayslip[],
     allocations: EmployeeAllocation[],
   ): Observable<IrisPayslip> {
-
     const shopEmployees = allocations
       .filter((x) => x.isShopEmployee)
       .map((x) => Number(x.payrollNumber)); // Only need payroll number

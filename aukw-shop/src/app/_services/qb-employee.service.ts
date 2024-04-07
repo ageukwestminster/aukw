@@ -11,14 +11,14 @@ const baseUrl = `${environment.apiUrl}/qb/employee`;
  * This class has a single method which returns a array of employees
  */
 @Injectable({ providedIn: 'root' })
-export class QuickbooksEmployeeService {
+export class QBEmployeeService {
   constructor(private http: HttpClient) {}
 
   /**
    * Get a list of the names of all available employees
    * @returns Array of employee ids and names
    */
-  getAll(realmID: string) {
+  getAll(realmID: string): Observable<EmployeeName[]> {
     return this.http.get<EmployeeName[]>(`${baseUrl}?realmid=${realmID}`);
   }
 }
