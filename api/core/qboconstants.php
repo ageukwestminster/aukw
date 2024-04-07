@@ -11,6 +11,7 @@ use DateTime;
  */
 class QuickbooksConstants {
 
+  // Charity Constants
   const AUEW_ACCOUNT = "65";
   const EMPLOYEE_PENSION_CONTRIB_ACCOUNT = "66";
   const SALARY_SACRIFICE_ACCOUNT = "375";
@@ -24,6 +25,14 @@ class QuickbooksConstants {
   const NOVAT_TAX_CODE = "20";
 
   const LEGAL_AND_GENERAL_VENDOR = "357";
+
+  // Enterprises Constants
+  const AUKW_INTERCO_ACCOUNT = "80";
+  const SALARIES_ACCOUNT = "106";
+  const NI_ACCOUNT = "150";
+  const PENSIONS_ACCOUNT = "139";
+
+  const HARROW_ROAD_CLASS = "400000000000618070";
 
   /**
    * Helper function to regularise the DocNumber for payroll transactions

@@ -36,18 +36,27 @@ class QuickbooksEnterprisesJournal extends QuickbooksJournal{
           "TotalAmt" => 0
       );
 
-      $sum = 0;
       foreach ($entries as $line) {
         //&$line_array, $description, $amount, $employee, $class, $account)
-        // This code will only add the respective line if amount != 0
-        $this->payrolljournal_line($payrolljournal['Line'], "", 
-            $line->amount, $line->employeeId, $line->class, $line->account);
+        $this->payrolljournal_line($payrolljournal['Line'], "Salary", 
+            $line->totalPay, $line->quickbooksId, QBO::HARROW_ROAD_CLASS, QBO::SALARIES_ACCOUNT);
+        $this->payrolljournal_line($payrolljournal['Line'], "Salary", 
+            -$line->totalPay, $line->quickbooksId, QBO::HARROW_ROAD_CLASS, QBO::AUKW_INTERCO_ACCOUNT);
         
-        $sum -= $line->amount;
-      }
+        if ($line->employerNI) {
+          $this->payrolljournal_line($payrolljournal['Line'], "NI", 
+              $line->employerNI, $line->quickbooksId, QBO::HARROW_ROAD_CLASS, QBO::NI_ACCOUNT);
+          $this->payrolljournal_line($payrolljournal['Line'], "NI", 
+              -$line->employerNI, $line->quickbooksId, QBO::HARROW_ROAD_CLASS, QBO::AUKW_INTERCO_ACCOUNT);
+        }
 
-      $this->payrolljournal_line($payrolljournal['Line'], "", 
-        $sum, '', QBO::ADMIN_CLASS, QBO::TAX_ACCOUNT);
+        if ($line->employerPension) {
+          $this->payrolljournal_line($payrolljournal['Line'], "Pension", 
+              $line->employerPension, $line->quickbooksId, QBO::HARROW_ROAD_CLASS, QBO::PENSIONS_ACCOUNT);
+          $this->payrolljournal_line($payrolljournal['Line'], "Pension", 
+              -$line->employerPension, $line->quickbooksId, QBO::HARROW_ROAD_CLASS, QBO::AUKW_INTERCO_ACCOUNT);
+        }
+      }
     
       $theResourceObj = JournalEntry::create($payrolljournal);
   

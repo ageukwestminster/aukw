@@ -154,7 +154,7 @@ export class PayslipListComponent implements OnInit {
         ),
       )
       .subscribe({
-        next: () => this.alertService.info('Employee journals added.'),
+        next: () => this.alertService.info('Individual employee journals added.'),
         error: (e) => this.alertService.error(e),
         complete: () => {
           this.busyOnEmployeeJournals = false;
@@ -191,7 +191,7 @@ export class PayslipListComponent implements OnInit {
         }),
       )
       .subscribe({
-        next: () => this.alertService.info('Pension bill added.'),
+        next: () => this.alertService.info('L&G Pension bill added.'),
         error: (e) => {
           this.busyOnPensions = false;
           this.alertService.error(e);
@@ -239,7 +239,7 @@ export class PayslipListComponent implements OnInit {
         }),
       )
       .subscribe({
-        next: () => this.alertService.info('Shop jopurnals added.'),
+        next: () => this.alertService.info(' Shop payroll journal added.'),
         error: (e) => {
           this.busyOnShopJournals = false;
           this.alertService.error(e);

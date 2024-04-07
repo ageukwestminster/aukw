@@ -37,7 +37,7 @@ export class AlertService {
     const alert = new Alert(
       id,
       type,
-      message,
+      ' ' + message, // space added for readability
       options.autoClose,
       options.keepAfterRouteChange,
     );

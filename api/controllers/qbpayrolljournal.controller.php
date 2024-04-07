@@ -127,7 +127,7 @@ class QBPayrollJournalCtl{
   }
 
   public static function create_enterprises_journal() {
-return;
+
     QBPayrollJournalCtl::checkRealmId();
     QBPayrollJournalCtl::checkPayrollDate();
 
@@ -135,6 +135,7 @@ return;
     $docNumber = QBO::payrollDocNumber($payrollDate);
 
     $data = json_decode(file_get_contents("php://input"));
+    QBPayrollJournalCtl::checkPostBodyContent($data);
 
     try {
 
@@ -270,6 +271,16 @@ return;
       http_response_code(400);   
       echo json_encode(
         array("message" => "Please supply a valid value for the 'payrolldate' parameter.")
+      );
+      exit(1);
+    }
+  }
+
+  private static function checkPostBodyContent($data){
+    if(!$data || count($data) == 0) {
+      http_response_code(400);   
+      echo json_encode(
+        array("message" => "The body of the POST request seems empty.")
       );
       exit(1);
     }
