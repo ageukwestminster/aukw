@@ -4,11 +4,12 @@
 <div>
   <div class="d-flex flex-row" *ngIf="total && total.totalPay">
     <button (click)="updateQBO()" class="btn btn-sm btn-success m-1 mt-1">
-      Update Mehfuz
+      Query QBO
     </button>
     <button
       (click)="employerNI()"
       class="btn btn-sm btn-success m-1 mt-1 #employerNI"
+      [disabled]="disableEmployerNI"
     >
       <span
         *ngIf="busyOnEmployerNI"
@@ -16,9 +17,13 @@
       ></span>
       Employer NI
     </button>
+    <div class="d-flex align-items-center">
+      <i class="fas fa-greater-than"></i>
+    </div>
     <button
       (click)="makeEmployeeJournalEntries()"
       class="btn btn-sm btn-success m-1 mt-1"
+      [disabled]="disableEmployeeJournals"
     >
       <span
         *ngIf="busyOnEmployeeJournals"
@@ -26,14 +31,28 @@
       ></span>
       Employee GJ
     </button>
-    <button (click)="pensionBill()" class="btn btn-sm btn-success m-1 mt-1">
+    <div class="d-flex align-items-center">
+      <i class="fas fa-greater-than"></i>
+    </div>
+    <button
+      (click)="pensionBill()"
+      class="btn btn-sm btn-success m-1 mt-1"
+      [disabled]="disablePensions"
+    >
       <span
         *ngIf="busyOnPensions"
         class="spinner-border spinner-border-sm"
       ></span>
       Pension Bill
     </button>
-    <button (click)="shopJournals()" class="btn btn-sm btn-success m-1 mt-1">
+    <div class="d-flex align-items-center">
+      <i class="fas fa-greater-than"></i>
+    </div>
+    <button
+      (click)="shopJournals()"
+      class="btn btn-sm btn-success m-1 mt-1"
+      [disabled]="disableShopJournals"
+    >
       <span
         *ngIf="busyOnShopJournals"
         class="spinner-border spinner-border-sm"

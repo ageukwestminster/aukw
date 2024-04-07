@@ -41,6 +41,10 @@ export class PayslipListComponent implements OnInit {
   busyOnEmployerNI: boolean = false;
   busyOnEmployeeJournals: boolean = false;
   busyOnShopJournals: boolean = false;
+  disablePensions: boolean = false;
+  disableEmployerNI: boolean = false;
+  disableEmployeeJournals: boolean = false;
+  disableShopJournals: boolean = false;
 
   constructor(
     private alertService: AlertService,
@@ -132,7 +136,10 @@ export class PayslipListComponent implements OnInit {
       .subscribe({
         next: () => this.alertService.info('Employer NI journal added.'),
         error: (e) => this.alertService.error(e),
-        complete: () => (this.busyOnEmployerNI = false),
+        complete: () => {
+          this.busyOnEmployerNI = false;
+          this.disableEmployerNI = true;
+        },
       });
   }
 
@@ -154,11 +161,13 @@ export class PayslipListComponent implements OnInit {
         ),
       )
       .subscribe({
-        next: () => this.alertService.info('Individual employee journals added.'),
+        next: () =>
+          this.alertService.info('Individual employee journals added.'),
         error: (e) => this.alertService.error(e),
         complete: () => {
           this.busyOnEmployeeJournals = false;
           this.showProgressBar = false;
+          this.disableEmployeeJournals = true;
         },
       });
   }
@@ -196,7 +205,10 @@ export class PayslipListComponent implements OnInit {
           this.busyOnPensions = false;
           this.alertService.error(e);
         },
-        complete: () => (this.busyOnPensions = false),
+        complete: () => {
+          this.busyOnPensions = false;
+          this.disablePensions = true;
+        },
       });
   }
 
@@ -244,7 +256,10 @@ export class PayslipListComponent implements OnInit {
           this.busyOnShopJournals = false;
           this.alertService.error(e);
         },
-        complete: () => (this.busyOnShopJournals = false),
+        complete: () => {
+          this.busyOnShopJournals = false;
+          this.disableShopJournals = true;
+        },
       });
   }
 }
