@@ -114,8 +114,10 @@ $router->mount('/qb', function () use ($router) {
     $router->get('/journal/docnumber/(\w+)', 'QBJournalCtl@query_by_docnumber');
     // QB Payroll Journal for individual employee
     $router->post('/journal/employee', 'QBPayrollJournalCtl@create_employee_payslip_journal');
-    // QB Payroll Journal for Employer NI (uses recurring transaciton)
+    // QB Payroll Journal for Employer NI 
     $router->post('/journal/employerni', 'QBPayrollJournalCtl@create_employer_ni_journal');
+    // QB Payroll Journal for shop (aka 'Enterprises')
+    $router->post('/journal/enterprises', 'QBPayrollJournalCtl@create_enterprises_journal');
 
     // The param is the Quickbooks Journal Id. This number is not easily seen on 
     // the normal QB website but it can been seen in Audit Log.

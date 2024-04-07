@@ -4,6 +4,7 @@ namespace Controllers;
 
 use Core\QuickbooksConstants as QBO;
 use \Models\QuickbooksEmployerNIJournal;
+use \Models\QuickbooksEnterprisesJournal;
 use \Models\QuickbooksPayrollJournal;
 
 /**
@@ -26,25 +27,11 @@ class QBPayrollJournalCtl{
    */
   public static function create_employee_payslip_journal(){  
 
-    if(!isset($_GET['realmid']) ) {
-      http_response_code(400);   
-      echo json_encode(
-        array("message" => "Please supply a value for the 'realmid' parameter.")
-      );
-      exit(1);
-    }
-    
-    if(!isset($_GET['payrolldate']) || 
-            !\Core\DatesHelper::validateDate($_GET['payrolldate'])) {
-      http_response_code(400);   
-      echo json_encode(
-        array("message" => "Please supply a valid value for the 'payrolldate' parameter.")
-      );
-      exit(1);
-    } else {
-      $payrollDate = $_GET['payrolldate'];
-    }
+    QBPayrollJournalCtl::checkRealmId();
+    QBPayrollJournalCtl::checkPayrollDate();
 
+    $payrollDate = $_GET['payrolldate'];
+    
     $data = json_decode(file_get_contents("php://input"));
 
     // The Ref No. that appears on QBO ui. 
@@ -100,26 +87,13 @@ class QBPayrollJournalCtl{
    * Enter the journal txn for employer NI
    */
   public static function create_employer_ni_journal(){
-    if(!isset($_GET['realmid']) ) {
-      http_response_code(400);   
-      echo json_encode(
-        array("message" => "Please supply a value for the 'realmid' parameter.")
-      );
-      exit(1);
-    }
-    
-    if(!isset($_GET['payrolldate']) || 
-            !\Core\DatesHelper::validateDate($_GET['payrolldate'])) {
-      http_response_code(400);   
-      echo json_encode(
-        array("message" => "Please supply a valid value for the 'payrolldate' parameter.")
-      );
-      exit(1);
-    } else {
-      $payrollDate = $_GET['payrolldate'];
-      $docNumber = QBO::payrollDocNumber($payrollDate);
-      $docNumber .= '-NI';
-    }
+
+    QBPayrollJournalCtl::checkRealmId();
+    QBPayrollJournalCtl::checkPayrollDate();
+
+    $payrollDate = $_GET['payrolldate'];
+    $docNumber = QBO::payrollDocNumber($payrollDate);
+    $docNumber .= '-NI';
 
     $data = json_decode(file_get_contents("php://input"));
 
@@ -141,17 +115,54 @@ class QBPayrollJournalCtl{
       }
 
     } catch (\Exception $e) {
-    http_response_code(400);  
-    echo json_encode(
-      array(
-        "message" => "Unable to enter payroll journal in Quickbooks.",
-        "extra" => $e->getMessage()
-         )
-        , JSON_NUMERIC_CHECK);
-    exit(1);
+      http_response_code(400);  
+      echo json_encode(
+        array(
+          "message" => "Unable to enter payroll journal in Quickbooks.",
+          "extra" => $e->getMessage()
+          )
+          , JSON_NUMERIC_CHECK);
+      exit(1);
+    }    
   }
 
-    
+  public static function create_enterprises_journal() {
+
+    QBPayrollJournalCtl::checkRealmId();
+    QBPayrollJournalCtl::checkPayrollDate();
+
+    $payrollDate = $_GET['payrolldate'];
+    $docNumber = QBO::payrollDocNumber($payrollDate);
+
+    $data = json_decode(file_get_contents("php://input"));
+
+    try {
+
+      $model = QuickbooksEnterprisesJournal::getInstance()
+        ->setDocNumber($docNumber)
+        ->setTxnDate($payrollDate)
+        ->setRealmID($_GET['realmid']);
+
+      $result = $model->create_enterprises_journal($data);
+
+      if ($result) {
+        echo json_encode(
+            array("message" => "Employer NI journal '". $result['label'] .
+                        "' has been added for " . $result['date'] . ".",
+                "id" => $result['id'])
+          );
+      }
+
+    } catch (\Exception $e) {
+      http_response_code(400);  
+      echo json_encode(
+        array(
+          "message" => "Unable to enter payroll journal in Quickbooks.",
+          "extra" => $e->getMessage()
+          )
+          , JSON_NUMERIC_CHECK);
+      exit(1);
+    }   
   }
 
    /**
@@ -161,13 +172,7 @@ class QBPayrollJournalCtl{
    */
   public static function read_employee_allocations(){  
 
-    if(!isset($_GET['realmid']) ) {
-      http_response_code(400);   
-      echo json_encode(
-        array("message" => "Please supply a value for the 'realmid' parameter.")
-      );
-      exit(1);
-    } 
+    QBPayrollJournalCtl::checkRealmId();
 
     $employeeModel = new \Models\QuickbooksEmployee();
     $employeeModel->realmid = $_GET['realmid'];
@@ -249,5 +254,24 @@ class QBPayrollJournalCtl{
     
   }
   
+  private static function checkRealmId() {
+    if(!isset($_GET['realmid']) || empty($_GET['realmid']) ) {
+      http_response_code(400);   
+      echo json_encode(
+        array("message" => "Please supply a value for the 'realmid' parameter.")
+      );
+      exit(1);
+    }
+  }
 
+  private static function checkPayrollDate(){
+    if(!isset($_GET['payrolldate']) || empty($_GET['payrolldate']) ||
+            !\Core\DatesHelper::validateDate($_GET['payrolldate'])) {
+      http_response_code(400);   
+      echo json_encode(
+        array("message" => "Please supply a valid value for the 'payrolldate' parameter.")
+      );
+      exit(1);
+    }
+  }
 }
