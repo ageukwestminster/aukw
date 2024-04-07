@@ -4,13 +4,12 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '@environments/environment';
 import {
   EmployeeAllocation,
-  EmployerNIEntry,
   PayrollJournalEntry,
 } from '@app/_models';
 import { Observable } from 'rxjs';
 
 const baseUrl = `${environment.apiUrl}/qb`;
-const allocationsUrl = `${environment.apiUrl}/qb/employees/allocations`;
+const allocationsUrl = `${environment.apiUrl}/qb/employee/allocations`;
 
 /**
  * This class performs a number of payroll-related task on Quickbooks

@@ -82,7 +82,7 @@ class QuickbooksEmployee{
             "payrollNumber" => $item->EmployeeNumber
           );
           if ($item->EmployeeNumber) {
-            $employeeArray[$item->Id] = $employee;
+            $employeeArray[] = $employee;
           }
         }
 

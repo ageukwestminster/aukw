@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
 import { concatMap, mergeMap, tap, toArray } from 'rxjs/operators';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
@@ -201,6 +201,13 @@ export class PayslipListComponent implements OnInit {
     if (!this.payslips || !this.payslips.length) return;
 
     this.busyOnShopJournals = true;
+
+    const data$ = forkJoin({
+      payslips: this.payrollService
+                  .shopPayslips(this.payslips, this.allocations)
+                  .pipe(toArray()),
+      employees: 
+    })
 
     this.payrollService
       .shopPayslips(this.payslips, this.allocations)
