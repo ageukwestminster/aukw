@@ -7,14 +7,17 @@
 />
 
 <div class="file-section">
-  {{ (file && file.name) || "No file uploaded yet." }}
-  <div class="col-sm-2">
+  <div class="d-flex flex-column">
     <button
       (click)="fileUpload.click()"
       class="btn btn-sm btn-success m-1 mt-1"
     >
       Upload File
     </button>
+    <div>
+      <strong>File:</strong>
+      {{ (file && file.name) || "No file uploaded yet." }}
+    </div>
     <div *ngIf="loading" class="spinner-border spinner-border-sm"></div>
     <section [ngSwitch]="status">
       <p *ngSwitchCase="'uploading'">Uploading...</p>
