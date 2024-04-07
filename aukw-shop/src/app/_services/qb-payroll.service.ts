@@ -27,7 +27,7 @@ export class QBPayrollService {
 
   createEmployerNIJournal(
     realmID: string,
-    params: EmployerNIEntry[],
+    params: any,
     payrollDate: string,
   ) {
     return this.http.post<any>(

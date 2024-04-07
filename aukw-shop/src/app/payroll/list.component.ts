@@ -1,12 +1,9 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
-import { Observable, from } from 'rxjs';
+import { Observable } from 'rxjs';
 import {
   concatMap,
-  filter,
   mergeMap,
-  map,
-  scan,
   tap,
   toArray,
 } from 'rxjs/operators';
@@ -24,10 +21,9 @@ import {
   EmployerNIEntry,
   PayrollJournalEntry,
   IrisPayslip,
-  PensionAllocation,
+  Allocation,
   QBRealm,
   User,
-  TotalPayAllocation,
 } from '@app/_models';
 import { SharedModule } from '@app/shared/shared.module';
 
@@ -50,6 +46,7 @@ export class PayslipListComponent implements OnInit {
   busyOnPensions: boolean = false;
   busyOnEmployerNI: boolean = false;
   busyOnEmployeeJournals: boolean = false;
+  busyOnShopJournals: boolean = false;
 
   constructor(
     private alertService: AlertService,
@@ -68,7 +65,6 @@ export class PayslipListComponent implements OnInit {
     payslips.forEach((element) => {
       this.total = this.total.add(element);
     });
-  
   }
 
   /**
@@ -126,50 +122,23 @@ export class PayslipListComponent implements OnInit {
 
     this.busyOnEmployerNI = true;
 
-    const employerNIArray: EmployerNIEntry[] = [];
-
-    this.payslips.forEach((payslip) => {
-      const allocations = this.allocations.filter(
-        (x) => x.payrollNumber == payslip.employeeId,
-      );
-      let sum: number = 0;
-      if (allocations.length) {
-        for (const [i, v] of allocations.entries()) {
-          const entry = new EmployerNIEntry({
-            employeeId: v.id,
-            class: v.class,
-            account: v.account,
-            amount: Number(
-              (Math.round(payslip.employerNI * v.percentage) / 100).toFixed(2),
-            ),
-          });
-
-          // The sum of the allocated amounts must equal the starting total
-          // If there is a discrepancy then adjust the final allocated amount.
-          sum += entry.amount;
-          if (i == allocations.length - 1 && sum != payslip.employerNI) {
-            entry.amount += payslip.employerNI - sum;
-
-            // Round to avoid numbers like 65.4000000000004
-            entry.amount = Number(entry.amount.toFixed(2));
-          }
-          if (entry.amount) employerNIArray.push(entry);
-        }
-      }
-    });
-
-    // Create QBO Journal entry via api call
-    this.qbPayrollService
-      .createEmployerNIJournal(
-        this.charityRealm.realmid!,
-        employerNIArray,
-        this.payrollDate,
+    this.payrollService.employerNIAllocatedCosts(this.payslips, this.allocations)
+      .pipe(
+        toArray(),
+        mergeMap((v) => this.qbPayrollService
+          .createEmployerNIJournal(
+            this.charityRealm.realmid!,
+            v,
+            this.payrollDate,
+          )
+        )
       )
       .subscribe({
         next: () => this.alertService.info('Employer NI journal added.'),
         error: (e) => this.alertService.error(e),
         complete: () => (this.busyOnEmployerNI = false),
       });
+
   }
 
   makeEmployeeJournalEntries() {
@@ -204,70 +173,8 @@ export class PayslipListComponent implements OnInit {
 
     this.busyOnPensions = true;
 
-    const costs$ = from(this.payslips)
+    this.payrollService.pensionAllocatedCosts(this.payslips, this.allocations)
       .pipe(
-        filter((p) => !p.pensionBillInQBO && p.employerPension != 0), // Only add if not already in QBO
-        concatMap((p) =>
-          // this will split each payslip into one or more allocations
-          from(
-            this.allocations.filter((x) => x.payrollNumber == p.employeeId),
-          ).pipe(
-            // Ignore any allocations of 0%
-            filter((x) => x.percentage != 0),
-
-            // loop through each allocation, computing the correct £ amount from the percentage supplied
-            scan(
-              (acc: any, allocation: EmployeeAllocation) => {
-                // We are looping through an array of allocations ordered by employee
-                // When the employee changes, reset subtotal (i.e. sum) to zero
-                if (allocation.id != acc.entry.id) {
-                  acc.sum = 0;
-                }
-
-                // This is what's left to allocate
-                const remainder = p.employerPension - acc.sum;
-
-                // Make first attempt at calcualted amount, from percentage and pension amount
-                let calculatedAllocatedAmount = Number(
-                  (
-                    Math.round(p.employerPension * allocation.percentage) / 100
-                  ).toFixed(2),
-                );
-
-                // Amount can never exceed remainder
-                calculatedAllocatedAmount = Math.min(
-                  calculatedAllocatedAmount,
-                  remainder,
-                );
-
-                // Handle edge case: Calculated amount is close to but less than remainder
-                // In that case then use the remainder
-                if (Math.abs(remainder - calculatedAllocatedAmount) < 1)
-                  calculatedAllocatedAmount = remainder;
-
-                const pa = new PensionAllocation({
-                  id: allocation.id,
-                  name: allocation.name,
-                  account: allocation.account,
-                  class: allocation.class,
-                  amount: calculatedAllocatedAmount,
-                });
-
-                // Send this object back as an accumulator, later we will just take the entry property
-                return {
-                  sum: acc.sum + pa.amount,
-                  entry: pa,
-                };
-              },
-              // starting value for accumulator
-              {
-                sum: 0,
-                entry: new PensionAllocation({ id: 0, amount: 0 }),
-              },
-            ),
-          ),
-        ),
-        map((x) => x.entry), // pluck a single property
         toArray(), // convert to an array, this will form body of post call
         mergeMap((costs) => {
           // Send to api
@@ -294,4 +201,19 @@ export class PayslipListComponent implements OnInit {
       });
   }
 
+  shopJournals() {
+    if (!this.payslips || !this.payslips.length) return;
+
+    this.busyOnShopJournals = true;
+
+    this.payrollService.shopPayslips(this.payslips, this.allocations)
+      .pipe(
+        tap((x) => console.log(x))
+      )
+      .subscribe({
+        next: () => this.alertService.info('Shop jopurnals added.'),
+        error: (e) => this.alertService.error(e),
+        complete: () => (this.busyOnShopJournals = false),
+      });
+    }
 }

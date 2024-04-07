@@ -12,21 +12,11 @@ export class EmployerNIEntry {
   }
 }
 
-export class TotalPayAllocation {
-  amount: number;
-  account: string;
-  class: string;
-
-  constructor(obj?: any) {
-    this.amount = (obj && obj.amount) || null;
-    this.account = (obj && obj.account) || null;
-    this.class = (obj && obj.class) || null;
-  }
-}
+import { Allocation } from './allocation'
 
 export class PayrollJournalEntry {
   employeeId: number;
-  totalPay: TotalPayAllocation[];
+  totalPay: Allocation[];
   paye: number;
   employeeNI: number;
   otherDeductions: number;

@@ -206,7 +206,8 @@ class QBPayrollJournalCtl{
                           $employees[$employee->value]['payrollNumber']:null,
                   'percentage' => $amount, 
                   'account' => $account->value,
-                  'class' => (string)$class->value
+                  'class' => (string)$class->value,
+                  'isShopEmployee' => $account->value == QBO::AUEW_ACCOUNT
               ];
             }
           }

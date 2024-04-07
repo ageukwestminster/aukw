@@ -33,6 +33,13 @@
       ></span>
       Pension Bill
     </button>
+    <button (click)="shopJournals()" class="btn btn-sm btn-success m-1 mt-1">
+      <span
+        *ngIf="busyOnShopJournals"
+        class="spinner-border spinner-border-sm"
+      ></span>
+      Shop Journals
+    </button>
   </div>
 </div>
 <div class="progress" *ngIf="payslips && payslips!.length && showProgressBar">
