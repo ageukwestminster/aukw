@@ -1,7 +1,7 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import { Observable, from } from 'rxjs';
-import { concatMap, filter, mergeMap, map, tap } from 'rxjs/operators';
+import { concatMap, filter, mergeMap, map, scan, tap, toArray } from 'rxjs/operators';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import {
@@ -15,6 +15,7 @@ import {
   EmployerNIEntry,
   PayrollJournalEntry,
   IrisPayslip,
+  PensionAllocation,
   QBRealm,
   User,
   TotalPayAllocation,
@@ -36,6 +37,7 @@ export class PayslipListComponent implements OnInit {
   employeeJournalEntries$!: Observable<PayrollJournalEntry>;
   currentPayslip: number = 0;
   showProgressBar: boolean = false;
+  employeePensionCosts$!: Observable<PensionAllocation[]>;
 
   constructor(
     private alertService: AlertService,
@@ -58,6 +60,33 @@ export class PayslipListComponent implements OnInit {
       filter((p) => !p.payslipJournalInQBO), // Only add if not already in QBO
       map((p: IrisPayslip) => this.convertPayslipToQBOFormat(p)), // map into allocated classes
       tap(() => this.currentPayslip++), // used to fill progress bar
+    );
+/*
+    this.employeePensionCosts$ = from(this.payslips).pipe(
+      filter((p) => !p.pensionBillInQBO), // Only add if not already in QBO
+      scan((sum,current) => {
+        return sum+current.employeePension;
+      })),
+      toArray()
+    )*/
+
+    this.employeePensionCosts$ = from(this.allocations).pipe(
+      map((alloc) => {
+        
+        const pensionCost = this.payslips.filter(
+          (p) => p.employeeId == alloc.payrollNumber,
+        )[0].employerPension;
+
+        return new PensionAllocation({
+          name: alloc.name,
+          account: alloc.account,
+          class: alloc.class,
+          amount: Number(
+            (Math.round(pensionCost * alloc.percentage) / 100).toFixed(2),
+          ),
+        });
+      }),
+      toArray(),
     );
   }
 
@@ -82,11 +111,9 @@ export class PayslipListComponent implements OnInit {
             this.charityRealm.realmid!,
           );
         }),
+        tap((allocations) => (this.allocations = allocations)),
       )
       .subscribe({
-        next: (response: any) => {
-          this.allocations = response;
-        },
         error: (error: any) => {
           this.alertService.error('QB Realms not loaded. ' + error, {
             autoClose: false,
@@ -180,6 +207,25 @@ export class PayslipListComponent implements OnInit {
   pensionBill() {
     if (!this.payslips || !this.payslips.length) return;
 
+    this.employeePensionCosts$.pipe(
+      mergeMap((costs) => {
+        return this.qbPayrollService.createPensionBill(
+          this.charityRealm.realmid!,
+          {
+            salarySacrificeTotal: this.total.salarySacrifice.toFixed(2),
+            employeePensionTotal: this.total.employeePension.toFixed(2),
+            pensionCosts: costs,
+            total: (
+              this.total.employeePension +
+              this.total.salarySacrifice +
+              this.total.employerPension
+            ).toFixed(2),
+          },
+          this.payrollDate,
+        );
+      }),
+    );
+
     this.qbPayrollService
       .createPensionBill(
         this.charityRealm.realmid!,
@@ -198,14 +244,14 @@ export class PayslipListComponent implements OnInit {
   }
 
   /**
-   * Given an employee's patyslip numbers, convert them into an array that can be used
+   * Given an employee's payslip numbers, convert them into an array that can be used
    * to create a journal in QBO.
    * @param p The detailed salary and deduction amounts form an employee's payslip
    * @returns
    */
   convertPayslipToQBOFormat(p: IrisPayslip): PayrollJournalEntry {
     const allocations = this.allocations.filter(
-      (x) => x.payrollNumber == p.employeeId,
+      (allocation) => allocation.payrollNumber == p.employeeId,
     );
 
     const entry = new PayrollJournalEntry({

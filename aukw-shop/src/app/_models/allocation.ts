@@ -19,3 +19,21 @@ export class EmployeeAllocation {
     this.payrollNumber = (obj && obj.payrollNumber) || null;
   }
 }
+
+/**
+ * Define the properties of an employee allocation
+ */
+
+export class PensionAllocation {
+  name: string;
+  amount: number;
+  account: number;
+  class: string;
+
+  constructor(obj?: any) {
+    this.name = (obj && obj.name) || null;
+    this.amount = (obj && obj.amount) || null;
+    this.account = (obj && obj.account) || null;
+    this.class = (obj && obj.class) || null;
+  }
+}
