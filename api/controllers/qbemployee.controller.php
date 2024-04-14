@@ -2,6 +2,8 @@
 
 namespace Controllers;
 
+use \Models\QuickbooksEmployee;
+
 /**
  * Controller to accomplish QBO Employee related tasks. 
  *
@@ -25,9 +27,9 @@ class QBEmployeeCtl{
       exit(1);
     } 
 
-    $model = new \Models\QuickbooksEmployee();
-    $model->id = $id;
-    $model->realmid = $_GET['realmid'];
+    $model = QuickbooksEmployee::getInstance()
+      ->setId($id)
+      ->setRealmID($_GET['realmid']);   
 
     echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
   }
@@ -47,8 +49,8 @@ class QBEmployeeCtl{
       exit(1);
     } 
 
-    $model = new \Models\QuickbooksEmployee();
-    $model->realmid = $_GET['realmid'];
+    $model = QuickbooksEmployee::getInstance()
+      ->setRealmID($_GET['realmid']); 
 
     echo json_encode(array_values($model->readAll()), JSON_NUMERIC_CHECK);
   }

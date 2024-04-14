@@ -14,13 +14,55 @@ class QuickbooksEmployee{
    *
    * @var int
    */
-  public int $id;
+  protected int $id;
   /**
    * The QBO company ID
    *
    * @var string
    */
-  public string $realmid;
+  protected string $realmid;
+
+  /**
+   * ID setter
+   */
+  public function setId(int $id) {
+    $this->id = $id;
+    return $this;
+  }
+
+  /**
+   * Private realmID setter.
+   */
+  public function setRealmID(string $realmid) {
+    $this->realmid = $realmid;
+    return $this;
+  }
+
+  /**
+   * realmID getter.
+   */
+  public function getrealmId() : string {
+    return $this->realmid;
+  }
+
+  /**
+   * Id getter.
+   */
+  public function getId() : int {
+    return $this->id;
+  }  
+
+  /**
+   * Constructor
+   */
+  protected function __construct(){}
+
+  /**
+   * Static constructor / factory
+   */
+  public static function getInstance() {
+    return new self();
+  }
 
   /**
    * Return details of the QBEmployee identified by $id
