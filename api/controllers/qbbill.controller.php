@@ -35,6 +35,28 @@ class QBBillCtl{
 
     echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
   }
+  
+  /**
+   * Return an array of bills whose DocNumber starts with the given string.
+   *
+   * @param string $doc_number The string to match e.g. 'Payroll_2024_03'
+   * @return void Output is echo'd directly to response 
+   */
+  public static function query_by_docnumber(string $doc_number){  
+
+    if(!isset($_GET['realmid']) ) {
+      http_response_code(400);   
+      echo json_encode(
+        array("message" => "Please supply a value for the 'realmid' parameter.")
+      );
+      exit(1);
+    } 
+
+    $model = QuickbooksBill::getInstance()
+      ->setRealmID($_GET['realmid']);  
+
+    echo json_encode($model->query_by_docnumber($doc_number), JSON_NUMERIC_CHECK);
+  }
 
   /**
    * Delete from QBO the bill identified by $id

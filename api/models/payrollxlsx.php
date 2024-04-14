@@ -7,9 +7,9 @@ use Exception;
 use Models\Payslip;
 
 /**
- * The Payroll spreadsheet, as provided by Iris the software company
+ * The Payroll spreadsheet, as provided by our payroll software company, Iris FMP.
  * 
- * Makes heavy use of PHPSpreadsheet {@link https://phpspreadsheet.readthedocs.io/en/latest/ manual}.
+ * Makes heavy use of PHPSpreadsheet. {@link https://phpspreadsheet.readthedocs.io/en/latest/ }
  * 
  * @category Model
  */

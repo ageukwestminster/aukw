@@ -32,7 +32,7 @@ class QBJournalCtl{
     echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
   }
 
-    /**
+  /**
    * Return an array of journals whose DocNumber starts with the given string.
    *
    * @param string $doc_number The string to match e.g. 'Payroll_2024_03'

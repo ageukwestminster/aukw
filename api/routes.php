@@ -161,6 +161,8 @@ $router->mount('/qb', function () use ($router) {
     $router->get('/bill/(\w+)', 'QBBillCtl@read_one');
     // QB Bill fopr Pension payments
     $router->post('/bill/pensions', 'QBBillCtl@create_pensions_bill');
+    // Get a list of bills whose DocNumber starts with the given string                                    
+    $router->get('/bill/docnumber/(\w+)', 'QBBillCtl@query_by_docnumber');
 
     // QB Class
     $router->get('/class/(\w+)', 'QBClassCtl@read_one');
