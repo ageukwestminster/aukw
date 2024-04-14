@@ -109,7 +109,7 @@ class QuickbooksBill{
   }
 
   /**
-   * Transaction Date getter.
+   * realmID getter.
    */
   public function getrealmId() : string {
       return $this->realmid;

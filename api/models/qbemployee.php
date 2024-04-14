@@ -96,10 +96,30 @@ class QuickbooksEmployee{
   /**
    * Return details of all QBO Employees
    * 
-   * @return array An array of QBO Employees
+   * @return array An array of QBO Employees, associated by QBO Id
    * 
    */
   public function readAll(){
+    return $this->readAllImpl(false);
+  }
+
+  /**
+   * Return details of all QBO Employees
+   * 
+   * @return array An array of QBO Employees, associated by Name
+   * 
+   */
+  public function readAllAssociatedByName(){
+    return $this->readAllImpl(true);
+  }
+
+  /**
+   * Return details of all QBO Employees
+   * @param bool $associateByName If 'true' return an associative array, sorted by Display Name
+   * @return array An array of QBO Employees
+   * 
+   */
+  private function readAllImpl(bool $associateByName = false){
 
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->realmid);
@@ -124,13 +144,17 @@ class QuickbooksEmployee{
             "payrollNumber" => $item->EmployeeNumber
           );
           if ($item->EmployeeNumber) {
-            $employeeArray[$item->Id] = $employee;
+            if ($associateByName) {
+              $employeeArray[$item->DisplayName] = $employee;
+            } else {
+              $employeeArray[$item->Id] = $employee;
+            }
           }
         }
 
         return $employeeArray;
     }
-}
+  }
 
 
 }

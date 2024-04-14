@@ -40,13 +40,14 @@ class QuickbooksEmployerNIJournal extends QuickbooksJournal{
       foreach ($entries as $line) {
         //&$line_array, $description, $amount, $employee, $class, $account)
         // This code will only add the respective line if amount != 0
-        $this->payrolljournal_line($payrolljournal['Line'], "", 
+        $this->payrolljournal_line($payrolljournal['Line'], QBO::EMPLOYER_NI_DESCRIPTION, 
             $line->amount, $line->employeeId, $line->class, $line->account);
         
         $sum -= $line->amount;
       }
 
-      $this->payrolljournal_line($payrolljournal['Line'], "", 
+      $this->payrolljournal_line($payrolljournal['Line'], 
+        "Total of " . QBO::EMPLOYER_NI_DESCRIPTION, 
         $sum, '', QBO::ADMIN_CLASS, QBO::TAX_ACCOUNT);
     
       $theResourceObj = JournalEntry::create($payrolljournal);

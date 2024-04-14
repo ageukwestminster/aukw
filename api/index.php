@@ -22,6 +22,7 @@ include_once 'controllers/qbemployee.controller.php';
 include_once 'controllers/qbitem.controller.php';
 include_once 'controllers/qbjournal.controller.php';
 include_once 'controllers/qbpayrolljournal.controller.php';
+include_once 'controllers/qbpayrollquery.controller.php';
 include_once 'controllers/qbrealm.controller.php';
 include_once 'controllers/qbrecurringtxn.controller.php';
 include_once 'controllers/qbreport.controller.php';

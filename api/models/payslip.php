@@ -17,6 +17,12 @@ class Payslip implements \JsonSerializable{
    * @var int
    */
   protected int $employeeId;
+    /**
+   * The ID of the employee on QBO
+   *
+   * @var int
+   */
+  protected int $quickbooksId;
   /**
    * The name of the employee
    *
@@ -34,25 +40,25 @@ class Payslip implements \JsonSerializable{
    *
    * @var float
    */
-  protected float $totalPay;
+  protected float $totalPay=0;
     /**
    * Income tax for the month.  
    *
    * @var float
    */
-  protected float $paye;
+  protected float $paye=0;
   /**
    * Employee NI for the month.  
    *
    * @var float
    */
-  protected float $employeeNI;
+  protected float $employeeNI=0;
     /**
    * Other deductions for the month.  
    *
    * @var float
    */
-  protected float $otherDeductions;
+  protected float $otherDeductions=0;
     /**
    * Salary sacrificed towards pension for the month.  
    *
@@ -64,19 +70,19 @@ class Payslip implements \JsonSerializable{
    *
    * @var float
    */
-  protected float $studentLoan;
+  protected float $studentLoan=0;
     /**
    * Net salary for the month.  
    *
    * @var float
    */
-  protected float $netPay;
+  protected float $netPay=0;
     /**
    * Employer's NI for the month.  
    *
    * @var float
    */
-  protected float $employerNI;
+  protected float $employerNI=0;
   /**
    * Pension contribution from employer.  
    *
@@ -96,6 +102,12 @@ class Payslip implements \JsonSerializable{
   public function getEmployeeId():int {
     return $this->employeeId;
   }
+  /**
+   * Quickbooks ID getter
+   */
+  public function getQuickbooksId():int {
+    return $this->quickbooksId;
+  }  
   /**
    * Employee name getter
    */
@@ -174,6 +186,13 @@ class Payslip implements \JsonSerializable{
     $this->employeeId = $employeeId;
     return $this;
   }
+  /**
+   * Quickbooks employee ID setter
+   */
+  public function setQuickbooksId(float $quickbooksId) {
+    $this->quickbooksId = $quickbooksId;
+    return $this;
+  }  
   /**
    * Employee name setter
    */
@@ -255,6 +274,86 @@ class Payslip implements \JsonSerializable{
    */
   public function setTotalPay(float $totalPay) {
     $this->totalPay = $totalPay;
+    return $this;
+  }
+  /**
+   * Increment Pension contribution from employee for the month by the given amount.
+   */
+  public function addToEmployeePension(float $employeePension) {
+    $this->employeePension += $employeePension;
+    $this->employeePension = round($this->employeePension, 2);
+    return $this;
+  }
+    /**
+   * Increment Pension contribution from employer by the given amount.
+   */
+  public function addToEmployerPension(float $employerPension) {
+    $this->employerPension += $employerPension;
+    $this->employerPension = round($this->employerPension, 2);
+    return $this;
+  }
+    /**
+   * Increment Employer NI by the given amount.
+   */
+  public function addToEmployerNI(float $employerNI) {
+    $this->employerNI += $employerNI;
+    $this->employerNI = round($this->employerNI, 2);
+    return $this;
+  }
+    /**
+   * Increment Employee NI setter by the given amount.
+   */
+  public function addToEmployeeNI(float $employeeNI) {
+    $this->employeeNI += $employeeNI;
+    $this->employeeNI = round($this->employeeNI, 2);
+    return $this;
+  }
+    /**
+   *  Increment Net pay for the month by the given amount.
+   */
+  public function addToNetPay(float $netPay) {
+    $this->netPay += $netPay;
+    $this->netPay = round($this->netPay, 2);
+    return $this;
+  }
+  /**
+   * Increment Student loan repayment by the given amount.
+   */
+  public function addToStudentLoan(float $studentLoan) {
+    $this->studentLoan += $studentLoan;
+    $this->studentLoan = round($this->studentLoan, 2);
+    return $this;
+  }  
+  /**
+  * Total pay for the month by the given amount.
+  */
+  public function addToPAYE(float $paye) {
+    $this->paye += $paye;
+    $this->paye = round($this->paye, 2);
+    return $this;
+  }
+   /**
+   * Increment Other deductions by the given amount.
+   */
+  public function addToOtherDeductions(float $otherDeductions) {
+    $this->otherDeductions += $otherDeductions;
+    $this->otherDeductions = round($this->otherDeductions, 2);
+    return $this;
+  }
+  /**
+   * Increment Salary sacrifice by the given amount.
+   */
+  public function addToSalarySacrifice(float $salarySacrifice) {
+    $this->salarySacrifice += $salarySacrifice;
+    $this->salarySacrifice = round($this->salarySacrifice, 2);
+    return $this;
+  }
+  /**
+   * Increment Total pay by the given amount.
+   */
+  public function addToTotalPay(float $totalPay) {
+    $this->totalPay += $totalPay;
+    $this->totalPay = round($this->totalPay, 2);
     return $this;
   }
 

@@ -14,13 +14,25 @@ class QuickbooksConstants {
   // Charity Constants
   const AUEW_ACCOUNT = "65";
   const EMPLOYEE_PENSION_CONTRIB_ACCOUNT = "66";
+  const EMPLOYER_NI_ACCOUNT = "95";
   const SALARY_SACRIFICE_ACCOUNT = "375";
   const NET_PAY_ACCOUNT = "98";
   const OTHER_DEDUCTIONS_ACCOUNT = "503";
   const PENSION_COSTS_ACCOUNT = "285";
+  const STAFF_SALARIES_ACCOUNT = "261";
   const TAX_ACCOUNT = "256";
 
   const ADMIN_CLASS = "1400000000000130710";
+
+  const EMPLOYEE_NI_DESCRIPTION = "Employee NI";
+  const EMPLOYER_NI_DESCRIPTION = "Employer NI";
+  const EMPLOYEE_PENSION_CONT_DESCRIPTION = "Employee Pension Contribution";
+  const GROSS_SALARY_DESCRIPTION = "Gross Salary";
+  const NET_PAY_DESCRIPTION = "Net Pay";
+  const OTHER_DEDUCTIONS_DESCRIPTION = "Other Deductions";
+  const PAYE_DESCRIPTION = "PAYE";
+  const SALARY_SACRIFICE_DESCRIPTION = "Salary Sacrifice";
+  const STUDENT_LOAN_DESCRIPTION = "Student Loan Deductions";
 
   const NOVAT_TAX_CODE = "20";
 

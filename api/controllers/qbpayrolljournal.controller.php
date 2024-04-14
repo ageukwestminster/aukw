@@ -3,6 +3,7 @@
 namespace Controllers;
 
 use Core\QuickbooksConstants as QBO;
+use \Models\QuickbooksEmployee;
 use \Models\QuickbooksEmployerNIJournal;
 use \Models\QuickbooksEnterprisesJournal;
 use \Models\QuickbooksPayrollJournal;
@@ -15,15 +16,9 @@ use \Models\QuickbooksPayrollJournal;
 class QBPayrollJournalCtl{
 
   /**
-   * Create a QBO sales receipt from data supplied via http POST
-   * Sales items should be positive, Expenses and cash/credit cards are negative.
    * 
-   * Sample data:
-   *  { "date": "2022-04-29", 
-   *  }
    *
    * @return void Output is echoed directly to response 
-   * 
    */
   public static function create_employee_payslip_journal(){  
 
@@ -175,9 +170,9 @@ class QBPayrollJournalCtl{
 
     QBPayrollJournalCtl::checkRealmId();
 
-    $employeeModel = new \Models\QuickbooksEmployee();
-    $employeeModel->realmid = $_GET['realmid'];
-    $employees = $employeeModel->readAll();
+    $employees = QuickbooksEmployee::getInstance()
+      ->setRealmID($_GET['realmid'])
+      ->readAll();
 
     $model = new \Models\QuickbooksRecurringTransaction();
     $model->id = \Core\Config::read('qb.allocationsid');
