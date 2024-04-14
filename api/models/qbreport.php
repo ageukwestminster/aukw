@@ -44,6 +44,12 @@ class QuickbooksReport{
      * @var string
      */
     public string $realmid;
+    /**
+     * A QBO account ID
+     *
+     * @var int
+     */
+    public int $account = 0;
 
         /**
      * Generate a Profit & Loss report
@@ -127,9 +133,14 @@ class QuickbooksReport{
             return;
         }
   
-        $reportService->setStartDate($this->startdate);
-        $reportService->setEndDate($this->enddate);
-        $reportService->setSummarizeColumnBy($this->summarizeColumn);
+        $reportService
+            ->setStartDate($this->startdate)
+            ->setEndDate($this->enddate)
+            ->setSummarizeColumnBy($this->summarizeColumn);
+
+        if (!$this->account) {
+            $reportService->setAccount($this->account);
+        }
 
         $profitAndLossReport = $reportService->executeReport(ReportName::GENERALLEDGER);
 

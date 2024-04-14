@@ -92,6 +92,10 @@ class QBReportCtl{
         $model->summarizeColumn = '';
     }
 
+    if (isset($_GET['account']) && !empty($_GET['account'])) {
+      $model->account = $_GET['account'];
+    } 
+
     echo json_encode($model->general_ledger(), JSON_NUMERIC_CHECK);
   }
 
