@@ -24,7 +24,7 @@ class QBAuthCtl{
   }
 
   /**
-   * As part of the QBO OAuth2 process the server contacts QBO to make a copnnection to
+   * As part of the QBO OAuth2 process the server contacts QBO to make a connection to
    * a QBO company. If the user supplies valided credentials then QBO sends back to the
    * system authorization codes. It does this by means of a callback uri. When the QBO
    * API calls the endpoint the system routes the request through here.
