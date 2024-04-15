@@ -42,7 +42,7 @@
     <button
       (click)="employerNI()"
       class="btn btn-sm btn-success m-1 mt-1 #employerNI"
-      [disabled]="disableEmployerNI"
+      [disabled]="disableEmployerNI || total.niJournalInQBO"
     >
       <span
         *ngIf="busyOnEmployerNI"
@@ -56,7 +56,7 @@
     <button
       (click)="makeEmployeeJournalEntries()"
       class="btn btn-sm btn-success m-1 mt-1"
-      [disabled]="disableEmployeeJournals"
+      [disabled]="disableEmployeeJournals || total.payslipJournalInQBO"
     >
       <span
         *ngIf="busyOnEmployeeJournals"
@@ -70,7 +70,7 @@
     <button
       (click)="pensionBill()"
       class="btn btn-sm btn-success m-1 mt-1"
-      [disabled]="disablePensions"
+      [disabled]="disablePensions || total.pensionBillInQBO"
     >
       <span
         *ngIf="busyOnPensions"
@@ -84,7 +84,7 @@
     <button
       (click)="shopJournals()"
       class="btn btn-sm btn-success m-1 mt-1"
-      [disabled]="disableShopJournals"
+      [disabled]="disableShopJournals || total.shopJournalInQBO"
     >
       <span
         *ngIf="busyOnShopJournals"
@@ -163,12 +163,12 @@
                 <th style="width: 8%" class="d-none d-sm-table-cell">
                   E'er NI
                 </th>
-                <th style="width: 8%">In QBO?</th>
+                <th class="text-center" style="width: 8%">In QBO?</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let payslip of payslips">
-                <td>{{ payslip.employeeId }}</td>
+                <td style="vertical-align: middle;">{{ payslip.employeeId }}</td>
                 <td>{{ payslip.employeeName }}</td>
                 <td>{{ payslip.totalPay | number: "1.2-2" }}</td>
                 <td class="d-none d-sm-table-cell">
@@ -196,65 +196,90 @@
                   {{ payslip.employerNI | number: "1.2-2" }}
                 </td>
                 <td class="text-center">
-                  <span style="color: green">
-                    <i
-                      class="fas fa-check"
-                      *ngIf="payslip.payslipJournalInQBO"
-                      ngbTooltip="Employee payslip GJ done."
-                    ></i>
-                  </span>
-                  <span style="color: red">
-                    <i
-                      class="fas fa-times"
-                      *ngIf="!payslip.payslipJournalInQBO"
-                      ngbTooltip="Employee payslip GJ missing."
-                    ></i>
-                  </span>
-                  <span style="color: green">
-                    <i
-                      class="fas fa-check"
-                      *ngIf="payslip.pensionBillInQBO"
-                      ngbTooltip="L&G pension bill done."
-                    ></i>
-                  </span>
-                  <span style="color: red">
-                    <i
-                      class="fas fa-times"
-                      *ngIf="!payslip.pensionBillInQBO"
-                      ngbTooltip="L&G pension bill missing."
-                    ></i>
-                  </span>
-                  <span style="color: green">
-                    <i
-                      class="fas fa-check"
-                      *ngIf="payslip.niJournalInQBO"
-                      ngbTooltip="Employer NI journal done."
-                    ></i>
-                  </span>
-                  <span style="color: red">
-                    <i
-                      class="fas fa-times"
-                      *ngIf="!payslip.niJournalInQBO"
-                      ngbTooltip="Employer NI journal missing."
-                    ></i>
-                  </span>
-                  <span style="color: green">
-                    <i
-                      class="fas fa-check"
-                      *ngIf="payslip.isShopEmployee && payslip.shopJournalInQBO"
-                      ngbTooltip="Shop journal entry done."
-                    ></i>
-                  </span>
-                  <span style="color: red">
-                    <i
-                      class="fas fa-times"
-                      *ngIf="
-                        payslip.isShopEmployee && !payslip.shopJournalInQBO
-                      "
-                      ngbTooltip="Shop journal entry missing."
-                    ></i>
-                  </span>
-                  <i class="fas fa-minus" *ngIf="!payslip.isShopEmployee"></i>
+                  <div class="row">
+                    <div class="col">
+                      <i class="fas fa-minus" *ngIf="!payslip.employerNI"></i>
+                      <span style="color: green">
+                        <i
+                          class="fas fa-check"
+                          *ngIf="payslip.employerNI && payslip.niJournalInQBO"
+                          ngbTooltip="Employer NI journal done."
+                        ></i>
+                      </span>
+                      <span style="color: red">
+                        <i
+                          class="fas fa-times"
+                          *ngIf="payslip.employerNI && !payslip.niJournalInQBO"
+                          ngbTooltip="Employer NI journal missing."
+                        ></i>
+                      </span>
+                    </div>
+                    <div class="col">
+                      <span style="color: green">
+                        <i
+                          class="fas fa-check"
+                          *ngIf="payslip.payslipJournalInQBO"
+                          ngbTooltip="Employee payslip GJ done."
+                        ></i>
+                      </span>
+                      <span style="color: red">
+                        <i
+                          class="fas fa-times"
+                          *ngIf="!payslip.payslipJournalInQBO"
+                          ngbTooltip="Employee payslip GJ missing."
+                        ></i>
+                      </span>
+                    </div>
+                    <div class="col">
+                      <i
+                        class="fas fa-minus"
+                        *ngIf="!payslip.employerPension"
+                      ></i>
+                      <span style="color: green">
+                        <i
+                          class="fas fa-check"
+                          *ngIf="
+                            payslip.employerPension && payslip.pensionBillInQBO
+                          "
+                          ngbTooltip="L&G pension bill done."
+                        ></i>
+                      </span>
+                      <span style="color: red">
+                        <i
+                          class="fas fa-times"
+                          *ngIf="
+                            payslip.employerPension && !payslip.pensionBillInQBO
+                          "
+                          ngbTooltip="L&G pension bill missing."
+                        ></i>
+                      </span>
+                    </div>
+                    <div class="col">
+                      <i
+                        class="fas fa-minus"
+                        *ngIf="!payslip.isShopEmployee"
+                        ngbTooltip="Not a shop employee."
+                      ></i>
+                      <span style="color: green">
+                        <i
+                          class="fas fa-check"
+                          *ngIf="
+                            payslip.isShopEmployee && payslip.shopJournalInQBO
+                          "
+                          ngbTooltip="Shop journal entry done."
+                        ></i>
+                      </span>
+                      <span style="color: red">
+                        <i
+                          class="fas fa-times"
+                          *ngIf="
+                            payslip.isShopEmployee && !payslip.shopJournalInQBO
+                          "
+                          ngbTooltip="Shop journal entry missing."
+                        ></i>
+                      </span>
+                    </div>
+                  </div>
                 </td>
               </tr>
               <tr *ngIf="total && total.totalPay" style="font-weight: bold">

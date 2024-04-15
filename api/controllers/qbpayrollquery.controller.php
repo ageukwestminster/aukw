@@ -15,7 +15,7 @@ use \Models\QuickbooksEmployee;
 class QBPayrollQueryCtl{
 
   /**
-   * Query QBO and return (in Payslip format) details of current month's payroll
+   * Query QBO and return (in Payslip format) details of any payroll entries for the given month and year
    *
    * @param string $realmid The company ID for the QBO company.
    * @param int $year 

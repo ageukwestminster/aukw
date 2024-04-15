@@ -92,6 +92,13 @@ class QBPayrollJournalCtl{
 
     $data = json_decode(file_get_contents("php://input"));
 
+    if (!$data) {
+      echo json_encode(
+        array("message" => "Employer NI journal not added: No payslip data provided.")
+      );
+      exit(0);
+    }
+
     try {
 
       $model = QuickbooksEmployerNIJournal::getInstance()

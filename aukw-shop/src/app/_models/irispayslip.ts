@@ -33,7 +33,7 @@ export class IrisPayslip {
   employerPension: number;
   employeePension: number;
 
-  isShopEmployee: boolean;
+  isShopEmployee: boolean = false;
   niJournalInQBO: boolean = false;
   pensionBillInQBO: boolean = false;
   shopJournalInQBO: boolean = false;

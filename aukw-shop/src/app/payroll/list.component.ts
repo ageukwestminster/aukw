@@ -26,6 +26,7 @@ import { SharedModule } from '@app/shared/shared.module';
   templateUrl: 'list.component.html',
   standalone: true,
   imports: [NgFor, NgIf, NgbModule, RouterLink, SharedModule],
+  styleUrls: ['list.component.css'],
 })
 export class PayslipListComponent implements OnInit {
   payslips: IrisPayslip[] = [];
@@ -167,27 +168,57 @@ export class PayslipListComponent implements OnInit {
       })
         .pipe(
           map((x) => {
-            x.charityPayslips.forEach((quickbooksPayslip: IrisPayslip) => {
-              const xlsxPayslip = this.payslips.find(
-                (item) => item.employeeId == quickbooksPayslip.employeeId,
+            this.payslips.forEach((xlsxPayslip) => {
+              const quickbooksPayslip = x.charityPayslips.find(
+                (item) => item.employeeId == xlsxPayslip.employeeId,
               );
 
-              if (xlsxPayslip) {
-                this.updateInQBOCharityValues(xlsxPayslip, quickbooksPayslip);
-              }
-            });
-            x.shopPayslips.forEach((quickbooksPayslip: IrisPayslip) => {
-              const xlsxPayslip = this.payslips.find(
-                (item) => item.employeeId == quickbooksPayslip.employeeId,
+              this.updateInQBOCharityValues(
+                xlsxPayslip,
+                quickbooksPayslip ?? new IrisPayslip(),
               );
 
-              if (xlsxPayslip) {
-                this.updateInQBOEnterprisesValues(
-                  xlsxPayslip,
-                  quickbooksPayslip,
-                );
-              }
+              const quickbooksShopPayslip = x.shopPayslips.find(
+                (item) => item.employeeId == xlsxPayslip.employeeId,
+              );
+
+              this.updateInQBOEnterprisesValues(
+                xlsxPayslip,
+                quickbooksShopPayslip ?? new IrisPayslip(),
+              );
             });
+          }),
+          tap(() => {
+            // if there are ANY payslips with niJournalInQBO = false then set total.niJournalInQBO to false
+            let filter = this.payslips.filter(
+              (payslip) => payslip.employerNI && !payslip.niJournalInQBO,
+            );
+            if (filter && filter.length > 0) {
+              this.total.niJournalInQBO = false;
+            } else {
+              this.total.niJournalInQBO = true;
+            }
+
+            this.total.niJournalInQBO =
+              this.payslips.filter(
+                (payslip) => payslip.employerNI && !payslip.niJournalInQBO,
+              ).length == 0;
+
+            this.total.payslipJournalInQBO =
+              this.payslips.filter((payslip) => !payslip.payslipJournalInQBO)
+                .length == 0;
+
+            this.total.pensionBillInQBO =
+              this.payslips.filter(
+                (payslip) =>
+                  payslip.employerPension && !payslip.pensionBillInQBO,
+              ).length == 0;
+
+            this.total.shopJournalInQBO =
+              this.payslips.filter(
+                (payslip) =>
+                  !payslip.shopJournalInQBO && payslip.isShopEmployee,
+              ).length == 0;
           }),
         )
         .subscribe({
@@ -224,7 +255,7 @@ export class PayslipListComponent implements OnInit {
         ),
       )
       .subscribe({
-        next: () => this.alertService.info('Employer NI journal processed.'),
+        next: () => this.alertService.info('Employer NI journal added.'),
         error: (e) => this.alertService.error(e),
         complete: () => {
           this.busyOnEmployerNI = false;
@@ -358,9 +389,11 @@ export class PayslipListComponent implements OnInit {
     quickbooksPayslip: IrisPayslip,
   ): void {
     xlsxPayslip.niJournalInQBO =
+      xlsxPayslip.employerNI == 0 ||
       xlsxPayslip.employerNI == quickbooksPayslip.employerNI;
 
     xlsxPayslip.pensionBillInQBO =
+      xlsxPayslip.employerPension == 0 ||
       xlsxPayslip.employerPension == quickbooksPayslip.employerPension;
 
     xlsxPayslip.payslipJournalInQBO =
@@ -379,8 +412,11 @@ export class PayslipListComponent implements OnInit {
     quickbooksPayslip: IrisPayslip,
   ): void {
     xlsxPayslip.shopJournalInQBO =
-      xlsxPayslip.totalPay == quickbooksPayslip.totalPay &&
-      xlsxPayslip.employerNI == quickbooksPayslip.employerNI &&
-      xlsxPayslip.employerPension == quickbooksPayslip.employerPension;
+      (xlsxPayslip.totalPay == 0 &&
+        xlsxPayslip.employerNI == 0 &&
+        xlsxPayslip.employerPension == 0) ||
+      (xlsxPayslip.totalPay == quickbooksPayslip.totalPay &&
+        xlsxPayslip.employerNI == quickbooksPayslip.employerNI &&
+        xlsxPayslip.employerPension == quickbooksPayslip.employerPension);
   }
 }
