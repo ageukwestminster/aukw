@@ -201,6 +201,15 @@ class QuickbooksAuth{
        */
     public function refresh($userid, $realmid) {
 
+        if($this->jwt->id != $userid) {
+            http_response_code(401);  
+            echo json_encode(
+              array("message" => "Unable to refresh Quickbooks tokens, userid mismatch.",
+              "details" => "JWT userid = '".$this->jwt->id."', provided userid = '".$userid."'.")
+            );
+            exit(0);
+        }
+
         $this->init($realmid);
 
         $this->tokenModel->read($userid, $realmid);
