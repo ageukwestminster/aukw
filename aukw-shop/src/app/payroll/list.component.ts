@@ -1,14 +1,8 @@
 ﻿import { Component, OnInit } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { NgFor, NgIf } from '@angular/common';
 import { Observable, forkJoin } from 'rxjs';
-import {
-  concatMap,
-  map,
-  mergeAll,
-  mergeMap,
-  tap,
-  toArray,
-} from 'rxjs/operators';
+import { concatMap, filter, map, mergeMap, tap, toArray } from 'rxjs/operators';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import {
@@ -31,7 +25,7 @@ import { SharedModule } from '@app/shared/shared.module';
 @Component({
   templateUrl: 'list.component.html',
   standalone: true,
-  imports: [NgFor, NgIf, NgbModule, SharedModule],
+  imports: [NgFor, NgIf, NgbModule, RouterLink, SharedModule],
 })
 export class PayslipListComponent implements OnInit {
   payslips: IrisPayslip[] = [];
@@ -45,6 +39,8 @@ export class PayslipListComponent implements OnInit {
   showProgressBar: boolean = false;
   employeePensionCosts$!: Observable<any>;
 
+  qboAuthorisationMissing: boolean = false;
+
   loading: boolean = false;
   busyOnPensions: boolean = false;
   busyOnEmployerNI: boolean = false;
@@ -54,6 +50,8 @@ export class PayslipListComponent implements OnInit {
   disableEmployerNI: boolean = false;
   disableEmployeeJournals: boolean = false;
   disableShopJournals: boolean = false;
+
+  fileUploadStatus: string = '';
 
   constructor(
     private alertService: AlertService,
@@ -95,6 +93,10 @@ export class PayslipListComponent implements OnInit {
       .pipe(
         concatMap((realms: QBRealm[]) => {
           realms.forEach((r: QBRealm) => {
+            if (!r.connection || !r.connection.refreshtoken) {
+              this.qboAuthorisationMissing = true;
+            }
+
             if (!r.issandbox && r.name) {
               if (/enterprises/i.test(r.name)) {
                 this.enterpriseRealm = r;
@@ -103,18 +105,29 @@ export class PayslipListComponent implements OnInit {
               }
             }
           });
-          return this.qbPayrollService.getAllocations(
-            this.charityRealm.realmid!,
-          );
+
+          if (
+            this.charityRealm &&
+            this.charityRealm.connection &&
+            this.enterpriseRealm &&
+            this.enterpriseRealm.connection
+          ) {
+            return this.qbPayrollService.getAllocations(
+              this.charityRealm.realmid!,
+            );
+          } else {
+            // Flag that user needs to authorise this app in QBO
+            this.qboAuthorisationMissing = true;
+            throw new Error('This app is not authorised in QBO.');
+          }
         }),
         tap((allocations) => (this.allocations = allocations)),
       )
       .subscribe({
         error: (error: any) => {
-          this.alertService.error('QB Realms not loaded. ' + error, {
-            autoClose: false,
-          });
+          this.alertService.error(error);
         },
+        complete: () => (this.qboAuthorisationMissing = false),
       });
   }
 
@@ -195,19 +208,23 @@ export class PayslipListComponent implements OnInit {
     this.busyOnEmployerNI = true;
 
     this.payrollService
-      .employerNIAllocatedCosts(this.payslips, this.allocations)
+      .employerNIAllocatedCosts(
+        this.payslips.filter((payslip) => !payslip.niJournalInQBO),
+        this.allocations,
+      )
       .pipe(
         toArray(),
-        mergeMap((v) =>
+        filter((term) => term && term.length > 0),
+        mergeMap((allocatedEmployerNICosts) =>
           this.qbPayrollService.createEmployerNIJournal(
             this.charityRealm.realmid!,
-            v,
+            allocatedEmployerNICosts,
             this.payrollDate,
           ),
         ),
       )
       .subscribe({
-        next: () => this.alertService.info('Employer NI journal added.'),
+        next: () => this.alertService.info('Employer NI journal processed.'),
         error: (e) => this.alertService.error(e),
         complete: () => {
           this.busyOnEmployerNI = false;

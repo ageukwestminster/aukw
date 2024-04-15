@@ -1,22 +1,44 @@
-﻿<div class="d-flex">
-  <div class="w-25 p-2 m-2 border border-secondary">Blah</div>
-  <div class="p-2 m-2 border border-secondary">
-    <div>
+﻿<div class="card" *ngIf="qboAuthorisationMissing">
+  <div class="card-body">
+    <p>
+      <strong>Notice: QBO Authorisation Missing or Incomplete</strong>
+    </p>
+    <p>
+      In order for this page to function you are required to make 2 links
+      between this app and QBO.
+    </p>
+    <p>Making a link can be done in one of two ways:</p>
+    <ul>
+      <li>Log in using the "Sign in with Intuit" button.</li>
+      <li>
+        Using the 'Add' buttons in the Quickbooks Connections section of your
+        <a routerLink="/users/edit/{{ user.id }}">Profile</a> page.
+      </li>
+    </ul>
+    <p>
+      You will be redirected to the Intuit website where you must log in using
+      your Quickbooks username and password. You will then have to select which
+      company file you wish to link to this app.
+    </p>
+    <p>
+      You have to repeat the entire procedure twice: Once for the charity
+      company file and once for the enterprises company file.
+    </p>
+  </div>
+</div>
+<div class="row" *ngIf="!qboAuthorisationMissing">
+  <div class="card m-2 col-sm-4">
+    <div class="card-body">
       <file-upload (onFileUploaded)="xlsxWasUploaded($event)"></file-upload>
+      <div *ngIf="loading">
+        <span class="spinner-border spinner-border-sm"> </span>
+        Quickbooks values loading.
+      </div>
     </div>
   </div>
-  <div>Blah</div>
 </div>
 <div>
-  <button
-    (click)="updateInQBOValues()"
-    class="btn btn-sm btn-success m-1 mt-1"
-    *ngIf="total && total.totalPay"
-  >
-    <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
-    Query QBO
-  </button>
-  <div class="d-flex flex-row" *ngIf="total && total.totalPay">
+  <div class="d-flex flex-row m-2" *ngIf="total && total.totalPay && !loading">
     <button
       (click)="employerNI()"
       class="btn btn-sm btn-success m-1 mt-1 #employerNI"
@@ -141,7 +163,7 @@
                 <th style="width: 8%" class="d-none d-sm-table-cell">
                   E'er NI
                 </th>
-                <th style="width: 8%">QBO?</th>
+                <th style="width: 8%">In QBO?</th>
               </tr>
             </thead>
             <tbody>
@@ -174,27 +196,65 @@
                   {{ payslip.employerNI | number: "1.2-2" }}
                 </td>
                 <td class="text-center">
-                  <i
-                    class="fas fa-check"
-                    *ngIf="payslip.payslipJournalInQBO"
-                  ></i>
-                  <i
-                    class="fas fa-times"
-                    *ngIf="!payslip.payslipJournalInQBO"
-                  ></i>
-                  <i class="fas fa-check" *ngIf="payslip.pensionBillInQBO"></i>
-                  <i class="fas fa-times" *ngIf="!payslip.pensionBillInQBO"></i>
-                  <i class="fas fa-check" *ngIf="payslip.niJournalInQBO"></i>
-                  <i class="fas fa-times" *ngIf="!payslip.niJournalInQBO"></i>
+                  <span style="color: green">
+                    <i
+                      class="fas fa-check"
+                      *ngIf="payslip.payslipJournalInQBO"
+                      ngbTooltip="Employee payslip GJ done."
+                    ></i>
+                  </span>
+                  <span style="color: red">
+                    <i
+                      class="fas fa-times"
+                      *ngIf="!payslip.payslipJournalInQBO"
+                      ngbTooltip="Employee payslip GJ missing."
+                    ></i>
+                  </span>
+                  <span style="color: green">
+                    <i
+                      class="fas fa-check"
+                      *ngIf="payslip.pensionBillInQBO"
+                      ngbTooltip="L&G pension bill done."
+                    ></i>
+                  </span>
+                  <span style="color: red">
+                    <i
+                      class="fas fa-times"
+                      *ngIf="!payslip.pensionBillInQBO"
+                      ngbTooltip="L&G pension bill missing."
+                    ></i>
+                  </span>
+                  <span style="color: green">
+                    <i
+                      class="fas fa-check"
+                      *ngIf="payslip.niJournalInQBO"
+                      ngbTooltip="Employer NI journal done."
+                    ></i>
+                  </span>
+                  <span style="color: red">
+                    <i
+                      class="fas fa-times"
+                      *ngIf="!payslip.niJournalInQBO"
+                      ngbTooltip="Employer NI journal missing."
+                    ></i>
+                  </span>
+                  <span style="color: green">
+                    <i
+                      class="fas fa-check"
+                      *ngIf="payslip.isShopEmployee && payslip.shopJournalInQBO"
+                      ngbTooltip="Shop journal entry done."
+                    ></i>
+                  </span>
+                  <span style="color: red">
+                    <i
+                      class="fas fa-times"
+                      *ngIf="
+                        payslip.isShopEmployee && !payslip.shopJournalInQBO
+                      "
+                      ngbTooltip="Shop journal entry missing."
+                    ></i>
+                  </span>
                   <i class="fas fa-minus" *ngIf="!payslip.isShopEmployee"></i>
-                  <i
-                    class="fas fa-check"
-                    *ngIf="payslip.isShopEmployee && payslip.shopJournalInQBO"
-                  ></i>
-                  <i
-                    class="fas fa-times"
-                    *ngIf="payslip.isShopEmployee && !payslip.shopJournalInQBO"
-                  ></i>
                 </td>
               </tr>
               <tr *ngIf="total && total.totalPay" style="font-weight: bold">
