@@ -4,9 +4,9 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '@environments/environment';
 import { ApiMessage, QBAuthUri, QBConnectionDetails } from '@app/_models';
 import { AuthenticationService } from '@app/_services';
-import { Role, User } from '@app/_models';
+import { User } from '@app/_models';
 
-const baseUrl = `${environment.apiUrl}/qb/connection`;
+const baseUrl = `${environment.apiUrl}/qb`;
 const authUrl = `${environment.apiUrl}/auth/qb/auth`;
 const refreshUrl = `${environment.apiUrl}/qb/refresh`;
 
@@ -27,7 +27,7 @@ export class QBConnectionService {
    */
   getDetails(userid: number, realmid: string) {
     return this.http.get<QBConnectionDetails>(
-      `${baseUrl}/${userid}?realmid=${realmid}`,
+      `${baseUrl}/${realmid}/connection/${userid}`,
     );
   }
 
@@ -58,13 +58,13 @@ export class QBConnectionService {
 
   delete(userid: number, realmid: string) {
     return this.http.delete<ApiMessage>(
-      `${baseUrl}/${userid}?realmid=${realmid}`,
+      `${baseUrl}/${realmid}/connection/${userid}`,
     );
   }
 
   refresh(userid: number, realmid: string) {
     return this.http.get<ApiMessage>(
-      `${refreshUrl}/${userid}?realmid=${realmid}`,
+      `${baseUrl}/${realmid}/refresh/${userid}`,
     );
   }
 }

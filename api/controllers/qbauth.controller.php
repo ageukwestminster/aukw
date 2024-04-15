@@ -50,22 +50,13 @@ class QBAuthCtl{
   }
 
   /**
-   * Break the link between this app and Quickbooks
-   * @param int $userid The database id of the user whose token is being revoked
-   * @return void Output is echo'd directly to response
+   * Break the link between this app and Quickbooks.
+   * @param string $realmid The id of the QBO company.
+   * @param string $userid The database id of the user whose token is being revoked.
+   * @return void Output is echo'd directly to response.
    */
-  public static function oauth2_revoke($userid){
+  public static function oauth2_revoke(string $realmid, string $userid) : void{
     $model = new QuickbooksAuth();
-
-    if(!isset($_GET['realmid']) ) {
-      http_response_code(400);   
-      echo json_encode(
-        array("message" => "Please supply a value for the 'realmid' parameter.")
-      );
-      exit(1);
-    } 
-
-    $realmid = $_GET['realmid'];
 
     if ($model->revoke($userid, $realmid)) {
       echo json_encode(
@@ -82,23 +73,14 @@ class QBAuthCtl{
 
 
   /**
-   * Refresh the QB access token from the refresh token
-   * @param int $userid The database id of the user whose token is being refreshed
-   * @return void 
+   * Refresh the QB access token from the refresh token.
+   * @param string $realmid The id of the QBO company.
+   * @param string $userid The database id of the user whose token is being refreshed.
+   * @return void Output is echo'd directly to response.
    * 
    */
-  public static function oauth2_refresh($userid){
+  public static function oauth2_refresh(string $realmid, string $userid) : void{
     $model = new QuickbooksAuth();
-
-    if(!isset($_GET['realmid']) ) {
-      http_response_code(400);   
-      echo json_encode(
-          array("message" => "Please supply a value for the 'realmid' parameter.")
-      );
-      exit(1);
-    } 
-
-    $realmid = $_GET['realmid'];
 
     if ($model->refresh($userid, $realmid)) {
     echo json_encode(
@@ -114,31 +96,13 @@ class QBAuthCtl{
 
   /**
    * Show details of authenticated connections with QBO for a given user.
-   * 
-   * @param int $userid The database id of the user whose connections are being sought
+   * @param string $realmid The id of the QBO company.
+   * @param string $userid The database id of the user whose connections are being sought
    * @return QuickbooksToken[] Containing the access and refresh tokens for QBO
    */
-  public static function connection_details($userid){  
+  public static function connection_details(string $realmid, string $userid){  
 
     $model = new \Models\QuickbooksToken();
-
-    if( !isset($_GET['realmid']) ) {
-      http_response_code(400);   
-      echo json_encode(
-          array("message" => "Please supply realmid as a parameter.")
-      );
-      exit(1);
-    } 
-
-    $realmid = $_GET['realmid'];
-
-    if (!is_numeric($realmid)) {
-      http_response_code(400);   
-      echo json_encode(
-          array("message" => "Expecting a numeric format for the parameter realmid.")
-      );
-      exit(1);
-    }
     
     $model->read($userid, $realmid);
 

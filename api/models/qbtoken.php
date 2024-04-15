@@ -176,9 +176,9 @@ class QuickbooksToken{
     }
 
     /**
-     * Refresh the instance properties with QB token information from the database
+     * Get a list of all the saved QB credentials for the given user
      * 
-     * @return QuickbooksToken[] Array of 
+     * @return QuickbooksToken[] Array of access and refresh tokens
      */
     function read_all($userid){
         $query = "SELECT t.`accesstoken`,t.`accesstokenexpiry`,t.`refreshtoken`,t.`refreshtokenexpiry`

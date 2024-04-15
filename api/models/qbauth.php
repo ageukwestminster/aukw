@@ -196,7 +196,8 @@ class QuickbooksAuth{
 
       /**
        * Refresh the QB access token from the refresh token
-       * @param string $realmid The company ID for the QBO company.
+       * @param string $realmid The company ID f
+       * 
        * @return true if success
        */
     public function refresh($userid, $realmid) {
@@ -446,6 +447,8 @@ class QuickbooksAuth{
         // before saving to the database. Otherwise during BST the time
         // will be wrong by 1 hour
         $expiry = $accessTokenObj->getAccessTokenExpiresAt();
+
+        /** @disregard Ignore Intelephense error on next line */
         $displayDate = new DateTime($expiry, new DateTimeZone('UTC'));
         $displayDate->setTimezone(new DateTimeZone('Europe/London'));
         $this->tokenModel->accesstokenexpiry = $displayDate->format('Y-m-d H:i:s');
