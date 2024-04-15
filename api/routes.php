@@ -178,7 +178,7 @@ $router->mount('/qb', function () use ($router) {
     $router->get('/recurringtransactions', 'QBRecurringTransactionCtl@read_all');
 
     // QB Payroll Query
-    $router->get('/query/payroll/(\d{4})/(\d{2})', 'QBPayrollQueryCtl@query');
+    $router->get('/(\d+)/query/payroll/(\d{4})/(\d{2})', 'QBPayrollQueryCtl@query');
 });
 
 /***************/

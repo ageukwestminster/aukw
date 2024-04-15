@@ -4,9 +4,8 @@ namespace Controllers;
 
 use \Core\QuickbooksConstants as QBO;
 use \Models\Payslip;
-use \Models\QuickbooksBill;
+use \Models\QuickbooksQuery;
 use \Models\QuickbooksEmployee;
-use \Models\QuickbooksJournal;
 
 /**
  * Controller to query QBO and return (in Payslip format) details of current month's payroll
@@ -18,37 +17,30 @@ class QBPayrollQueryCtl{
   /**
    * Query QBO and return (in Payslip format) details of current month's payroll
    *
+   * @param string $realmid The company ID for the QBO company.
    * @param int $year 
    * @param int $month
    * @return void Output is echo'd directly to response 
    */
-  public static function query(int $year, int $month){  
-
-    if(!isset($_GET['realmid']) ) {
-      http_response_code(400);   
-      echo json_encode(
-        array("message" => "Please supply a value for the 'realmid' parameter.")
-      );
-      exit(1);
-    }
+  public static function query(string $realmid, int $year, int $month){  
 
     $payslips = array(); // this will be returned
 
     $payrollIdentifier = QBO::payrollDocNumber($year . '-' . $month . '-25'); // day of month is irrelevent, using 25
 
     $employees = QuickbooksEmployee::getInstance()
-      ->setRealmID($_GET['realmid'])
+      ->setRealmID($realmid)
       ->readAllAssociatedByName();
 
-    $bills = QuickbooksBill::getInstance()
-      ->setRealmID($_GET['realmid'])
-      ->query_by_docnumber($payrollIdentifier);
+    $bills = QuickbooksQuery::getInstance()
+      ->setRealmID($realmid)
+      ->query_by_docnumber($payrollIdentifier, 'Bill');
 
     QBPayrollQueryCtl::parsePensionBills($employees, $bills, $payslips);
     
-    $model = new \Models\QuickbooksJournal();
-    $model->realmid = $_GET['realmid'];
-    $journals = $model->query_by_docnumber($payrollIdentifier);
+    $journals = QuickbooksQuery::getInstance()
+      ->setRealmID($realmid)
+      ->query_by_docnumber($payrollIdentifier, 'JournalEntry');
 
     QBPayrollQueryCtl::parsePayrollJournals($employees, $journals, $payslips);
 
@@ -112,6 +104,7 @@ class QBPayrollQueryCtl{
                 default:
               }
               break;
+            case QBO::AUEW_SALARIES_ACCOUNT:
             case QBO::STAFF_SALARIES_ACCOUNT:
               $payslip->addToTotalPay($amount);
               break;
@@ -153,11 +146,17 @@ class QBPayrollQueryCtl{
             case QBO::NET_PAY_ACCOUNT:    
               $payslip->addToNetPay($amount);            
               break;
+            case QBO::AUEW_NI_ACCOUNT:
             case QBO::EMPLOYER_NI_ACCOUNT:
               $payslip->addToEmployerNI($amount);
               break;
+            case QBO::AUEW_PENSIONS_ACCOUNT:
+              $payslip->addToEmployerPension($amount);
+              break;
+            case QBO::AUKW_INTERCO_ACCOUNT:
+              break;
             default:
-              echo "possible Error";
+              break;
           }
         }
       }

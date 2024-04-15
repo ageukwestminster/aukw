@@ -27,7 +27,7 @@ class QBRealmCtl{
   /**
    * Return details of the specifice QBO company identified by $realmid
    *
-   * @param string $realmid
+   * @param string $realmid The id of the QBO company.
    * 
    * @return void Output is echo'd directly to response.
    * 

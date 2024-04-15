@@ -2,6 +2,8 @@
 
 namespace Controllers;
 
+use \Models\QuickbooksQuery;
+
 /**
  * Controller to accomplish QBO General Journal related tasks. 
  *
@@ -48,10 +50,11 @@ class QBJournalCtl{
       exit(1);
     } 
 
-    $model = new \Models\QuickbooksJournal();
-    $model->realmid = $_GET['realmid'];
+    $journals = QuickbooksQuery::getInstance()
+      ->setRealmID($_GET['realmid'])
+      ->query_by_docnumber($doc_number, 'JournalEntry');
 
-    echo json_encode($model->query_by_docnumber($doc_number), JSON_NUMERIC_CHECK);
+    echo json_encode($journals);
   }
 
     /**

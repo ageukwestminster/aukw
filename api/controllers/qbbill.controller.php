@@ -4,6 +4,7 @@ namespace Controllers;
 
 use \Models\QuickbooksBill;
 use \Models\QuickbooksPensionBill;
+use \Models\QuickbooksQuery;
 use Core\QuickbooksConstants as QBO;
 
 /**
@@ -52,10 +53,11 @@ class QBBillCtl{
       exit(1);
     } 
 
-    $model = QuickbooksBill::getInstance()
-      ->setRealmID($_GET['realmid']);  
+    $bills = QuickbooksQuery::getInstance()
+      ->setRealmID($_GET['realmid'])
+      ->query_by_docnumber($doc_number, 'Bill'); 
 
-    echo json_encode($model->query_by_docnumber($doc_number), JSON_NUMERIC_CHECK);
+    echo json_encode($bills);
   }
 
   /**

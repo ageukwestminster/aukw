@@ -1,7 +1,14 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import { Observable, forkJoin } from 'rxjs';
-import { concatMap, map, mergeMap, tap, toArray } from 'rxjs/operators';
+import {
+  concatMap,
+  map,
+  mergeAll,
+  mergeMap,
+  tap,
+  toArray,
+} from 'rxjs/operators';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import {
@@ -37,6 +44,8 @@ export class PayslipListComponent implements OnInit {
   currentPayslip: number = 0;
   showProgressBar: boolean = false;
   employeePensionCosts$!: Observable<any>;
+
+  loading: boolean = false;
   busyOnPensions: boolean = false;
   busyOnEmployerNI: boolean = false;
   busyOnEmployeeJournals: boolean = false;
@@ -61,9 +70,20 @@ export class PayslipListComponent implements OnInit {
     this.payslips = payslips;
 
     this.total = new IrisPayslip();
-    payslips.forEach((element) => {
-      this.total = this.total.add(element);
+    payslips.forEach((payslip) => {
+      this.total = this.total.add(payslip);
+
+      if (
+        this.allocations.find(
+          (item) =>
+            item.isShopEmployee && item.payrollNumber == payslip.employeeId,
+        )
+      ) {
+        payslip.isShopEmployee = true;
+      }
     });
+
+    this.updateInQBOValues();
   }
 
   /**
@@ -107,9 +127,62 @@ export class PayslipListComponent implements OnInit {
       : '';
   }
 
-  updateQBO() {
-    if (this.payslips && this.payslips[0]) {
-      this.payslips[0].inQBO = !this.payslips[0].inQBO;
+  updateInQBOValues() {
+    if (
+      this.payslips &&
+      this.payslips[0] &&
+      this.charityRealm.realmid &&
+      this.enterpriseRealm.realmid
+    ) {
+      const dt = new Date(this.payslips[0].payrollDate + 'T12:00:00');
+      const month = (dt.getMonth() + 1).toString().padStart(2, '0');
+      const year = dt.getFullYear().toString();
+
+      this.loading = true;
+
+      forkJoin({
+        charityPayslips: this.qbPayrollService.getWhatsAlreadyInQBO(
+          this.charityRealm.realmid,
+          year,
+          month,
+        ),
+        shopPayslips: this.qbPayrollService.getWhatsAlreadyInQBO(
+          this.enterpriseRealm.realmid!,
+          year,
+          month,
+        ),
+      })
+        .pipe(
+          map((x) => {
+            x.charityPayslips.forEach((quickbooksPayslip: IrisPayslip) => {
+              const xlsxPayslip = this.payslips.find(
+                (item) => item.employeeId == quickbooksPayslip.employeeId,
+              );
+
+              if (xlsxPayslip) {
+                this.updateInQBOCharityValues(xlsxPayslip, quickbooksPayslip);
+              }
+            });
+            x.shopPayslips.forEach((quickbooksPayslip: IrisPayslip) => {
+              const xlsxPayslip = this.payslips.find(
+                (item) => item.employeeId == quickbooksPayslip.employeeId,
+              );
+
+              if (xlsxPayslip) {
+                this.updateInQBOEnterprisesValues(
+                  xlsxPayslip,
+                  quickbooksPayslip,
+                );
+              }
+            });
+          }),
+        )
+        .subscribe({
+          error: (e) => this.alertService.error(e),
+          complete: () => {
+            this.loading = false;
+          },
+        });
     }
   }
 
@@ -261,5 +334,36 @@ export class PayslipListComponent implements OnInit {
           this.disableShopJournals = true;
         },
       });
+  }
+
+  private updateInQBOCharityValues(
+    xlsxPayslip: IrisPayslip,
+    quickbooksPayslip: IrisPayslip,
+  ): void {
+    xlsxPayslip.niJournalInQBO =
+      xlsxPayslip.employerNI == quickbooksPayslip.employerNI;
+
+    xlsxPayslip.pensionBillInQBO =
+      xlsxPayslip.employerPension == quickbooksPayslip.employerPension;
+
+    xlsxPayslip.payslipJournalInQBO =
+      xlsxPayslip.totalPay == quickbooksPayslip.totalPay &&
+      xlsxPayslip.paye == quickbooksPayslip.paye &&
+      xlsxPayslip.employeeNI == quickbooksPayslip.employeeNI &&
+      xlsxPayslip.otherDeductions == quickbooksPayslip.otherDeductions &&
+      xlsxPayslip.employeePension == quickbooksPayslip.employeePension &&
+      xlsxPayslip.salarySacrifice == quickbooksPayslip.salarySacrifice &&
+      xlsxPayslip.studentLoan == quickbooksPayslip.studentLoan &&
+      xlsxPayslip.netPay == quickbooksPayslip.netPay;
+  }
+
+  private updateInQBOEnterprisesValues(
+    xlsxPayslip: IrisPayslip,
+    quickbooksPayslip: IrisPayslip,
+  ): void {
+    xlsxPayslip.shopJournalInQBO =
+      xlsxPayslip.totalPay == quickbooksPayslip.totalPay &&
+      xlsxPayslip.employerNI == quickbooksPayslip.employerNI &&
+      xlsxPayslip.employerPension == quickbooksPayslip.employerPension;
   }
 }

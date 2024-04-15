@@ -38,22 +38,22 @@ class QuickbooksEnterprisesJournal extends QuickbooksJournal{
 
       foreach ($entries as $line) {
         //&$line_array, $description, $amount, $employee, $class, $account)
-        $this->payrolljournal_line($payrolljournal['Line'], "Salary", 
-            $line->totalPay, $line->quickbooksId, QBO::HARROW_ROAD_CLASS, QBO::SALARIES_ACCOUNT);
-        $this->payrolljournal_line($payrolljournal['Line'], "Salary", 
+        $this->payrolljournal_line($payrolljournal['Line'], QBO::GROSS_SALARY_DESCRIPTION, 
+            $line->totalPay, $line->quickbooksId, QBO::HARROW_ROAD_CLASS, QBO::AUEW_SALARIES_ACCOUNT);
+        $this->payrolljournal_line($payrolljournal['Line'], QBO::GROSS_SALARY_DESCRIPTION, 
             -$line->totalPay, $line->quickbooksId, QBO::HARROW_ROAD_CLASS, QBO::AUKW_INTERCO_ACCOUNT);
         
         if ($line->employerNI) {
-          $this->payrolljournal_line($payrolljournal['Line'], "NI", 
-              $line->employerNI, $line->quickbooksId, QBO::HARROW_ROAD_CLASS, QBO::NI_ACCOUNT);
-          $this->payrolljournal_line($payrolljournal['Line'], "NI", 
+          $this->payrolljournal_line($payrolljournal['Line'], QBO::EMPLOYER_NI_DESCRIPTION, 
+              $line->employerNI, $line->quickbooksId, QBO::HARROW_ROAD_CLASS, QBO::AUEW_NI_ACCOUNT);
+          $this->payrolljournal_line($payrolljournal['Line'], QBO::EMPLOYER_NI_DESCRIPTION, 
               -$line->employerNI, $line->quickbooksId, QBO::HARROW_ROAD_CLASS, QBO::AUKW_INTERCO_ACCOUNT);
         }
 
         if ($line->employerPension) {
-          $this->payrolljournal_line($payrolljournal['Line'], "Pension", 
-              $line->employerPension, $line->quickbooksId, QBO::HARROW_ROAD_CLASS, QBO::PENSIONS_ACCOUNT);
-          $this->payrolljournal_line($payrolljournal['Line'], "Pension", 
+          $this->payrolljournal_line($payrolljournal['Line'], QBO::EMPLOYER_PENSION_CONT_DESCRIPTION, 
+              $line->employerPension, $line->quickbooksId, QBO::HARROW_ROAD_CLASS, QBO::AUEW_PENSIONS_ACCOUNT);
+          $this->payrolljournal_line($payrolljournal['Line'], QBO::EMPLOYER_PENSION_CONT_DESCRIPTION, 
               -$line->employerPension, $line->quickbooksId, QBO::HARROW_ROAD_CLASS, QBO::AUKW_INTERCO_ACCOUNT);
         }
       }

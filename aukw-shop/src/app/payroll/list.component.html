@@ -9,10 +9,11 @@
 </div>
 <div>
   <button
-    (click)="updateQBO()"
+    (click)="updateInQBOValues()"
     class="btn btn-sm btn-success m-1 mt-1"
     *ngIf="total && total.totalPay"
   >
+    <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
     Query QBO
   </button>
   <div class="d-flex flex-row" *ngIf="total && total.totalPay">
@@ -133,14 +134,14 @@
                 <th style="width: 8%" class="d-none d-sm-table-cell">
                   E'ee NI
                 </th>
-                <th style="width: 8%" class="d-none d-sm-table-cell">Other</th>
+                <th style="width: 6%" class="d-none d-sm-table-cell">Other</th>
                 <th style="width: 8%" class="d-none d-sm-table-cell">Pens</th>
                 <th style="width: 8%" class="d-none d-sm-table-cell">S Loan</th>
                 <th style="width: 8%" class="d-none d-sm-table-cell">Net</th>
                 <th style="width: 8%" class="d-none d-sm-table-cell">
                   E'er NI
                 </th>
-                <th style="width: 6%">QBO?</th>
+                <th style="width: 8%">QBO?</th>
               </tr>
             </thead>
             <tbody>
@@ -172,11 +173,28 @@
                 <td class="d-none d-sm-table-cell">
                   {{ payslip.employerNI | number: "1.2-2" }}
                 </td>
-                <td *ngIf="payslip.inQBO" class="text-center">
-                  <i class="fas fa-check"></i>
-                </td>
-                <td *ngIf="!payslip.inQBO" class="text-center">
-                  <i class="fas fa-times"></i>
+                <td class="text-center">
+                  <i
+                    class="fas fa-check"
+                    *ngIf="payslip.payslipJournalInQBO"
+                  ></i>
+                  <i
+                    class="fas fa-times"
+                    *ngIf="!payslip.payslipJournalInQBO"
+                  ></i>
+                  <i class="fas fa-check" *ngIf="payslip.pensionBillInQBO"></i>
+                  <i class="fas fa-times" *ngIf="!payslip.pensionBillInQBO"></i>
+                  <i class="fas fa-check" *ngIf="payslip.niJournalInQBO"></i>
+                  <i class="fas fa-times" *ngIf="!payslip.niJournalInQBO"></i>
+                  <i class="fas fa-minus" *ngIf="!payslip.isShopEmployee"></i>
+                  <i
+                    class="fas fa-check"
+                    *ngIf="payslip.isShopEmployee && payslip.shopJournalInQBO"
+                  ></i>
+                  <i
+                    class="fas fa-times"
+                    *ngIf="payslip.isShopEmployee && !payslip.shopJournalInQBO"
+                  ></i>
                 </td>
               </tr>
               <tr *ngIf="total && total.totalPay" style="font-weight: bold">

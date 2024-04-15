@@ -2,7 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { environment } from '@environments/environment';
-import { EmployeeAllocation, PayrollJournalEntry } from '@app/_models';
+import {
+  EmployeeAllocation,
+  IrisPayslip,
+  PayrollJournalEntry,
+} from '@app/_models';
 import { Observable } from 'rxjs';
 
 const baseUrl = `${environment.apiUrl}/qb`;
@@ -14,6 +18,12 @@ const allocationsUrl = `${environment.apiUrl}/qb/employee/allocations`;
 @Injectable({ providedIn: 'root' })
 export class QBPayrollService {
   constructor(private http: HttpClient) {}
+
+  getWhatsAlreadyInQBO(realmID: string, year: string, month: string) {
+    return this.http.get<IrisPayslip[]>(
+      `${baseUrl}/${realmID}/query/payroll/${year}/${month}`,
+    );
+  }
 
   getAllocations(realmID: string): Observable<EmployeeAllocation[]> {
     return this.http.get<EmployeeAllocation[]>(

@@ -23,7 +23,7 @@ export class QBConnectionService {
 
   /**
    * Get details of the current connection to QuickBooks
-   * @returns The uri needed to re-authorize the connection and the expiry date of the refresh token
+   * @returns
    */
   getDetails(userid: number, realmid: string) {
     return this.http.get<QBConnectionDetails>(
@@ -33,10 +33,12 @@ export class QBConnectionService {
 
   /**
    * Get details of all the current connections to QuickBooks
-   * @returns The uri needed to re-authorize the connection and the expiry date of the refresh token
+   * @returns
    */
   getAll(userid: number) {
-    return this.http.get<QBConnectionDetails[]>(`${baseUrl}s/${userid}`);
+    return this.http.get<QBConnectionDetails[]>(
+      `${baseUrl}/connections/${userid}`,
+    );
   }
 
   getAuthUri() {
@@ -63,8 +65,6 @@ export class QBConnectionService {
   }
 
   refresh(userid: number, realmid: string) {
-    return this.http.get<ApiMessage>(
-      `${baseUrl}/${realmid}/refresh/${userid}`,
-    );
+    return this.http.get<ApiMessage>(`${baseUrl}/${realmid}/refresh/${userid}`);
   }
 }

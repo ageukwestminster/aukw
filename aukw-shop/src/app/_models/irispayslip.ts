@@ -19,6 +19,7 @@
     */
 export class IrisPayslip {
   employeeId: number;
+  quickbooksId: number;
   employeeName: string;
   payrollDate: string;
   totalPay: number;
@@ -32,7 +33,7 @@ export class IrisPayslip {
   employerPension: number;
   employeePension: number;
 
-  inQBO: boolean;
+  isShopEmployee: boolean;
   niJournalInQBO: boolean = false;
   pensionBillInQBO: boolean = false;
   shopJournalInQBO: boolean = false;
@@ -54,6 +55,7 @@ export class IrisPayslip {
 
   constructor(obj?: any) {
     this.employeeId = (obj && obj.employeeId) || null;
+    this.quickbooksId = (obj && obj.quickbooksId) || null;
     this.employeeName = (obj && obj.employeeName) || null;
     this.payrollDate = (obj && obj.payrollDate) || null;
     this.totalPay = (obj && obj.totalPay) || 0;
@@ -66,6 +68,6 @@ export class IrisPayslip {
     this.employerNI = (obj && obj.employerNI) || 0;
     this.employerPension = (obj && obj.employerPension) || 0;
     this.employeePension = (obj && obj.employeePension) || 0;
-    this.inQBO = (obj && obj.inQBO) || false;
+    this.isShopEmployee = (obj && obj.isShopEmployee) || false;
   }
 }

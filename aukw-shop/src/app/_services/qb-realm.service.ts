@@ -25,7 +25,7 @@ export class QBRealmService {
   /**
    * Get a list of the names of all available QBO realms, with associated
    * QBConnection details, if any.
-   * @returns Obs of Array of QBO realms, with connection property populated.
+   * @returns Observable of Arrays of QBO realms, with connection property populated.
    */
   getAll(userid: number) {
     // forkJoin accepts an array of Observables and emits an array of the

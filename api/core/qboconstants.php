@@ -12,6 +12,7 @@ use DateTime;
 class QuickbooksConstants {
 
   // Charity Constants
+  // if any account number clashes with AUEW account numbers then check parsePayrollJournals() carefully
   const AUEW_ACCOUNT = "65";
   const EMPLOYEE_PENSION_CONTRIB_ACCOUNT = "66";
   const EMPLOYER_NI_ACCOUNT = "95";
@@ -27,6 +28,7 @@ class QuickbooksConstants {
   const EMPLOYEE_NI_DESCRIPTION = "Employee NI";
   const EMPLOYER_NI_DESCRIPTION = "Employer NI";
   const EMPLOYEE_PENSION_CONT_DESCRIPTION = "Employee Pension Contribution";
+  const EMPLOYER_PENSION_CONT_DESCRIPTION = "Employer Pension Contribution";
   const GROSS_SALARY_DESCRIPTION = "Gross Salary";
   const NET_PAY_DESCRIPTION = "Net Pay";
   const OTHER_DEDUCTIONS_DESCRIPTION = "Other Deductions";
@@ -40,9 +42,9 @@ class QuickbooksConstants {
 
   // Enterprises Constants
   const AUKW_INTERCO_ACCOUNT = "80";
-  const SALARIES_ACCOUNT = "106";
-  const NI_ACCOUNT = "150";
-  const PENSIONS_ACCOUNT = "139";
+  const AUEW_SALARIES_ACCOUNT = "106";
+  const AUEW_NI_ACCOUNT = "150";
+  const AUEW_PENSIONS_ACCOUNT = "139";
 
   const HARROW_ROAD_CLASS = "400000000000618070";
 
