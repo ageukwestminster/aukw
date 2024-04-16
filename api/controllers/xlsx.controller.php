@@ -43,7 +43,7 @@ class XlsxCtl{
         echo json_encode(
             array("message" => "The file has been uploaded successfully.",
             "isEncrypted" =>   EncryptedXlsx::getInstance()
-                                ->setEncryptedFilePath($uploadfile)->isEncrypted())
+                                ->isEncrypted($uploadfile))
         );
     }
     else
@@ -131,7 +131,7 @@ class XlsxCtl{
     catch (\Exception $e){
         http_response_code(400);   
         echo json_encode(
-            array("message" => "Listing of WorkSheets failed.",
+            array("message" => "Unable to open decrypted file for reading. Incorrect password?",
             "details" => $e->getMessage())
         );
         exit(1);

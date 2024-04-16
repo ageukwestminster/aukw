@@ -29,7 +29,10 @@
 <div class="row" *ngIf="!qboAuthorisationMissing">
   <div class="card m-2 col-sm-4">
     <div class="card-body">
-      <file-upload (onFileUploaded)="xlsxWasUploaded($event)"></file-upload>
+      <file-upload
+        (onFileUploaded)="xlsxWasUploaded($event)"
+        [setButtonDisabled]="loading"
+      ></file-upload>
       <div *ngIf="loading">
         <span class="spinner-border spinner-border-sm"> </span>
         Quickbooks values loading.
@@ -168,7 +171,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let payslip of payslips">
-                <td style="vertical-align: middle;">{{ payslip.employeeId }}</td>
+                <td style="vertical-align: middle">{{ payslip.employeeId }}</td>
                 <td>{{ payslip.employeeName }}</td>
                 <td>{{ payslip.totalPay | number: "1.2-2" }}</td>
                 <td class="d-none d-sm-table-cell">

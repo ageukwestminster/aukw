@@ -13,6 +13,7 @@ import { QBConnectionRowComponent } from './qbconn-list/row.component';
 import { SalesHistogramChartComponent } from './sales-histogram/sales-histogram-chart.component';
 import { SummaryTableComponent } from './summary-table/summary-table.component';
 import { MovingAverageChartComponent } from './moving-avg-chart/moving-avg-chart.component';
+import { PasswordInputModalComponent} from './file-upload/password-input.component';
 
 @NgModule({
   imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbModule],
@@ -20,6 +21,7 @@ import { MovingAverageChartComponent } from './moving-avg-chart/moving-avg-chart
     DepartmentChartComponent,
     FileUploadComponent,
     MoneyInputComponent,
+    PasswordInputModalComponent,
     SalesChartComponent,
     MonthlySalesChartComponent,
     MovingAverageChartComponent,
@@ -34,6 +36,7 @@ import { MovingAverageChartComponent } from './moving-avg-chart/moving-avg-chart
     MoneyInputComponent,
     MonthlySalesChartComponent,
     MovingAverageChartComponent,
+    PasswordInputModalComponent,
     QBConnectionListComponent,
     QBConnectionRowComponent,
     SalesChartComponent,

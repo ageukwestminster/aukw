@@ -1,7 +1,9 @@
-import { Component, EventEmitter, Output } from '@angular/core';
-import { throwError, concatMap, iif, tap } from 'rxjs';
-import { FileService } from '@app/_services';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { from, throwError, concatMap, iif, tap } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { AlertService, FileService } from '@app/_services';
 import { IrisPayslip, UploadResponse } from '@app/_models';
+import { PasswordInputModalComponent } from './password-input.component';
 
 @Component({
   selector: 'file-upload',
@@ -12,8 +14,13 @@ export class FileUploadComponent {
   status: 'initial' | 'uploading' | 'reading' | 'success' | 'fail' = 'initial';
   file: File | null = null;
   @Output() onFileUploaded: EventEmitter<IrisPayslip[]>;
+  @Input() setButtonDisabled: boolean = false;
 
-  constructor(private fileService: FileService) {
+  constructor(
+    private alertService: AlertService,
+    private fileService: FileService,
+    public modalService: NgbModal,
+  ) {
     this.onFileUploaded = new EventEmitter();
   }
 
@@ -21,18 +28,24 @@ export class FileUploadComponent {
     if (!event) return;
 
     const files: FileList | null = (event.target as HTMLInputElement).files;
-    if (files && files.length) {
-      this.status = 'initial';
-      this.file = files![0];
+    if (files) {
+      if (files.length) {
+        this.status = 'initial';
+        this.file = files![0];
+      } else {
+        this.file = null;
+      }
     }
 
     if (!this.file) return;
 
-    const decrypt_and_parse$ = this.fileService.decrypt('FMP804').pipe(
-      concatMap(() => {
-        return this.fileService.parse();
-      }),
+    const decrypt_and_parse$ = from(
+      this.modalService.open(PasswordInputModalComponent).result,
+    ).pipe(
+      concatMap((password: string) => this.fileService.decrypt(password)),
+      concatMap(() => this.fileService.parse()),
     );
+
     const just_parse$ = this.fileService.parse();
 
     const upload$ = this.fileService.upload(this.file).pipe(
@@ -53,6 +66,9 @@ export class FileUploadComponent {
       },
       error: (error: any) => {
         this.status = 'fail';
+        this.alertService.error(error, {
+          autoClose: false,
+        });
         return throwError(() => error);
       },
     });

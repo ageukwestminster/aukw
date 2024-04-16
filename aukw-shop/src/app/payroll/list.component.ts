@@ -2,7 +2,15 @@
 import { RouterLink } from '@angular/router';
 import { NgFor, NgIf } from '@angular/common';
 import { Observable, forkJoin } from 'rxjs';
-import { concatMap, filter, map, mergeMap, tap, toArray } from 'rxjs/operators';
+import {
+  concatMap,
+  filter,
+  map,
+  mergeMap,
+  retry,
+  tap,
+  toArray,
+} from 'rxjs/operators';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import {
@@ -89,6 +97,7 @@ export class PayslipListComponent implements OnInit {
    * initialize the object by populating the 2 realm properties
    */
   ngOnInit() {
+    this.loading = true;
     this.qbRealmService
       .getAll(this.user.id)
       .pipe(
@@ -113,16 +122,19 @@ export class PayslipListComponent implements OnInit {
             this.enterpriseRealm &&
             this.enterpriseRealm.connection
           ) {
-            return this.qbPayrollService.getAllocations(
-              this.charityRealm.realmid!,
-            );
+            return this.qbPayrollService
+              .getAllocations(this.charityRealm.realmid!)
+              .pipe(retry(2));
           } else {
             // Flag that user needs to authorise this app in QBO
             this.qboAuthorisationMissing = true;
             throw new Error('This app is not authorised in QBO.');
           }
         }),
-        tap((allocations) => (this.allocations = allocations)),
+        tap((allocations) => {
+          this.allocations = allocations;
+          this.loading = false;
+        }),
       )
       .subscribe({
         error: (error: any) => {

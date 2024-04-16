@@ -8,7 +8,11 @@
 
 <div class="file-section">
   <div class="d-flex flex-column">
-    <button (click)="fileUpload.click()" class="btn btn-sm btn-success mt-1">
+    <button
+      (click)="fileUpload.click()"
+      class="btn btn-sm btn-success mt-1"
+      [disabled]="setButtonDisabled"
+    >
       Upload File
     </button>
     <div>

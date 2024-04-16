@@ -78,15 +78,15 @@ class EncryptedXlsx{
    * 
    * Code is from https://github.com/jaydadhania08/PHPDecryptXLSXWithPassword
    */
-  public function isEncrypted():bool {
+  public function isEncrypted(string $filename):bool {
     $oleObj = new OLE();
 
-    if (!is_file($this->encryptedFilePath)) {
-      throw new \Exception('File not found. File name: ('. $this->encryptedFilePath??'<empty>' .')');
+    if (!is_file($filename)) {
+      throw new \Exception('File not found. File name: ('. $filename??'<empty>' .')');
     }
 
     try {
-      $oleObj -> read($this->encryptedFilePath);
+      $oleObj -> read($filename);
       
       // Look for the Encryption Info
       $xmlstr = substr($this->getDataByName($oleObj, 'EncryptionInfo'), 8);
@@ -209,6 +209,7 @@ class EncryptedXlsx{
 
     // write to file
     file_put_contents($this->decryptedFilePath, $decrypted);
+
   }
 
   /**
