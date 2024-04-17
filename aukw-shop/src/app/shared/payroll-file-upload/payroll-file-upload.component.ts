@@ -1,19 +1,24 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { from, throwError, concatMap, iif, tap } from 'rxjs';
+import { from, concatMap, iif, tap, Observable, catchError } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AlertService, FileService } from '@app/_services';
 import { IrisPayslip, UploadResponse } from '@app/_models';
 import { PasswordInputModalComponent } from './password-input.component';
 
 @Component({
-  selector: 'file-upload',
-  templateUrl: './file-upload.component.html',
-  styleUrls: ['./file-upload.component.css'],
+  selector: 'payroll-file-upload',
+  templateUrl: './payroll-file-upload.component.html',
+  styleUrls: ['./payroll-file-upload.component.css'],
 })
-export class FileUploadComponent {
+export class PayrollFileUploadComponent {
+  
   status: 'initial' | 'uploading' | 'reading' | 'success' | 'fail' = 'initial';
   file: File | null = null;
+
   @Output() onFileUploaded: EventEmitter<IrisPayslip[]>;
+  /**
+   * Input flag to allow disabling the loading of a file until the parent object is ready
+   */
   @Input() setButtonDisabled: boolean = false;
 
   constructor(
@@ -24,7 +29,12 @@ export class FileUploadComponent {
     this.onFileUploaded = new EventEmitter();
   }
 
-  onChange(event: Event) {
+  /**
+   * Called when the user chooses a file using the file input control 
+   * @param event 
+   * @returns void
+   */
+  onChange(event: Event):void {
     if (!event) return;
 
     const files: FileList | null = (event.target as HTMLInputElement).files;
@@ -39,21 +49,15 @@ export class FileUploadComponent {
 
     if (!this.file) return;
 
-    const decrypt_and_parse$ = from(
-      this.modalService.open(PasswordInputModalComponent).result,
-    ).pipe(
-      concatMap((password: string) => this.fileService.decrypt(password)),
-      concatMap(() => this.fileService.parse()),
-    );
-
-    const just_parse$ = this.fileService.parse();
-
     const upload$ = this.fileService.upload(this.file).pipe(
       tap(() => {
         this.status = 'reading';
       }),
       concatMap((response: UploadResponse) =>
-        iif(() => response.isEncrypted, decrypt_and_parse$, just_parse$),
+        iif(() => response.isEncrypted, 
+          this.decrypt_and_parse(this.file!.name), 
+          this.fileService.parse()
+        ),
       ),
     );
 
@@ -65,15 +69,41 @@ export class FileUploadComponent {
         this.status = 'success';
       },
       error: (error: any) => {
+        /* ignore error is user has cancelled password */
+        if(error == 'cancel click') { 
+          this.status = 'initial';
+          return; 
+        }
+
         this.status = 'fail';
         this.alertService.error(error, {
           autoClose: false,
         });
-        return throwError(() => error);
       },
     });
   }
 
+  /**
+   * Open a modal window to obtain the password, then parse the Spreadsheet
+   * @param fileName string
+   * @returns Open
+   */
+  private decrypt_and_parse(fileName: string): Observable<IrisPayslip[]> {
+
+    const modalRef = this.modalService.open(PasswordInputModalComponent);
+    modalRef.componentInstance.fileName = fileName;
+
+    return from(
+      modalRef.result,
+    ).pipe(
+      concatMap((password: string) => this.fileService.decrypt(password)),
+      concatMap(() => this.fileService.parse()),
+    );
+  }
+
+  /**
+   * A flag representing when there is background work being performed.
+   */
   get loading(): boolean {
     return this.status == 'reading' || this.status == 'uploading';
   }

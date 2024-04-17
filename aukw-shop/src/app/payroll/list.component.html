@@ -29,10 +29,10 @@
 <div class="row" *ngIf="!qboAuthorisationMissing">
   <div class="card m-2 col-sm-4">
     <div class="card-body">
-      <file-upload
+      <payroll-file-upload
         (onFileUploaded)="xlsxWasUploaded($event)"
         [setButtonDisabled]="loading"
-      ></file-upload>
+      ></payroll-file-upload>
       <div *ngIf="loading">
         <span class="spinner-border spinner-border-sm"> </span>
         Quickbooks values loading.
