@@ -46,42 +46,47 @@ export class PayrollFileUploadComponent {
       }
     }
 
-    if (!this.file) return;
+    this.upload();
+  }
 
-    const upload$ = this.fileService.upload(this.file).pipe(
-      tap(() => {
-        this.status = 'reading';
-      }),
-      concatMap((response: UploadResponse) =>
-        iif(
-          () => response.isEncrypted,
-          this.decrypt_and_parse(this.file!.name),
-          this.fileService.parse(),
-        ),
-      ),
-    );
+  upload() {
+    if (!this.file) return;
 
     this.status = 'uploading';
 
-    upload$.subscribe({
-      next: (response: IrisPayslip[]) => {
-        this.onFileUploaded.emit(response);
-        this.status = 'success';
-      },
-      error: (error: any) => {
-        /* ignore error if user has cancelled password */
-        if (error == 'cancel click') {
-          this.file = null;
-          this.status = 'initial';
-          return;
-        }
+    this.fileService
+      .upload(this.file)
+      .pipe(
+        tap(() => {
+          this.status = 'reading';
+        }),
+        concatMap((response: UploadResponse) =>
+          iif(
+            () => response.isEncrypted,
+            this.decrypt_and_parse(this.file!.name),
+            this.fileService.parse(),
+          ),
+        ),
+      )
+      .subscribe({
+        next: (response: IrisPayslip[]) => {
+          this.onFileUploaded.emit(response);
+          this.status = 'success';
+        },
+        error: (error: any) => {
+          /* ignore error if user has cancelled password */
+          if (error == 'cancel click') {
+            this.file = null;
+            this.status = 'initial';
+            return;
+          }
 
-        this.status = 'fail';
-        this.alertService.error(error, {
-          autoClose: false,
-        });
-      },
-    });
+          this.status = 'fail';
+          this.alertService.error(error, {
+            autoClose: false,
+          });
+        },
+      });
   }
 
   /**

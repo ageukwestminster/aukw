@@ -31,8 +31,12 @@
     <div class="card-body">
       <payroll-file-upload
         (onFileUploaded)="xlsxWasUploaded($event)"
-        [setButtonDisabled]="loading"
+        [setButtonDisabled]="loading || initializing"
       ></payroll-file-upload>
+      <div *ngIf="initializing">
+        <span class="spinner-border spinner-border-sm"> </span>
+        Please wait...
+      </div>
       <div *ngIf="loading">
         <span class="spinner-border spinner-border-sm"> </span>
         Quickbooks values loading.

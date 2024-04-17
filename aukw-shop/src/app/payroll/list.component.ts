@@ -51,6 +51,7 @@ export class PayslipListComponent implements OnInit {
 
   qboAuthorisationMissing: boolean = false;
 
+  initializing: boolean = false;
   loading: boolean = false;
   busyOnPensions: boolean = false;
   busyOnEmployerNI: boolean = false;
@@ -101,7 +102,7 @@ export class PayslipListComponent implements OnInit {
    * initialize the object by populating the 2 realm properties
    */
   ngOnInit() {
-    this.loading = true;
+    this.initializing = true;
     this.qbRealmService
       .getAll(this.user.id)
       .pipe(
@@ -137,12 +138,13 @@ export class PayslipListComponent implements OnInit {
         }),
         tap((allocations) => {
           this.allocations = allocations;
-          this.loading = false;
+          this.initializing = false;
         }),
       )
       .subscribe({
         error: (error: any) => {
           this.alertService.error(error);
+          this.initializing = false;
         },
         complete: () => (this.qboAuthorisationMissing = false),
       });
