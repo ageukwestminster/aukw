@@ -69,7 +69,7 @@ class QBPayrollQueryCtl{
           
           if (!isset($detail->Entity) || !property_exists($detail->Entity, 'Type') 
             || $detail->Entity->Type != 'Employee' || !isset($detail->Entity->EntityRef)) {
-            break;
+            continue;
           }
 
           if ( property_exists($detail->Entity->EntityRef, 'value') ) {
@@ -92,7 +92,13 @@ class QBPayrollQueryCtl{
 
           $amount = $line->Amount;
 
-          switch ($detail->AccountRef) {
+          if ( property_exists($detail->AccountRef, 'value') ) {
+            $account = $detail->AccountRef->value;
+          } else {
+            $account = $detail->AccountRef;
+          }
+
+          switch ($account) {
             case QBO::AUEW_ACCOUNT:
               switch ($line->Description) {
                 case QBO::EMPLOYER_NI_DESCRIPTION:
@@ -178,9 +184,26 @@ class QBPayrollQueryCtl{
           // It's expected that the Employee name is in Description/Memo 
           // if bill created by this system then it will be
           $name = $line->Description; 
-          
-          // Is the employee found in the QBO list of employees?
-          if (array_key_exists($name, $employees)) {
+
+          // Determine the account number and if it is a pension costs account         
+          $isPensionContributionAccount = false;
+          if (property_exists($line, 'AccountBasedExpenseLineDetail')
+                && property_exists($line->AccountBasedExpenseLineDetail, 'AccountRef')) {
+            
+            $accountRef = $line->AccountBasedExpenseLineDetail->AccountRef;
+            // AccountRef can be a string or an object of type {"value": number, "name": string}  
+            if (property_exists($accountRef, 'value')) {
+              $accountNumber = $accountRef->value;
+            } else {
+              $accountNumber = $accountRef;
+            }
+            $isPensionContributionAccount = $accountNumber == QBO::PENSION_COSTS_ACCOUNT ||
+              $accountNumber == QBO::AUEW_ACCOUNT; // for shop employees
+          }
+
+          // Is it a pension contribution account?
+          // and is the employee found in the QBO list of employees?
+          if ($isPensionContributionAccount && array_key_exists($name, $employees)) {
 
             // Determine their iris Payroll number
             $payrollNumber = $employees[$name]['payrollNumber'];
