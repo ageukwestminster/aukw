@@ -213,9 +213,9 @@ class QBPayrollJournalCtl{
                       array_key_exists($employee->value, $employees)?
                           $employees[$employee->value]['payrollNumber']:null,
                   'percentage' => $amount, 
-                  'account' => $account->value,
-                  'class' => (string)$class->value,
-                  'isShopEmployee' => $account->value == QBO::AUEW_ACCOUNT
+                  'account' => property_exists($account,'value')?$account->value:$account,
+                  'class' => (string)$class->value, // Force to string because its too long as a number
+                  'isShopEmployee' => ($account->value??'') == QBO::AUEW_ACCOUNT
               ];
             }
           }
