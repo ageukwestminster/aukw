@@ -86,7 +86,7 @@ export class PayrollService {
     property: (p: IrisPayslip) => number,
   ): Observable<Allocation> {
     return from(payslips).pipe(
-      filter((p) => !p.niJournalInQBO && property(p) != 0), // Only add if not already in QBO
+      filter((p) => !property(p) && property(p) != 0), // Only add if property exists and is not zero
       concatMap((p) =>
         // this will split each payslip into one or more allocations
         from(allocations.filter((x) => x.payrollNumber == p.employeeId)).pipe(
@@ -156,10 +156,11 @@ export class PayrollService {
   }
 
   /**
-   * Return an Observable of employee payslips for the shop
+   * Return an Observable of employee payslips for the shop. Payslips whose details
+   * have already been entered in QBO are filtered out.
    * @param payslips An array of payslips, detailing each employee's salary and ni
    * @param allocations An array of allocation objects that show how to split costs between classes
-   * @returns
+   * @returns An observable of IrisPayslip objects. Could be empty.
    */
   shopPayslips(
     payslips: IrisPayslip[],

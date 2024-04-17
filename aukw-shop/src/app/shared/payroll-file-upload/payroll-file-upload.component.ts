@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { from, concatMap, iif, tap, Observable, catchError } from 'rxjs';
+import { from, concatMap, iif, tap, Observable } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AlertService, FileService } from '@app/_services';
 import { IrisPayslip, UploadResponse } from '@app/_models';
@@ -11,7 +11,6 @@ import { PasswordInputModalComponent } from './password-input.component';
   styleUrls: ['./payroll-file-upload.component.css'],
 })
 export class PayrollFileUploadComponent {
-  
   status: 'initial' | 'uploading' | 'reading' | 'success' | 'fail' = 'initial';
   file: File | null = null;
 
@@ -30,11 +29,11 @@ export class PayrollFileUploadComponent {
   }
 
   /**
-   * Called when the user chooses a file using the file input control 
-   * @param event 
+   * Called when the user chooses a file using the file input control
+   * @param event
    * @returns void
    */
-  onChange(event: Event):void {
+  onChange(event: Event): void {
     if (!event) return;
 
     const files: FileList | null = (event.target as HTMLInputElement).files;
@@ -54,9 +53,10 @@ export class PayrollFileUploadComponent {
         this.status = 'reading';
       }),
       concatMap((response: UploadResponse) =>
-        iif(() => response.isEncrypted, 
-          this.decrypt_and_parse(this.file!.name), 
-          this.fileService.parse()
+        iif(
+          () => response.isEncrypted,
+          this.decrypt_and_parse(this.file!.name),
+          this.fileService.parse(),
         ),
       ),
     );
@@ -69,10 +69,11 @@ export class PayrollFileUploadComponent {
         this.status = 'success';
       },
       error: (error: any) => {
-        /* ignore error is user has cancelled password */
-        if(error == 'cancel click') { 
+        /* ignore error if user has cancelled password */
+        if (error == 'cancel click') {
+          this.file = null;
           this.status = 'initial';
-          return; 
+          return;
         }
 
         this.status = 'fail';
@@ -89,13 +90,10 @@ export class PayrollFileUploadComponent {
    * @returns Open
    */
   private decrypt_and_parse(fileName: string): Observable<IrisPayslip[]> {
-
     const modalRef = this.modalService.open(PasswordInputModalComponent);
     modalRef.componentInstance.fileName = fileName;
 
-    return from(
-      modalRef.result,
-    ).pipe(
+    return from(modalRef.result).pipe(
       concatMap((password: string) => this.fileService.decrypt(password)),
       concatMap(() => this.fileService.parse()),
     );

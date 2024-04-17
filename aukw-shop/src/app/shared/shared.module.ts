@@ -13,7 +13,7 @@ import { QBConnectionRowComponent } from './qbconn-list/row.component';
 import { SalesHistogramChartComponent } from './sales-histogram/sales-histogram-chart.component';
 import { SummaryTableComponent } from './summary-table/summary-table.component';
 import { MovingAverageChartComponent } from './moving-avg-chart/moving-avg-chart.component';
-import { PasswordInputModalComponent} from './payroll-file-upload/password-input.component';
+import { PasswordInputModalComponent } from './payroll-file-upload/password-input.component';
 
 @NgModule({
   imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbModule],

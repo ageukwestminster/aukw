@@ -18,26 +18,43 @@
     },
     */
 export class IrisPayslip {
+  /** Iris payroll number for employee */
   employeeId: number;
+  /** Quickbooks employee id */
   quickbooksId: number;
+  /** Display name of employee */
   employeeName: string;
+  /** Date of payroll run in string format */
   payrollDate: string;
+  /** Gross monthly salary */
   totalPay: number;
+  /** Income tax deduction */
   paye: number;
+  /** National insurance deduction paid by the employee */
   employeeNI: number;
-  otherDeductions: number;
+  /** Salary reduction taken by employee and paid into pension pot */
   salarySacrifice: number;
+  /** Deduction taken by government to pay for university education */
   studentLoan: number;
+  /** Catch all for all other deductions */
+  otherDeductions: number;
   netPay: number;
+  /** National Insurance paid by the employer */
   employerNI: number;
+  /** Pension contribution paid by employer */
   employerPension: number;
+  /** Pension contribution paid by employee, if not salary sacrifice */
   employeePension: number;
-
+  /** 'True' if employee works in the shop */
   isShopEmployee: boolean = false;
+  /** 'True' if the employee's Employer NI has been booked in QBO.  */
   niJournalInQBO: boolean = false;
+  /** 'True' if the employee's Employer pension contribution has been booked in QBO.  */
   pensionBillInQBO: boolean = false;
-  shopJournalInQBO: boolean = false;
+  /** 'True' if the employee's salary and deductions have been booked in QBO.  */
   payslipJournalInQBO: boolean = false;
+  /** 'True' if the shop employee's salary, NI and pension has been booked in the Enterprises QBO company. */
+  shopJournalInQBO: boolean = false;
 
   add(obj: IrisPayslip): IrisPayslip {
     this.totalPay += (obj && obj.totalPay) || 0;

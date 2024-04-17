@@ -8,6 +8,6 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class PasswordInputModalComponent {
   @Input() fileName!: string;
-  passwordValue: string ='';
+  passwordValue: string = '';
   constructor(public modal: NgbActiveModal) {}
 }

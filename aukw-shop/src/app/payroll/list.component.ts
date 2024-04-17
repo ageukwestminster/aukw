@@ -25,6 +25,7 @@ import {
   EmployeeAllocation,
   PayrollJournalEntry,
   IrisPayslip,
+  QBFlags,
   QBRealm,
   User,
 } from '@app/_models';
@@ -62,6 +63,8 @@ export class PayslipListComponent implements OnInit {
 
   fileUploadStatus: string = '';
 
+  cummulativeQbFlags: QBFlags = new QBFlags();
+
   constructor(
     private alertService: AlertService,
     private qbRealmService: QBRealmService,
@@ -80,6 +83,7 @@ export class PayslipListComponent implements OnInit {
     payslips.forEach((payslip) => {
       this.total = this.total.add(payslip);
 
+      // Set flag for shop employees according to the allocations array values
       if (
         this.allocations.find(
           (item) =>
@@ -155,91 +159,100 @@ export class PayslipListComponent implements OnInit {
 
   updateInQBOValues() {
     if (
-      this.payslips &&
-      this.payslips[0] &&
-      this.charityRealm.realmid &&
-      this.enterpriseRealm.realmid
+      !this.payslips ||
+      !this.payslips[0] ||
+      !this.charityRealm.realmid ||
+      !this.enterpriseRealm.realmid
     ) {
-      const dt = new Date(this.payslips[0].payrollDate + 'T12:00:00');
-      const month = (dt.getMonth() + 1).toString().padStart(2, '0');
-      const year = dt.getFullYear().toString();
-
-      this.loading = true;
-
-      forkJoin({
-        charityPayslips: this.qbPayrollService.getWhatsAlreadyInQBO(
-          this.charityRealm.realmid,
-          year,
-          month,
-        ),
-        shopPayslips: this.qbPayrollService.getWhatsAlreadyInQBO(
-          this.enterpriseRealm.realmid!,
-          year,
-          month,
-        ),
-      })
-        .pipe(
-          map((x) => {
-            this.payslips.forEach((xlsxPayslip) => {
-              const quickbooksPayslip = x.charityPayslips.find(
-                (item) => item.employeeId == xlsxPayslip.employeeId,
-              );
-
-              this.updateInQBOCharityValues(
-                xlsxPayslip,
-                quickbooksPayslip ?? new IrisPayslip(),
-              );
-
-              const quickbooksShopPayslip = x.shopPayslips.find(
-                (item) => item.employeeId == xlsxPayslip.employeeId,
-              );
-
-              this.updateInQBOEnterprisesValues(
-                xlsxPayslip,
-                quickbooksShopPayslip ?? new IrisPayslip(),
-              );
-            });
-          }),
-          tap(() => {
-            // if there are ANY payslips with niJournalInQBO = false then set total.niJournalInQBO to false
-            let filter = this.payslips.filter(
-              (payslip) => payslip.employerNI && !payslip.niJournalInQBO,
-            );
-            if (filter && filter.length > 0) {
-              this.total.niJournalInQBO = false;
-            } else {
-              this.total.niJournalInQBO = true;
-            }
-
-            this.total.niJournalInQBO =
-              this.payslips.filter(
-                (payslip) => payslip.employerNI && !payslip.niJournalInQBO,
-              ).length == 0;
-
-            this.total.payslipJournalInQBO =
-              this.payslips.filter((payslip) => !payslip.payslipJournalInQBO)
-                .length == 0;
-
-            this.total.pensionBillInQBO =
-              this.payslips.filter(
-                (payslip) =>
-                  payslip.employerPension && !payslip.pensionBillInQBO,
-              ).length == 0;
-
-            this.total.shopJournalInQBO =
-              this.payslips.filter(
-                (payslip) =>
-                  !payslip.shopJournalInQBO && payslip.isShopEmployee,
-              ).length == 0;
-          }),
-        )
-        .subscribe({
-          error: (e) => this.alertService.error(e),
-          complete: () => {
-            this.loading = false;
-          },
-        });
+      return;
     }
+
+    // Inform user background work is happening
+    this.loading = true;
+
+    // Time added to avoid problems with BST
+    const dt = new Date(this.payrollDate + 'T12:00:00');
+    const month = (dt.getMonth() + 1).toString().padStart(2, '0');
+    const year = dt.getFullYear().toString();
+
+    // forkJoin will wait for both Observables to complete
+    forkJoin({
+      charityPayslips: this.qbPayrollService.getWhatsAlreadyInQBO(
+        this.charityRealm.realmid,
+        year,
+        month,
+      ),
+      shopPayslips: this.qbPayrollService.getWhatsAlreadyInQBO(
+        this.enterpriseRealm.realmid!,
+        year,
+        month,
+      ),
+    })
+      .pipe(
+        map((x) => {
+          this.payslips.forEach((xlsxPayslip) => {
+            let qbPayslip = x.charityPayslips.find(
+              (item) => item.employeeId == xlsxPayslip.employeeId,
+            );
+            qbPayslip = qbPayslip ?? new IrisPayslip();
+
+            xlsxPayslip.niJournalInQBO = this.isEqualEmployerNI(
+              xlsxPayslip,
+              qbPayslip,
+            );
+            xlsxPayslip.pensionBillInQBO = this.isEqualPension(
+              xlsxPayslip,
+              qbPayslip,
+            );
+            xlsxPayslip.payslipJournalInQBO = this.isEqualPay(
+              xlsxPayslip,
+              qbPayslip,
+            );
+
+            const qbShopPayslip = x.shopPayslips.find(
+              (item) => item.employeeId == xlsxPayslip.employeeId,
+            );
+
+            xlsxPayslip.shopJournalInQBO = this.isEqualShopPay(
+              xlsxPayslip,
+              qbShopPayslip ?? new IrisPayslip(),
+            );
+          });
+        }),
+        tap(() => {
+          // if there are any payslips with non-zero Employer NI and which have not
+          // been added yet to QBO then set the cummulative flag.
+          this.cummulativeQbFlags.niJournalInQBO =
+            this.payslips.filter(
+              (payslip) => payslip.employerNI && !payslip.niJournalInQBO,
+            ).length == 0;
+
+          // Now compute payslip flag
+          this.cummulativeQbFlags.payslipJournalInQBO =
+            this.payslips.filter((payslip) => !payslip.payslipJournalInQBO)
+              .length == 0;
+
+          // if there are any payslips with non-zero Employer pension and which
+          // have not been added yet to QBO then set the cummulative flag.
+          this.cummulativeQbFlags.pensionBillInQBO =
+            this.payslips.filter(
+              (payslip) => payslip.employerPension && !payslip.pensionBillInQBO,
+            ).length == 0;
+
+          // if there are shop employees for which the Enterprises journal is
+          // not yet done then set the cummulative flag.
+          this.cummulativeQbFlags.shopJournalInQBO =
+            this.payslips.filter(
+              (payslip) => payslip.isShopEmployee && !payslip.shopJournalInQBO,
+            ).length == 0;
+        }),
+      )
+      .subscribe({
+        error: (e) => this.alertService.error(e),
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 
   employerNI() {
@@ -345,26 +358,43 @@ export class PayslipListComponent implements OnInit {
       });
   }
 
-  shopJournals() {
+  /**
+   * Add the payroll journal in the shop QBO company file. This journal has salary,
+   * NI and pension amounts for each shop employee.
+   * @returns void
+   */
+  enterPayrollJournalInEnterprisesCompany(): void {
     if (!this.payslips || !this.payslips.length) return;
 
     this.busyOnShopJournals = true;
 
+    //forkJoin waits for both Observables to complete before proceeding
     forkJoin({
+      // payslips for shop employees, but only if not already entered.
       payslips: this.payrollService
         .shopPayslips(this.payslips, this.allocations)
-        .pipe(toArray()),
+        .pipe(toArray()), // return an array, not one-by-one
+
+      // A list of employees in the Enterprises QBO file.
       employees: this.qbEmployeeService.getAll(this.enterpriseRealm!.realmid!),
     })
       .pipe(
         map((x) => {
-          let returnArray: Array<object> = [];
+          let returnArray: Array<{
+            quickbooksId: number;
+            totalPay: number;
+            employerNI: number;
+            employerPension: number;
+          }> = [];
 
+          // The quickbooks
           x.payslips.forEach((payslip) => {
+            // Find th eemployee that matches the payslip
             const employeeName = x.employees.filter(
               (emp) => emp.payrollNumber == payslip.employeeId,
             )[0];
 
+            // This data will go to the API
             returnArray.push({
               quickbooksId: employeeName.quickbooksId,
               totalPay: payslip.totalPay,
@@ -384,7 +414,9 @@ export class PayslipListComponent implements OnInit {
         }),
       )
       .subscribe({
-        next: () => this.alertService.info(' Shop payroll journal added.'),
+        next: () => {
+          this.alertService.info(' Shop payroll journal added.');
+        },
         error: (e) => {
           this.busyOnShopJournals = false;
           this.alertService.error(e);
@@ -396,19 +428,20 @@ export class PayslipListComponent implements OnInit {
       });
   }
 
-  private updateInQBOCharityValues(
+  /**
+   * Compare the payslip calculated from the Iris spreadsheet with the payslip
+   * calculated from QB values and see if they are equal, considering only the properties
+   * that matter for calculating the journal entries needed for the charity QBO.
+   * Return 'true' if they match
+   * @param xlsxPayslip The payslip calculated from the Iris spreadsheet
+   * @param quickbooksPayslip The payslip calculated from QB values
+   * @returns 'true' if they are equal
+   */
+  isEqualPay(
     xlsxPayslip: IrisPayslip,
     quickbooksPayslip: IrisPayslip,
-  ): void {
-    xlsxPayslip.niJournalInQBO =
-      xlsxPayslip.employerNI == 0 ||
-      xlsxPayslip.employerNI == quickbooksPayslip.employerNI;
-
-    xlsxPayslip.pensionBillInQBO =
-      xlsxPayslip.employerPension == 0 ||
-      xlsxPayslip.employerPension == quickbooksPayslip.employerPension;
-
-    xlsxPayslip.payslipJournalInQBO =
+  ): boolean {
+    return (
       xlsxPayslip.totalPay == quickbooksPayslip.totalPay &&
       xlsxPayslip.paye == quickbooksPayslip.paye &&
       xlsxPayslip.employeeNI == quickbooksPayslip.employeeNI &&
@@ -416,19 +449,66 @@ export class PayslipListComponent implements OnInit {
       xlsxPayslip.employeePension == quickbooksPayslip.employeePension &&
       xlsxPayslip.salarySacrifice == quickbooksPayslip.salarySacrifice &&
       xlsxPayslip.studentLoan == quickbooksPayslip.studentLoan &&
-      xlsxPayslip.netPay == quickbooksPayslip.netPay;
+      xlsxPayslip.netPay == quickbooksPayslip.netPay
+    );
   }
 
-  private updateInQBOEnterprisesValues(
+  /**
+   * Compare the payslip calculated from the Iris spreadsheet with the payslip
+   * calculated from QB values and see if they are equal, considering only Employer pension.
+   * Return 'true' if they match
+   * @param xlsxPayslip The payslip calculated from the Iris spreadsheet
+   * @param quickbooksPayslip The payslip calculated from QB values
+   * @returns 'true' if they are equal
+   */
+  isEqualPension(
     xlsxPayslip: IrisPayslip,
     quickbooksPayslip: IrisPayslip,
-  ): void {
-    xlsxPayslip.shopJournalInQBO =
+  ): boolean {
+    return (
+      xlsxPayslip.employerPension == 0 ||
+      xlsxPayslip.employerPension == quickbooksPayslip.employerPension
+    );
+  }
+
+  /**
+   * Compare the payslip calculated from the Iris spreadsheet with the payslip
+   * calculated from QB values and see if they are equal, considering only Employer NI.
+   * Return 'true' if they match
+   * @param xlsxPayslip The payslip calculated from the Iris spreadsheet
+   * @param quickbooksPayslip The payslip calculated from QB values
+   * @returns 'true' if they are equal
+   */
+  isEqualEmployerNI(
+    xlsxPayslip: IrisPayslip,
+    quickbooksPayslip: IrisPayslip,
+  ): boolean {
+    return (
+      xlsxPayslip.employerNI == 0 ||
+      xlsxPayslip.employerNI == quickbooksPayslip.employerNI
+    );
+  }
+
+  /**
+   * Compare the payslip calculated from the Iris spreadsheet with the payslip
+   * calculated from QB values and see if they are equal, considering only the properties
+   * that matter for calculating the journal entries needed for the Enterprises QBO.
+   * Return 'true' if they match
+   * @param xlsxPayslip The payslip calculated from the Iris spreadsheet
+   * @param quickbooksPayslip The payslip calculated from QB values
+   * @returns 'true' if they are equal
+   */
+  isEqualShopPay(
+    xlsxPayslip: IrisPayslip,
+    quickbooksPayslip: IrisPayslip,
+  ): boolean {
+    return (
       (xlsxPayslip.totalPay == 0 &&
         xlsxPayslip.employerNI == 0 &&
         xlsxPayslip.employerPension == 0) ||
       (xlsxPayslip.totalPay == quickbooksPayslip.totalPay &&
         xlsxPayslip.employerNI == quickbooksPayslip.employerNI &&
-        xlsxPayslip.employerPension == quickbooksPayslip.employerPension);
+        xlsxPayslip.employerPension == quickbooksPayslip.employerPension)
+    );
   }
 }

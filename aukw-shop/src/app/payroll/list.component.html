@@ -1,7 +1,7 @@
 ﻿<div class="card" *ngIf="qboAuthorisationMissing">
   <div class="card-body">
     <p>
-      <strong>Notice: QBO Authorisation Missing or Incomplete</strong>
+      <strong>Quickbooks Online Authorisation Missing or Incomplete</strong>
     </p>
     <p>
       In order for this page to function you are required to make 2 links
@@ -45,7 +45,7 @@
     <button
       (click)="employerNI()"
       class="btn btn-sm btn-success m-1 mt-1 #employerNI"
-      [disabled]="disableEmployerNI || total.niJournalInQBO"
+      [disabled]="disableEmployerNI || cummulativeQbFlags.niJournalInQBO"
     >
       <span
         *ngIf="busyOnEmployerNI"
@@ -59,7 +59,9 @@
     <button
       (click)="makeEmployeeJournalEntries()"
       class="btn btn-sm btn-success m-1 mt-1"
-      [disabled]="disableEmployeeJournals || total.payslipJournalInQBO"
+      [disabled]="
+        disableEmployeeJournals || cummulativeQbFlags.payslipJournalInQBO
+      "
     >
       <span
         *ngIf="busyOnEmployeeJournals"
@@ -73,7 +75,7 @@
     <button
       (click)="pensionBill()"
       class="btn btn-sm btn-success m-1 mt-1"
-      [disabled]="disablePensions || total.pensionBillInQBO"
+      [disabled]="disablePensions || cummulativeQbFlags.pensionBillInQBO"
     >
       <span
         *ngIf="busyOnPensions"
@@ -85,9 +87,9 @@
       <i class="fas fa-greater-than"></i>
     </div>
     <button
-      (click)="shopJournals()"
+      (click)="enterPayrollJournalInEnterprisesCompany()"
       class="btn btn-sm btn-success m-1 mt-1"
-      [disabled]="disableShopJournals || total.shopJournalInQBO"
+      [disabled]="disableShopJournals || cummulativeQbFlags.shopJournalInQBO"
     >
       <span
         *ngIf="busyOnShopJournals"
@@ -201,7 +203,11 @@
                 <td class="text-center">
                   <div class="row">
                     <div class="col">
-                      <i class="fas fa-minus" *ngIf="!payslip.employerNI"></i>
+                      <i
+                        class="fas fa-minus"
+                        *ngIf="!payslip.employerNI"
+                        ngbTooltip="Employer NI is zero."
+                      ></i>
                       <span style="color: green">
                         <i
                           class="fas fa-check"
@@ -237,6 +243,7 @@
                       <i
                         class="fas fa-minus"
                         *ngIf="!payslip.employerPension"
+                        ngbTooltip="Not in pension plan."
                       ></i>
                       <span style="color: green">
                         <i
@@ -266,9 +273,7 @@
                       <span style="color: green">
                         <i
                           class="fas fa-check"
-                          *ngIf="
-                            payslip.isShopEmployee && payslip.shopJournalInQBO
-                          "
+                          *ngIf="payslip.shopJournalInQBO"
                           ngbTooltip="Shop journal entry done."
                         ></i>
                       </span>
