@@ -190,11 +190,11 @@ class QBPayrollJournalCtl{
     if (isset($response) && isset($response->RecurringTransaction) && 
                     isset($response->RecurringTransaction->JournalEntry)) {
 
-        $allocationTxnArray = $response->RecurringTransaction->JournalEntry->Line;
+        $returnObj = array();
         
         try {
-
-          $returnObj = array();
+          
+          $allocationTxnArray = $response->RecurringTransaction->JournalEntry->Line;
 
           foreach ($allocationTxnArray as $line) {
 
@@ -220,20 +220,6 @@ class QBPayrollJournalCtl{
             }
           }
 
-          // Check allocations sum up to 100 for each employee
-          /*foreach ($returnObj as $employeeAllocationsObj) {  
-            $sum = 0;     
-            foreach ($employeeAllocationsObj['allocations'] as $allocation) {
-              $sum += $allocation->percentage;
-            }     
-            if (abs($sum - 100) > 0.0005) {
-              throw new \Exception("Sum of percentage allocations for employee named '" 
-                . $employeeAllocationsObj->name . "' (QBO id = " 
-                . $employeeAllocationsObj->id . ") do not add up to 100.");
-            }
-          }*/
-
-          // array_values converts associative array to normal array
           echo json_encode($returnObj); 
 
         } catch (\Exception $e) {
