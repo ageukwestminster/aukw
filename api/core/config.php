@@ -94,14 +94,8 @@ Config::write('qb.loglocation', 'B:\\logs');
 Config::write('qb.baseUrl', 'Production');
 Config::write('qb.clientid', 'QB_CLIENT_ID'); // env key name
 Config::write('qb.clientsecret', 'QB_CLIENT_SECRET'); // env key name
-Config::write('qb.realmid', '9130350604308576'); // Enterprises
 Config::write('qb.redirectdomain', 'https://c5b2-91-125-74-184.ngrok-free.app');
 Config::write('qb.redirecturl', Config::read('qb.redirectdomain') . '/callback');
 
 // QBO id of recurring txn that defines employee salary allocations.
 Config::write('qb.allocationsid', '15654'); 
-
-//Config::write('qb.baseUrl', 'Development');
-//Config::write('qb.clientid', 'QB_SANDBOX_CLIENT_ID'); // env key name
-//Config::write('qb.clientsecret', 'QB_SANDBOX_CLIENT_SECRET'); // env key name
-//Config::write('qb.realmid', '4620816365027844190'); // Sandbox GB Company
