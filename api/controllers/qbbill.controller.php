@@ -51,7 +51,7 @@ class QBBillCtl{
    *
    * On success the PHP call exits with HTTP status 200 and a message confirming success.
    * If this fails the PHP call exits with HTTP status 400 and a message describing the error.
-   * 
+   * @param string $realmid The company ID for the QBO company.
    * @param int $id The QBO id, not the DocNumber
    * @return void Output is echoed directly to response 
    */

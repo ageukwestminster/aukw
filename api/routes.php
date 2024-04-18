@@ -147,7 +147,7 @@ $router->mount('/qb', function () use ($router) {
     $router->get('/connections/(\d+)', 'QBAuthCtl@all_connection_details');
     
     // Retrieve details of the QBO company
-    $router->get('/companyinfo', 'QBCompanyCtl@companyInfo');
+    $router->get('/(\d+)/companyinfo', 'QBCompanyCtl@companyInfo');
     // return list of all QB realms in databse
     $router->get('/realm', 'QBRealmCtl@read_all');
     // return single user that has the given realm id

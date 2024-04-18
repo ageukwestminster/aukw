@@ -13,20 +13,10 @@ class QBCompanyCtl{
 
   /**
    * Get information about the QBO company
-   * 
+   * @param string $realmid The company ID for the QBO company.
    * @return void Output is echo'd directly to response
    */
-  public static function companyInfo(){  
-
-    if( !isset($_GET['realmid']) ) {
-      http_response_code(400);   
-      echo json_encode(
-          array("message" => "Please supply realmid as a parameter.")
-      );
-      exit(1);
-    } 
-
-    $realmid = $_GET['realmid'];
+  public static function companyInfo(string $realmid){  
 
     $model = new QuickbooksAuth();
 
