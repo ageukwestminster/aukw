@@ -126,7 +126,7 @@ $router->mount('/qb', function () use ($router) {
 
     // Create a new sales receipt in QB
     $router->post('/salesreceipt', 'QBSalesReceiptCtl@create');
-    // Delete a new sales receipt in QB
+    // Delete a sales receipt in QB
     $router->delete('/salesreceipt/(\w+)', 'QBSalesReceiptCtl@delete');
 
     // The param is the takingsid value in the takings table in MySQL dB
@@ -157,12 +157,14 @@ $router->mount('/qb', function () use ($router) {
     $router->get('/item/(\w+)', 'QBItemCtl@read_one');
     $router->get('/items', 'QBItemCtl@read_all');
 
-    // QB item is for Products/Services
-    $router->get('/bill/(\w+)', 'QBBillCtl@read_one');
-    // QB Bill fopr Pension payments
-    $router->post('/bill/pensions', 'QBBillCtl@create_pensions_bill');
+    // Return details of a QB bill (aka invoice)
+    $router->get('/(\d+)/bill/(\w+)', 'QBBillCtl@read_one');
+    // QB Bill for Pension payments
+    $router->post('/(\d+)/bill/pensions', 'QBBillCtl@create_pensions_bill');
     // Get a list of bills whose DocNumber starts with the given string                                    
-    $router->get('/bill/docnumber/(\w+)', 'QBBillCtl@query_by_docnumber');
+    $router->get('/(\d+)/bill/docnumber/(\w+)', 'QBBillCtl@query_by_docnumber');
+    // Delete a bill in QB
+    $router->delete('/(\d+)/bill/(\w+)', 'QBBillCtl@delete');
 
     // QB Class
     $router->get('/class/(\w+)', 'QBClassCtl@read_one');

@@ -17,22 +17,15 @@ class QBBillCtl{
   /**
    * Return details of the QBBill identified by $id
    *
+   * @param string $realmid The company ID for the QBO company.
    * @param string $id
    * @return void Output is echo'd directly to response 
    */
-  public static function read_one(string $id){  
-
-    if(!isset($_GET['realmid']) ) {
-      http_response_code(400);   
-      echo json_encode(
-        array("message" => "Please supply a value for the 'realmid' parameter.")
-      );
-      exit(1);
-    } 
+  public static function read_one(string $realmid, string $id){  
 
     $model = QuickbooksBill::getInstance()
-      ->setId($id)
-      ->setRealmID($_GET['realmid']);    
+      ->setRealmID($realmid)  
+      ->setId($id);
 
     echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
   }
@@ -40,21 +33,14 @@ class QBBillCtl{
   /**
    * Return an array of bills whose DocNumber starts with the given string.
    *
+   * @param string $realmid The company ID for the QBO company.
    * @param string $doc_number The string to match e.g. 'Payroll_2024_03'
    * @return void Output is echo'd directly to response 
    */
-  public static function query_by_docnumber(string $doc_number){  
-
-    if(!isset($_GET['realmid']) ) {
-      http_response_code(400);   
-      echo json_encode(
-        array("message" => "Please supply a value for the 'realmid' parameter.")
-      );
-      exit(1);
-    } 
+  public static function query_by_docnumber(string $realmid, string $doc_number){  
 
     $bills = QuickbooksQuery::getInstance()
-      ->setRealmID($_GET['realmid'])
+      ->setRealmID($realmid)
       ->query_by_docnumber('Bill', $doc_number); 
 
     echo json_encode($bills);
@@ -63,22 +49,17 @@ class QBBillCtl{
   /**
    * Delete from QBO the bill identified by $id
    *
+   * On success the PHP call exits with HTTP status 200 and a message confirming success.
+   * If this fails the PHP call exits with HTTP status 400 and a message describing the error.
+   * 
    * @param int $id The QBO id, not the DocNumber
    * @return void Output is echoed directly to response 
    */
-  public static function delete(int $id){  
-    
-    if(!isset($_GET['realmid']) ) {
-      http_response_code(400);   
-      echo json_encode(
-        array("message" => "Please supply a value for the 'realmid' parameter.")
-      );
-      exit(1);
-    } 
+  public static function delete(string $realmid, int $id){  
 
     $model = QuickbooksBill::getInstance()
       ->setId($id)
-      ->setRealmID($_GET['realmid']); 
+      ->setRealmID($realmid); 
 
     if($model->delete()) {
       echo json_encode(
@@ -99,18 +80,11 @@ class QBBillCtl{
   /**
    * Create a QBO bill for the monthly pension expenses from data supplied via http POST
    *
+   * @param string $realmid The company ID for the QBO company.
    * @return void Output is echoed directly to response 
    * 
    */
-  public static function create_pensions_bill(){  
-
-    if(!isset($_GET['realmid']) ) {
-      http_response_code(400);   
-      echo json_encode(
-        array("message" => "Please supply a value for the 'realmid' parameter.")
-      );
-      exit(1);
-    }
+  public static function create_pensions_bill(string $realmid){  
     
     if(!isset($_GET['payrolldate']) || 
             !\Core\DatesHelper::validateDate($_GET['payrolldate'])) {
@@ -130,15 +104,16 @@ class QBBillCtl{
     $docNumber = QBO::payrollDocNumber($payrollDate).'-LG';
 
     try {
+
       $model = QuickbooksPensionBill::getInstance()
+        ->setRealmID($realmid)
         ->setDocNumber($docNumber)
         ->setTxnDate($payrollDate)
         ->setSalarySacrificeTotal($data->salarySacrificeTotal)
         ->setEmployeePensContribTotal($data->employeePensionTotal)
         ->setTotal($data->total)
-        ->setPensionCosts($data->pensionCosts)
-        ->setRealmID($_GET['realmid']
-      );
+        ->setPensionCosts($data->pensionCosts);
+        
     } catch (\Exception $e) {
     http_response_code(400);  
     echo json_encode(

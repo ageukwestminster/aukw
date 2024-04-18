@@ -52,7 +52,7 @@ export class QBPayrollService {
   createPensionBill(realmID: string, params: any, payrollDate: string) {
     //console.log(JSON.stringify(params, null, 2));
     return this.http.post<any>(
-      `${baseUrl}/bill/pensions?realmid=${realmID}&payrolldate=${payrollDate}`,
+      `${baseUrl}/${realmID}/bill/pensions?payrolldate=${payrollDate}`,
       params,
     );
   }
