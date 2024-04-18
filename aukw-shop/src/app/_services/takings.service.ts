@@ -64,7 +64,7 @@ export class TakingsService {
 
   addToQuickbooks(id: number): Observable<ApiMessage> {
     return this.http.post<ApiMessage>(
-      `${environment.apiUrl}/qb/salesreceipt/takings/${id}?realmid=${realmID}`,
+      `${environment.apiUrl}/qb/${realmID}/salesreceipt/takings/${id}`,
       null,
     );
   }

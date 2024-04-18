@@ -16,46 +16,30 @@ class QBSalesReceiptCtl{
 
   /**
    * Return details of the sales receipt identified by $id
-   *
+   * @param string $realmid The company ID for the QBO company.
    * @param int $id The QBO id, not the DocNumber
    * @return void Output is echoed directly to response 
    */
-  public static function read_one(int $id){  
-
-    if(!isset($_GET['realmid']) ) {
-      http_response_code(400);   
-      echo json_encode(
-        array("message" => "Please supply a value for the 'realmid' parameter.")
-      );
-      exit(1);
-    } 
+  public static function read_one(string $realmid, int $id){  
 
     $model = QuickbooksSalesReceipt::getInstance()
                 ->setId($id)
-                ->setRealmID(($_GET['realmid']));
+                ->setRealmID($realmid);
 
     echo json_encode($model->readone(), JSON_NUMERIC_CHECK);   
   }
 
   /**
    * Delete from QBO the sales receipt identified by $id
-   *
+   * @param string $realmid The company ID for the QBO company.
    * @param int $id The QBO id, not the DocNumber
    * @return void Output is echoed directly to response 
    */
-  public static function delete(int $id){  
-    
-    if(!isset($_GET['realmid']) ) {
-      http_response_code(400);   
-      echo json_encode(
-        array("message" => "Please supply a value for the 'realmid' parameter.")
-      );
-      exit(1);
-    } 
+  public static function delete(string $realmid, int $id){  
 
     $model = QuickbooksSalesReceipt::getInstance()
         ->setId($id)
-        ->setRealmID($_GET['realmid']);
+        ->setRealmID($realmid);
 
     if($model->delete()) {
       echo json_encode(
@@ -88,17 +72,11 @@ class QBSalesReceiptCtl{
    *   "cashToCharity": 0, "shopid": 1
    *  }
    *
+   * @param string $realmid The company ID for the QBO company.
    * @return void Output is echoed directly to response 
    * 
    */
-  public static function create(){  
-    if(!isset($_GET['realmid']) ) {
-      http_response_code(400);   
-      echo json_encode(
-        array("message" => "Please supply a value for the 'realmid' parameter.")
-      );
-      exit(1);
-    } 
+  public static function create(string $realmid){  
 
     $emptySales = (object) [ 'number' => 0, 'sales' => 0];
 
@@ -121,8 +99,8 @@ class QBSalesReceiptCtl{
         ->setVolunteerExpenses($data->volunteerExpenses ?? 0)
         ->setCashToCharity($data->cashToCharity ?? 0)
         ->setPrivateNote($data->comments ?? '')
-        ->setRealmID($_GET['realmid']
-      );
+        ->setRealmID($realmid);
+      
     } catch (\TypeError $e) {
       http_response_code(422);  
       echo json_encode(
@@ -165,21 +143,12 @@ class QBSalesReceiptCtl{
   /**
    * Create a QB sales receipt from a Takings referenced by the given ID.
    * if the QB object is successfully created then update 
-   *
+   * @param string $realmid The company ID for the QBO company.
    * @param int $takingsid The id of the Takings
-   * 
    * @return void Output is echoed directly to response 
    * 
    */
-  public static function create_from_takings(int $takingsid){  
-
-    if(!isset($_GET['realmid']) ) {
-      http_response_code(400);   
-      echo json_encode(
-        array("message" => "Please supply a value for the 'realmid' parameter.")
-      );
-      exit(1);
-    } 
+  public static function create_from_takings(string $realmid, int $takingsid){  
 
     $takings = new Takings();
     $takings->id = $takingsid;
@@ -202,7 +171,7 @@ class QBSalesReceiptCtl{
     }
 
     $model=QBSalesReceiptCtl::transfer_takings_data($takings);
-    $model->setRealmID($_GET['realmid']);
+    $model->setRealmID($realmid);
     $result = $model->create();
     if ($result) {
       $takings->quickbooks = 1;
@@ -216,11 +185,11 @@ class QBSalesReceiptCtl{
 
   /**
    * Create a QBO Sales receipt for each Takings item that has Quickbooks = 0
-   *
+   * @param string $realmid The company ID for the QBO company.
    * @return void Output is echoed directly to response 
    * 
    */
-  public static function create_all_from_takings(){  
+  public static function create_all_from_takings(string $realmid){  
 
     // search for all the takings objects that are not yet entered into Quickbooks
     $takingsModel = new \Models\Takings();

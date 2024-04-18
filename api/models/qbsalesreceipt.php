@@ -280,10 +280,10 @@ class QuickbooksSalesReceipt{
    *
    * @param int $id The QBO id of the Quickbooks sales receipt.
    * 
-   * @return IPPIntuitEntity Returns a sales receipt  with specified Id.
+   * @return object|false Returns a sales receipt  with specified Id.
    * 
    */
-  public function readOne(){
+  public function readOne():object|false{
 
       $auth = new QuickbooksAuth();
       try{
@@ -294,23 +294,29 @@ class QuickbooksSalesReceipt{
         echo json_encode(
           array("message" =>  $e->getMessage() )
         );
-        return;
+        return false;
       }
 
       if ($dataService == false) {
-        return;
+        return false;
       }
 
       $dataService->forceJsonSerializers();
-      $salesreceipt = $dataService->FindbyId('salesreceipt', $this->id);
+      $salesreceipt = $dataService->FindbyId('SalesReceipt', $this->id);
       $error = $dataService->getLastError();
       if ($error) {
           echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
           echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
           echo "The Response message is: " . $error->getResponseBody() . "\n";
+          return false;
       }
       else {
+        if (property_exists($salesreceipt, 'SalesReceipt')) {
+          /** @disregard Ignore Intelephense error on next line */
+          return $salesreceipt->SalesReceipt;
+        } else {
           return $salesreceipt;
+        }
       }
   }
 
