@@ -81,7 +81,7 @@ class QBPayrollJournalCtl{
   /**
    * Enter the journal txn for employer NI
    */
-  public static function create_employer_ni_journal(){
+  public static function create_employer_ni_journal():void{
 
     QBPayrollJournalCtl::checkRealmId();
     QBPayrollJournalCtl::checkPayrollDate();
@@ -128,7 +128,7 @@ class QBPayrollJournalCtl{
     }    
   }
 
-  public static function create_enterprises_journal() {
+  public static function create_enterprises_journal():void {
 
     QBPayrollJournalCtl::checkRealmId();
     QBPayrollJournalCtl::checkPayrollDate();
@@ -173,7 +173,7 @@ class QBPayrollJournalCtl{
    *
    * @return void Output is echo'd directly to response 
    */
-  public static function read_employee_allocations(){  
+  public static function read_employee_allocations():void{  
 
     QBPayrollJournalCtl::checkRealmId();
 
@@ -243,7 +243,13 @@ class QBPayrollJournalCtl{
     
   }
   
-  private static function checkRealmId() {
+  /** 
+   * Private function that checks that $_GET, the array of variables received via the HTTP 
+   * GET method, contains a populated variable called 'realmid'.
+   * 
+   * If the test fails the PHP call exits with HTTP status 400 and a message describing the error.
+  */
+  private static function checkRealmId():void {
     if(!isset($_GET['realmid']) || empty($_GET['realmid']) ) {
       http_response_code(400);   
       echo json_encode(
@@ -253,7 +259,14 @@ class QBPayrollJournalCtl{
     }
   }
 
-  private static function checkPayrollDate(){
+  /** 
+   * Private function that checks that $_GET, the array of variables received via the HTTP 
+   * GET method, contains a populated variable called 'payrolldate'. it alos checks that
+   * the value of this variable can be converted into a PHP Date.
+   * 
+   * If the test fails the PHP call exits with HTTP status 400 and a message describing the error.
+  */
+  private static function checkPayrollDate():void{
     if(!isset($_GET['payrolldate']) || empty($_GET['payrolldate']) ||
             !\Core\DatesHelper::validateDate($_GET['payrolldate'])) {
       http_response_code(400);   
@@ -264,7 +277,12 @@ class QBPayrollJournalCtl{
     }
   }
 
-  private static function checkPostBodyContent($data){
+  /**
+   * Private function that checks that the supplied data variable exists and is of length != 0
+   * 
+   * If the test fails the PHP call exits with HTTP status 400 and a message describing the error.
+   */
+  private static function checkPostBodyContent($data):void{
     if(!$data || count($data) == 0) {
       http_response_code(400);   
       echo json_encode(
