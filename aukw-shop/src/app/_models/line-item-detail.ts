@@ -1,5 +1,5 @@
 /**
- * Define the properties of an employee allocation
+ * Stores the detail of a QBO entity 'Line' 
  */
 export class LineItemDetail {
   quickbooksId: number;

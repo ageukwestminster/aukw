@@ -9,7 +9,7 @@ export class EmployeeAllocation {
   /** Quickbooks employee id */
   quickbooksId: number;
   /** 'True' if the employee works in the shop */
-  isShopEmployee: boolean;
+  isShopEmployee: boolean  = false;
   /** Display name of employee */
   name: string;
   /** Percentage of cost to be allocated to this account/class pair. Cannot be less than 0 or more than 100. */
