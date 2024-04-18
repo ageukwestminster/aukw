@@ -447,7 +447,7 @@ class QuickbooksAuth{
         // will be wrong by 1 hour
         $expiry = $accessTokenObj->getAccessTokenExpiresAt();
 
-        /** @disregard Ignore Intelephense error on next line */
+        /** @disregard Intelephense error on next line */
         $displayDate = new DateTime($expiry, new DateTimeZone('UTC'));
         $displayDate->setTimezone(new DateTimeZone('Europe/London'));
         $this->tokenModel->accesstokenexpiry = $displayDate->format('Y-m-d H:i:s');

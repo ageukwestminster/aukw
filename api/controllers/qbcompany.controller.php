@@ -5,7 +5,7 @@ namespace Controllers;
 use Models\QuickbooksAuth;
 
 /**
- * Controller that provides methods to interrogate the QBO Copmpany object.
+ * Controller that provides methods to interrogate the QBO Company object.
  * 
  * @category  Controller
  */

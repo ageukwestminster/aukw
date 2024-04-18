@@ -2,11 +2,6 @@
 
 namespace Models;
 
-use QuickBooksOnline\API\DataService\DataService;
-use QuickBooksOnline\API\Facades\JournalEntry;
-
-use DateTime;
-
 /**
  * Factory class that provides data about QBO recurring transactions.
  * 
@@ -72,7 +67,7 @@ class QuickbooksRecurringTransaction{
 
   /**
    * Return details of the QBO recurring transaction identified by $id
-   * @return :object|false Returns an journal with specified Id.
+   * @return object|false Returns an journal with specified Id.
    * 
    */
   public function readOne():object|false{
@@ -94,7 +89,7 @@ class QuickbooksRecurringTransaction{
     }
     else {
       if (property_exists($recurringTransaction, 'RecurringTransaction')) {
-        /** @disregard Ignore Intelephense error on next line */
+        /** @disregard Intelephense error on next line */
         return $recurringTransaction->RecurringTransaction;
       } else {
         return $recurringTransaction;
@@ -126,7 +121,7 @@ class QuickbooksRecurringTransaction{
     }
     else {
       if (property_exists($transactions, 'entities')) {
-        /** @disregard Ignore Intelephense error on next line */
+        /** @disregard Intelephense error on next line */
         return $transactions->entities;
       } else {
         return [];

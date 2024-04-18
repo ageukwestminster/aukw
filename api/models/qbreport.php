@@ -194,10 +194,10 @@ class QuickbooksReport{
 
         $returnObj = array();
 
-        /** @disregard Ignore Intelephense error on next line */
+        /** @disregard Intelephense error on next line */
         if ($customerSales && property_exists($customerSales, 'Rows') 
                             && property_exists($customerSales->Rows, 'Row')) {
-            /** @disregard Ignore Intelephense error on next line */
+            /** @disregard Intelephense error on next line */
             $dataArray = $customerSales->Rows->Row;
 
             if (is_array($dataArray)) {

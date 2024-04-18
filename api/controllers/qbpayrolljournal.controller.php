@@ -270,7 +270,7 @@ class QBPayrollJournalCtl{
 
   /** 
    * Private function that checks that $_GET, the array of variables received via the HTTP 
-   * GET method, contains a populated variable called 'payrolldate'. it alos checks that
+   * GET method, contains a populated variable called 'payrolldate'. it also checks that
    * the value of this variable can be converted into a PHP Date.
    * 
    * If the test fails the PHP call exits with HTTP status 400 and a message describing the error.

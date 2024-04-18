@@ -90,7 +90,7 @@ class QuickbooksEmployee{
       }
       else {
         if (property_exists($item, 'Employee')) {
-          /** @disregard Ignore Intelephense error on next line */
+          /** @disregard Intelephense error on next line */
           return $item->Employee;
         } else {
           return $item;

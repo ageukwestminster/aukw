@@ -135,7 +135,7 @@ class QuickbooksJournal{
     }
     else {
       if (property_exists($journalentry, 'JournalEntry')) {
-        /** @disregard Ignore Intelephense error on next line */
+        /** @disregard Intelephense error on next line */
         return $journalentry->JournalEntry;
       } else {
         return $journalentry;

@@ -312,7 +312,7 @@ class QuickbooksSalesReceipt{
       }
       else {
         if (property_exists($salesreceipt, 'SalesReceipt')) {
-          /** @disregard Ignore Intelephense error on next line */
+          /** @disregard Intelephense error on next line */
           return $salesreceipt->SalesReceipt;
         } else {
           return $salesreceipt;
