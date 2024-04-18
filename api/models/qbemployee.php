@@ -89,7 +89,12 @@ class QuickbooksEmployee{
           echo "The Response message is: " . $error->getResponseBody() . "\n";
       }
       else {
+        if (property_exists($item, 'Employee')) {
+          /** @disregard Ignore Intelephense error on next line */
+          return $item->Employee;
+        } else {
           return $item;
+        }
       }
   }
 
@@ -99,7 +104,7 @@ class QuickbooksEmployee{
    * @return array An array of QBO Employees, associated by QBO Id
    * 
    */
-  public function readAll(){
+  public function readAll():array{
     return $this->readAllImpl(false);
   }
 
@@ -109,7 +114,7 @@ class QuickbooksEmployee{
    * @return array An array of QBO Employees, associated by Name
    * 
    */
-  public function readAllAssociatedByName(){
+  public function readAllAssociatedByName():array{
     return $this->readAllImpl(true);
   }
 
@@ -119,12 +124,12 @@ class QuickbooksEmployee{
    * @return array An array of QBO Employees
    * 
    */
-  private function readAllImpl(bool $associateByName = false){
+  private function readAllImpl(bool $associateByName = false):array{
 
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->realmid);
     if ($dataService == false) {
-      return;
+      return [];
     }
 
     $items = $dataService->FindAll('Employee');
@@ -133,6 +138,7 @@ class QuickbooksEmployee{
         echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
         echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
         echo "The Response message is: " . $error->getResponseBody() . "\n";
+        return [];
     }
     else {
 

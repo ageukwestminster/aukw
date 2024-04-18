@@ -171,13 +171,13 @@ $router->mount('/qb', function () use ($router) {
     $router->get('/(\d+)/classes', 'QBClassCtl@read_all');
     
     // QB Employee
-    $router->get('/employee/(\d+)', 'QBEmployeeCtl@read_one');
-    $router->get('/employee', 'QBEmployeeCtl@read_all');
-    $router->get('/employee/allocations', 'QBPayrollJournalCtl@read_employee_allocations');
+    $router->get('/(\d+)/employee/(\d+)', 'QBEmployeeCtl@read_one');
+    $router->get('/(\d+)/employee', 'QBEmployeeCtl@read_all');
+    $router->get('/(\d+)/employee/allocations', 'QBPayrollJournalCtl@read_employee_allocations');
 
     // QB Recurring Transactions
-    $router->get('/recurringtransaction/(\w+)', 'QBRecurringTransactionCtl@read_one');
-    $router->get('/recurringtransactions', 'QBRecurringTransactionCtl@read_all');
+    $router->get('/(\d+)/recurringtransaction/(\w+)', 'QBRecurringTransactionCtl@read_one');
+    $router->get('/(\d+)/recurringtransactions', 'QBRecurringTransactionCtl@read_all');
 
     // QB Payroll Query
     $router->get('/(\d+)/query/payroll/(\d{4})/(\d{2})', 'QBPayrollQueryCtl@query');

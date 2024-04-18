@@ -194,31 +194,29 @@ class QBPayrollJournalCtl{
    *
    * On success the PHP call exits with HTTP status 200 and a message confirming success.
    * If this fails the PHP call exits with HTTP status 400 and a message describing the error.
+   * @param string $realmid The company ID for the QBO company.
+   * @return void Output is echo'd directly to response 
    */
-  public static function read_employee_allocations():void{  
-
-    QBPayrollJournalCtl::checkRealmId();
+  public static function read_employee_allocations(string $realmid):void{  
 
     $employees = QuickbooksEmployee::getInstance()
-      ->setRealmID($_GET['realmid'])
+      ->setRealmID($realmid)
       ->readAll();
 
-    $model = new \Models\QuickbooksRecurringTransaction();
-    $model->id = \Core\Config::read('qb.allocationsid');
-    $model->realmid = $_GET['realmid'];
+    $model = \Models\QuickbooksRecurringTransaction::getInstance()
+      ->setRealmID($realmid)
+      ->setId(\Core\Config::read('qb.allocationsid'));
 
     $response = $model->readone();
 
-    if (isset($response) && isset($response->RecurringTransaction) && 
-                    isset($response->RecurringTransaction->JournalEntry)) {
+    if (isset($response) && isset($response->JournalEntry) 
+              && isset($response->JournalEntry->Line)) {
 
         $returnObj = array();
         
         try {
-          
-          $allocationTxnArray = $response->RecurringTransaction->JournalEntry->Line;
 
-          foreach ($allocationTxnArray as $line) {
+          foreach ($response->JournalEntry->Line as $line) {
 
             if (!isset($line->Description) || !preg_match('/ignore/i', $line->Description)) {
 
@@ -258,7 +256,7 @@ class QBPayrollJournalCtl{
       http_response_code(400);   
       echo json_encode(
           array("message" => "Recurring transaction that is used to obtain employee allocations not found.",
-          "details" => "QBO ID of recurring transaciton = " . $model->id)
+          "details" => "QBO ID of recurring transaciton = " . $model->getId())
       );
       exit(1);
     }

@@ -10,7 +10,6 @@ import {
 import { Observable } from 'rxjs';
 
 const baseUrl = `${environment.apiUrl}/qb`;
-const allocationsUrl = `${environment.apiUrl}/qb/employee/allocations`;
 
 /**
  * This class performs a number of payroll-related task on Quickbooks
@@ -27,7 +26,7 @@ export class QBPayrollService {
 
   getAllocations(realmID: string): Observable<EmployeeAllocation[]> {
     return this.http.get<EmployeeAllocation[]>(
-      `${allocationsUrl}?realmid=${realmID}`,
+      `${baseUrl}/${realmID}/employee/allocations`,
     );
   }
 
