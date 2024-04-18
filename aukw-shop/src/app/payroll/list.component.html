@@ -177,7 +177,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let payslip of payslips">
-                <td style="vertical-align: middle">{{ payslip.employeeId }}</td>
+                <td style="vertical-align: middle">{{ payslip.payrollNumber }}</td>
                 <td>{{ payslip.employeeName }}</td>
                 <td>{{ payslip.totalPay | number: "1.2-2" }}</td>
                 <td class="d-none d-sm-table-cell">

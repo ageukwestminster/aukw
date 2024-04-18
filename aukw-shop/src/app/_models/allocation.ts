@@ -1,54 +1,31 @@
 /**
- * Define the properties of an employee allocation
+ * Stores a percentage allocation for a given employee (identified by payrollNumber, quickbooksId and name)
+ * against a class / account pair. Also stores if the employee is a shop employee because this affects the
+ * resulting QBO bookings.
  */
-
 export class EmployeeAllocation {
-  id: number;
-  name: string;
-  percentage: number;
-  account: number;
-  class: string;
+  /** Iris payroll number for employee */
   payrollNumber: number;
+  /** Quickbooks employee id */
+  quickbooksId: number;
+  /** 'True' if the employee works in the shop */
   isShopEmployee: boolean;
+  /** Display name of employee */
+  name: string;
+  /** Percentage of cost to be allocated to this account/class pair. Cannot be less than 0 or more than 100. */
+  percentage: number;
+  /** The account to allocate the cost to */
+  account: number;
+  /** The class to allocate the cost to */
+  class: string;
 
+  /**Create a new EmployeeAllocation */
   constructor(obj?: any) {
-    this.id = (obj && obj.id) || 0;
+    this.payrollNumber = (obj && obj.payrollNumber) || null;
+    this.quickbooksId = (obj && obj.quickbooksId) || 0;
+    this.isShopEmployee = (obj && obj.isShopEmployee) || false;
     this.name = (obj && obj.name) || null;
     this.percentage = (obj && obj.percentage) || null;
-    this.account = (obj && obj.account) || null;
-    this.class = (obj && obj.class) || null;
-    this.payrollNumber = (obj && obj.payrollNumber) || null;
-    this.isShopEmployee = (obj && obj.isShopEmployee) || false;
-  }
-}
-
-/**
- * Define the properties of an employee allocation
- */
-
-export class Allocation {
-  employeeId: number;
-  name: string;
-  amount: number;
-  account: number;
-  class: string;
-
-  constructor(obj?: any) {
-    this.employeeId = (obj && obj.employeeId) || 0;
-    this.name = (obj && obj.name) || null;
-    this.amount = (obj && obj.amount) || 0;
-    this.account = (obj && obj.account) || null;
-    this.class = (obj && obj.class) || null;
-  }
-}
-
-export class TotalPayAllocation {
-  amount: number;
-  account: string;
-  class: string;
-
-  constructor(obj?: any) {
-    this.amount = (obj && obj.amount) || null;
     this.account = (obj && obj.account) || null;
     this.class = (obj && obj.class) || null;
   }

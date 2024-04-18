@@ -3,7 +3,7 @@ import { Observable, from } from 'rxjs';
 import { concatMap, filter, map, scan } from 'rxjs/operators';
 
 import {
-  Allocation,
+  LineItemDetail,
   EmployeeAllocation,
   PayrollJournalEntry,
   IrisPayslip,
@@ -35,7 +35,7 @@ export class PayrollService {
   employerNIAllocatedCosts(
     payslips: IrisPayslip[],
     allocations: EmployeeAllocation[],
-  ): Observable<Allocation> {
+  ): Observable<LineItemDetail> {
     return this.entries(
       payslips,
       allocations,
@@ -52,7 +52,7 @@ export class PayrollService {
   pensionAllocatedCosts(
     payslips: IrisPayslip[],
     allocations: EmployeeAllocation[],
-  ): Observable<Allocation> {
+  ): Observable<LineItemDetail> {
     return this.entries(
       payslips,
       allocations,
@@ -69,7 +69,7 @@ export class PayrollService {
   grossSalaryAllocatedCosts(
     payslips: IrisPayslip[],
     allocations: EmployeeAllocation[],
-  ): Observable<Allocation> {
+  ): Observable<LineItemDetail> {
     return this.entries(payslips, allocations, (p: IrisPayslip) => p.totalPay);
   }
 
@@ -84,22 +84,22 @@ export class PayrollService {
     payslips: IrisPayslip[],
     allocations: EmployeeAllocation[],
     property: (p: IrisPayslip) => number,
-  ): Observable<Allocation> {
+  ): Observable<LineItemDetail> {
     return from(payslips).pipe(
 
-      filter((p) => property(p) != 0), // Only add if property value is not zero
+      filter((p) => (property && (property(p) != 0))), // Only add if property value is not zero
 
       concatMap((p) =>
         // this will split each payslip into one or more allocations
-        from(allocations.filter((x) => x.payrollNumber == p.employeeId)).pipe(
+        from(allocations.filter((x) => x.payrollNumber == p.payrollNumber)).pipe(
           filter((x) => x.percentage != 0), // Ignore any allocations of 0%
 
           // loop through each allocation, computing the correct £ amount from the percentage supplied
           scan(
-            (acc: any, allocation: EmployeeAllocation) => {
+            (acc: any, empAllocation: EmployeeAllocation) => {
               // We are looping through an array of allocations ordered by employee
               // When the employee changes, reset subtotal (i.e. sum) to zero
-              if (allocation.id != acc.entry.employeeId) {
+              if (empAllocation.quickbooksId != acc.entry.employeeId) {
                 acc.sum = 0;
               }
 
@@ -108,7 +108,7 @@ export class PayrollService {
 
               // Make first attempt at calcualted amount, from percentage and pension amount
               let calculatedAllocatedAmount = Number(
-                (Math.round(property(p) * allocation.percentage) / 100).toFixed(
+                (Math.round(property(p) * empAllocation.percentage) / 100).toFixed(
                   2,
                 ),
               );
@@ -131,24 +131,24 @@ export class PayrollService {
               if (Math.abs(remainder - calculatedAllocatedAmount) < 1)
                 calculatedAllocatedAmount = Number(remainder.toFixed(2));
 
-              const value = new Allocation({
-                employeeId: allocation.id,
-                name: allocation.name,
-                account: allocation.account,
-                class: allocation.class,
+              const line = new LineItemDetail({
+                quickbooksId: empAllocation.quickbooksId,
+                name: empAllocation.name,
+                account: empAllocation.account,
+                class: empAllocation.class,
                 amount: calculatedAllocatedAmount,
               });
 
               // Send this object back as an accumulator, later we will just take the entry property
               return {
-                sum: acc.sum + value.amount,
-                entry: value,
+                sum: acc.sum + line.amount,
+                entry: line,
               };
             },
             // starting value for accumulator
             {
               sum: 0,
-              entry: new Allocation({ employeeId: 0, amount: 0 }),
+              entry: new LineItemDetail({ quickbooksId: 0, amount: 0 }),
             },
           ),
         ),
@@ -174,7 +174,7 @@ export class PayrollService {
 
     return from(payslips).pipe(
       filter((p) => !p.shopJournalInQBO), // Only add if not already in QBO
-      filter((p) => shopEmployees.includes(p.employeeId)),
+      filter((p) => shopEmployees.includes(p.payrollNumber)),
     );
   }
 
@@ -189,11 +189,11 @@ export class PayrollService {
     allocationsArray: EmployeeAllocation[],
   ): PayrollJournalEntry {
     const allocations = allocationsArray.filter(
-      (allocation) => allocation.payrollNumber == p.employeeId,
+      (allocation) => allocation.payrollNumber == p.payrollNumber,
     );
 
     const entry = new PayrollJournalEntry({
-      employeeId: allocations[0].id,
+      employeeId: allocations[0].quickbooksId,
       totalPay: [],
       paye: p.paye,
       employeeNI: p.employeeNI,
@@ -207,7 +207,7 @@ export class PayrollService {
 
     let sum: number = 0;
     for (const [i, v] of allocations.entries()) {
-      const alloc = new Allocation({
+      const alloc = new LineItemDetail({
         class: v.class,
         account: v.account,
         amount: Number(

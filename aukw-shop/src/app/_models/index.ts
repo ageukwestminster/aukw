@@ -8,6 +8,7 @@ export * from './department.enum';
 export * from './employee';
 export * from './form-mode.enum';
 export * from './irispayslip';
+export * from './line-item-detail';
 export * from './qb-auth-uri';
 export * from './qb-connection-details';
 export * from './qb-flags';

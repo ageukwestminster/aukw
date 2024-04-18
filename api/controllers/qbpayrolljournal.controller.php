@@ -232,7 +232,7 @@ class QBPayrollJournalCtl{
               $class = $line->JournalEntryLineDetail->ClassRef;
 
               $returnObj[] = (object) [
-                  'id' => $employee->value,
+                  'quickbooksId' => $employee->value,
                   'name' => $employee->name ?? '',
                   'payrollNumber' => 
                       array_key_exists($employee->value, $employees)?

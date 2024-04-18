@@ -12,11 +12,11 @@ namespace Models;
 class Payslip implements \JsonSerializable{
 
   /**
-   * The ID of the employee
+   * The number assigned to the employee by Iris, the payroll software company.
    *
    * @var int
    */
-  protected int $employeeId;
+  protected int $payrollNumber;
     /**
    * The ID of the employee on QBO
    *
@@ -97,10 +97,10 @@ class Payslip implements \JsonSerializable{
   protected float $employeePension=0;
  
   /**
-   * Employee ID getter
+   * Employee payroll number getter
    */
-  public function getEmployeeId():int {
-    return $this->employeeId;
+  public function getPayrollNumber():int {
+    return $this->payrollNumber;
   }
   /**
    * Quickbooks ID getter
@@ -180,10 +180,10 @@ class Payslip implements \JsonSerializable{
     return $this->totalPay;
   }
   /**
-   * Employee ID setter
+   * Employee payroll number setter
    */
-  public function setEmployeeId(float $employeeId) {
-    $this->employeeId = $employeeId;
+  public function setPayrollNumber(int $payrollNumber) {
+    $this->payrollNumber = $payrollNumber;
     return $this;
   }
   /**

@@ -246,7 +246,7 @@ class QBPayrollQueryCtl{
   */
   private static function createPayslip($payrollNumber, $quickbooksId, string $name) : Payslip {
     return Payslip::getInstance()
-    ->setEmployeeId($payrollNumber)
+    ->setPayrollNumber($payrollNumber)
     ->setQuickbooksId($quickbooksId)
     ->setEmployeeName($name);
   }

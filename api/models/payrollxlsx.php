@@ -202,9 +202,9 @@ class PayrollXlsx{
     // Loop through employees, creating payslips
     $this->payslips = array();
     for ($i=0; $i < count($salaryData); $i++) { 
-      $employeeId = (int) trim($salaryData[$i][0]); // '0' = column A
+      $payrollNumber = (int) trim($salaryData[$i][0]); // '0' = column A
       $payslip = Payslip::getInstance()
-        ->setEmployeeId($employeeId) 
+        ->setPayrollNumber($payrollNumber) 
         ->setEmployeeName(trim($salaryData[$i][2])) // '2' = column C
         ->setPayrollDate($this->paymentDate->format('Y-m-d'))
         ->setTotalPay(round(((float)$salaryData[$i][7]),2)) // '7' = col H
@@ -215,7 +215,7 @@ class PayrollXlsx{
         ->setNetPay(round(((float)$salaryData[$i][13]),2)) // '13' = col N
         ->setEmployerNI(round(((float)$salaryData[$i][14]),2)); // '14' = col O        
 
-        $this->payslips[$employeeId] = $payslip;
+        $this->payslips[$payrollNumber] = $payslip;
     }    
     return true;
   }
@@ -257,7 +257,7 @@ class PayrollXlsx{
             } else {
               // Add new payslip
               $payslip = Payslip::getInstance()
-              ->setEmployeeId($employeeId);
+              ->setPayrollNumber($employeeId);
 
               $this->payslips[$employeeId] = $payslip; // Add to list
             }

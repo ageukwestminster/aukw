@@ -88,7 +88,7 @@ export class PayslipListComponent implements OnInit {
       if (
         this.allocations.find(
           (item) =>
-            item.isShopEmployee && item.payrollNumber == payslip.employeeId,
+            item.isShopEmployee && item.payrollNumber == payslip.payrollNumber,
         )
       ) {
         payslip.isShopEmployee = true;
@@ -200,7 +200,7 @@ export class PayslipListComponent implements OnInit {
         map((x) => {
           this.payslips.forEach((xlsxPayslip) => {
             let qbPayslip = x.charityPayslips.find(
-              (item) => item.employeeId == xlsxPayslip.employeeId,
+              (item) => item.payrollNumber == xlsxPayslip.payrollNumber,
             );
             qbPayslip = qbPayslip ?? new IrisPayslip();
 
@@ -218,7 +218,7 @@ export class PayslipListComponent implements OnInit {
             );
 
             const qbShopPayslip = x.shopPayslips.find(
-              (item) => item.employeeId == xlsxPayslip.employeeId,
+              (item) => item.payrollNumber == xlsxPayslip.payrollNumber,
             );
 
             xlsxPayslip.shopJournalInQBO = this.isEqualShopPay(
@@ -406,7 +406,7 @@ export class PayslipListComponent implements OnInit {
           x.payslips.forEach((payslip) => {
             // Find th eemployee that matches the payslip
             const employeeName = x.employees.filter(
-              (emp) => emp.payrollNumber == payslip.employeeId,
+              (emp) => emp.payrollNumber == payslip.payrollNumber,
             )[0];
 
             // This data will go to the API

@@ -12,11 +12,11 @@ export class EmployerNIEntry {
   }
 }
 
-import { Allocation } from './allocation';
+import { LineItemDetail } from './line-item-detail';
 
 export class PayrollJournalEntry {
   employeeId: number;
-  totalPay: Allocation[];
+  totalPay: LineItemDetail[];
   paye: number;
   employeeNI: number;
   otherDeductions: number;
