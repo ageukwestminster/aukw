@@ -26,8 +26,9 @@ class QuickbooksEnterprisesJournal extends QuickbooksJournal{
 
     /**
      * Create the general journal entry for the shop
+     * @return array|false On success return an array with details of the new object. On failure return 'false'.
      */
-    public function create_enterprises_journal($entries) {
+    public function create_enterprises_journal($entries):array|false {
 
       $payrolljournal = array(
           "TxnDate" => $this->TxnDate,

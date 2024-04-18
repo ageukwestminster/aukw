@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, from } from 'rxjs';
-import { concatMap, filter, first, map, scan } from 'rxjs/operators';
+import { concatMap, filter, map, scan } from 'rxjs/operators';
 
 import {
   Allocation,
@@ -86,7 +86,9 @@ export class PayrollService {
     property: (p: IrisPayslip) => number,
   ): Observable<Allocation> {
     return from(payslips).pipe(
-      filter((p) => !property(p) && property(p) != 0), // Only add if property exists and is not zero
+
+      filter((p) => property(p) != 0), // Only add if property value is not zero
+
       concatMap((p) =>
         // this will split each payslip into one or more allocations
         from(allocations.filter((x) => x.payrollNumber == p.employeeId)).pipe(

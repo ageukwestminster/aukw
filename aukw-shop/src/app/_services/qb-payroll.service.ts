@@ -32,7 +32,7 @@ export class QBPayrollService {
 
   createEmployerNIJournal(realmID: string, params: any, payrollDate: string) {
     return this.http.post<any>(
-      `${baseUrl}/journal/employerni?realmid=${realmID}&payrolldate=${payrollDate}`,
+      `${baseUrl}/${realmID}/journal/employerni?payrolldate=${payrollDate}`,
       params,
     );
   }
@@ -43,7 +43,7 @@ export class QBPayrollService {
     payrollDate: string,
   ) {
     return this.http.post<any>(
-      `${baseUrl}/journal/employee?realmid=${realmID}&payrolldate=${payrollDate}`,
+      `${baseUrl}/${realmID}/journal/employee?payrolldate=${payrollDate}`,
       params,
     );
   }
@@ -58,7 +58,7 @@ export class QBPayrollService {
 
   createShopJournal(realmID: string, params: any, payrollDate: string) {
     return this.http.post<any>(
-      `${baseUrl}/journal/enterprises?realmid=${realmID}&payrolldate=${payrollDate}`,
+      `${baseUrl}/${realmID}/journal/enterprises?payrolldate=${payrollDate}`,
       params,
     );
   }

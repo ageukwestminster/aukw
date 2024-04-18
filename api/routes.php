@@ -106,18 +106,19 @@ $router->mount('/shop', function () use ($router) {
 /* Quickbooks Routes */
 /*********************/
 $router->mount('/qb', function () use ($router) {
-    // The param is the Quickbooks Journal Id. This number is not easily seen on 
-    // the normal QB website but it can been seen in Audit Log.
+    // The first parameter is realmid, as is customary with the QBO api
+    // The second param is the Quickbooks Journal Id. This number is not easily 
+    // seen on the normal QB website but it can been seen in Audit Log.
     // It is not the DocNumber which can be seen when adding/editing on QBO.
-    $router->get('/journal/(\d+)', 'QBJournalCtl@read_one');
+    $router->get('/(\d+)/journal/(\d+)', 'QBJournalCtl@read_one');
     // Get a list of journals whose DocNumber starts with the given string                                    
-    $router->get('/journal/docnumber/(\w+)', 'QBJournalCtl@query_by_docnumber');
+    $router->get('/(\d+)/journal/docnumber/(\w+)', 'QBJournalCtl@query_by_docnumber');
     // QB Payroll Journal for individual employee
-    $router->post('/journal/employee', 'QBPayrollJournalCtl@create_employee_payslip_journal');
+    $router->post('/(\d+)/journal/employee', 'QBPayrollJournalCtl@create_employee_payslip_journal');
     // QB Payroll Journal for Employer NI 
-    $router->post('/journal/employerni', 'QBPayrollJournalCtl@create_employer_ni_journal');
+    $router->post('/(\d+)/journal/employerni', 'QBPayrollJournalCtl@create_employer_ni_journal');
     // QB Payroll Journal for shop (aka 'Enterprises')
-    $router->post('/journal/enterprises', 'QBPayrollJournalCtl@create_enterprises_journal');
+    $router->post('/(\d+)/journal/enterprises', 'QBPayrollJournalCtl@create_enterprises_journal');
 
     // The param is the Quickbooks Journal Id. This number is not easily seen on 
     // the normal QB website but it can been seen in Audit Log.

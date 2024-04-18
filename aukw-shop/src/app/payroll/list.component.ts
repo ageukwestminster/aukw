@@ -94,7 +94,7 @@ export class PayslipListComponent implements OnInit {
         payslip.isShopEmployee = true;
       }
     });
-
+    
     this.updateInQBOValues();
   }
 
@@ -171,6 +171,12 @@ export class PayslipListComponent implements OnInit {
 
     // Inform user background work is happening
     this.loading = true;
+
+    // Reset disablement flags
+    this.disableEmployerNI = false;
+    this.disableEmployeeJournals = false;
+    this.disablePensions = false;
+    this.disableShopJournals = false;
 
     // Time added to avoid problems with BST
     const dt = new Date(this.payrollDate + 'T12:00:00');
@@ -272,7 +278,7 @@ export class PayslipListComponent implements OnInit {
       )
       .pipe(
         toArray(),
-        filter((term) => term && term.length > 0),
+        filter((allocations) => allocations && allocations.length > 0),
         mergeMap((allocatedEmployerNICosts) =>
           this.qbPayrollService.createEmployerNIJournal(
             this.charityRealm.realmid!,
@@ -283,7 +289,10 @@ export class PayslipListComponent implements OnInit {
       )
       .subscribe({
         next: () => this.alertService.info('Employer NI journal added.'),
-        error: (e) => this.alertService.error(e),
+        error: (e) => {
+            this.alertService.error(e, {autoClose: false});
+            this.busyOnEmployerNI = false;
+        },
         complete: () => {
           this.busyOnEmployerNI = false;
           this.disableEmployerNI = true;
@@ -311,7 +320,11 @@ export class PayslipListComponent implements OnInit {
       .subscribe({
         next: () =>
           this.alertService.info('Individual employee journals added.'),
-        error: (e) => this.alertService.error(e),
+        error: (e) => {
+          this.alertService.error(e, {autoClose: false});
+          this.busyOnEmployeeJournals = false;
+          this.showProgressBar = false;
+      },
         complete: () => {
           this.busyOnEmployeeJournals = false;
           this.showProgressBar = false;
@@ -350,8 +363,8 @@ export class PayslipListComponent implements OnInit {
       .subscribe({
         next: () => this.alertService.info('L&G Pension bill added.'),
         error: (e) => {
+          this.alertService.error(e, {autoClose: false});
           this.busyOnPensions = false;
-          this.alertService.error(e);
         },
         complete: () => {
           this.busyOnPensions = false;

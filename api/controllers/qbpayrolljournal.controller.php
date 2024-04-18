@@ -19,14 +19,14 @@ class QBPayrollJournalCtl{
    * Create the general journal entry for a single employee. The values used are those 
    * supplied in the body of the HTTP POST query.
    * 
-   * The function expects two HTTP parameters: realmid and payrolldate.
+   * The function expects a HTTP parameter called payrolldate.
    *
    * On success the PHP call exits with HTTP status 200 and a message confirming success.
    * If this fails the PHP call exits with HTTP status 400 and a message describing the error.
+   * @param string $realmid The company ID for the QBO company.
    */
-  public static function create_employee_payslip_journal():void{  
+  public static function create_employee_payslip_journal(string $realmid):void{  
 
-    QBPayrollJournalCtl::checkRealmId();
     QBPayrollJournalCtl::checkPayrollDate();
 
     $payrollDate = $_GET['payrolldate'];
@@ -50,8 +50,8 @@ class QBPayrollJournalCtl{
         ->setEmployeePension(empty($data->employeePension)?0:$data->employeePension)
         ->setStudentLoan(empty($data->studentLoan)?0:$data->studentLoan)
         ->setNetSalary($data->netPay)
-        ->setRealmID($_GET['realmid']
-      );
+        ->setRealmID($realmid);
+      
     } catch (\Exception $e) {
     http_response_code(400);  
     echo json_encode(
@@ -85,14 +85,14 @@ class QBPayrollJournalCtl{
   /**
    * Enter the journal txn for employer NI.
    * 
-   * The function expects two HTTP parameters: realmid and payrolldate.
+   * The function expects a HTTP parameter called payrolldate.
    * 
    * On success the PHP call exits with HTTP status 200 and a message confirming success.
    * If this fails the PHP call exits with HTTP status 400 and a message describing the error.
+   * @param string $realmid The company ID for the QBO company.
    */
-  public static function create_employer_ni_journal():void{
+  public static function create_employer_ni_journal(string $realmid):void{
 
-    QBPayrollJournalCtl::checkRealmId();
     QBPayrollJournalCtl::checkPayrollDate();
 
     $payrollDate = $_GET['payrolldate'];
@@ -113,7 +113,7 @@ class QBPayrollJournalCtl{
       $model = QuickbooksEmployerNIJournal::getInstance()
         ->setDocNumber($docNumber)
         ->setTxnDate($payrollDate)
-        ->setRealmID($_GET['realmid']);
+        ->setRealmID($realmid);
 
       $result = $model->create_employerNI_journal($data);
 
@@ -123,6 +123,13 @@ class QBPayrollJournalCtl{
                         "' has been added for " . $result['date'] . ".",
                 "id" => $result['id'])
           );
+      } else {
+        http_response_code(400);  
+        echo json_encode(
+          array(
+            "message" => "Unable to enter payroll journal in Quickbooks."
+          )
+        );
       }
 
     } catch (\Exception $e) {
@@ -140,14 +147,14 @@ class QBPayrollJournalCtl{
   /**
    * Create the general journal transaction in the Enterprises company file.
    * 
-   * The function expects two HTTP parameters: realmid and payrolldate.
+   * The function expects a HTTP parameter called payrolldate.
    * 
    * On success the PHP call exits with HTTP status 200 and a message confirming success.
    * If this fails the PHP call exits with HTTP status 400 and a message describing the error.
+   * @param string $realmid The company ID for the QBO company.
    */
-  public static function create_enterprises_journal():void {
+  public static function create_enterprises_journal(string $realmid):void {
 
-    QBPayrollJournalCtl::checkRealmId();
     QBPayrollJournalCtl::checkPayrollDate();
 
     $payrollDate = $_GET['payrolldate'];
@@ -161,7 +168,7 @@ class QBPayrollJournalCtl{
       $model = QuickbooksEnterprisesJournal::getInstance()
         ->setDocNumber($docNumber)
         ->setTxnDate($payrollDate)
-        ->setRealmID($_GET['realmid']);
+        ->setRealmID($realmid);
 
       $result = $model->create_enterprises_journal($data);
 
@@ -189,8 +196,6 @@ class QBPayrollJournalCtl{
    * Return details of how employee salaries are to be split between various QBO classes. 
    * The values are saved in QBO as a recurring transaction. The ID of the recurring 
    * transaction is stored in Config.php as 'qb.allocationsid'.
-   * 
-   * The function expects a HTTP parameters called realmid.
    *
    * On success the PHP call exits with HTTP status 200 and a message confirming success.
    * If this fails the PHP call exits with HTTP status 400 and a message describing the error.
@@ -261,22 +266,6 @@ class QBPayrollJournalCtl{
       exit(1);
     }
     
-  }
-  
-  /** 
-   * Private function that checks that $_GET, the array of variables received via the HTTP 
-   * GET method, contains a populated variable called 'realmid'.
-   * 
-   * If the test fails the PHP call exits with HTTP status 400 and a message describing the error.
-  */
-  private static function checkRealmId():void {
-    if(!isset($_GET['realmid']) || empty($_GET['realmid']) ) {
-      http_response_code(400);   
-      echo json_encode(
-        array("message" => "Please supply a value for the 'realmid' parameter.")
-      );
-      exit(1);
-    }
   }
 
   /** 

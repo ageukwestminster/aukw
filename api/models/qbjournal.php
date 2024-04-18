@@ -16,14 +16,14 @@ class QuickbooksJournal{
    *
    * @var int
    */
-  public int $id;
+  protected int $id;
 
   /**
    * The QBO company ID
    *
    * @var string
    */
-  public string $realmid;
+  protected string $realmid;
 
   /**
    * The transaction date of the Journal entry
@@ -39,20 +39,12 @@ class QuickbooksJournal{
    */
   protected string $DocNumber;
 
-      /**
-     * Transaction Date setter.
-     */
-    public function setTxnDate(string $txnDate) {
-      $this->TxnDate = $txnDate;
-      return $this;
-  }
-
   /**
-   * Reference number setter.
+   * ID setter
    */
-  public function setDocNumber(string $docNumber) {
-      $this->DocNumber = $docNumber;
-      return $this;
+  public function setId(int $id) {
+    $this->id = $id;
+    return $this;
   }
 
   /**
@@ -61,6 +53,36 @@ class QuickbooksJournal{
   public function setRealmID(string $realmid) {
     $this->realmid = $realmid;
     return $this;
+  }
+
+  /**
+   * ID getter.
+   */
+  public function getId() : string {
+    return $this->id;
+  }  
+
+  /**
+   * realmID getter.
+   */
+  public function getrealmId() : string {
+    return $this->realmid;
+  }  
+
+  /**
+   * Transaction Date setter.
+   */
+  public function setTxnDate(string $txnDate) {
+    $this->TxnDate = $txnDate;
+    return $this;
+  }
+
+  /**
+   * Reference number setter.
+   */
+  public function setDocNumber(string $docNumber) {
+      $this->DocNumber = $docNumber;
+      return $this;
   }
 
   /**
@@ -73,23 +95,28 @@ class QuickbooksJournal{
   /**
    * Transaction Date getter.
    */
-  public function getrealmId() : string {
-      return $this->realmid;
-  }
-
-  /**
-   * Transaction Date getter.
-   */
   public function getTxnDate() : string {
       return $this->TxnDate;
+  }
+  
+  /**
+   * Constructor
+   */
+  protected function __construct(){}
+
+  /**
+   * Static constructor / factory
+   */
+  public static function getInstance() {
+    return new self();
   }
 
   /**
    * Return details of the QBO general journal identified by $id
-   * @return IPPIntuitEntity|null Returns an journal with specified Id or nothing.
+   * @return object|null Returns an journal with specified Id or nothing.
    * 
    */
-  public function readOne():\QuickBooksOnline\API\Data\IPPIntuitEntity|null{
+  public function readOne():object|null{
 
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->realmid);
@@ -107,7 +134,12 @@ class QuickbooksJournal{
         return null;
     }
     else {
+      if (property_exists($journalentry, 'JournalEntry')) {
+        /** @disregard Ignore Intelephense error on next line */
+        return $journalentry->JournalEntry;
+      } else {
         return $journalentry;
+      }
     }
   }
 

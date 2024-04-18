@@ -45,19 +45,6 @@ export class QBConnectionService {
     return this.http.get<QBAuthUri>(`${authUrl}`);
   }
 
-  getAuthUriWithParameters(
-    realmid: string,
-    clientID: string,
-    clientSecret: string,
-    useSandbox: boolean = false,
-  ) {
-    return this.http.post<QBAuthUri>(`${authUrl}?realmid=${realmid}`, {
-      clientID,
-      clientSecret,
-      useSandbox,
-    });
-  }
-
   delete(userid: number, realmid: string) {
     return this.http.delete<ApiMessage>(
       `${baseUrl}/${realmid}/connection/${userid}`,
