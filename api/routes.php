@@ -154,8 +154,8 @@ $router->mount('/qb', function () use ($router) {
     $router->get('/realm/(\w+)', 'QBRealmCtl@read_one');
 
     // QB item is for Products/Services
-    $router->get('/item/(\w+)', 'QBItemCtl@read_one');
-    $router->get('/items', 'QBItemCtl@read_all');
+    $router->get('/(\d+)/item/(\w+)', 'QBItemCtl@read_one');
+    $router->get('/(\d+)/items', 'QBItemCtl@read_all');
 
     // Return details of a QB bill (aka invoice)
     $router->get('/(\d+)/bill/(\w+)', 'QBBillCtl@read_one');
@@ -167,8 +167,8 @@ $router->mount('/qb', function () use ($router) {
     $router->delete('/(\d+)/bill/(\w+)', 'QBBillCtl@delete');
 
     // QB Class
-    $router->get('/class/(\w+)', 'QBClassCtl@read_one');
-    $router->get('/classes', 'QBClassCtl@read_all');
+    $router->get('/(\d+)/class/(\w+)', 'QBClassCtl@read_one');
+    $router->get('/(\d+)/classes', 'QBClassCtl@read_all');
     
     // QB Employee
     $router->get('/employee/(\d+)', 'QBEmployeeCtl@read_one');

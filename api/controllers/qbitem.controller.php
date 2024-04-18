@@ -13,23 +13,15 @@ class QBItemCtl{
 
   /**
    * Return details of the QBItem identified by $id
-   *
+   * @param string $realmid The company ID for the QBO company.
    * @param int $id
    * @return void Output is echo'd directly to response 
    */
-  public static function read_one(int $id){  
+  public static function read_one(string $realmid, int $id){  
 
-    if(!isset($_GET['realmid']) ) {
-      http_response_code(400);   
-      echo json_encode(
-        array("message" => "Please supply a value for the 'realmid' parameter.")
-      );
-      exit(1);
-    } 
-
-    $model = new \Models\QuickbooksItem();
-    $model->id = $id;
-    $model->realmid = $_GET['realmid'];
+    $model = \Models\QuickbooksItem::getInstance()
+      ->setRealmID($realmid)
+      ->setId($id);  
 
     echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
   }
@@ -37,20 +29,13 @@ class QBItemCtl{
   /**
    * Return details of all QBO Items
    * 
+   * @param string $realmid The company ID for the QBO company.
    * @return void Output is echo'd directly to response 
    */
-  public static function read_all(){  
+  public static function read_all(string $realmid){  
 
-    if(!isset($_GET['realmid']) ) {
-      http_response_code(400);   
-      echo json_encode(
-        array("message" => "Please supply a value for the 'realmid' parameter.")
-      );
-      exit(1);
-    } 
-
-    $model = new \Models\QuickbooksItem();
-    $model->realmid = $_GET['realmid'];
+    $model = \Models\QuickbooksItem::getInstance()
+      ->setRealmID($realmid);
 
     echo json_encode($model->readAll(), JSON_NUMERIC_CHECK);
   }

@@ -16,9 +16,6 @@ class QBPayrollQueryCtl{
 
   /**
    * Query QBO and return (in Payslip format) details of any payroll entries for the given month and year.
-   * 
-   * On success the PHP call exits with HTTP status 200 and a message confirming success.
-   * If this fails the PHP call exits with HTTP status 400 and a message describing the error.
    *
    * @param string $realmid The company ID for the QBO company.
    * @param int $year The year of the payroll run. e.g. 2024
@@ -56,7 +53,7 @@ class QBPayrollQueryCtl{
    * 
    * @param array $employees An array of QBO Employees, associated by Name
    * @param array $journals An array of QBO Journal Entry entities
-   * @param array $payslips 
+   * @param array $payslips An array of payslips (type is /Models/Payslip)
    */
   private static function parsePayrollJournals(array $employees, array $journals, array &$payslips):void {
 
