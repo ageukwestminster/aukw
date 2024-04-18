@@ -38,6 +38,7 @@ export class IrisPayslip {
   studentLoan: number;
   /** Catch all for all other deductions */
   otherDeductions: number;
+  /** Net monthly salary, the amount paid to the employee. */
   netPay: number;
   /** National Insurance paid by the employer */
   employerNI: number;

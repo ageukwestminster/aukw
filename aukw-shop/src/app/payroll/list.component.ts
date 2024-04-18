@@ -47,7 +47,6 @@ export class PayslipListComponent implements OnInit {
   employeeJournalEntries$!: Observable<PayrollJournalEntry>;
   currentPayslip: number = 0;
   showProgressBar: boolean = false;
-  employeePensionCosts$!: Observable<any>;
 
   qboAuthorisationMissing: boolean = false;
 
@@ -404,7 +403,7 @@ export class PayslipListComponent implements OnInit {
 
           // The quickbooks
           x.payslips.forEach((payslip) => {
-            // Find th eemployee that matches the payslip
+            // Find the employee that matches the payslip
             const employeeName = x.employees.filter(
               (emp) => emp.payrollNumber == payslip.payrollNumber,
             )[0];

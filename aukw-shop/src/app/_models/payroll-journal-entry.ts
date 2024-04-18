@@ -15,15 +15,25 @@ export class EmployerNIEntry {
 import { LineItemDetail } from './line-item-detail';
 
 export class PayrollJournalEntry {
+  /** Quickbooks employee id */
   employeeId: number;
+  /** Gross monthly salary, split into allocated amounts */
   totalPay: LineItemDetail[];
+  /** Income tax deduction */
   paye: number;
+  /** National insurance deduction paid by the employee */
   employeeNI: number;
-  otherDeductions: number;
+  /** Salary reduction taken by employee and paid into pension pot */
   salarySacrifice: number;
-  employeePension: number;
+  /** Deduction taken by government to pay for university education */
   studentLoan: number;
+  /** Catch all for all other deductions */
+  otherDeductions: number;
+  /** Pension contribution paid by employee, if not salary sacrifice */
+  employeePension: number;
+  /** Net monthly salary, the amount paid to the employee. */
   netPay: number;
+  /** Display name of employee */
   name: string;
 
   constructor(obj?: any) {

@@ -41,7 +41,7 @@ class QBPayrollJournalCtl{
       $model = QuickbooksPayrollJournal::getInstance()
         ->setDocNumber($docNumber)
         ->setTxnDate($payrollDate)
-        ->setEmployeeNumber($data->employeeId)
+        ->setQuickbooksEmployeeId($data->employeeId)
         ->setGrossSalary($data->totalPay)
         ->setPAYE(empty($data->paye)?0:$data->paye)
         ->setEmployeeNI(empty($data->employeeNI)?0:$data->employeeNI)

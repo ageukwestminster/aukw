@@ -12,11 +12,11 @@ use QuickBooksOnline\API\Facades\JournalEntry;
  */
 class QuickbooksPayrollJournal extends QuickbooksJournal{
   /**
-   * The QB employee number
+   * The ID of the employee in Quickbooks
    *
    * @var string
    */
-  protected string $employeeNumber; 
+  protected string $quickbooksEmployeeId; 
   
   /**
    * The transaction date of the Journal entry
@@ -96,10 +96,10 @@ class QuickbooksPayrollJournal extends QuickbooksJournal{
   protected float $salarySacrifice;
 
   /**
-   * Employee Number (QBO) setter.
+   * Employee Id (QBO) setter.
    */
-  public function setEmployeeNumber(string $employeeNumber) {
-    $this->employeeNumber = $employeeNumber;
+  public function setQuickbooksEmployeeId(string $quickbooksEmployeeId) {
+    $this->quickbooksEmployeeId = $quickbooksEmployeeId;
     return $this;
   }
 
@@ -195,38 +195,38 @@ class QuickbooksPayrollJournal extends QuickbooksJournal{
     foreach($this->grossSalary as $grossSalaryAllocation) {
       //&$line_array, $description, $amount, $emploee, $class, $account)
       $this->payrolljournal_line($payrolljournal['Line'], QBO::GROSS_SALARY_DESCRIPTION, 
-        $grossSalaryAllocation->amount, $this->employeeNumber, 
+        $grossSalaryAllocation->amount, $this->quickbooksEmployeeId, 
         $grossSalaryAllocation->class,
         $grossSalaryAllocation->account==QBO::AUEW_ACCOUNT?QBO::AUEW_ACCOUNT:QBO::STAFF_SALARIES_ACCOUNT
       );
     }
 
     $this->payrolljournal_line($payrolljournal['Line'], QBO::PAYE_DESCRIPTION, 
-      $this->paye, $this->employeeNumber, QBO::ADMIN_CLASS,
+      $this->paye, $this->quickbooksEmployeeId, QBO::ADMIN_CLASS,
       QBO::TAX_ACCOUNT);
 
     $this->payrolljournal_line($payrolljournal['Line'], QBO::EMPLOYEE_NI_DESCRIPTION, 
-      $this->employeeNI, $this->employeeNumber, QBO::ADMIN_CLASS,
+      $this->employeeNI, $this->quickbooksEmployeeId, QBO::ADMIN_CLASS,
       QBO::TAX_ACCOUNT);
 
     $this->payrolljournal_line($payrolljournal['Line'], QBO::SALARY_SACRIFICE_DESCRIPTION, 
-      $this->salarySacrifice, $this->employeeNumber, QBO::ADMIN_CLASS,
+      $this->salarySacrifice, $this->quickbooksEmployeeId, QBO::ADMIN_CLASS,
       QBO::SALARY_SACRIFICE_ACCOUNT);
 
     $this->payrolljournal_line($payrolljournal['Line'], QBO::EMPLOYEE_PENSION_CONT_DESCRIPTION, 
-      $this->employeePensionContribution, $this->employeeNumber, QBO::ADMIN_CLASS,
+      $this->employeePensionContribution, $this->quickbooksEmployeeId, QBO::ADMIN_CLASS,
       QBO::EMPLOYEE_PENSION_CONTRIB_ACCOUNT);
 
     $this->payrolljournal_line($payrolljournal['Line'], QBO::OTHER_DEDUCTIONS_DESCRIPTION, 
-      $this->otherDeduction, $this->employeeNumber, QBO::ADMIN_CLASS,
+      $this->otherDeduction, $this->quickbooksEmployeeId, QBO::ADMIN_CLASS,
       QBO::OTHER_DEDUCTIONS_ACCOUNT);
 
     $this->payrolljournal_line($payrolljournal['Line'], QBO::STUDENT_LOAN_DESCRIPTION, 
-      $this->studentLoan, $this->employeeNumber, QBO::ADMIN_CLASS,
+      $this->studentLoan, $this->quickbooksEmployeeId, QBO::ADMIN_CLASS,
       QBO::TAX_ACCOUNT);     
 
     $this->payrolljournal_line($payrolljournal['Line'], QBO::NET_PAY_DESCRIPTION, 
-        $this->netSalary, $this->employeeNumber, QBO::ADMIN_CLASS,
+        $this->netSalary, $this->quickbooksEmployeeId, QBO::ADMIN_CLASS,
         QBO::NET_PAY_ACCOUNT);
 
 
