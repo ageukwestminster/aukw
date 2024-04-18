@@ -15,14 +15,17 @@ use \Models\QuickbooksEmployee;
 class QBPayrollQueryCtl{
 
   /**
-   * Query QBO and return (in Payslip format) details of any payroll entries for the given month and year
+   * Query QBO and return (in Payslip format) details of any payroll entries for the given month and year.
+   * 
+   * On success the PHP call exits with HTTP status 200 and a message confirming success.
+   * If this fails the PHP call exits with HTTP status 400 and a message describing the error.
    *
    * @param string $realmid The company ID for the QBO company.
-   * @param int $year 
-   * @param int $month
+   * @param int $year The year of the payroll run. e.g. 2024
+   * @param int $month The number of the month of the payroll run. e.g. '3' for March
    * @return void Output is echo'd directly to response 
    */
-  public static function query(string $realmid, int $year, int $month){  
+  public static function query(string $realmid, int $year, int $month):void{  
 
     $payslips = array(); // this will be returned
 
@@ -48,11 +51,14 @@ class QBPayrollQueryCtl{
   }
 
   /**
-   * Run through the payroll journals and extract details of the month's salary and deeduction amounts
+   * Run through the payroll journals and extract details of the month's salary and deduction amounts.
+   * Works for journals in both Charity and Enterprises company files.
    * 
-   * @return void 
+   * @param array $employees An array of QBO Employees, associated by Name
+   * @param array $journals An array of QBO Journal Entry entities
+   * @param array $payslips 
    */
-  private static function parsePayrollJournals(Array $employees, Array $journals, &$payslips):void {
+  private static function parsePayrollJournals(array $employees, array $journals, array &$payslips):void {
 
     // Convert $employees from keyed on employee name to keyed on QB id.
     $employeesById = array();
@@ -72,6 +78,7 @@ class QBPayrollQueryCtl{
             continue;
           }
 
+          // Handle case where EntityRef is an name/value object or a string
           if ( property_exists($detail->Entity->EntityRef, 'value') ) {
             $employeeId = $detail->Entity->EntityRef->value;
           } else {
@@ -87,17 +94,19 @@ class QBPayrollQueryCtl{
                 $employeesById[$employeeId]['name']
               );   
           }
-
           $payslip = $payslips[$payrollNumber];
 
           $amount = $line->Amount;
 
+          // Handle case where AccountRef is an name/value object or a string
           if ( property_exists($detail->AccountRef, 'value') ) {
             $account = $detail->AccountRef->value;
           } else {
             $account = $detail->AccountRef;
           }
 
+          // The type of GJ line that we are parsing is largely determined
+          // by its account. For shop employees we have to examine Description too.
           switch ($account) {
             case QBO::AUEW_ACCOUNT:
               switch ($line->Description) {
@@ -160,8 +169,10 @@ class QBPayrollQueryCtl{
               $payslip->addToEmployerPension($amount);
               break;
             case QBO::AUKW_INTERCO_ACCOUNT:
+              // If Enterprises' AUKW interco account then do nothing
               break;
             default:
+              // If unrecognised account then do nothing.
               break;
           }
         }
@@ -172,9 +183,13 @@ class QBPayrollQueryCtl{
     /**
    * Run through the pension bills and extract details of the month's pension amounts
    * 
-   * @return void 
+   * @param array $employees An array of QBO Employees, associated by Name
+   * @param array $bills An array of QBO Bill entities
+   * @param array An array of type \Models\Payslip, passed by reference
+   * @return void
    */
-  private static function parsePensionBills (Array $employees, Array $bills, &$payslips):void {
+  private static function parsePensionBills (array $employees, array $bills, array &$payslips):void {
+
     foreach($bills as $bill) {
       // $bill is of type QuickBooksOnline\API\Data\IPPBill with extends IPPTransaction
       if (property_exists($bill, 'Line') && is_array($bill->Line)) {
@@ -224,9 +239,15 @@ class QBPayrollQueryCtl{
         }
       }
     }
+
   }
 
-  private static function createPayslip($payrollNumber, $quickbooksId, $name) : Payslip {
+  /** Helper funciton to create a new employee Payslip 
+   * @param $payrollNumber The number associated with the employee in the Iris spreadsheet
+   * @param $quickbooksId Id associated with the employee in Quickbooks
+   * @param string $name Display name of the employee.
+  */
+  private static function createPayslip($payrollNumber, $quickbooksId, string $name) : Payslip {
     return Payslip::getInstance()
     ->setEmployeeId($payrollNumber)
     ->setQuickbooksId($quickbooksId)

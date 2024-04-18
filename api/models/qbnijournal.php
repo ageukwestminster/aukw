@@ -26,8 +26,10 @@ class QuickbooksEmployerNIJournal extends QuickbooksJournal{
 
     /**
      * Create the general journal entry for Employer NI 
+     * 
+     * @return array|false On success return an array with details of the new object. On failure return 'false'.
      */
-    public function create_employerNI_journal($entries) {
+    public function create_employerNI_journal($entries):array|false {
 
       $payrolljournal = array(
           "TxnDate" => $this->TxnDate,

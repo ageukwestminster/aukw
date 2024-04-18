@@ -178,8 +178,10 @@ class QuickbooksPayrollJournal extends QuickbooksJournal{
 
   /**
    * Create a general journal in QBO
+   * 
+   * @return array|false On success return an array with details of the new object. On failure return 'false'.
    */
-  public function create_employee_journal() {
+  public function create_employee_journal():array|false {
 
     $payrolljournal = array(
         "TxnDate" => $this->TxnDate,
@@ -255,6 +257,8 @@ class QuickbooksPayrollJournal extends QuickbooksJournal{
 
   /**
    * Check the provided values make sense. Is transaction in balance?
+   * 
+   * @return bool 'True' if the transaction is in balance, 'false' otherwise.
    */
   public function validate(): bool {
 

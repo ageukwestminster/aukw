@@ -86,15 +86,15 @@ class QuickbooksJournal{
 
   /**
    * Return details of the QBO general journal identified by $id
-   * @return IPPIntuitEntity Returns an journal with specified Id.
+   * @return IPPIntuitEntity|null Returns an journal with specified Id or nothing.
    * 
    */
-  public function readOne(){
+  public function readOne():\QuickBooksOnline\API\Data\IPPIntuitEntity|null{
 
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->realmid);
     if ($dataService == false) {
-      return;
+      return null;
     }
 
     $dataService->forceJsonSerializers();
@@ -104,6 +104,7 @@ class QuickbooksJournal{
         echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
         echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
         echo "The Response message is: " . $error->getResponseBody() . "\n";
+        return null;
     }
     else {
         return $journalentry;
@@ -159,7 +160,7 @@ class QuickbooksJournal{
    * Push a new array describing a single line of a QBO journal into the given array
    * Helper function used in create.
    *
-   * @param mixed $line_array The given array
+   * @param mixed $line_array The given array, passed by reference.
    * @param mixed $description
    * @param mixed $amount
    * @param mixed $employee

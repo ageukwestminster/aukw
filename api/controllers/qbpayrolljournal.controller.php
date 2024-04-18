@@ -16,11 +16,15 @@ use \Models\QuickbooksPayrollJournal;
 class QBPayrollJournalCtl{
 
   /**
+   * Create the general journal entry for a single employee. The values used are those 
+   * supplied in the body of the HTTP POST query.
    * 
+   * The function expects two HTTP parameters: realmid and payrolldate.
    *
-   * @return void Output is echoed directly to response 
+   * On success the PHP call exits with HTTP status 200 and a message confirming success.
+   * If this fails the PHP call exits with HTTP status 400 and a message describing the error.
    */
-  public static function create_employee_payslip_journal(){  
+  public static function create_employee_payslip_journal():void{  
 
     QBPayrollJournalCtl::checkRealmId();
     QBPayrollJournalCtl::checkPayrollDate();
@@ -79,7 +83,12 @@ class QBPayrollJournalCtl{
   }
 
   /**
-   * Enter the journal txn for employer NI
+   * Enter the journal txn for employer NI.
+   * 
+   * The function expects two HTTP parameters: realmid and payrolldate.
+   * 
+   * On success the PHP call exits with HTTP status 200 and a message confirming success.
+   * If this fails the PHP call exits with HTTP status 400 and a message describing the error.
    */
   public static function create_employer_ni_journal():void{
 
@@ -128,6 +137,14 @@ class QBPayrollJournalCtl{
     }    
   }
 
+  /**
+   * Create the general journal transaction in the Enterprises company file.
+   * 
+   * The function expects two HTTP parameters: realmid and payrolldate.
+   * 
+   * On success the PHP call exits with HTTP status 200 and a message confirming success.
+   * If this fails the PHP call exits with HTTP status 400 and a message describing the error.
+   */
   public static function create_enterprises_journal():void {
 
     QBPayrollJournalCtl::checkRealmId();
@@ -169,9 +186,14 @@ class QBPayrollJournalCtl{
   }
 
    /**
-   * Return details of the QBO recurring transaction identified by $id
+   * Return details of how employee salaries are to be split between various QBO classes. 
+   * The values are saved in QBO as a recurring transaction. The ID of the recurring 
+   * transaction is stored in Config.php as 'qb.allocationsid'.
+   * 
+   * The function expects a HTTP parameters called realmid.
    *
-   * @return void Output is echo'd directly to response 
+   * On success the PHP call exits with HTTP status 200 and a message confirming success.
+   * If this fails the PHP call exits with HTTP status 400 and a message describing the error.
    */
   public static function read_employee_allocations():void{  
 
