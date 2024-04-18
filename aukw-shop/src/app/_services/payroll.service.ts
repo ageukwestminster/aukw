@@ -86,12 +86,13 @@ export class PayrollService {
     property: (p: IrisPayslip) => number,
   ): Observable<LineItemDetail> {
     return from(payslips).pipe(
-
-      filter((p) => (property && (property(p) != 0))), // Only add if property value is not zero
+      filter((p) => property && property(p) != 0), // Only add if property value is not zero
 
       concatMap((p) =>
         // this will split each payslip into one or more allocations
-        from(allocations.filter((x) => x.payrollNumber == p.payrollNumber)).pipe(
+        from(
+          allocations.filter((x) => x.payrollNumber == p.payrollNumber),
+        ).pipe(
           filter((x) => x.percentage != 0), // Ignore any allocations of 0%
 
           // loop through each allocation, computing the correct £ amount from the percentage supplied
@@ -108,9 +109,9 @@ export class PayrollService {
 
               // Make first attempt at calcualted amount, from percentage and pension amount
               let calculatedAllocatedAmount = Number(
-                (Math.round(property(p) * empAllocation.percentage) / 100).toFixed(
-                  2,
-                ),
+                (
+                  Math.round(property(p) * empAllocation.percentage) / 100
+                ).toFixed(2),
               );
 
               // abs(Amount) can never exceed abs(remainder)

@@ -1,5 +1,5 @@
 /**
- * Stores the detail of a QBO entity 'Line' 
+ * Stores the detail of a QBO entity 'Line'
  */
 export class LineItemDetail {
   quickbooksId: number;
@@ -16,4 +16,3 @@ export class LineItemDetail {
     this.class = (obj && obj.class) || null;
   }
 }
-

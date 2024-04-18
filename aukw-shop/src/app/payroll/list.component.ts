@@ -93,7 +93,7 @@ export class PayslipListComponent implements OnInit {
         payslip.isShopEmployee = true;
       }
     });
-    
+
     this.updateInQBOValues();
   }
 
@@ -158,6 +158,11 @@ export class PayslipListComponent implements OnInit {
       : '';
   }
 
+  /**
+   * Interrogate Quickbooks (both charity and enterprises) to see if the monthly payroll transactions
+   * have already been booked.
+   * @returns void
+   */
   updateInQBOValues() {
     if (
       !this.payslips ||
@@ -262,6 +267,13 @@ export class PayslipListComponent implements OnInit {
       });
   }
 
+  /**
+   * Add the general ledger that contains details of the costs of employer NI to the QBO company file.
+   *
+   * This ledger has a line for each employee detailing the employer NI cost. These amounts might be
+   * split between two or more classes. Employees who have zero employer NI are absent.
+   * @returns void
+   */
   employerNI() {
     if (!this.payslips || !this.payslips.length) {
       this.alertService.error('No payslips found!');
@@ -289,8 +301,8 @@ export class PayslipListComponent implements OnInit {
       .subscribe({
         next: () => this.alertService.info('Employer NI journal added.'),
         error: (e) => {
-            this.alertService.error(e, {autoClose: false});
-            this.busyOnEmployerNI = false;
+          this.alertService.error(e, { autoClose: false });
+          this.busyOnEmployerNI = false;
         },
         complete: () => {
           this.busyOnEmployerNI = false;
@@ -320,10 +332,10 @@ export class PayslipListComponent implements OnInit {
         next: () =>
           this.alertService.info('Individual employee journals added.'),
         error: (e) => {
-          this.alertService.error(e, {autoClose: false});
+          this.alertService.error(e, { autoClose: false });
           this.busyOnEmployeeJournals = false;
           this.showProgressBar = false;
-      },
+        },
         complete: () => {
           this.busyOnEmployeeJournals = false;
           this.showProgressBar = false;
@@ -332,6 +344,14 @@ export class PayslipListComponent implements OnInit {
       });
   }
 
+  /**
+   * Add the pension invoice payable to Legal & General, our pensions provider, to the QBO company file.
+   *
+   * This bill has a line for total of salary sacrifice, a line for total of employee pension contributions
+   * and lines for each employee detailing the employer pension contribution. These final amounts might be
+   * split between two or more classes. Employees who are not in the pension scheme are absent.
+   * @returns void
+   */
   pensionBill() {
     if (!this.payslips || !this.payslips.length) return;
 
@@ -362,7 +382,7 @@ export class PayslipListComponent implements OnInit {
       .subscribe({
         next: () => this.alertService.info('L&G Pension bill added.'),
         error: (e) => {
-          this.alertService.error(e, {autoClose: false});
+          this.alertService.error(e, { autoClose: false });
           this.busyOnPensions = false;
         },
         complete: () => {

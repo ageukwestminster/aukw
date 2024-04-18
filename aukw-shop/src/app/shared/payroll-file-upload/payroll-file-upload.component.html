@@ -7,36 +7,33 @@
 />
 
 <div class="file-section">
-    <div *ngIf="loading" class="spinner-border spinner-border-sm"></div>
-    <section *ngIf="!setButtonDisabled" [ngSwitch]="status">
-      <p *ngSwitchCase="'uploading'">Uploading...</p>
-      <p *ngSwitchCase="'reading'">Reading File</p>
-      <p *ngSwitchCase="'success'">Done!</p>
-      <p *ngSwitchCase="'fail'">Error!</p>
-      <p *ngSwitchDefault>Click 'Upload File' button to start.</p>
-    </section>
-    <div *ngIf="!setButtonDisabled" class="d-flex flex-column">
-      <button
-        (click)="fileUpload.click()"
-        class="btn btn-sm btn-success mt-1"
-        [disabled]="setButtonDisabled"
-      >
-        Upload File
-      </button>
-      <p></p>
-      <div class="d-flex justify-content-between">
-        <div>
-          <strong>File:</strong>
-          {{ (file && file.name) || "No file uploaded yet." }}
-        </div>
-        <div>
-          <button
-            (click)="upload()"
-            class="btn btn-sm btn-success mt-1"
-          >
-            <i class="fas fa-sync"></i>
-          </button>
-        </div>
+  <div *ngIf="loading" class="spinner-border spinner-border-sm"></div>
+  <section *ngIf="!setButtonDisabled" [ngSwitch]="status">
+    <p *ngSwitchCase="'uploading'">Uploading...</p>
+    <p *ngSwitchCase="'reading'">Reading File</p>
+    <p *ngSwitchCase="'success'">Done!</p>
+    <p *ngSwitchCase="'fail'">Error!</p>
+    <p *ngSwitchDefault>Click 'Upload File' button to start.</p>
+  </section>
+  <div *ngIf="!setButtonDisabled" class="d-flex flex-column">
+    <button
+      (click)="fileUpload.click()"
+      class="btn btn-sm btn-success mt-1"
+      [disabled]="setButtonDisabled"
+    >
+      Upload File
+    </button>
+    <p></p>
+    <div class="d-flex justify-content-between">
+      <div>
+        <strong>File:</strong>
+        {{ (file && file.name) || "No file uploaded yet." }}
+      </div>
+      <div>
+        <button (click)="upload()" class="btn btn-sm btn-success mt-1">
+          <i class="fas fa-sync"></i>
+        </button>
       </div>
     </div>
+  </div>
 </div>
