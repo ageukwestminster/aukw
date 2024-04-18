@@ -55,7 +55,7 @@ class QBBillCtl{
 
     $bills = QuickbooksQuery::getInstance()
       ->setRealmID($_GET['realmid'])
-      ->query_by_docnumber($doc_number, 'Bill'); 
+      ->query_by_docnumber('Bill', $doc_number); 
 
     echo json_encode($bills);
   }

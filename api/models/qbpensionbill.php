@@ -6,7 +6,7 @@ use Core\QuickbooksConstants as QBO;
 use QuickBooksOnline\API\Facades\Bill;
 
 /**
- * Factory class that provides data about QBO Bills.
+ * Factory class that provides create and delete methods for QBO Bills.
  * 
  * @category Model
  */
@@ -86,9 +86,11 @@ class QuickbooksPensionBill extends QuickbooksBill{
 
 
   /**
-   * Create a bill in QBO
+   * Create this bill in QBO
+   * 
+   * @return array|false On success return an array with details of the new object. On failure return 'false'.
    */
-  public function create() {
+  public function create():array|false {
 
     $bill = array(
       "TxnDate" => $this->TxnDate,
@@ -143,7 +145,7 @@ class QuickbooksPensionBill extends QuickbooksBill{
 
 
   /**
-   * Delete a bill from the QB system.
+   * Delete this bill from the QB system.
    *
    * @return bool 'true' if success.
    * 

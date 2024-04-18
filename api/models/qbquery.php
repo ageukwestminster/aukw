@@ -47,34 +47,35 @@ class QuickbooksQuery{
 
 
     /**
-   * Return an array of QBO entities identified by $doc_number
-   * @param string $doc_number
-   * @return IPPIntuitEntity[] Returns an array of entities
+   * Return an array of QBO entities whose DocNumber starts with the provided string
    * 
+   * More information: {@link https://developer.intuit.com/app/developer/qbo/docs/learn/explore-the-quickbooks-online-api/data-queries}
+   * @param string $entity_type_name The QBO entity type name e.g. 'Bill' or 'JournalEntry'
+   * @param string $doc_number The returned array of entities will have a DocNumber starting with this string
+   * @return array Returns an array of entities that match the doc_number criterion
    */
-  public function query_by_docnumber(string $doc_number, string $entity_name){
+  public function query_by_docnumber(string $entity_type_name, string $doc_number):array{
 
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->realmid);
     if ($dataService == false) {
-      return;
+      return [];
     }
 
-    $entities = $dataService->Query("SELECT * FROM " . $entity_name ." WHERE DocNumber LIKE '" .
-                                              $doc_number . "%'");
+    $entities = $dataService->Query("SELECT * FROM " . $entity_type_name 
+        ." WHERE DocNumber LIKE '" . $doc_number . "%'");
     $error = $dataService->getLastError();
     if ($error) {
         echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
         echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
         echo "The Response message is: " . $error->getResponseBody() . "\n";
     }
-    else {
-        if ($entities) {
-          return $entities;
-        } else {
-          return [];
-        }
+    else if ($entities) {
+      return $entities;
     }
+
+    return [];
+    
   }
 
 }

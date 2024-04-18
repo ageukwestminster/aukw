@@ -52,7 +52,7 @@ class QBJournalCtl{
 
     $journals = QuickbooksQuery::getInstance()
       ->setRealmID($_GET['realmid'])
-      ->query_by_docnumber($doc_number, 'JournalEntry');
+      ->query_by_docnumber('JournalEntry', $doc_number);
 
     echo json_encode($journals);
   }

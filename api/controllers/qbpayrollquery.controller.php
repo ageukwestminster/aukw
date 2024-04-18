@@ -37,13 +37,13 @@ class QBPayrollQueryCtl{
 
     $bills = QuickbooksQuery::getInstance()
       ->setRealmID($realmid)
-      ->query_by_docnumber($payrollIdentifier, 'Bill');
+      ->query_by_docnumber('Bill', $payrollIdentifier);
 
     QBPayrollQueryCtl::parsePensionBills($employees, $bills, $payslips);
     
     $journals = QuickbooksQuery::getInstance()
       ->setRealmID($realmid)
-      ->query_by_docnumber($payrollIdentifier, 'JournalEntry');
+      ->query_by_docnumber('JournalEntry', $payrollIdentifier);
 
     QBPayrollQueryCtl::parsePayrollJournals($employees, $journals, $payslips);
 
