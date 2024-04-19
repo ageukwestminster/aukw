@@ -46,8 +46,6 @@ export class PayslipListComponent implements OnInit {
   allocations!: EmployeeAllocation[];
   user!: User;
   employeeJournalEntries$!: Observable<PayrollJournalEntry>;
-  currentPayslip: number = 0;
-  showProgressBar: boolean = false;
 
   qboAuthorisationMissing: boolean = false;
 
@@ -375,14 +373,12 @@ export class PayslipListComponent implements OnInit {
    * @returns void
    */
   makeEmployeeJournalEntries() {
-    this.currentPayslip = 0;
-    this.showProgressBar = true;
+
     this.busyOnEmployeeJournals = true;
 
     this.payrollService
       .employeeJournalEntries(this.payslips, this.allocations)
       .pipe(
-        tap(() => this.currentPayslip++), // used to fill progress bar
         mergeMap((v) =>
           this.qbPayrollService.createEmployeeJournal(
             this.charityRealm.realmid!,
@@ -397,11 +393,9 @@ export class PayslipListComponent implements OnInit {
         error: (e) => {
           this.alertService.error(e, { autoClose: false });
           this.busyOnEmployeeJournals = false;
-          this.showProgressBar = false;
         },
         complete: () => {
           this.busyOnEmployeeJournals = false;
-          this.showProgressBar = false;
           this.disableEmployeeJournals = true;
         },
       });
