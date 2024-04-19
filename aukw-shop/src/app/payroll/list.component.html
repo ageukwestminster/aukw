@@ -119,9 +119,13 @@
             class="col-md-12"
             *ngIf="consoleMessage$ | async as consoleMessage"
           >
-            <textarea style="width: 100%" cols="50" rows="10" name ="consoleTextarea">{{
-              consoleMessage
-            }}</textarea>
+            <textarea
+              style="width: 100%"
+              cols="50"
+              rows="10"
+              name="consoleTextarea"
+              >{{ consoleMessage }}</textarea
+            >
           </div>
         </ng-template>
       </div>
@@ -172,7 +176,9 @@
                 </th>
                 <th style="width: 6%" class="d-none d-sm-table-cell">Other</th>
                 <th style="width: 8%" class="d-none d-sm-table-cell">S Sac</th>
-                <th style="width: 8%" class="d-none d-sm-table-cell">St Loan</th>
+                <th style="width: 8%" class="d-none d-sm-table-cell">
+                  St Loan
+                </th>
                 <th style="width: 8%" class="d-none d-sm-table-cell">Net</th>
                 <th style="width: 8%" class="d-none d-sm-table-cell">
                   E'er NI

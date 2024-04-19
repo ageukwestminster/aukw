@@ -337,9 +337,11 @@ export class PayslipListComponent implements OnInit {
         this.allocations,
       )
       .pipe(
-        toArray(),  //concat them into an array   
+        toArray(), //concat them into an array
         filter((journalLines) => journalLines && journalLines.length > 0), // only proceed if array is not empty
-        tap((journalLines) => this.consoleService.sendLineItemDetailToConsole(journalLines)), //Send to console
+        tap((journalLines) =>
+          this.consoleService.sendLineItemDetailToConsole(journalLines),
+        ), //Send to console
         mergeMap((allocatedEmployerNICosts) =>
           // Create the GJ entry in Charity QBO
           this.qbPayrollService.createEmployerNIJournal(
@@ -373,7 +375,6 @@ export class PayslipListComponent implements OnInit {
    * @returns void
    */
   makeEmployeeJournalEntries() {
-
     this.busyOnEmployeeJournals = true;
 
     this.payrollService
