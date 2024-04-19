@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { from, concatMap, iif, tap, Observable } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { AlertService, FileService } from '@app/_services';
+import { AlertService, ConsoleService, FileService } from '@app/_services';
 import { IrisPayslip, UploadResponse } from '@app/_models';
 import { PasswordInputModalComponent } from './password-input.component';
 
@@ -11,21 +12,32 @@ import { PasswordInputModalComponent } from './password-input.component';
   styleUrls: ['./payroll-file-upload.component.css'],
 })
 export class PayrollFileUploadComponent {
-  status: 'initial' | 'uploading' | 'reading' | 'success' | 'fail' = 'initial';
+  /** When 'true' background work is being performed */
+  loading: boolean = false;
+  /** The file that the user has selected, or null */
   file: File | null = null;
+  /**Using a form group to allow me to reset the file input control easily */
+  form!: FormGroup;
 
   @Output() onFileUploaded: EventEmitter<IrisPayslip[]>;
+
   /**
    * Input flag to allow disabling the loading of a file until the parent object is ready
    */
-  @Input() setButtonDisabled: boolean = false;
+  @Input() setButtonDisabled: boolean | null = false;
 
   constructor(
     private alertService: AlertService,
     private fileService: FileService,
     public modalService: NgbModal,
+    private formBuilder: FormBuilder,
+    private consoleService: ConsoleService,
   ) {
     this.onFileUploaded = new EventEmitter();
+  }
+
+  ngOnInit() {
+    this.form = this.formBuilder.group({ chooseFile: [null] });
   }
 
   /**
@@ -39,7 +51,6 @@ export class PayrollFileUploadComponent {
     const files: FileList | null = (event.target as HTMLInputElement).files;
     if (files) {
       if (files.length) {
-        this.status = 'initial';
         this.file = files![0];
       } else {
         this.file = null;
@@ -52,13 +63,16 @@ export class PayrollFileUploadComponent {
   upload() {
     if (!this.file) return;
 
-    this.status = 'uploading';
+    this.loading = true;
+    this.consoleService.sendConsoleMessage(`Uploading '${this.file.name}'.`);
 
     this.fileService
       .upload(this.file)
       .pipe(
         tap(() => {
-          this.status = 'reading';
+          this.consoleService.sendConsoleMessage(
+            `Reading '${this.file!.name}' into memory.`,
+          );
         }),
         concatMap((response: UploadResponse) =>
           iif(
@@ -70,22 +84,28 @@ export class PayrollFileUploadComponent {
       )
       .subscribe({
         next: (response: IrisPayslip[]) => {
+          this.consoleService.sendConsoleMessage(
+            `Processing complete for '${this.file!.name}'.`,
+          );
           this.onFileUploaded.emit(response);
-          this.status = 'success';
         },
         error: (error: any) => {
+          this.loading = false;
           /* ignore error if user has cancelled password */
           if (error == 'cancel click') {
             this.file = null;
-            this.status = 'initial';
+            this.form.reset();
             return;
           }
 
-          this.status = 'fail';
+          this.consoleService.sendConsoleMessage(
+            `Failed to parse '${this.file!.name}'.`,
+          );
           this.alertService.error(error, {
             autoClose: false,
           });
         },
+        complete: () => (this.loading = false),
       });
   }
 
@@ -99,15 +119,14 @@ export class PayrollFileUploadComponent {
     modalRef.componentInstance.fileName = fileName;
 
     return from(modalRef.result).pipe(
+      tap(() => this.consoleService.sendConsoleMessage('Decrypting file.')),
       concatMap((password: string) => this.fileService.decrypt(password)),
+      tap(() =>
+        this.consoleService.sendConsoleMessage(
+          'Examining file for pension and salary details.',
+        ),
+      ),
       concatMap(() => this.fileService.parse()),
     );
-  }
-
-  /**
-   * A flag representing when there is background work being performed.
-   */
-  get loading(): boolean {
-    return this.status == 'reading' || this.status == 'uploading';
   }
 }

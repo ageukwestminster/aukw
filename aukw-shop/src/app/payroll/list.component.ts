@@ -1,21 +1,22 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgFor, NgIf } from '@angular/common';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable, forkJoin, BehaviorSubject } from 'rxjs';
 import {
   concatMap,
   filter,
   map,
   mergeMap,
   retry,
+  scan,
   tap,
   toArray,
 } from 'rxjs/operators';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
 import {
   AlertService,
   AuthenticationService,
+  ConsoleService,
   PayrollService,
   QBEmployeeService,
   QBPayrollService,
@@ -50,8 +51,7 @@ export class PayslipListComponent implements OnInit {
 
   qboAuthorisationMissing: boolean = false;
 
-  initializing: boolean = false;
-  loading: boolean = false;
+  loading$: BehaviorSubject<boolean>;
   busyOnPensions: boolean = false;
   busyOnEmployerNI: boolean = false;
   busyOnEmployeeJournals: boolean = false;
@@ -65,15 +65,25 @@ export class PayslipListComponent implements OnInit {
 
   cummulativeQbFlags: QBFlags = new QBFlags();
 
-  constructor(
-    private alertService: AlertService,
-    private qbRealmService: QBRealmService,
-    private authenticationService: AuthenticationService,
-    private qbPayrollService: QBPayrollService,
-    private payrollService: PayrollService,
-    private qbEmployeeService: QBEmployeeService,
-  ) {
+  consoleMessage$: Observable<string>;
+
+  private alertService = inject(AlertService);
+  private qbRealmService = inject(QBRealmService);
+  private authenticationService = inject(AuthenticationService);
+  private qbPayrollService = inject(QBPayrollService);
+  private payrollService = inject(PayrollService);
+  private qbEmployeeService = inject(QBEmployeeService);
+  private consoleService = inject(ConsoleService);
+
+  constructor() {
     this.user = this.authenticationService.userValue;
+    this.loading$ = new BehaviorSubject<boolean>(false);
+    this.consoleMessage$ = this.consoleService.consoleMessage$.pipe(
+      scan(
+        (accumultor, message) =>
+          accumultor + (message == '.' ? '.' : '\n' + message),
+      ),
+    );
   }
 
   xlsxWasUploaded(payslips: IrisPayslip[]): void {
@@ -101,14 +111,25 @@ export class PayslipListComponent implements OnInit {
    * initialize the object by populating the 2 realm properties
    */
   ngOnInit() {
-    this.initializing = true;
+    this.loading$.next(true);
+
     this.qbRealmService
       .getAll(this.user.id)
       .pipe(
+        tap(() =>
+          this.consoleService.sendConsoleMessage(
+            'Loading Quickbooks' +
+              ' connection details for Charity and Enterprises.',
+          ),
+        ),
         concatMap((realms: QBRealm[]) => {
           realms.forEach((r: QBRealm) => {
             if (!r.connection || !r.connection.refreshtoken) {
               this.qboAuthorisationMissing = true;
+            } else {
+              this.consoleService.sendConsoleMessage(
+                `Quickbooks connection to Company file '${r.name}' found.`,
+              );
             }
 
             if (!r.issandbox && r.name) {
@@ -119,6 +140,10 @@ export class PayslipListComponent implements OnInit {
               }
             }
           });
+
+          this.consoleService.sendConsoleMessage(
+            'Loading employee allocations from Quickbooks:',
+          );
 
           if (
             this.charityRealm &&
@@ -137,13 +162,18 @@ export class PayslipListComponent implements OnInit {
         }),
         tap((allocations) => {
           this.allocations = allocations;
-          this.initializing = false;
+          this.consoleService.sendAllocationsToConsole(allocations);
+          this.consoleService.sendConsoleMessage(
+            '\n' +
+              "Press 'File Upload' to begin processing payroll spreadsheet.",
+          );
+          this.loading$.next(false);
         }),
       )
       .subscribe({
         error: (error: any) => {
           this.alertService.error(error);
-          this.initializing = false;
+          this.loading$.next(false);
         },
         complete: () => (this.qboAuthorisationMissing = false),
       });
@@ -174,18 +204,22 @@ export class PayslipListComponent implements OnInit {
     }
 
     // Inform user background work is happening
-    this.loading = true;
+    this.loading$.next(true);
 
     // Reset disablement flags
-    this.disableEmployerNI = false;
-    this.disableEmployeeJournals = false;
-    this.disablePensions = false;
-    this.disableShopJournals = false;
+    this.disableEmployerNI = true;
+    this.disableEmployeeJournals = true;
+    this.disablePensions = true;
+    this.disableShopJournals = true;
 
     // Time added to avoid problems with BST
     const dt = new Date(this.payrollDate + 'T12:00:00');
     const month = (dt.getMonth() + 1).toString().padStart(2, '0');
     const year = dt.getFullYear().toString();
+
+    this.consoleService.sendConsoleMessage(
+      `Querying Quickbooks for existing payroll transactions for ${year}-${month}.`,
+    );
 
     // forkJoin will wait for both Observables to complete
     forkJoin({
@@ -201,6 +235,16 @@ export class PayslipListComponent implements OnInit {
       ),
     })
       .pipe(
+        tap((x) => {
+          this.consoleService.sendConsoleMessage(
+            `${'\n'}Entries found in Charity Quickbooks: `,
+          );
+          this.consoleService.sendPayslipsToConsole(x.charityPayslips);
+          this.consoleService.sendConsoleMessage(
+            `${'\n'}Entries found in Enterprises Quickbooks: `,
+          );
+          this.consoleService.sendShopPayslipsToConsole(x.shopPayslips);
+        }),
         map((x) => {
           this.payslips.forEach((xlsxPayslip) => {
             let qbPayslip = x.charityPayslips.find(
@@ -260,9 +304,16 @@ export class PayslipListComponent implements OnInit {
         }),
       )
       .subscribe({
-        error: (e) => this.alertService.error(e),
+        error: (e) => {
+          this.alertService.error(e);
+          this.loading$.next(false);
+        },
         complete: () => {
-          this.loading = false;
+          this.loading$.next(false);
+          this.disableEmployerNI = false;
+          this.disableEmployeeJournals = false;
+          this.disablePensions = false;
+          this.disableShopJournals = false;
         },
       });
   }
@@ -288,9 +339,11 @@ export class PayslipListComponent implements OnInit {
         this.allocations,
       )
       .pipe(
-        toArray(),
-        filter((allocations) => allocations && allocations.length > 0),
+        toArray(),  //concat them into an array   
+        filter((journalLines) => journalLines && journalLines.length > 0), // only proceed if array is not empty
+        tap((journalLines) => this.consoleService.sendLineItemDetailToConsole(journalLines)), //Send to console
         mergeMap((allocatedEmployerNICosts) =>
+          // Create the GJ entry in Charity QBO
           this.qbPayrollService.createEmployerNIJournal(
             this.charityRealm.realmid!,
             allocatedEmployerNICosts,
@@ -307,10 +360,20 @@ export class PayslipListComponent implements OnInit {
         complete: () => {
           this.busyOnEmployerNI = false;
           this.disableEmployerNI = true;
+          this.consoleService.sendConsoleMessage(
+            `${'\n'}Employer NI added to Quickbooks.`,
+          );
         },
       });
   }
 
+  /**
+   * Add a general ledger for each employee contains details salary and deductions to the QBO company file.
+   *
+   * This ledger may have multiple lines for detailing the total salary. These amounts might be
+   * split between two or more classes.
+   * @returns void
+   */
   makeEmployeeJournalEntries() {
     this.currentPayslip = 0;
     this.showProgressBar = true;
@@ -458,6 +521,9 @@ export class PayslipListComponent implements OnInit {
         complete: () => {
           this.busyOnShopJournals = false;
           this.disableShopJournals = true;
+          this.consoleService.sendConsoleMessage(
+            `${'\n'}Enterprises transactions added to Quickbooks.`,
+          );
         },
       });
   }

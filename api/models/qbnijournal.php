@@ -43,7 +43,7 @@ class QuickbooksEmployerNIJournal extends QuickbooksJournal{
         //&$line_array, $description, $amount, $employee, $class, $account)
         // This code will only add the respective line if amount != 0
         $this->payrolljournal_line($payrolljournal['Line'], QBO::EMPLOYER_NI_DESCRIPTION, 
-            $line->amount, $line->employeeId, $line->class, $line->account);
+            $line->amount, $line->quickbooksId, $line->class, $line->account);
         
         $sum -= $line->amount;
       }
@@ -70,7 +70,7 @@ class QuickbooksEmployerNIJournal extends QuickbooksJournal{
           return false;
       } else {      
         return array(
-            "id" => $resultingObj->Id,
+            "id" => $resultingObj->Id ?? 0,
             "date" => $this->TxnDate,
             "label" => $this->DocNumber
         );

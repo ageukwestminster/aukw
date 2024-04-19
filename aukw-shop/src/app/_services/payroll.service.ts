@@ -16,6 +16,13 @@ import {
 export class PayrollService {
   constructor() {}
 
+  /**
+   * Given employee payslips and their corresponding account/class allocations, calculate 
+   * the entire GJ entry for salary and deductions.
+   * @param payslips An array of payslips, detailing each employee's salary and deductions
+   * @param allocations An array of allocation objects that show how to split costs between classes
+   * @returns Return an Observable of the entire PayrollJournalEntry
+   */
   employeeJournalEntries(
     payslips: IrisPayslip[],
     allocations: EmployeeAllocation[],
@@ -27,10 +34,12 @@ export class PayrollService {
   }
 
   /**
-   * Return an Observable of allocated employer NI costs
+   * Given employee payslips and their corresponding account/class allocations, calculate 
+   * the GJ line entries for Employer NI. Each employee payslip may be spilt among one, two or more
+   * lines.
    * @param payslips An array of payslips, detailing each employee's salary and ni
    * @param allocations An array of allocation objects that show how to split costs between classes
-   * @returns
+   * @returns Return an Observable of allocated employer NI costs
    */
   employerNIAllocatedCosts(
     payslips: IrisPayslip[],
@@ -97,10 +106,10 @@ export class PayrollService {
 
           // loop through each allocation, computing the correct £ amount from the percentage supplied
           scan(
-            (acc: any, empAllocation: EmployeeAllocation) => {
+            (acc: {sum: number, entry: LineItemDetail}, empAllocation: EmployeeAllocation) => {
               // We are looping through an array of allocations ordered by employee
               // When the employee changes, reset subtotal (i.e. sum) to zero
-              if (empAllocation.quickbooksId != acc.entry.employeeId) {
+              if (empAllocation.quickbooksId != acc.entry.quickbooksId) {
                 acc.sum = 0;
               }
 
@@ -207,8 +216,10 @@ export class PayrollService {
     });
 
     let sum: number = 0;
-    for (const [i, v] of allocations.entries()) {
+    for (const [key, v] of allocations.entries()) {
       const alloc = new LineItemDetail({
+        quickbooksId: allocations[0].quickbooksId,
+        name: p.employeeName,
         class: v.class,
         account: v.account,
         amount: Number(
@@ -219,7 +230,7 @@ export class PayrollService {
       // The sum of the allocated amounts must equal the starting total
       // If there is a discrepancy then adjust the final allocated amount.
       sum += alloc.amount;
-      if (i == allocations.length - 1 && sum != p.totalPay) {
+      if (key == allocations.length - 1 && sum != p.totalPay) {
         alloc.amount += p.totalPay - sum;
 
         // Round to avoid numbers like 65.4000000000004

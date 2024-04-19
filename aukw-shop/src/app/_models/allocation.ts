@@ -16,8 +16,12 @@ export class EmployeeAllocation {
   percentage: number;
   /** The account to allocate the cost to */
   account: number;
+  /** The name of the account to allocate the cost to */
+  accountName: string;
   /** The class to allocate the cost to */
   class: string;
+  /** The name of the class to allocate the cost to */
+  className: string;
 
   /**Create a new EmployeeAllocation */
   constructor(obj?: any) {
@@ -28,5 +32,7 @@ export class EmployeeAllocation {
     this.percentage = (obj && obj.percentage) || null;
     this.account = (obj && obj.account) || null;
     this.class = (obj && obj.class) || null;
+    this.accountName = (obj && obj.accountName) || null;
+    this.className = (obj && obj.className) || null;
   }
 }

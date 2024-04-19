@@ -138,7 +138,7 @@ class QuickbooksReport{
             ->setEndDate($this->enddate)
             ->setSummarizeColumnBy($this->summarizeColumn);
 
-        if (!$this->account) {
+        if ($this->account) {
             $reportService->setAccount($this->account);
         }
 
