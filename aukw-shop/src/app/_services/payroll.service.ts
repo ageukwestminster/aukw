@@ -17,7 +17,7 @@ export class PayrollService {
   constructor() {}
 
   /**
-   * Given employee payslips and their corresponding account/class allocations, calculate 
+   * Given employee payslips and their corresponding account/class allocations, calculate
    * the entire GJ entry for salary and deductions.
    * @param payslips An array of payslips, detailing each employee's salary and deductions
    * @param allocations An array of allocation objects that show how to split costs between classes
@@ -34,7 +34,7 @@ export class PayrollService {
   }
 
   /**
-   * Given employee payslips and their corresponding account/class allocations, calculate 
+   * Given employee payslips and their corresponding account/class allocations, calculate
    * the GJ line entries for Employer NI. Each employee payslip may be spilt among one, two or more
    * lines.
    * @param payslips An array of payslips, detailing each employee's salary and ni
@@ -106,7 +106,10 @@ export class PayrollService {
 
           // loop through each allocation, computing the correct £ amount from the percentage supplied
           scan(
-            (acc: {sum: number, entry: LineItemDetail}, empAllocation: EmployeeAllocation) => {
+            (
+              acc: { sum: number; entry: LineItemDetail },
+              empAllocation: EmployeeAllocation,
+            ) => {
               // We are looping through an array of allocations ordered by employee
               // When the employee changes, reset subtotal (i.e. sum) to zero
               if (empAllocation.quickbooksId != acc.entry.quickbooksId) {

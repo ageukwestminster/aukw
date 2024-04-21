@@ -3,6 +3,7 @@ export * from './authentication.service';
 export * from './console.service';
 export * from './department.service';
 export * from './file.service';
+export * from './loading-indicator.service';
 export * from './payroll.service';
 export * from './qb-connection.service';
 export * from './qb-employee.service';

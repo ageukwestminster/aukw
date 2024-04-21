@@ -1,0 +1,111 @@
+<div *ngIf="user.isAdmin && !qboAuthorisationMissing">
+  <ul
+    ngbNav
+    #nav="ngbNav"
+    [(activeId)]="active"
+    class="nav-tabs"
+    [destroyOnHide]="false"
+  >
+    <li [ngbNavItem]="1">
+      <button ngbNavLink>Employee Allocations</button>
+      <ng-template ngbNavContent>
+        <div class="border p-2">
+          <h4>Notes</h4>
+          <p>
+            Employee allocations are managed by editing a recurring transaction
+            in the Charity quickbooks file.
+          </p>
+          <p>The transaction is called "Salary Allocations - DoNotDelete".</p>
+          <p>
+            Before adding a new employee to the recurring transaction, ensure
+            that they are listed among the employees in the QBO Payroll section.
+            Edit the new employee and add their iris payroll number to the
+            Employee ID field.
+          </p>
+        </div>
+        <div
+          *ngIf="
+            charityRealm && charityRealm.connection && charityRealm.realmid
+          "
+        >
+          <employee-allocations
+            [realmId]="charityRealm.realmid"
+            (onAllocationsLoaded)="(receiveAllocations)"
+          ></employee-allocations>
+        </div>
+      </ng-template>
+    </li>
+    <li [ngbNavItem]="2">
+      <button ngbNavLink>Iris Payslips</button>
+      <ng-template ngbNavContent>
+        <div class="border p-2">
+          <h4>Notes</h4>
+          <p>TO DO</p>
+        </div>
+        <div
+          *ngIf="
+            charityRealm && charityRealm.connection && charityRealm.realmid
+          "
+        >
+          <iris-payslips (onPayslipsExtractedFromSpreadsheet)="receivePayslips"></iris-payslips>
+        </div>
+      </ng-template>
+    </li>
+    <li [ngbNavItem]="3">
+      <button ngbNavLink>Three</button>
+      <ng-template ngbNavContent>
+        <p>
+          Sed commodo, leo at suscipit dictum, quam est porttitor sapien, eget
+          sodales nibh elit id diam. Nulla facilisi. Donec egestas ligula vitae
+          odio interdum aliquet. Duis lectus turpis, luctus eget tincidunt eu,
+          congue et odio. Duis pharetra et nisl at faucibus. Quisque luctus
+          pulvinar arcu, et molestie lectus ultrices et. Sed diam urna, egestas
+          ut ipsum vel, volutpat volutpat neque. Praesent fringilla tortor arcu.
+          Vivamus faucibus nisl enim, nec tristique ipsum euismod facilisis.
+          Morbi ut bibendum est, eu tincidunt odio. Orci varius natoque
+          penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+          Mauris aliquet odio ac lorem aliquet ultricies in eget neque.
+          Phasellus nec tortor vel tellus pulvinar feugiat.
+        </p>
+      </ng-template>
+    </li>
+  </ul>
+
+  <div [ngbNavOutlet]="nav" class="mt-2"></div>
+</div>
+<div *ngIf="!user.isAdmin">
+  <strong>This page is accesible to Admin users only.</strong>
+</div>
+<div class="card" *ngIf="qboAuthorisationMissing">
+  <div class="card-body">
+    <p>
+      <strong
+        >Quickbooks Online (QBO) Authorisation Missing or Incomplete</strong
+      >
+    </p>
+    <p>
+      This page is restricted to SMT and Accounts Department employees only.
+    </p>
+    <p>
+      In order for this page to function you are required to make 2 links
+      between this app and QBO.
+    </p>
+    <p>Making a link can be done in one of two ways:</p>
+    <ul>
+      <li>Log in using the "Sign in with Intuit" button.</li>
+      <li>
+        Using the 'Add' buttons in the Quickbooks Connections section of your
+        <a routerLink="/users/edit/{{ user.id }}">Profile</a> page.
+      </li>
+    </ul>
+    <p>
+      You will be redirected to the Intuit website where you must log in using
+      your Quickbooks username and password. You will then have to select which
+      company file you wish to link to this app.
+    </p>
+    <p>
+      You have to repeat the entire procedure twice: Once for the charity
+      company file and once for the enterprises company file.
+    </p>
+  </div>
+</div>

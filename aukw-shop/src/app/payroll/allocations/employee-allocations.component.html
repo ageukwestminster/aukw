@@ -1,0 +1,32 @@
+<div class="border">
+  <div class="m-2">
+    <h4>Project Allocations</h4>
+  </div>
+  <table class="table table-striped table-responsive">
+    <thead>
+      <tr>
+        <th>No.</th>
+        <th>Name</th>
+        <th>Percentage</th>
+        <th>Project</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let alloc of allocations">
+        <td style="vertical-align: middle">
+          {{ alloc.payrollNumber }}
+        </td>
+        <td>{{ alloc.name }}</td>
+        <td>{{ alloc.percentage + "%" }}</td>
+        <td>
+          {{ alloc.isShopEmployee ? "Charity Shop" : alloc.className }}
+        </td>
+      </tr>
+      <tr *ngIf="!allocations">
+        <td colspan="5" class="text-center">
+          <span class="spinner-border spinner-border-lg align-center"></span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
