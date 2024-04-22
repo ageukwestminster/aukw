@@ -15,7 +15,9 @@ export class IrisPayslipsComponent {
   /**
    * When the payslips have been loaded we will emit them
    */
-  @Output() onPayslipsExtractedFromSpreadsheet = new EventEmitter<IrisPayslip[]>();
+  @Output() onPayslipsExtractedFromSpreadsheet = new EventEmitter<
+    IrisPayslip[]
+  >();
 
   xlsxWasUploaded(payslips: IrisPayslip[]): void {
     this._payslips = payslips;

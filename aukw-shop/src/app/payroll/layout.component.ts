@@ -35,6 +35,7 @@ export class PayrollLayoutComponent {
   qboAuthorisationMissing: boolean = false;
 
   allocations: EmployeeAllocation[] = [];
+  payslips: IrisPayslip[] = [];
 
   private authenticationService = inject(AuthenticationService);
   private qbRealmService = inject(QBRealmService);
@@ -78,6 +79,6 @@ export class PayrollLayoutComponent {
     this.allocations = array;
   }
   receivePayslips(array: IrisPayslip[]) {
-    
+    this.payslips = array;
   }
 }

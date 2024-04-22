@@ -47,7 +47,9 @@
             charityRealm && charityRealm.connection && charityRealm.realmid
           "
         >
-          <iris-payslips (onPayslipsExtractedFromSpreadsheet)="receivePayslips"></iris-payslips>
+          <iris-payslips
+            (onPayslipsExtractedFromSpreadsheet)="(receivePayslips)"
+          ></iris-payslips>
         </div>
       </ng-template>
     </li>
