@@ -1,32 +1,28 @@
 import { Component, Input } from '@angular/core';
-import { NgFor, NgIf } from '@angular/common';
-import { Observable, of, scan, switchMap, merge } from 'rxjs';
+import { CommonModule,  NgFor, NgIf } from '@angular/common';
 import { IrisPayslip } from '@app/_models';
+import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'payslip-list',
   templateUrl: 'list.component.html',
   standalone: true,
-  imports: [NgFor, NgIf],
+  imports: [ CommonModule, NgbTooltip, NgFor, NgIf ],
   styleUrls: ['list.component.css'],
 })
-export class PayslipListComponent2 {
-  _payslips$?: Observable<IrisPayslip[]>;
-  _total$?: Observable<IrisPayslip>;
-  @Input() set payslips(value: Observable<IrisPayslip[]>) {
-    this._payslips$ = value;
+export class PayslipListComponent {
+  private _payslips!: IrisPayslip[];
+  total = new IrisPayslip();
 
-    this._total$ = value.pipe(
-      switchMap((dataArray: IrisPayslip[]) => {
-        const obs = dataArray.map((x) => {
-          return of(x);
-        });
-        return merge(...obs);
-      }),
-      scan(
-        (acc: IrisPayslip, value: IrisPayslip) => acc.add(value),
-        new IrisPayslip(),
-      ),
-    );   
+  @Input() set payslips(value: IrisPayslip[]) {
+    value.forEach((payslip) => {
+      this.total = this.total.add(payslip);
+    });
+
+    this._payslips = value;
+  }
+
+  get payslips() : IrisPayslip[] {
+    return this._payslips;
   }
 }

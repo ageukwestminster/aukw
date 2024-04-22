@@ -30,7 +30,7 @@
         >
           <employee-allocations
             [realmId]="charityRealm.realmid"
-            (onAllocationsLoaded)="(receiveAllocations)"
+            (onAllocationsLoaded)="receiveAllocations($event)"
           ></employee-allocations>
         </div>
       </ng-template>
@@ -44,11 +44,14 @@
         </div>
         <div
           *ngIf="
-            charityRealm && charityRealm.connection && charityRealm.realmid
+            charityRealm && charityRealm.connection && charityRealm.realmid && allocations && allocations.length
           "
         >
           <iris-payslips
-            (onPayslipsExtractedFromSpreadsheet)="(receivePayslips)"
+            (onPayslipsExtractedFromSpreadsheet)="receivePayslips($event)"
+            [charityRealm]="charityRealm"
+            [enterpriseRealm]="enterpriseRealm"
+            [allocations]="allocations"
           ></iris-payslips>
         </div>
       </ng-template>

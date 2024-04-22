@@ -4,5 +4,5 @@ import { PayslipListComponent } from './list.component';
 import { PayrollLayoutComponent } from './layout.component';
 
 export const PAYROLL_ROUTES: Routes = [
-  { path: '', component: PayslipListComponent },
+  { path: '', component: PayrollLayoutComponent },
 ];

@@ -30,6 +30,8 @@ export class EmployeeAllocationsComponent {
   private qbPayrollService = inject(QBPayrollService);
   private loadingIndicatorService = inject(LoadingIndicatorService);
 
+  constructor() {}
+
   /**
    *
    * @returns
