@@ -31,13 +31,13 @@ export class FileService {
     );
   }
 
-  decrypt(password: string) {
-    return this.http.post<ApiMessage>(`${baseUrl}/decrypt`, {
+  decrypt(fileName: string, password: string) {
+    return this.http.post<ApiMessage>(`${baseUrl}/decrypt?filename=${fileName}`, {
       password: password,
     });
   }
 
-  parse() {
-    return this.http.get<IrisPayslip[]>(`${baseUrl}/parse`);
+  parse(fileName: string) {
+    return this.http.get<IrisPayslip[]>(`${baseUrl}/parse?filename=${fileName}`);
   }
 }

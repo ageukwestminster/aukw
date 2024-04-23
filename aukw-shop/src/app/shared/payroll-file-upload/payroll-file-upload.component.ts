@@ -74,13 +74,13 @@ export class PayrollFileUploadComponent {
             `Reading '${this.file!.name}' into memory.`,
           );
         }),
-        concatMap((response: UploadResponse) =>
-          iif(
-            () => response.isEncrypted,
-            this.decrypt_and_parse(this.file!.name),
-            this.fileService.parse(),
-          ),
-        ),
+        concatMap((response: UploadResponse) => {
+          if( response.isEncrypted) {
+            return this.decrypt_and_parse(this.file!.name);
+          } else {
+            return this.fileService.parse(this.file!.name);
+          }
+        }),
       )
       .subscribe({
         next: (response: IrisPayslip[]) => {
@@ -111,22 +111,22 @@ export class PayrollFileUploadComponent {
 
   /**
    * Open a modal window to obtain the password, then parse the Spreadsheet
-   * @param fileName string
+   * @param filename string
    * @returns Open
    */
-  private decrypt_and_parse(fileName: string): Observable<IrisPayslip[]> {
+  private decrypt_and_parse(filename: string): Observable<IrisPayslip[]> {
     const modalRef = this.modalService.open(PasswordInputModalComponent);
-    modalRef.componentInstance.fileName = fileName;
+    modalRef.componentInstance.fileName = filename;
 
     return from(modalRef.result).pipe(
       tap(() => this.consoleService.sendConsoleMessage('Decrypting file.')),
-      concatMap((password: string) => this.fileService.decrypt(password)),
+      concatMap((password: string) => this.fileService.decrypt(filename, password)),
       tap(() =>
         this.consoleService.sendConsoleMessage(
           'Examining file for pension and salary details.',
         ),
       ),
-      concatMap(() => this.fileService.parse()),
+      concatMap(() => this.fileService.parse(filename)),
     );
   }
 }

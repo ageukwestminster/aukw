@@ -35,15 +35,17 @@ class XlsxCtl{
     }
 
     // Set the new file name
-    $uploadfile = $uploaddir . XlsxCtl::getUploadedFilename(isset($_GET['filename'])?$_GET['filename']:'');
+    $filename = XlsxCtl::getUploadedFilename(isset($_GET['filename'])?$_GET['filename']:'');
+    $uploadpathandfile = $uploaddir . $filename;
 
     // Move file from PHP temp folder to upload directory
-    if(move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile))
+    if(move_uploaded_file($_FILES['file']['tmp_name'], $uploadpathandfile))
     {
         echo json_encode(
             array("message" => "The file has been uploaded successfully.",
             "isEncrypted" =>   EncryptedXlsx::getInstance()
-                                ->isEncrypted($uploadfile))
+                                ->isEncrypted($uploadpathandfile),
+            "filename" => $filename)
         );
     }
     else
@@ -115,7 +117,8 @@ class XlsxCtl{
 
     $uploaddir = XlsxCtl::getUploadDirectory();
 
-    $decryptedFilePath = $uploaddir . \Core\Config::read('file.decryptedfilename');
+    $decryptedFilePath = $uploaddir . 
+        XlsxCtl::getDecryptedFilename(isset($_GET['filename'])?$_GET['filename']:'');
 
     try {
         if (!is_file($decryptedFilePath)) {
@@ -208,7 +211,7 @@ class XlsxCtl{
   }
   
   /**
-   * Helper function to get the file name of the uplaoded file
+   * Helper function to get the file name of the uploaded file
    * @param string $filename 
    * @return string
    */
@@ -217,7 +220,21 @@ class XlsxCtl{
     if(!empty($filename) ) {
         return $filename;
     } else {
-        return \Core\Config::read('file.encryptedfilename');
+        return \Core\Config::read('file.decryptedfilename');
+    }
+  }
+
+/**
+   * Helper function to get the file name of the decrypted file
+   * @param string $filename 
+   * @return string
+   */
+  private static function getDecryptedFilename(string $filename = '') {
+    // Set the new file name
+    if(!empty($filename) ) {
+        return $filename;
+    } else {
+        return \Core\Config::read('file.decryptedfilename');
     }
   }
 

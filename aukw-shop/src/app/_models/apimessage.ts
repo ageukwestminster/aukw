@@ -14,9 +14,11 @@ export class ApiMessage {
 export class UploadResponse {
   isEncrypted: boolean;
   message: string;
+  filename: string;
 
   constructor(obj?: any) {
     this.isEncrypted = (obj && obj.isEncrypted) || false;
     this.message = (obj && obj.message) || null;
+    this.filename = (obj && obj.filename) || null;
   }
 }
