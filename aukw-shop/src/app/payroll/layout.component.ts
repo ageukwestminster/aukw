@@ -11,12 +11,14 @@ import {
 import { EmployeeAllocation, IrisPayslip, QBRealm, User } from '@app/_models';
 import { EmployeeAllocationsComponent } from './allocations/employee-allocations.component';
 import { IrisPayslipsComponent } from './payslips/iris-payslips.component';
+import { EmployerNiComponent } from './employerni/employer-ni.component';
 import { SharedModule } from '@app/shared/shared.module';
 
 @Component({
   standalone: true,
   imports: [
     EmployeeAllocationsComponent,
+    EmployerNiComponent,
     IrisPayslipsComponent,
     NgbNavModule,
     NgIf,
@@ -25,7 +27,7 @@ import { SharedModule } from '@app/shared/shared.module';
   ],
   templateUrl: 'layout.component.html',
 })
-export class PayrollLayoutComponent {
+export class PayrollLayoutComponent implements OnInit {
   user: User;
 
   active = 1;

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { SharedModule } from '@app/shared/shared.module';
 
 import { EmployeeAllocation, IrisPayslip, QBRealm } from '@app/_models';
@@ -14,7 +14,7 @@ import { forkJoin, map, shareReplay} from 'rxjs';
   templateUrl: './iris-payslips.component.html',
   styleUrl: './iris-payslips.component.css',
 })
-export class IrisPayslipsComponent {
+export class IrisPayslipsComponent implements OnChanges {
   _payslips: IrisPayslip[] = [];
   _allocations: EmployeeAllocation[] = [];
 
@@ -28,11 +28,16 @@ export class IrisPayslipsComponent {
   @Input() charityRealm! : QBRealm;
   @Input() enterpriseRealm! : QBRealm;
   @Input() allocations : EmployeeAllocation[] = [];
+  @Input() refreshNow:boolean = false;
 
   private qbPayrollService = inject(QBPayrollService);
   private loadingIndicatorService = inject(LoadingIndicatorService);
 
   constructor() {}
+
+  ngOnChanges(changes: SimpleChanges):void {
+    
+  }
 
   xlsxWasUploaded(payslips: IrisPayslip[]): void {
     payslips.forEach((payslip) => {

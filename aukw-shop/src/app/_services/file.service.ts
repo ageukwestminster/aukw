@@ -25,7 +25,7 @@ export class FileService {
     };
 
     return this.http.post<UploadResponse>(
-      `${baseUrl}/upload`,
+      `${baseUrl}/upload?filename=${file.name}`,
       formData,
       options,
     );

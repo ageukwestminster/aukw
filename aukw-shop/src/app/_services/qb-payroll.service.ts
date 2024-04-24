@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { environment } from '@environments/environment';
 import {
+  ApiMessage,
   EmployeeAllocation,
   IrisPayslip,
   PayrollJournalEntry,
@@ -30,7 +31,7 @@ export class QBPayrollService {
     );
   }
 
-  createEmployerNIJournal(realmID: string, params: any, payrollDate: string) {
+  createEmployerNIJournal(realmID: string, params: any, payrollDate: string): Observable<ApiMessage> {
     return this.http.post<any>(
       `${baseUrl}/${realmID}/journal/employerni?payrolldate=${payrollDate}`,
       params,

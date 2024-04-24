@@ -148,8 +148,12 @@ export class PayrollService {
                 quickbooksId: empAllocation.quickbooksId,
                 name: empAllocation.name,
                 account: empAllocation.account,
+                accountName: empAllocation.accountName,
                 class: empAllocation.class,
+                className: empAllocation.className,
                 amount: calculatedAllocatedAmount,
+                payrollNumber: empAllocation.payrollNumber,
+                isShopEmployee: empAllocation.isShopEmployee,
               });
 
               // Send this object back as an accumulator, later we will just take the entry property

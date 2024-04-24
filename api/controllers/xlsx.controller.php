@@ -13,7 +13,7 @@ use Models\PayrollXlsx;
 class XlsxCtl{
 
   /**
-   * Receive an uploaded spreadsheet
+   * Delete all sporeadsheets from the upload directory, then receive an uploaded spreadsheet
    * 
    * @return void Output is echo'd directly to response 
    * 
@@ -220,7 +220,7 @@ class XlsxCtl{
     if(!empty($filename) ) {
         return $filename;
     } else {
-        return \Core\Config::read('file.decryptedfilename');
+        return \Core\Config::read('file.encryptedfilename');
     }
   }
 

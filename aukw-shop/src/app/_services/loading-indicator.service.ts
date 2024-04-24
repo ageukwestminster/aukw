@@ -12,6 +12,8 @@ import { MessageFactories } from '@app/_interfaces/message-factories';
 
 /**
  * The content for the Modal that displays during a long running task
+ * 
+ * Code from {@link https://medium.com/@andre.schouten_ff/having-some-fun-with-activity-indicators-and-observables-in-angular-dcd1c5ae7685}
  */
 @Component({
   standalone: true,

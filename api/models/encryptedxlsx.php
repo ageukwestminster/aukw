@@ -82,7 +82,7 @@ class EncryptedXlsx{
     $oleObj = new OLE();
 
     if (!is_file($filename)) {
-      throw new \Exception('File not found. File name: ('. $filename??'<empty>' .')');
+      throw new \Exception('File not found, file name: "'. $filename??'<empty>' .'"');
     }
 
     try {
@@ -115,6 +115,10 @@ class EncryptedXlsx{
   public function decrypt() {
     $oleObj = new OLE();
     $oleObj -> read($this->encryptedFilePath);
+
+    if (!is_file($this->encryptedFilePath)) {
+      throw new \Exception('File not found: file name: "'. $this->encryptedFilePath??'<empty>' .'"');
+    }
     
     // parse info from XML
     {

@@ -17,7 +17,7 @@
       [disabled]="setButtonDisabled"
     >
       <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
-      Upload File
+      Upload Iris Payroll Spreadsheet
     </button>
     <p></p>
     <div class="d-flex justify-content-between">
@@ -26,7 +26,7 @@
         {{ (file && file.name) || "No file uploaded yet." }}
       </div>
       <div>
-        <button (click)="upload()" class="btn btn-sm btn-success mt-1">
+        <button (click)="upload()" class="btn btn-sm btn-secondary mt-1" ngbTooltip="Repeat file upload.">
           <i class="fas fa-sync"></i>
         </button>
       </div>
