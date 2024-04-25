@@ -11,7 +11,7 @@ import {
 import { Observable } from 'rxjs';
 
 const baseUrl = `${environment.apiUrl}/takings`;
-const realmID = `${environment.quickbooksRealmID}`;
+const realmID = `${environment.qboEnterprisesRealmID}`;
 
 @Injectable({ providedIn: 'root' })
 export class TakingsService {

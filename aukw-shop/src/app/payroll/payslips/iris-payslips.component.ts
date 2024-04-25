@@ -1,10 +1,10 @@
-import { Component, EventEmitter, inject, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output} from '@angular/core';
 import { SharedModule } from '@app/shared/shared.module';
 
 import { EmployeeAllocation, IrisPayslip, QBRealm } from '@app/_models';
 import { PayslipListComponent } from './list/list.component';
 import { isEqualPay, isEqualPension, isEqualEmployerNI, isEqualShopPay  } from '@app/_helpers';
-import { LoadingIndicatorService, QBPayrollService } from '@app/_services';
+import { LoadingIndicatorService, QBPayrollService, PayslipListService } from '@app/_services';
 import { forkJoin, map, shareReplay} from 'rxjs';
 
 @Component({
@@ -14,9 +14,9 @@ import { forkJoin, map, shareReplay} from 'rxjs';
   templateUrl: './iris-payslips.component.html',
   styleUrl: './iris-payslips.component.css',
 })
-export class IrisPayslipsComponent implements OnChanges {
+export class IrisPayslipsComponent {
   _payslips: IrisPayslip[] = [];
-  _allocations: EmployeeAllocation[] = [];
+  allocations: EmployeeAllocation[] = [];
 
   /**
    * When the payslips have been loaded we will emit them
@@ -27,19 +27,15 @@ export class IrisPayslipsComponent implements OnChanges {
 
   @Input() charityRealm! : QBRealm;
   @Input() enterpriseRealm! : QBRealm;
-  @Input() allocations : EmployeeAllocation[] = [];
-  @Input() refreshNow:boolean = false;
 
   private qbPayrollService = inject(QBPayrollService);
   private loadingIndicatorService = inject(LoadingIndicatorService);
+  private payslipListService = inject(PayslipListService);
 
   constructor() {}
 
-  ngOnChanges(changes: SimpleChanges):void {
-    
-  }
-
   xlsxWasUploaded(payslips: IrisPayslip[]): void {
+    this.qbPayrollService.allocations$.subscribe(x => this.allocations = x);
     payslips.forEach((payslip) => {
       // Set flag for shop employees according to the allocations array values
       if (
@@ -51,11 +47,13 @@ export class IrisPayslipsComponent implements OnChanges {
         payslip.isShopEmployee = true;
       }
     });
+    this.payslipListService.sendPayslips(this._payslips);
     this._payslips = payslips;
 
     this.updateInQBOValues();
 
-    this.onPayslipsExtractedFromSpreadsheet.emit(this._payslips);
+    this.payslipListService.sendPayslips(this._payslips);
+    //this.onPayslipsExtractedFromSpreadsheet.emit(this._payslips);
   }
 
   updateInQBOValues() {
@@ -74,9 +72,11 @@ export class IrisPayslipsComponent implements OnChanges {
         year,
         month,
       ),
+
     })
     .pipe(
       map((x) => {
+        this.payslipListService.payslips$
         this._payslips.forEach((xlsxPayslip) => {
           let qbPayslip = x.charityPayslips.find(
             (item) => item.payrollNumber == xlsxPayslip.payrollNumber,

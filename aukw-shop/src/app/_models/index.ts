@@ -12,6 +12,7 @@ export * from './line-item-detail';
 export * from './qb-auth-uri';
 export * from './qb-connection-details';
 export * from './qb-flags';
+export * from './qb-payslip-flags';
 export * from './qb-realm';
 export * from './payroll-journal-entry';
 export * from './role';

@@ -36,7 +36,6 @@ export class PayrollLayoutComponent implements OnInit {
   enterpriseRealm!: QBRealm;
   qboAuthorisationMissing: boolean = false;
 
-  allocations: EmployeeAllocation[] = [];
   payslips: IrisPayslip[] = [];
 
   private authenticationService = inject(AuthenticationService);
@@ -77,9 +76,6 @@ export class PayrollLayoutComponent implements OnInit {
       });
   }
 
-  receiveAllocations(array: EmployeeAllocation[]) {
-    this.allocations = array;
-  }
   receivePayslips(array: IrisPayslip[]) {
     this.payslips = array;
   }

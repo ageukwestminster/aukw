@@ -16,18 +16,9 @@ import {
   styleUrl: './employee-allocations.component.css',
 })
 export class EmployeeAllocationsComponent {
-  allocations: EmployeeAllocation[] = [];
-  /**
-   * The id of the Quickbooks company. We query QBO for the allocation info.
-   */
-  @Input() realmId: string = '';
-  /**
-   * When the allocations have been loaded we will emit them
-   */
-  @Output() onAllocationsLoaded = new EventEmitter<EmployeeAllocation[]>();
 
   private alertService = inject(AlertService);
-  private qbPayrollService = inject(QBPayrollService);
+  public qbPayrollService = inject(QBPayrollService);
   private loadingIndicatorService = inject(LoadingIndicatorService);
 
   constructor() {}
@@ -37,9 +28,9 @@ export class EmployeeAllocationsComponent {
    * @returns
    */
   ngOnInit(): void {
-    if (!this.realmId) return;
+
     this.qbPayrollService
-      .getAllocations(this.realmId)
+      .getAllocations()
       .pipe(
         retry(2),
         this.loadingIndicatorService.createObserving({
@@ -51,10 +42,7 @@ export class EmployeeAllocationsComponent {
         shareReplay(1),
       )
       .subscribe({
-        next: (result) => {
-          this.allocations = result;
-          this.onAllocationsLoaded.emit(result);
-        },
+        next: () => { },
         error: (error: any) => {
           this.alertService.error(error);
         },

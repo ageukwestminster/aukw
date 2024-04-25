@@ -1,6 +1,9 @@
 /**
  * Define the properties of an employee payslip
  */
+
+import { QBTransactionFlags } from "./qb-payslip-flags";
+
 /*
     {
         "payrollNumber": 7,
@@ -57,6 +60,8 @@ export class IrisPayslip {
   /** 'True' if the shop employee's salary, NI and pension has been booked in the Enterprises QBO company. */
   shopJournalInQBO: boolean = false;
 
+  qbFlags: QBTransactionFlags;
+
   add(obj: IrisPayslip): IrisPayslip {
     this.totalPay += (obj && obj.totalPay) || 0;
     this.paye += (obj && obj.paye) || 0;
@@ -86,6 +91,7 @@ export class IrisPayslip {
     this.employerNI = (obj && obj.employerNI) || 0;
     this.employerPension = (obj && obj.employerPension) || 0;
     this.employeePension = (obj && obj.employeePension) || 0;
-    this.isShopEmployee = (obj && obj.isShopEmployee) || false;
+    this.isShopEmployee = (obj && obj.isShopEmployee);
+    this.qbFlags = (obj && obj.qbFlags) || null;
   }
 }

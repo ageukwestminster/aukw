@@ -150,7 +150,7 @@ export class PayslipListComponent implements OnInit {
             this.enterpriseRealm.connection
           ) {
             return this.qbPayrollService
-              .getAllocations(this.charityRealm.realmid!)
+              .getAllocations()
               .pipe(retry(2));
           } else {
             // Flag that user needs to authorise this app in QBO
@@ -345,7 +345,6 @@ export class PayslipListComponent implements OnInit {
         mergeMap((allocatedEmployerNICosts) =>
           // Create the GJ entry in Charity QBO
           this.qbPayrollService.createEmployerNIJournal(
-            this.charityRealm.realmid!,
             allocatedEmployerNICosts,
             this.payrollDate,
           ),

@@ -1,14 +1,18 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable, forkJoin, of, Subject } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 
 import { environment } from '@environments/environment';
 import {
   ApiMessage,
   EmployeeAllocation,
   IrisPayslip,
+  LineItemDetail,
   PayrollJournalEntry,
+  QBTransactionFlags,
 } from '@app/_models';
-import { Observable } from 'rxjs';
+import { isEqualPay, isEqualPension, isEqualEmployerNI, isEqualShopPay  } from '@app/_helpers';
 
 const baseUrl = `${environment.apiUrl}/qb`;
 
@@ -17,23 +21,55 @@ const baseUrl = `${environment.apiUrl}/qb`;
  */
 @Injectable({ providedIn: 'root' })
 export class QBPayrollService {
-  constructor(private http: HttpClient) {}
 
+
+  private allocationsSubject = new Subject<EmployeeAllocation[]>();
+  allocations$ = this.allocationsSubject.asObservable();
+  private http = inject(HttpClient);
+
+  /**
+   * Query Quickbooks online for all payroll-related transactions for a given 
+   * month and year. The payroll transactions are identified by having a DocNumber
+   * of the format 'Payroll-YYYY-MM....'. 
+   * The transacitons are then converted by the API into IrisPayslip objects for
+   * each employee.
+   * @param realmID The Quickbooks ID of the company file.
+   * @param year The year in which the payroll run happened e.g. '2024'
+   * @param month The month in which the payroll run happened e.g. '03' for March
+   * @returns An array of payslips, one for each employee, or an empty array.
+   */
   getWhatsAlreadyInQBO(realmID: string, year: string, month: string) {
     return this.http.get<IrisPayslip[]>(
       `${baseUrl}/${realmID}/query/payroll/${year}/${month}`,
     );
   }
 
-  getAllocations(realmID: string): Observable<EmployeeAllocation[]> {
+  /**
+   * This query returns an array of allocation objects that specify what percentage of
+   * employee salary costs must be allocated to what account/class pairs. 
+   * There will be one or more objects for each employee. The sum of the percentages 
+   * for each employee must be 100.0.
+   * The allocations are stored in the Charity Quickbooks file as a recurring transaction.
+   * @returns An array of percentage allocations, one or more for each employee, or an empty array.
+   */
+  getAllocations(): Observable<EmployeeAllocation[]> {
     return this.http.get<EmployeeAllocation[]>(
-      `${baseUrl}/${realmID}/employee/allocations`,
-    );
+      `${baseUrl}/${environment.qboCharityRealmID}/employee/allocations`,
+    ).pipe(
+      tap( (result) => this.allocationsSubject.next(result))
+    )
   }
 
-  createEmployerNIJournal(realmID: string, params: any, payrollDate: string): Observable<ApiMessage> {
+  /**
+   * Create a new journal entry in the Charity Quickbooks file that records the Employer NI amounts and
+   * account and class allocations.
+   * @param params An array of LineItemDetails that specify the employee NI amount and account/class pairs.
+   * @param payrollDate The transaction date of the journal entry.
+   * @returns A success or failure message. A success message will have the quickbooks id of the new transaciton.
+   */
+  createEmployerNIJournal(params: LineItemDetail[], payrollDate: string): Observable<ApiMessage> {
     return this.http.post<any>(
-      `${baseUrl}/${realmID}/journal/employerni?payrolldate=${payrollDate}`,
+      `${baseUrl}/${environment.qboCharityRealmID}/journal/employerni?payrolldate=${payrollDate}`,
       params,
     );
   }
@@ -61,6 +97,71 @@ export class QBPayrollService {
     return this.http.post<any>(
       `${baseUrl}/${realmID}/journal/enterprises?payrolldate=${payrollDate}`,
       params,
+    );
+  }
+
+  payslipFlagsForCharity(xlsxPayslips: IrisPayslip[], year: string, month: string):Observable<void> {
+    return forkJoin({
+      qbPayslips: this.getWhatsAlreadyInQBO(
+        environment.qboCharityRealmID,
+        year,
+        month
+      ),
+      payrollPayslips: of(xlsxPayslips),
+    }).pipe(
+      map((x) => {
+
+        x.payrollPayslips.forEach((payslip) => {
+          const qbPayslip = x.qbPayslips.find(
+            (item) => item.payrollNumber == payslip.payrollNumber,
+          ) ?? new IrisPayslip();
+
+            if (!payslip.qbFlags) {
+              payslip.qbFlags = new QBTransactionFlags({
+                payrollNumber: qbPayslip.payrollNumber,
+                employerNI: isEqualEmployerNI(payslip, qbPayslip),
+                pensionBill: isEqualPension(payslip, qbPayslip),
+                employeeJournal: isEqualPay(payslip, qbPayslip),
+                shopJournal: null,
+              });
+            } else {
+              payslip.qbFlags.employerNI = isEqualEmployerNI(payslip, qbPayslip);
+              payslip.qbFlags.pensionBill = isEqualPension(payslip, qbPayslip);
+              payslip.qbFlags.employeeJournal = isEqualPay(payslip, qbPayslip);
+            }          
+        });
+      }),
+    );
+  }
+
+
+  payslipFlagsForShop(xlsxPayslips: IrisPayslip[], year: string, month: string):Observable<void> {
+    return forkJoin({
+      qbPayslips: this.getWhatsAlreadyInQBO(
+        environment.qboEnterprisesRealmID,
+        year,
+        month
+      ),
+      payrollPayslips: of(xlsxPayslips),
+    }).pipe(
+      map((x) => {
+
+        x.payrollPayslips.forEach((payrollPayslip) => {
+          const qbPayslip = x.qbPayslips.find(
+            (item) => item.payrollNumber == payrollPayslip.payrollNumber,
+          );
+          if (qbPayslip) {
+            if (!payrollPayslip.qbFlags) {
+              payrollPayslip.qbFlags = new QBTransactionFlags({
+                payrollNumber: qbPayslip.payrollNumber,
+                shopJournal: isEqualShopPay(payrollPayslip, qbPayslip),
+              });
+            } else {
+              payrollPayslip.qbFlags.shopJournal = isEqualShopPay(payrollPayslip, qbPayslip);
+            }
+          }
+        });
+      }),
     );
   }
 }

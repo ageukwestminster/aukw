@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, inject, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { from, concatMap, tap, Observable } from 'rxjs';
 import { NgbModal, NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
-import { AlertService, ConsoleService, FileService } from '@app/_services';
+import { AlertService, ConsoleService, FileService, PayslipListService } from '@app/_services';
 import { IrisPayslip, UploadResponse } from '@app/_models';
 import { PasswordInputModalComponent } from './password-input.component';
 
@@ -11,7 +11,7 @@ import { PasswordInputModalComponent } from './password-input.component';
   templateUrl: './payroll-file-upload.component.html',
   styleUrls: ['./payroll-file-upload.component.css'],
 })
-export class PayrollFileUploadComponent {
+export class PayrollFileUploadComponent implements OnInit {
   /** When 'true' background work is being performed */
   loading: boolean = false;
   /** The file that the user has selected, or null */
@@ -19,24 +19,23 @@ export class PayrollFileUploadComponent {
   /**Using a form group to allow me to reset the file input control easily */
   form!: FormGroup;
 
-  @Output() onFileUploaded: EventEmitter<IrisPayslip[]>;
+  @Output() onFileUploaded = new EventEmitter<IrisPayslip[]>();
 
   /**
    * Input flag to allow disabling the loading of a file until the parent object is ready
    */
   @Input() setButtonDisabled: boolean | null = false;
 
-  constructor(
-    private alertService: AlertService,
-    private fileService: FileService,
-    public modalService: NgbModal,
-    private formBuilder: FormBuilder,
-    private consoleService: ConsoleService,
-  ) {
-    this.onFileUploaded = new EventEmitter();
-  }
+  private alertService = inject(AlertService);
+  private fileService = inject(FileService);
+  public modalService = inject(NgbModal);
+  private formBuilder = inject(FormBuilder);
+  private consoleService = inject(ConsoleService);
+  private payslipListService = inject(PayslipListService);
 
-  ngOnInit() {
+  constructor() { }
+
+  ngOnInit():void {
     this.form = this.formBuilder.group({ chooseFile: [null] });
   }
 
@@ -87,6 +86,7 @@ export class PayrollFileUploadComponent {
           this.consoleService.sendConsoleMessage(
             `Processing complete for '${this.file!.name}'.`,
           );
+          this.payslipListService.sendPayslips(response);
           this.onFileUploaded.emit(response);
         },
         error: (error: any) => {

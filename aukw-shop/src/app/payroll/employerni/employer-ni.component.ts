@@ -68,7 +68,6 @@ export class EmployerNiComponent implements OnChanges {
 
   createEmployerNIJournal() {
     this.qbPayrollService.createEmployerNIJournal(
-      this.charityRealm.realmid!,
       this.lines,
       this.payslips[0].payrollDate,
     ).pipe(

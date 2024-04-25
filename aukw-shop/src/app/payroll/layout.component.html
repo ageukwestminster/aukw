@@ -29,8 +29,6 @@
           "
         >
           <employee-allocations
-            [realmId]="charityRealm.realmid"
-            (onAllocationsLoaded)="receiveAllocations($event)"
           ></employee-allocations>
         </div>
       </ng-template>
@@ -38,16 +36,11 @@
     <li [ngbNavItem]="2">
       <button ngbNavLink>Iris Payslips</button>
       <ng-template ngbNavContent>
-        <div
-          *ngIf="
-            charityRealm && charityRealm.connection && charityRealm.realmid && allocations && allocations.length
-          "
-        >
+        <div>
           <iris-payslips
             (onPayslipsExtractedFromSpreadsheet)="receivePayslips($event)"
             [charityRealm]="charityRealm"
             [enterpriseRealm]="enterpriseRealm"
-            [allocations]="allocations"
           ></iris-payslips>
         </div>
       </ng-template>
@@ -58,9 +51,7 @@
         <employer-ni
             [charityRealm]="charityRealm"
             [enterpriseRealm]="enterpriseRealm"
-            [allocations]="allocations"
             [payslips]="payslips"
-            (onJournalCreated)="refresh()"
         ></employer-ni>
       </ng-template>
     </li>
