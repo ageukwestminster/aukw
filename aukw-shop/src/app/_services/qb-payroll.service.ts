@@ -154,7 +154,7 @@ export class QBPayrollService {
     xlsxPayslips: IrisPayslip[],
     year: string,
     month: string,
-  ): Observable<void> {
+  ): Observable<IrisPayslip[]> {
     return forkJoin({
       qbPayslips: this.getWhatsAlreadyInQBO(
         environment.qboEnterprisesRealmID,
@@ -181,6 +181,7 @@ export class QBPayrollService {
             }
           }
         });
+        return x.payrollPayslips;
       }),
     );
   }

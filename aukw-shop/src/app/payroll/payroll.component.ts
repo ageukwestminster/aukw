@@ -68,6 +68,7 @@ export class PayrollComponent implements OnInit {
   /**
    * Initialize the component by populating the 2 realm properties and
    * the boolean flag that warns if a QBO connection is absent.
+   * Also call getAllocations to
    */
   ngOnInit() {
     this.qbRealmService
@@ -104,8 +105,16 @@ export class PayrollComponent implements OnInit {
         },
       });
 
-    const destroyed = new Subject();
+    this.subscribeToSubjects();
+  }
 
+  /**
+   * This pattern is used to subscribe to an rxjs Subject and automatically
+   * unsubscribe when the object is destroyed. Angular gives us the destroyRef
+   * hook to manage this.
+   */
+  private subscribeToSubjects(): void {
+    const destroyed = new Subject();
     this.destroyRef.onDestroy(() => {
       destroyed.next('');
       destroyed.complete();
@@ -119,11 +128,15 @@ export class PayrollComponent implements OnInit {
       .subscribe((response) => (this.payslips = response));
   }
 
+  /** This is a callback from the file upload component. It is called when
+   *  the API has uploaded and decrypoted the file and converted it into
+   *  an array of IrisPayslip.
+   */
   xlsxWasUploaded(payslips: IrisPayslip[]): void {
     if (!payslips || !payslips.length) return;
 
     payslips.forEach((payslip) => {
-      // Set flag for shop employees according to the allocations array values
+      // Set flag for shop employees using the allocations array
       if (
         this.allocations.find(
           (item) =>
@@ -136,13 +149,16 @@ export class PayrollComponent implements OnInit {
       }
     });
 
+    // Update the payslips subject so it will be availabe to all subscribers
     this.qbPayrollService.sendPayslips(payslips);
 
+    // Calcualte month and year form payroll date
     this.payrollDate = payslips[0].payrollDate;
     const dt = new Date(this.payrollDate + 'T12:00:00');
     this.payrollMonth = (dt.getMonth() + 1).toString().padStart(2, '0');
     this.payrollYear = dt.getFullYear().toString();
 
+    //
     this.qbPayrollService
       .payslipFlagsForCharity(
         this.payslips,
@@ -150,10 +166,17 @@ export class PayrollComponent implements OnInit {
         this.payrollMonth,
       )
       .pipe(
+        concatMap((response) => {
+          return this.qbPayrollService.payslipFlagsForShop(
+            response,
+            this.payrollYear,
+            this.payrollMonth,
+          );
+        }),
         this.loadingIndicatorService.createObserving({
           loading: () =>
-            ' Loading existing payroll transactions from Quickbooks',
-          success: () => `Successfully loaded QBO transactions.`,
+            ' Querying Quickbooks for existing payroll transactions.',
+          success: () => `Successfully loaded Quickbooks transactions.`,
           error: (err) => `${err}`,
         }),
         shareReplay(1),

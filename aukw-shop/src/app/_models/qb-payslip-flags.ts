@@ -6,7 +6,7 @@ export class QBTransactionFlags {
   /** 'True' if the amount of Employer NI for this employee has been recorded in Quickbooks. */
   employerNI: boolean;
   /** 'True' if the Employer pension amount for this employee has been recorded in Quickbooks. */
-  pensionBill: boolean ;
+  pensionBill: boolean;
   /** 'True' if the employee's salary and deductions have been booked in QBO.  */
   employeeJournal: boolean;
   /** 'True' if the shop employee's salary, NI and pension has been booked in the Enterprises QBO company.  */

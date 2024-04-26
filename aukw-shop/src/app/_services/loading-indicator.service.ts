@@ -43,6 +43,8 @@ export class LoadingIndicatorContent {
 
 /**
  * Provide a simple way of dispalying an overlay when performing a long running task
+ *
+ * From {@link https://medium.com/@andre.schouten_ff/having-some-fun-with-activity-indicators-and-observables-in-angular-dcd1c5ae7685 }
  */
 @Injectable({ providedIn: 'root' })
 export class LoadingIndicatorService {
@@ -92,7 +94,7 @@ export class LoadingIndicatorService {
               modalRef.componentInstance.message = messageFactories.error(err);
               setTimeout(function () {
                 modalRef.close();
-              }, this.DEFAULT_DISMISS_MESSAGE_DURATION);
+              }, this.DEFAULT_DISMISS_MESSAGE_DURATION * 5);
             },
           }),
         );
