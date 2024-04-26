@@ -81,10 +81,12 @@ export class PensionInvoiceComponent implements OnChanges {
   createTransaction() {
     // Filter out lines for which there is already a QBO entry
     const linesToAdd = this.lines.filter((item) => {
-      let ps = this.payslips.filter(        
-        (p) => p.payrollNumber == item.payrollNumber && (!p.qbFlags || !p.qbFlags.pensionBill),
+      let ps = this.payslips.filter(
+        (p) =>
+          p.payrollNumber == item.payrollNumber &&
+          (!p.qbFlags || !p.qbFlags.pensionBill),
       );
-      return ( ps.length > 0)
+      return ps.length > 0;
     });
 
     //Add the invoice
@@ -116,7 +118,7 @@ export class PensionInvoiceComponent implements OnChanges {
           error: (error: any) => {
             this.alertService.error(error, { autoClose: false });
           },
-          complete: () => this.onTransactionCreated.emit()
+          complete: () => this.onTransactionCreated.emit(),
         });
     } else {
       this.alertService.info(
@@ -126,8 +128,8 @@ export class PensionInvoiceComponent implements OnChanges {
   }
 
   inQBOProperty() {
-    return function(payslip: IrisPayslip):boolean {
+    return function (payslip: IrisPayslip): boolean {
       return payslip.qbFlags.pensionBill;
-   }
-  } 
+    };
+  }
 }

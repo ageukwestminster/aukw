@@ -45,12 +45,11 @@ export class AllocatedCostsListComponent implements OnChanges {
    * @returns 'True' if already in QBO.
    */
   inQBO(line: LineItemDetail): boolean {
-    if (!this.payslips || !this.payslips.length) return false;
+    if (!this.payslips || !this.payslips.length) return false;    
     return (
       this.payslips.filter(
         (p) => p.payrollNumber == line.payrollNumber && this.inQBOProperty(p),
       ).length != 0
     );
   }
-
 }

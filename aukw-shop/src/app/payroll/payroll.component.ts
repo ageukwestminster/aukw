@@ -199,5 +199,4 @@ export class PayrollComponent implements OnInit {
         complete: () => (this.loadingComplete = true),
       });
   }
-
 }
