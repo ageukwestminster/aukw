@@ -379,7 +379,6 @@ export class PayslipListComponent implements OnInit {
       .pipe(
         mergeMap((v) =>
           this.qbPayrollService.createEmployeeJournal(
-            this.charityRealm.realmid!,
             v,
             this.payrollDate,
           ),
@@ -419,7 +418,6 @@ export class PayslipListComponent implements OnInit {
         mergeMap((costs) => {
           // Send to api
           return this.qbPayrollService.createPensionBill(
-            this.charityRealm.realmid!,
             {
               salarySacrificeTotal: this.total.salarySacrifice.toFixed(2),
               employeePensionTotal: this.total.employeePension.toFixed(2),
@@ -496,7 +494,6 @@ export class PayslipListComponent implements OnInit {
         }),
         mergeMap((data) => {
           return this.qbPayrollService.createShopJournal(
-            this.enterpriseRealm!.realmid!,
             data,
             this.payrollDate,
           );

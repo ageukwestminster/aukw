@@ -152,7 +152,7 @@ export class PayrollComponent implements OnInit {
     // Update the payslips subject so it will be availabe to all subscribers
     this.qbPayrollService.sendPayslips(payslips);
 
-    // Calcualte month and year form payroll date
+    // Calculate month and year from payroll date
     this.payrollDate = payslips[0].payrollDate;
     const dt = new Date(this.payrollDate + 'T12:00:00');
     this.payrollMonth = (dt.getMonth() + 1).toString().padStart(2, '0');
@@ -188,16 +188,5 @@ export class PayrollComponent implements OnInit {
         },
       });
   }
-
-  shopPayslipFlags = this.qbPayrollService
-    .payslipFlagsForShop(this.payslips, this.payrollYear, this.payrollMonth)
-    .pipe(
-      this.loadingIndicatorService.createObserving({
-        loading: () =>
-          ' Loading existing shop payroll transactions from Quickbooks',
-        success: () => `Successfully loaded QBO transactions.`,
-        error: (err) => `${err}`,
-      }),
-      shareReplay(1),
-    );
+  
 }
