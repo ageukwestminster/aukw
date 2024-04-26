@@ -40,7 +40,7 @@ export class QBPayrollService {
    * Query Quickbooks online for all payroll-related transactions for a given
    * month and year. The payroll transactions are identified by having a DocNumber
    * of the format 'Payroll-YYYY-MM....'.
-   * The transacitons are then converted by the API into IrisPayslip objects for
+   * The transactions are then converted by the API into IrisPayslip objects for
    * each employee.
    * @param realmID The Quickbooks ID of the company file.
    * @param year The year in which the payroll run happened e.g. '2024'
@@ -74,7 +74,7 @@ export class QBPayrollService {
    * account and class allocations.
    * @param params An array of LineItemDetails that specify the employee NI amount and account/class pairs.
    * @param payrollDate The transaction date of the journal entry.
-   * @returns A success or failure message. A success message will have the quickbooks id of the new transaciton.
+   * @returns A success or failure message. A success message will have the quickbooks id of the new transaction.
    */
   createEmployerNIJournal(
     params: LineItemDetail[],
@@ -86,17 +86,14 @@ export class QBPayrollService {
     );
   }
 
-    /**
+  /**
    * Create a new general journal entry in the Charity Quickbooks file that records the salary and deductions
    * for a single employee.
    * @param params An array of PayrollJournalEntry that specify the employee salary and deductions and account/class pairs.
    * @param payrollDate The transaction date of the journal entry.
-   * @returns A success or failure message. A success message will have the quickbooks id of the new transaciton.
+   * @returns A success or failure message. A success message will have the quickbooks id of the new transaction.
    */
-  createEmployeeJournal(
-    params: PayrollJournalEntry,
-    payrollDate: string,
-  ) {
+  createEmployeeJournal(params: PayrollJournalEntry, payrollDate: string) {
     return this.http.post<ApiMessage>(
       `${baseUrl}/${environment.qboCharityRealmID}/journal/employee?payrolldate=${payrollDate}`,
       params,
@@ -108,7 +105,7 @@ export class QBPayrollService {
    * and account and class allocations.
    * @param params An array that specify the employee pension amount and account/class pairs.
    * @param payrollDate The transaction date of the journal entry.
-   * @returns A success or failure message. A success message will have the quickbooks id of the new transaciton.
+   * @returns A success or failure message. A success message will have the quickbooks id of the new transaction.
    */
   createPensionBill(params: any, payrollDate: string) {
     return this.http.post<ApiMessage>(
@@ -125,7 +122,7 @@ export class QBPayrollService {
   }
 
   /**
-   * Set the 'in Charity Quickbooks' flags for a given array of payslips. There are 3 flags: 
+   * Set the 'in Charity Quickbooks' flags for a given array of payslips. There are 3 flags:
    *  i) Is the employer NI amount entered in QB?
    *  ii) Are the employee salary and deductions entered in QB?
    *  iii) Is the employer pension amount entered in QB?

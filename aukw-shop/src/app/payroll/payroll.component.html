@@ -55,11 +55,13 @@
     <li [ngbNavItem]="3" [disabled]="!payslips || !payslips.length">
       <button ngbNavLink>Employer NI</button>
       <ng-template ngbNavContent>
-        <employer-ni
-          [charityRealm]="charityRealm"
-          [enterpriseRealm]="enterpriseRealm"
-          [payslips]="payslips"
-        ></employer-ni>
+        <div *ngIf="loadingComplete">
+          <employer-ni
+            [payslips]="payslips"
+            [allocations]="allocations"
+            [payrollDate]="payrollDate"
+          ></employer-ni>
+        </div>
       </ng-template>
     </li>
   </ul>

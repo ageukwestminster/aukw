@@ -10,9 +10,9 @@ import {
   EmployeeAllocation,
   IrisPayslip,
   LineItemDetail,
-  QBRealm,
 } from '@app/_models';
 import {
+  AlertService,
   LoadingIndicatorService,
   PayrollService,
   QBPayrollService,
@@ -30,14 +30,14 @@ export class EmployerNiComponent implements OnChanges {
   lines: LineItemDetail[] = [];
   total: number = 0;
 
-  @Input() charityRealm!: QBRealm;
-  @Input() enterpriseRealm!: QBRealm;
   @Input() allocations: EmployeeAllocation[] = [];
   @Input() payslips: IrisPayslip[] = [];
+  @Input() payrollDate: string = '';
 
   private loadingIndicatorService = inject(LoadingIndicatorService);
   private payrollService = inject(PayrollService);
   private qbPayrollService = inject(QBPayrollService);
+  private alertService = inject(AlertService);
 
   constructor() {}
 
@@ -60,15 +60,27 @@ export class EmployerNiComponent implements OnChanges {
       .subscribe((total: number) => (this.total = total));
   }
 
+  /** Present the string 'Charity Shop' for the class when the class is '01 Unrestricted'. 
+   * Can do this because only the shop emnployees have that class allocation.
+  */
   className(name_from_quickbooks: string): string {
     return name_from_quickbooks.startsWith('01')
       ? 'Charity Shop'
       : name_from_quickbooks;
   }
 
+  /**
+   * Create a single new journal entry in the Charity Quickbooks file that records the Employer NI amounts and
+   * account and class allocations for each employee.
+   */
   createEmployerNIJournal() {
+    // Filter out lines for which there is already a QBO entry
+    const linesToAdd = this.lines.filter(item => {
+      this.payslips.filter(p => p.payrollNumber == item.payrollNumber && !p.qbFlags.shopJournal).length
+  })
+  if (linesToAdd && linesToAdd.length) {
     this.qbPayrollService
-      .createEmployerNIJournal(this.lines, this.payslips[0].payrollDate)
+      .createEmployerNIJournal(linesToAdd, this.payrollDate)
       .pipe(
         this.loadingIndicatorService.createObserving({
           loading: () => 'Adding employer NI journal to Quickbooks',
@@ -78,10 +90,21 @@ export class EmployerNiComponent implements OnChanges {
         }),
         shareReplay(1),
       )
-      .subscribe({
-        next: () => {
-          /*this.payrollService.updateempNI*/
-        },
-      });
+      .subscribe();
+  } else {
+    this.alertService.info('There are no entries to add: they are all in Quickbooks already.')
+  }
+
+  }
+
+  /**
+   * Check if the values contianed in the given LineItemDetail have been flagged as having already been
+   * entered in Quickbooks.
+   * @param line The details of the entry
+   * @returns 'True' if already in QBO.
+   */
+  inQBO(line: LineItemDetail):boolean {
+    if (!this.payslips || !this.payslips.length) return false;
+    return this.payslips.filter(p => p.payrollNumber == line.payrollNumber && p.qbFlags.employerNI).length != 0
   }
 }

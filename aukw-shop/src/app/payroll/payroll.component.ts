@@ -53,6 +53,8 @@ export class PayrollComponent implements OnInit {
   payrollYear: string = '';
   payrollMonth: string = '';
 
+  loadingComplete: boolean = false;
+
   private authenticationService = inject(AuthenticationService);
   private qbRealmService = inject(QBRealmService);
   private alertService = inject(AlertService);
@@ -111,6 +113,7 @@ export class PayrollComponent implements OnInit {
    * This pattern is used to subscribe to an rxjs Subject and automatically
    * unsubscribe when the object is destroyed. Angular gives us the destroyRef
    * hook to manage this.
+   * { @link https://medium.com/@chandrashekharsingh25/exploring-the-takeuntildestroyed-operator-in-angular-d7244c24a43e }
    */
   private subscribeToSubjects(): void {
     const destroyed = new Subject();
@@ -185,7 +188,7 @@ export class PayrollComponent implements OnInit {
         error: (error: any) => {
           this.alertService.error(error, { autoClose: false });
         },
+        complete: () => (this.loadingComplete = true),
       });
   }
-
 }

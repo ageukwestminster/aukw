@@ -378,10 +378,7 @@ export class PayslipListComponent implements OnInit {
       .employeeJournalEntries(this.payslips, this.allocations)
       .pipe(
         mergeMap((v) =>
-          this.qbPayrollService.createEmployeeJournal(
-            v,
-            this.payrollDate,
-          ),
+          this.qbPayrollService.createEmployeeJournal(v, this.payrollDate),
         ),
       )
       .subscribe({
