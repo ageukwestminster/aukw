@@ -38,7 +38,7 @@ export class EmployerNiComponent implements OnChanges {
   private qbPayrollService = inject(QBPayrollService);
   private alertService = inject(AlertService);
 
-    /**
+  /**
    * On every change of the input variables, recalculate the allocated employer ni costs.
    * @param changes The inputs that have changed. Not used but retained to match interface.
    * @returns void

@@ -37,7 +37,6 @@ import { PensionInvoiceComponent } from './pension-invoice/pension-invoice.compo
     PensionInvoiceComponent,
     RouterLink,
     SharedModule,
-    TransactionEntryComponent,
   ],
   templateUrl: 'payroll.component.html',
 })
@@ -72,7 +71,8 @@ export class PayrollComponent implements OnInit {
   /**
    * Initialize the component by populating the 2 realm properties and
    * the boolean flag that warns if a QBO connection is absent.
-   * Also call getAllocations to
+   * Also call getAllocations to retrieve percentage allocations for each
+   * employee.
    */
   ngOnInit() {
     this.qbRealmService
@@ -166,8 +166,17 @@ export class PayrollComponent implements OnInit {
     this.updateQBOFlags();
   }
 
+  /**
+   * Set the 'in Quickbooks' flags for the array of payslips that is held in the
+   * instance variable 'payslips'. There are 4 flags:
+   *  i) Is the employer NI amount entered in QB?
+   *  ii) Are the employee salary and deductions entered in QB?
+   *  iii) Is the employer pension amount entered in QB?
+   *  iv) Are the numbers for shop employees entered in the Enterprises QB?
+   * The function takes the given payslips, sets or unsets the boolean flags for each payslip
+   * and then sends the amended array of payslips back to the service for onward broadcast.
+   */
   updateQBOFlags() {
-    //
     this.qbPayrollService
       .payslipFlagsForCharity(
         this.payslips,

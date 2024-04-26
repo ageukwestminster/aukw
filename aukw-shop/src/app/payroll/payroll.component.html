@@ -77,6 +77,18 @@
         </div>
       </ng-template>
     </li>
+    <li [ngbNavItem]="5" [disabled]="!payslips || !payslips.length">
+      <button ngbNavLink>Employee Journals</button>
+      <ng-template ngbNavContent>
+        <div *ngIf="loadingComplete">TO DO</div>
+      </ng-template>
+    </li>
+    <li [ngbNavItem]="6" [disabled]="!payslips || !payslips.length">
+      <button ngbNavLink>Shop Journal</button>
+      <ng-template ngbNavContent>
+        <div *ngIf="loadingComplete"></div>
+      </ng-template>
+    </li>
   </ul>
 
   <div [ngbNavOutlet]="nav" class="mt-2"></div>
