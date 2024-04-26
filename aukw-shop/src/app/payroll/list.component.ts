@@ -149,9 +149,7 @@ export class PayslipListComponent implements OnInit {
             this.enterpriseRealm &&
             this.enterpriseRealm.connection
           ) {
-            return this.qbPayrollService
-              .getAllocations()
-              .pipe(retry(2));
+            return this.qbPayrollService.getAllocations().pipe(retry(2));
           } else {
             // Flag that user needs to authorise this app in QBO
             this.qboAuthorisationMissing = true;

@@ -2,7 +2,7 @@
  * Define the properties of an employee payslip
  */
 
-import { QBTransactionFlags } from "./qb-payslip-flags";
+import { QBTransactionFlags } from './qb-payslip-flags';
 
 /*
     {
@@ -91,7 +91,7 @@ export class IrisPayslip {
     this.employerNI = (obj && obj.employerNI) || 0;
     this.employerPension = (obj && obj.employerPension) || 0;
     this.employeePension = (obj && obj.employeePension) || 0;
-    this.isShopEmployee = (obj && obj.isShopEmployee);
+    this.isShopEmployee = obj && obj.isShopEmployee;
     this.qbFlags = (obj && obj.qbFlags) || null;
   }
 }

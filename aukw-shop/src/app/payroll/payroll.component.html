@@ -28,8 +28,7 @@
             charityRealm && charityRealm.connection && charityRealm.realmid
           "
         >
-          <employee-allocations
-          ></employee-allocations>
+          <employee-allocations></employee-allocations>
         </div>
       </ng-template>
     </li>
@@ -37,11 +36,19 @@
       <button ngbNavLink>Iris Payslips</button>
       <ng-template ngbNavContent>
         <div>
-          <iris-payslips
+          <div class="col-md-4">
+            <payroll-file-upload
+              *ngIf="!payslips || !payslips.length"
+              (onFileUploaded)="xlsxWasUploaded($event)"
+            ></payroll-file-upload>
+          </div>
+          <h4>EE Summary</h4>
+          <payslip-list [payslips]="payslips"></payslip-list>
+          <!--<iris-payslips
             (onPayslipsExtractedFromSpreadsheet)="receivePayslips($event)"
             [charityRealm]="charityRealm"
             [enterpriseRealm]="enterpriseRealm"
-          ></iris-payslips>
+          ></iris-payslips>-->
         </div>
       </ng-template>
     </li>
@@ -49,9 +56,9 @@
       <button ngbNavLink>Employer NI</button>
       <ng-template ngbNavContent>
         <employer-ni
-            [charityRealm]="charityRealm"
-            [enterpriseRealm]="enterpriseRealm"
-            [payslips]="payslips"
+          [charityRealm]="charityRealm"
+          [enterpriseRealm]="enterpriseRealm"
+          [payslips]="payslips"
         ></employer-ni>
       </ng-template>
     </li>

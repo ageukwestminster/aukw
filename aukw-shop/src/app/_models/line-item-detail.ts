@@ -30,6 +30,6 @@ export class LineItemDetail {
     this.payrollNumber = (obj && obj.payrollNumber) || null;
     this.accountName = (obj && obj.accountName) || null;
     this.className = (obj && obj.className) || null;
-    this.isShopEmployee = (obj && obj.isShopEmployee);
+    this.isShopEmployee = obj && obj.isShopEmployee;
   }
 }

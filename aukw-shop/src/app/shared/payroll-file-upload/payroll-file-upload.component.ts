@@ -1,8 +1,20 @@
-import { Component, EventEmitter, Input, inject, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  inject,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { from, concatMap, tap, Observable } from 'rxjs';
 import { NgbModal, NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
-import { AlertService, ConsoleService, FileService, PayslipListService } from '@app/_services';
+import {
+  AlertService,
+  ConsoleService,
+  FileService,
+  PayslipListService,
+} from '@app/_services';
 import { IrisPayslip, UploadResponse } from '@app/_models';
 import { PasswordInputModalComponent } from './password-input.component';
 
@@ -33,9 +45,9 @@ export class PayrollFileUploadComponent implements OnInit {
   private consoleService = inject(ConsoleService);
   private payslipListService = inject(PayslipListService);
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit():void {
+  ngOnInit(): void {
     this.form = this.formBuilder.group({ chooseFile: [null] });
   }
 
@@ -74,7 +86,7 @@ export class PayrollFileUploadComponent implements OnInit {
           );
         }),
         concatMap((response: UploadResponse) => {
-          if( response.isEncrypted) {
+          if (response.isEncrypted) {
             return this.decrypt_and_parse(this.file!.name);
           } else {
             return this.fileService.parse(this.file!.name);
@@ -120,7 +132,9 @@ export class PayrollFileUploadComponent implements OnInit {
 
     return from(modalRef.result).pipe(
       tap(() => this.consoleService.sendConsoleMessage('Decrypting file.')),
-      concatMap((password: string) => this.fileService.decrypt(filename, password)),
+      concatMap((password: string) =>
+        this.fileService.decrypt(filename, password),
+      ),
       tap(() =>
         this.consoleService.sendConsoleMessage(
           'Examining file for pension and salary details.',

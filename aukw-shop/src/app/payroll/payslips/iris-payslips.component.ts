@@ -1,11 +1,20 @@
-import { Component, EventEmitter, inject, Input, Output} from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { SharedModule } from '@app/shared/shared.module';
 
 import { EmployeeAllocation, IrisPayslip, QBRealm } from '@app/_models';
 import { PayslipListComponent } from './list/list.component';
-import { isEqualPay, isEqualPension, isEqualEmployerNI, isEqualShopPay  } from '@app/_helpers';
-import { LoadingIndicatorService, QBPayrollService, PayslipListService } from '@app/_services';
-import { forkJoin, map, shareReplay} from 'rxjs';
+import {
+  isEqualPay,
+  isEqualPension,
+  isEqualEmployerNI,
+  isEqualShopPay,
+} from '@app/_helpers';
+import {
+  LoadingIndicatorService,
+  QBPayrollService,
+  PayslipListService,
+} from '@app/_services';
+import { forkJoin, map, shareReplay } from 'rxjs';
 
 @Component({
   selector: 'iris-payslips',
@@ -25,8 +34,8 @@ export class IrisPayslipsComponent {
     IrisPayslip[]
   >();
 
-  @Input() charityRealm! : QBRealm;
-  @Input() enterpriseRealm! : QBRealm;
+  @Input() charityRealm!: QBRealm;
+  @Input() enterpriseRealm!: QBRealm;
 
   private qbPayrollService = inject(QBPayrollService);
   private loadingIndicatorService = inject(LoadingIndicatorService);
@@ -35,7 +44,7 @@ export class IrisPayslipsComponent {
   constructor() {}
 
   xlsxWasUploaded(payslips: IrisPayslip[]): void {
-    this.qbPayrollService.allocations$.subscribe(x => this.allocations = x);
+    this.qbPayrollService.allocations$.subscribe((x) => (this.allocations = x));
     payslips.forEach((payslip) => {
       // Set flag for shop employees according to the allocations array values
       if (
@@ -72,48 +81,46 @@ export class IrisPayslipsComponent {
         year,
         month,
       ),
-
     })
-    .pipe(
-      map((x) => {
-        this.payslipListService.payslips$
-        this._payslips.forEach((xlsxPayslip) => {
-          let qbPayslip = x.charityPayslips.find(
-            (item) => item.payrollNumber == xlsxPayslip.payrollNumber,
-          );
-          qbPayslip = qbPayslip ?? new IrisPayslip();
+      .pipe(
+        map((x) => {
+          this.payslipListService.payslips$;
+          this._payslips.forEach((xlsxPayslip) => {
+            let qbPayslip = x.charityPayslips.find(
+              (item) => item.payrollNumber == xlsxPayslip.payrollNumber,
+            );
+            qbPayslip = qbPayslip ?? new IrisPayslip();
 
-          xlsxPayslip.niJournalInQBO = isEqualEmployerNI(
-            xlsxPayslip,
-            qbPayslip,
-          );
-          xlsxPayslip.pensionBillInQBO = isEqualPension(
-            xlsxPayslip,
-            qbPayslip,
-          );
-          xlsxPayslip.payslipJournalInQBO = isEqualPay(
-            xlsxPayslip,
-            qbPayslip,
-          );
+            xlsxPayslip.niJournalInQBO = isEqualEmployerNI(
+              xlsxPayslip,
+              qbPayslip,
+            );
+            xlsxPayslip.pensionBillInQBO = isEqualPension(
+              xlsxPayslip,
+              qbPayslip,
+            );
+            xlsxPayslip.payslipJournalInQBO = isEqualPay(
+              xlsxPayslip,
+              qbPayslip,
+            );
 
-          const qbShopPayslip = x.shopPayslips.find(
-            (item) => item.payrollNumber == xlsxPayslip.payrollNumber,
-          );
+            const qbShopPayslip = x.shopPayslips.find(
+              (item) => item.payrollNumber == xlsxPayslip.payrollNumber,
+            );
 
-          xlsxPayslip.shopJournalInQBO = isEqualShopPay(
-            xlsxPayslip,
-            qbShopPayslip ?? new IrisPayslip(),
-          );
-        });
-      }),
-      this.loadingIndicatorService.createObserving({
-        loading: () => 'Loading payroll transactions from Quickbooks',
-        success: () =>
-          `Successfully loaded transactions from Quickbooks`,
-        error: (err) => `${err}`,
-      }),
-      shareReplay(1),
-    )
-    .subscribe();
+            xlsxPayslip.shopJournalInQBO = isEqualShopPay(
+              xlsxPayslip,
+              qbShopPayslip ?? new IrisPayslip(),
+            );
+          });
+        }),
+        this.loadingIndicatorService.createObserving({
+          loading: () => 'Loading payroll transactions from Quickbooks',
+          success: () => `Successfully loaded transactions from Quickbooks`,
+          error: (err) => `${err}`,
+        }),
+        shareReplay(1),
+      )
+      .subscribe();
   }
 }

@@ -32,12 +32,17 @@ export class FileService {
   }
 
   decrypt(fileName: string, password: string) {
-    return this.http.post<ApiMessage>(`${baseUrl}/decrypt?filename=${fileName}`, {
-      password: password,
-    });
+    return this.http.post<ApiMessage>(
+      `${baseUrl}/decrypt?filename=${fileName}`,
+      {
+        password: password,
+      },
+    );
   }
 
   parse(fileName: string) {
-    return this.http.get<IrisPayslip[]>(`${baseUrl}/parse?filename=${fileName}`);
+    return this.http.get<IrisPayslip[]>(
+      `${baseUrl}/parse?filename=${fileName}`,
+    );
   }
 }

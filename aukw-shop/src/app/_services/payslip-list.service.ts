@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 
-import {
-  IrisPayslip,
-} from '@app/_models';
+import { IrisPayslip } from '@app/_models';
 
 @Injectable({ providedIn: 'root' })
 export class PayslipListService {
@@ -15,5 +13,4 @@ export class PayslipListService {
   sendPayslips(payslips: IrisPayslip[]) {
     this.payslipsSubject.next(payslips);
   }
-
 }

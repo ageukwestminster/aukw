@@ -41,7 +41,7 @@ export class EmployerNiComponent implements OnChanges {
 
   constructor() {}
 
-  ngOnChanges(changes: SimpleChanges):void {
+  ngOnChanges(changes: SimpleChanges): void {
     if (!this.payslips.length || !this.allocations.length) return;
 
     this.total = 0;
@@ -67,19 +67,21 @@ export class EmployerNiComponent implements OnChanges {
   }
 
   createEmployerNIJournal() {
-    this.qbPayrollService.createEmployerNIJournal(
-      this.lines,
-      this.payslips[0].payrollDate,
-    ).pipe(
-      this.loadingIndicatorService.createObserving({
-        loading: () => 'Adding employer NI journal to Quickbooks',
-        success: (result) =>
-          `Successfully created journal with id=${result.id} in Quickbooks.`,
-        error: (err) => `${err}`,
-      }),
-      shareReplay(1),
-    ).subscribe({
-    next: () => {/*this.payrollService.updateempNI*/ }
-    });
+    this.qbPayrollService
+      .createEmployerNIJournal(this.lines, this.payslips[0].payrollDate)
+      .pipe(
+        this.loadingIndicatorService.createObserving({
+          loading: () => 'Adding employer NI journal to Quickbooks',
+          success: (result) =>
+            `Successfully created journal with id=${result.id} in Quickbooks.`,
+          error: (err) => `${err}`,
+        }),
+        shareReplay(1),
+      )
+      .subscribe({
+        next: () => {
+          /*this.payrollService.updateempNI*/
+        },
+      });
   }
 }

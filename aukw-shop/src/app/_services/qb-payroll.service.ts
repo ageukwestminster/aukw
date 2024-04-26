@@ -12,7 +12,12 @@ import {
   PayrollJournalEntry,
   QBTransactionFlags,
 } from '@app/_models';
-import { isEqualPay, isEqualPension, isEqualEmployerNI, isEqualShopPay  } from '@app/_helpers';
+import {
+  isEqualPay,
+  isEqualPension,
+  isEqualEmployerNI,
+  isEqualShopPay,
+} from '@app/_helpers';
 
 const baseUrl = `${environment.apiUrl}/qb`;
 
@@ -21,16 +26,20 @@ const baseUrl = `${environment.apiUrl}/qb`;
  */
 @Injectable({ providedIn: 'root' })
 export class QBPayrollService {
-
+  private http = inject(HttpClient);
 
   private allocationsSubject = new Subject<EmployeeAllocation[]>();
   allocations$ = this.allocationsSubject.asObservable();
-  private http = inject(HttpClient);
+  private payslipsSubject = new Subject<IrisPayslip[]>();
+  payslips$ = this.payslipsSubject.asObservable();
+  sendPayslips(payslips: IrisPayslip[]) {
+    this.payslipsSubject.next(payslips);
+  }
 
   /**
-   * Query Quickbooks online for all payroll-related transactions for a given 
+   * Query Quickbooks online for all payroll-related transactions for a given
    * month and year. The payroll transactions are identified by having a DocNumber
-   * of the format 'Payroll-YYYY-MM....'. 
+   * of the format 'Payroll-YYYY-MM....'.
    * The transacitons are then converted by the API into IrisPayslip objects for
    * each employee.
    * @param realmID The Quickbooks ID of the company file.
@@ -46,18 +55,18 @@ export class QBPayrollService {
 
   /**
    * This query returns an array of allocation objects that specify what percentage of
-   * employee salary costs must be allocated to what account/class pairs. 
-   * There will be one or more objects for each employee. The sum of the percentages 
+   * employee salary costs must be allocated to what account/class pairs.
+   * There will be one or more objects for each employee. The sum of the percentages
    * for each employee must be 100.0.
    * The allocations are stored in the Charity Quickbooks file as a recurring transaction.
    * @returns An array of percentage allocations, one or more for each employee, or an empty array.
    */
   getAllocations(): Observable<EmployeeAllocation[]> {
-    return this.http.get<EmployeeAllocation[]>(
-      `${baseUrl}/${environment.qboCharityRealmID}/employee/allocations`,
-    ).pipe(
-      tap( (result) => this.allocationsSubject.next(result))
-    )
+    return this.http
+      .get<
+        EmployeeAllocation[]
+      >(`${baseUrl}/${environment.qboCharityRealmID}/employee/allocations`)
+      .pipe(tap((result) => this.allocationsSubject.next(result)));
   }
 
   /**
@@ -67,7 +76,10 @@ export class QBPayrollService {
    * @param payrollDate The transaction date of the journal entry.
    * @returns A success or failure message. A success message will have the quickbooks id of the new transaciton.
    */
-  createEmployerNIJournal(params: LineItemDetail[], payrollDate: string): Observable<ApiMessage> {
+  createEmployerNIJournal(
+    params: LineItemDetail[],
+    payrollDate: string,
+  ): Observable<ApiMessage> {
     return this.http.post<any>(
       `${baseUrl}/${environment.qboCharityRealmID}/journal/employerni?payrolldate=${payrollDate}`,
       params,
@@ -100,64 +112,72 @@ export class QBPayrollService {
     );
   }
 
-  payslipFlagsForCharity(xlsxPayslips: IrisPayslip[], year: string, month: string):Observable<void> {
+  payslipFlagsForCharity(
+    xlsxPayslips: IrisPayslip[],
+    year: string,
+    month: string,
+  ): Observable<IrisPayslip[]> {
     return forkJoin({
       qbPayslips: this.getWhatsAlreadyInQBO(
         environment.qboCharityRealmID,
         year,
-        month
+        month,
       ),
       payrollPayslips: of(xlsxPayslips),
     }).pipe(
       map((x) => {
-
         x.payrollPayslips.forEach((payslip) => {
-          const qbPayslip = x.qbPayslips.find(
-            (item) => item.payrollNumber == payslip.payrollNumber,
-          ) ?? new IrisPayslip();
+          const qbPayslip =
+            x.qbPayslips.find(
+              (item) => item.payrollNumber == payslip.payrollNumber,
+            ) ?? new IrisPayslip();
 
-            if (!payslip.qbFlags) {
-              payslip.qbFlags = new QBTransactionFlags({
-                payrollNumber: qbPayslip.payrollNumber,
-                employerNI: isEqualEmployerNI(payslip, qbPayslip),
-                pensionBill: isEqualPension(payslip, qbPayslip),
-                employeeJournal: isEqualPay(payslip, qbPayslip),
-                shopJournal: null,
-              });
-            } else {
-              payslip.qbFlags.employerNI = isEqualEmployerNI(payslip, qbPayslip);
-              payslip.qbFlags.pensionBill = isEqualPension(payslip, qbPayslip);
-              payslip.qbFlags.employeeJournal = isEqualPay(payslip, qbPayslip);
-            }          
+          if (!payslip.qbFlags) {
+            payslip.qbFlags = new QBTransactionFlags({
+              employerNI: isEqualEmployerNI(payslip, qbPayslip),
+              pensionBill: isEqualPension(payslip, qbPayslip),
+              employeeJournal: isEqualPay(payslip, qbPayslip),
+              shopJournal: false,
+            });
+          } else {
+            payslip.qbFlags.employerNI = isEqualEmployerNI(payslip, qbPayslip);
+            payslip.qbFlags.pensionBill = isEqualPension(payslip, qbPayslip);
+            payslip.qbFlags.employeeJournal = isEqualPay(payslip, qbPayslip);
+          }
         });
+        return x.payrollPayslips;
       }),
     );
   }
 
-
-  payslipFlagsForShop(xlsxPayslips: IrisPayslip[], year: string, month: string):Observable<void> {
+  payslipFlagsForShop(
+    xlsxPayslips: IrisPayslip[],
+    year: string,
+    month: string,
+  ): Observable<void> {
     return forkJoin({
       qbPayslips: this.getWhatsAlreadyInQBO(
         environment.qboEnterprisesRealmID,
         year,
-        month
+        month,
       ),
       payrollPayslips: of(xlsxPayslips),
     }).pipe(
       map((x) => {
-
-        x.payrollPayslips.forEach((payrollPayslip) => {
+        x.payrollPayslips.forEach((payslip) => {
           const qbPayslip = x.qbPayslips.find(
-            (item) => item.payrollNumber == payrollPayslip.payrollNumber,
+            (item) => item.payrollNumber == payslip.payrollNumber,
           );
           if (qbPayslip) {
-            if (!payrollPayslip.qbFlags) {
-              payrollPayslip.qbFlags = new QBTransactionFlags({
-                payrollNumber: qbPayslip.payrollNumber,
-                shopJournal: isEqualShopPay(payrollPayslip, qbPayslip),
+            if (!payslip.qbFlags) {
+              payslip.qbFlags = new QBTransactionFlags({
+                employerNI: false,
+                pensionBill: false,
+                employeeJournal: false,
+                shopJournal: isEqualShopPay(payslip, qbPayslip),
               });
             } else {
-              payrollPayslip.qbFlags.shopJournal = isEqualShopPay(payrollPayslip, qbPayslip);
+              payslip.qbFlags.shopJournal = isEqualShopPay(payslip, qbPayslip);
             }
           }
         });
