@@ -21,7 +21,6 @@ import {
 } from '@app/_services';
 import { EmployeeAllocation, IrisPayslip, QBRealm, User } from '@app/_models';
 import { EmployeeAllocationsComponent } from './allocations/employee-allocations.component';
-import { IrisPayslipsComponent } from './payslips/iris-payslips.component';
 import { EmployerNiComponent } from './employerni/employer-ni.component';
 import { PayslipListComponent } from './payslips/list/list.component';
 import { SharedModule } from '@app/shared/shared.module';
@@ -188,5 +187,5 @@ export class PayrollComponent implements OnInit {
         },
       });
   }
-  
+
 }
