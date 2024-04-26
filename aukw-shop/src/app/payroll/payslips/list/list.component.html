@@ -26,49 +26,35 @@
     <tr>
       <th style="width: 5%">No.</th>
       <th style="width: 22%">Name</th>
-      <th style="width: 8%" ngbTooltip="Total salary for the month">Gross</th>
-      <th
-        style="width: 8%"
-        class="d-none d-sm-table-cell"
-        ngbTooltip="Employee income tax"
-      >
-        PAYE
+      <th style="width: 8%">
+        <!-- Tooltip must be on element inside header, not header itself-->
+        <!-- From https://stackoverflow.com/a/48324991/6941165 -->
+        <div ngbTooltip="Total salary for the month">Gross</div>
       </th>
-      <th
-        style="width: 8%"
-        class="d-none d-sm-table-cell"
-        ngbTooltip="Employee National Insurance"
-      >
-        E'ee NI
+      <th style="width: 8%" class="d-none d-sm-table-cell">
+        <!-- Tooltip must be on element inside header, not header itself-->
+        <div ngbTooltip="Employee income tax">PAYE</div>
       </th>
-      <th
-        style="width: 6%"
-        class="d-none d-sm-table-cell"
-        ngbTooltip="Other Deductions"
-      >
-        Other
+      <th style="width: 8%" class="d-none d-sm-table-cell">
+        <!-- Tooltip must be on element inside header, not header itself-->
+        <div ngbTooltip="Employee National Insurance">E'ee NI</div>
       </th>
-      <th
-        style="width: 8%"
-        class="d-none d-sm-table-cell"
-        ngbTooltip="Salary Sacrifice"
-      >
-        S Sac
+      <th style="width: 6%" class="d-none d-sm-table-cell">
+        <!-- Tooltip must be on element inside header, not header itself-->
+        <div ngbTooltip="Other Deductions">Other</div>
       </th>
-      <th
-        style="width: 8%"
-        class="d-none d-sm-table-cell"
-        ngbTooltip="Student Loan repayments"
-      >
-        St Loan
+      <th style="width: 8%" class="d-none d-sm-table-cell">
+        <!-- Tooltip must be on element inside header, not header itself-->
+        <div ngbTooltip="Salary Sacrifice">S Sac</div>
+      </th>
+      <th style="width: 8%" class="d-none d-sm-table-cell">
+        <!-- Tooltip must be on element inside header, not header itself-->
+        <div ngbTooltip="Student Loan repayments">St Loan</div>
       </th>
       <th style="width: 8%" class="d-none d-sm-table-cell">Net</th>
-      <th
-        style="width: 8%"
-        class="d-none d-sm-table-cell"
-        ngbTooltip="Employer National Insurance"
-      >
-        E'er NI
+      <th style="width: 8%" class="d-none d-sm-table-cell">
+        <!-- Tooltip must be on element inside header, not header itself-->
+        <div ngbTooltip="Employer National Insurance">E'er NI</div>
       </th>
       <th class="text-center" style="width: 8%">In QBO?</th>
     </tr>
@@ -90,9 +76,7 @@
         {{ p.otherDeductions | number: "1.2-2" }}
       </td>
       <td class="d-none d-sm-table-cell">
-        {{
-          -p.salarySacrifice - p.employeePension | number: "1.2-2"
-        }}
+        {{ -p.salarySacrifice - p.employeePension | number: "1.2-2" }}
       </td>
       <td class="d-none d-sm-table-cell">
         {{ p.studentLoan | number: "1.2-2" }}
@@ -158,7 +142,9 @@
             <span style="color: red">
               <i
                 class="fas fa-times"
-                *ngIf="p.employerPension && (!p.qbFlags || !p.qbFlags.pensionBill)"
+                *ngIf="
+                  p.employerPension && (!p.qbFlags || !p.qbFlags.pensionBill)
+                "
                 ngbTooltip="L&G pension bill missing."
               ></i>
             </span>
@@ -179,7 +165,9 @@
             <span style="color: red">
               <i
                 class="fas fa-times"
-                *ngIf="p.isShopEmployee && (!p.qbFlags || !p.qbFlags.shopJournal)"
+                *ngIf="
+                  p.isShopEmployee && (!p.qbFlags || !p.qbFlags.shopJournal)
+                "
                 ngbTooltip="Shop journal entry missing."
               ></i>
             </span>
