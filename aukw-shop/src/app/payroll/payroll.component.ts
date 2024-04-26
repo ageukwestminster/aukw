@@ -22,7 +22,7 @@ import {
 import { EmployeeAllocation, IrisPayslip, QBRealm, User } from '@app/_models';
 import { EmployeeAllocationsComponent } from './allocations/employee-allocations.component';
 import { EmployerNiComponent } from './employerni/employer-ni.component';
-import { PayslipListComponent } from './payslips/list/list.component';
+import { PayslipListComponent } from './payslips/list.component';
 import { SharedModule } from '@app/shared/shared.module';
 import { PensionInvoiceComponent } from './pension-invoice/pension-invoice.component';
 
