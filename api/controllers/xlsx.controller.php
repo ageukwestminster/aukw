@@ -68,11 +68,12 @@ class XlsxCtl{
 
     $uploaddir = XlsxCtl::getUploadDirectory();
 
-    $decryptedFilePath = $uploaddir . \Core\Config::read('file.decryptedfilename');
+    $decryptedFilePath = $uploaddir . 
+        XlsxCtl::getDecryptedFilename(isset($_GET['filename'])?$_GET['filename']:'');
 
     try {
         if (!is_file($decryptedFilePath)) {
-            throw new \Exception('File not found. File name: ('. $decryptedFilePath .')');
+            throw new \Exception('Decrypted file not found. File name: ('. $decryptedFilePath .')');
         }
 
         $model = PayrollXlsx::getInstance()
