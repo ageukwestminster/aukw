@@ -80,7 +80,14 @@
     <li [ngbNavItem]="5" [disabled]="!payslips || !payslips.length">
       <button ngbNavLink>Employee Journals</button>
       <ng-template ngbNavContent>
-        <div *ngIf="loadingComplete">TO DO</div>
+        <div *ngIf="loadingComplete">
+          <employee-journals
+          [payslips]="payslips"
+          [allocations]="allocations"
+          [payrollDate]="payrollDate"
+          (onTransactionCreated)="updateQBOFlags()"
+          ></employee-journals>
+        </div>
       </ng-template>
     </li>
     <li [ngbNavItem]="6" [disabled]="!payslips || !payslips.length">

@@ -26,11 +26,13 @@ import { PayslipListComponent } from './payslips/list.component';
 import { SharedModule } from '@app/shared/shared.module';
 import { PensionInvoiceComponent } from './pension-invoice/pension-invoice.component';
 import { ShopJournalComponent } from './shop-journal/shop-journal.component';
+import { EmployeeJournalsComponent } from './employee-journals/employee-journals.component';
 
 @Component({
   standalone: true,
   imports: [
     EmployeeAllocationsComponent,
+    EmployeeJournalsComponent,
     EmployerNiComponent,
     PayslipListComponent,
     NgbNavModule,
