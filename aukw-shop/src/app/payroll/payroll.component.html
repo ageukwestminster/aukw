@@ -72,6 +72,7 @@
             [payslips]="payslips"
             [allocations]="allocations"
             [payrollDate]="payrollDate"
+            (onTransactionCreated)="updateQBOFlags()"
           ></pension-invoice>
         </div>
       </ng-template>

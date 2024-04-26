@@ -1,8 +1,10 @@
 import {
   Component,
+  EventEmitter,
   inject,
   Input,
   OnChanges,
+  Output,
   SimpleChanges,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -31,6 +33,7 @@ export class PensionInvoiceComponent implements OnChanges {
   @Input() allocations: EmployeeAllocation[] = [];
   @Input() payslips: IrisPayslip[] = [];
   @Input() payrollDate: string = '';
+  @Output() onTransactionCreated = new EventEmitter();
 
   private payrollService = inject(PayrollService);
   private loadingIndicatorService = inject(LoadingIndicatorService);
@@ -78,9 +81,10 @@ export class PensionInvoiceComponent implements OnChanges {
   createTransaction() {
     // Filter out lines for which there is already a QBO entry
     const linesToAdd = this.lines.filter((item) => {
-      this.payslips.filter(
-        (p) => p.payrollNumber == item.payrollNumber && !p.qbFlags.pensionBill,
-      ).length;
+      let ps = this.payslips.filter(        
+        (p) => p.payrollNumber == item.payrollNumber && (!p.qbFlags || !p.qbFlags.pensionBill),
+      );
+      return ( ps.length > 0)
     });
 
     //Add the invoice
@@ -108,7 +112,12 @@ export class PensionInvoiceComponent implements OnChanges {
           }),
           shareReplay(1),
         )
-        .subscribe();
+        .subscribe({
+          error: (error: any) => {
+            this.alertService.error(error, { autoClose: false });
+          },
+          complete: () => this.onTransactionCreated.emit()
+        });
     } else {
       this.alertService.info(
         'There are no entries to add: they are all in Quickbooks already.',

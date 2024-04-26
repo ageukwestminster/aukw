@@ -164,6 +164,10 @@ export class PayrollComponent implements OnInit {
     this.payrollMonth = (dt.getMonth() + 1).toString().padStart(2, '0');
     this.payrollYear = dt.getFullYear().toString();
 
+    this.updateQBOFlags();
+  }
+
+  updateQBOFlags() {
     //
     this.qbPayrollService
       .payslipFlagsForCharity(
@@ -195,4 +199,5 @@ export class PayrollComponent implements OnInit {
         complete: () => (this.loadingComplete = true),
       });
   }
+
 }
