@@ -408,6 +408,28 @@ export class PayslipListComponent implements OnInit {
 
     this.busyOnPensions = true;
 
+    const x = this.payrollService
+      .pensionAllocatedCosts(this.payslips, this.allocations)
+      .pipe(
+        toArray(), // convert to an array, this will form body of post call
+        mergeMap((costs) => {
+          // Send to api
+          return this.qbPayrollService.createPensionBill(
+            {
+              salarySacrificeTotal: this.total.salarySacrifice.toFixed(2),
+              employeePensionTotal: this.total.employeePension.toFixed(2),
+              pensionCosts: costs,
+              total: (
+                this.total.employeePension +
+                this.total.salarySacrifice +
+                this.total.employerPension
+              ).toFixed(2),
+            },
+            this.payrollDate,
+          );
+        }),
+      );
+
     this.payrollService
       .pensionAllocatedCosts(this.payslips, this.allocations)
       .pipe(

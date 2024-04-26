@@ -1,0 +1,21 @@
+<h4>Allocated Employer Pension Costs</h4>
+<div class="row">
+  <div class="col-sm-4">
+    <p>Total of Employer Pension: £{{ this.total | number: "1.2-2" }}</p>
+  </div>
+  <div class="col-sm-4">
+    <button
+      (click)="createTransaction()"
+      class="btn btn-sm btn-success m-1 mt-1 #employerNI"
+      [disabled]="!lines || !lines.length"
+    >
+      Create Employer Pension Invoice
+    </button>
+  </div>
+</div>
+<allocated-costs-list
+[title]="'Pension costs'"
+[transactionType]="'invoice'"
+[lines]="lines"
+[payslips]="payslips"
+[inQBOProperty]="inQBOProperty()"></allocated-costs-list>

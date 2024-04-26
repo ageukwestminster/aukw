@@ -14,27 +14,32 @@ import {
   QBPayrollService,
 } from '@app/_services';
 import { shareReplay, scan, tap } from 'rxjs';
+import { PayrollEntryTypeDetails } from '../payroll-entry.model';
+import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'employer-ni',
+  selector: 'transaction-entry',
   standalone: true,
-  imports: [CommonModule, NgFor, NgIf],
-  templateUrl: './employer-ni.component.html',
+  imports: [CommonModule, NgbTooltip, NgFor, NgIf],
+  templateUrl: './transaction-entry.component.html',
 })
-export class EmployerNiComponent implements OnChanges {
+export class TransactionEntryComponent implements OnChanges {
   lines: LineItemDetail[] = [];
   total: number = 0;
 
   @Input() allocations: EmployeeAllocation[] = [];
   @Input() payslips: IrisPayslip[] = [];
   @Input() payrollDate: string = '';
+  @Input() details: PayrollEntryTypeDetails;
 
   private loadingIndicatorService = inject(LoadingIndicatorService);
   private payrollService = inject(PayrollService);
   private qbPayrollService = inject(QBPayrollService);
   private alertService = inject(AlertService);
 
-  constructor() {}
+  constructor() {
+    this.details = new PayrollEntryTypeDetails();
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (!this.payslips.length || !this.allocations.length) return;
@@ -42,8 +47,8 @@ export class EmployerNiComponent implements OnChanges {
     this.total = 0;
     this.lines = [];
 
-    this.payrollService
-      .employerNIAllocatedCosts(this.payslips, this.allocations)
+    this.details
+      .costAllocations(this.payslips, this.allocations)
       .pipe(
         tap((line: LineItemDetail) => this.lines.push(line)),
         scan((a: number, v: LineItemDetail) => a + v.amount, 0),
@@ -64,21 +69,24 @@ export class EmployerNiComponent implements OnChanges {
    * Create a single new journal entry in the Charity Quickbooks file that records the Employer NI amounts and
    * account and class allocations for each employee.
    */
-  createEmployerNIJournal() {
+  createTransaction() {
     // Filter out lines for which there is already a QBO entry
     const linesToAdd = this.lines.filter((item) => {
       this.payslips.filter(
-        (p) => p.payrollNumber == item.payrollNumber && !p.qbFlags.shopJournal,
+        (p) =>
+          p.payrollNumber == item.payrollNumber &&
+          !this.details.inQBOProperty(p),
       ).length;
     });
     if (linesToAdd && linesToAdd.length) {
-      this.qbPayrollService
-        .createEmployerNIJournal(linesToAdd, this.payrollDate)
+      this.details
+        .transactionCreation(linesToAdd, this.payrollDate)
         .pipe(
           this.loadingIndicatorService.createObserving({
-            loading: () => 'Adding employer NI journal to Quickbooks',
+            loading: () =>
+              `Adding ${this.details.title} ${this.details.transactionType} to Quickbooks`,
             success: (result) =>
-              `Successfully created journal with id=${result.id} in Quickbooks.`,
+              `Successfully created ${this.details.transactionType} with id=${result.id} in Quickbooks.`,
             error: (err) => `${err}`,
           }),
           shareReplay(1),
@@ -101,7 +109,9 @@ export class EmployerNiComponent implements OnChanges {
     if (!this.payslips || !this.payslips.length) return false;
     return (
       this.payslips.filter(
-        (p) => p.payrollNumber == line.payrollNumber && p.qbFlags.employerNI,
+        (p) =>
+          p.payrollNumber == line.payrollNumber &&
+          this.details.inQBOProperty(p),
       ).length != 0
     );
   }
