@@ -77,7 +77,7 @@ export class IrisPayslip {
   }
 
   constructor(obj?: any) {
-    this.payrollNumber = (obj && obj.employeeId) || null;
+    this.payrollNumber = (obj && obj.payrollNumber) || null;
     this.quickbooksId = (obj && obj.quickbooksId) || null;
     this.employeeName = (obj && obj.employeeName) || null;
     this.payrollDate = (obj && obj.payrollDate) || null;

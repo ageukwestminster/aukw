@@ -114,7 +114,7 @@ export class PensionInvoiceComponent implements OnChanges {
           this.loadingIndicatorService.createObserving({
             loading: () => `Adding pension invoice to Quickbooks`,
             success: (result) =>
-              `Successfully created poension invoice with id=${result.id} in Quickbooks.`,
+              `Successfully created pension invoice with id=${result.id} in Quickbooks.`,
             error: (err) => `${err}`,
           }),
           shareReplay(1),

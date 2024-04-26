@@ -25,6 +25,7 @@ import { EmployerNiComponent } from './employerni/employer-ni.component';
 import { PayslipListComponent } from './payslips/list.component';
 import { SharedModule } from '@app/shared/shared.module';
 import { PensionInvoiceComponent } from './pension-invoice/pension-invoice.component';
+import { ShopJournalComponent } from './shop-journal/shop-journal.component';
 
 @Component({
   standalone: true,
@@ -37,6 +38,7 @@ import { PensionInvoiceComponent } from './pension-invoice/pension-invoice.compo
     PensionInvoiceComponent,
     RouterLink,
     SharedModule,
+    ShopJournalComponent,
   ],
   templateUrl: 'payroll.component.html',
 })
