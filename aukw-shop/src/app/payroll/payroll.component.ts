@@ -24,7 +24,6 @@ import { EmployeeAllocationsComponent } from './allocations/employee-allocations
 import { EmployerNiComponent } from './employerni/employer-ni.component';
 import { PayslipListComponent } from './payslips/list/list.component';
 import { SharedModule } from '@app/shared/shared.module';
-import { TransactionEntryComponent } from './transaction-entry/transaction-entry.component';
 import { PensionInvoiceComponent } from './pension-invoice/pension-invoice.component';
 
 @Component({
