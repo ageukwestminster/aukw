@@ -5,7 +5,7 @@
   </div>
   <div class="col-sm-4">
     <button
-      (click)="createEmployerNIJournal()"
+      (click)="createTransaction()"
       class="btn btn-sm btn-success m-1 mt-1 #employerNI"
       [disabled]="!lines || !lines.length"
     >
@@ -13,52 +13,10 @@
     </button>
   </div>
 </div>
-<div class="row">
-  <div class="col-sm-8">
-    <table class="table table-striped table-responsive">
-      <thead>
-        <tr>
-          <th>No.</th>
-          <th>Name</th>
-          <th>Amount</th>
-          <th class="d-none d-sm-table-cell">Class</th>
-          <th>In QBO?</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let line of lines">
-          <td style="vertical-align: middle">
-            {{ line.payrollNumber }}
-          </td>
-          <td>{{ line.name }}</td>
-          <td>{{ line.amount | number: "1.2-2" }}</td>
-          <td class="d-none d-sm-table-cell">
-            {{ className(line.className) }}
-          </td>
-          <td>
-            <span style="color: green">
-              <i
-                class="fas fa-check"
-                *ngIf="inQBO(line)"
-                ngbTooltip="Employer NI journal done."
-              ></i>
-            </span>
-            <span style="color: red">
-              <i
-                class="fas fa-times"
-                *ngIf="!inQBO(line)"
-                ngbTooltip="Employer NI journal missing."
-              ></i>
-            </span>
-          </td>
-        </tr>
-        <tr *ngIf="!lines">
-          <td colspan="5" class="text-center">
-            <span class="spinner-border spinner-border-lg align-center"></span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="col-sm-6"></div>
-</div>
+<allocated-costs-list
+  [title]="'Employer NI'"
+  [transactionType]="'journal'"
+  [lines]="lines"
+  [payslips]="payslips"
+  [inQBOProperty]="inQBOProperty()"
+></allocated-costs-list>

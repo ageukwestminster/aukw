@@ -1,24 +1,27 @@
 import {
   Component,
+  EventEmitter,
   inject,
   Input,
   OnChanges,
+  Output,
   SimpleChanges,
 } from '@angular/core';
-import { CommonModule, NgFor, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { EmployeeAllocation, IrisPayslip, LineItemDetail } from '@app/_models';
 import {
   AlertService,
   LoadingIndicatorService,
-  PayrollService,
   QBPayrollService,
+  PayrollService,
 } from '@app/_services';
-import { shareReplay, scan, tap } from 'rxjs';
+import { scan, shareReplay, tap } from 'rxjs';
+import { AllocatedCostsListComponent } from '../allocated-costs-list/list.component';
 
 @Component({
   selector: 'employer-ni',
   standalone: true,
-  imports: [CommonModule, NgFor, NgIf],
+  imports: [AllocatedCostsListComponent, CommonModule],
   templateUrl: './employer-ni.component.html',
 })
 export class EmployerNiComponent implements OnChanges {
@@ -28,14 +31,18 @@ export class EmployerNiComponent implements OnChanges {
   @Input() allocations: EmployeeAllocation[] = [];
   @Input() payslips: IrisPayslip[] = [];
   @Input() payrollDate: string = '';
+  @Output() onTransactionCreated = new EventEmitter();
 
   private loadingIndicatorService = inject(LoadingIndicatorService);
   private payrollService = inject(PayrollService);
   private qbPayrollService = inject(QBPayrollService);
   private alertService = inject(AlertService);
 
-  constructor() {}
-
+    /**
+   * On every change of the input variables, recalculate the allocated employer ni costs.
+   * @param changes The inputs that have changed. Not used but retained to match interface.
+   * @returns void
+   */
   ngOnChanges(changes: SimpleChanges): void {
     if (!this.payslips.length || !this.allocations.length) return;
 
@@ -51,25 +58,18 @@ export class EmployerNiComponent implements OnChanges {
       .subscribe((total: number) => (this.total = total));
   }
 
-  /** Present the string 'Charity Shop' for the class when the class is '01 Unrestricted'.
-   * Can do this because only the shop emnployees have that class allocation.
-   */
-  className(name_from_quickbooks: string): string {
-    return name_from_quickbooks.startsWith('01')
-      ? 'Charity Shop'
-      : name_from_quickbooks;
-  }
-
   /**
    * Create a single new journal entry in the Charity Quickbooks file that records the Employer NI amounts and
    * account and class allocations for each employee.
    */
-  createEmployerNIJournal() {
+  createTransaction() {
     // Filter out lines for which there is already a QBO entry
     const linesToAdd = this.lines.filter((item) => {
       this.payslips.filter(
-        (p) => p.payrollNumber == item.payrollNumber && !p.qbFlags.shopJournal,
-      ).length;
+        (p) =>
+          p.payrollNumber == item.payrollNumber &&
+          (!p.qbFlags || !p.qbFlags.shopJournal),
+      ).length > 0;
     });
     if (linesToAdd && linesToAdd.length) {
       this.qbPayrollService
@@ -91,18 +91,10 @@ export class EmployerNiComponent implements OnChanges {
     }
   }
 
-  /**
-   * Check if the values contianed in the given LineItemDetail have been flagged as having already been
-   * entered in Quickbooks.
-   * @param line The details of the entry
-   * @returns 'True' if already in QBO.
-   */
-  inQBO(line: LineItemDetail): boolean {
-    if (!this.payslips || !this.payslips.length) return false;
-    return (
-      this.payslips.filter(
-        (p) => p.payrollNumber == line.payrollNumber && p.qbFlags.employerNI,
-      ).length != 0
-    );
+  /** This is the property that the list must check to see iof the line is in QBO or not*/
+  inQBOProperty() {
+    return function (payslip: IrisPayslip): boolean {
+      return payslip.qbFlags.employerNI;
+    };
   }
 }

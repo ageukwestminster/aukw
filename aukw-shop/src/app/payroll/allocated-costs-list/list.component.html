@@ -23,21 +23,23 @@
           <td class="d-none d-sm-table-cell">
             {{ className(line.className) }}
           </td>
-          <td>
-            <span style="color: green">
-              <i
-                class="fas fa-check"
-                *ngIf="inQBO(line)"
-                ngbTooltip="{{ title }} {{ transactionType }} done."
-              ></i>
-            </span>
-            <span style="color: red">
-              <i
-                class="fas fa-times"
-                *ngIf="!inQBO(line)"
-                ngbTooltip="{{ title }} {{ transactionType }} missing."
-              ></i>
-            </span>
+          <td class="text-center">
+            <div *ngIf="line.payrollNumber">
+              <span style="color: green">
+                <i
+                  class="fas fa-check"
+                  *ngIf="inQBO(line)"
+                  ngbTooltip="{{ title }} {{ transactionType }} done."
+                ></i>
+              </span>
+              <span style="color: red">
+                <i
+                  class="fas fa-times"
+                  *ngIf="!inQBO(line)"
+                  ngbTooltip="{{ title }} {{ transactionType }} missing."
+                ></i>
+              </span>
+            </div>
           </td>
         </tr>
         <tr *ngIf="!lines">

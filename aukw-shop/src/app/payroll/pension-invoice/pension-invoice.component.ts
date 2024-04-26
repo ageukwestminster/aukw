@@ -40,6 +40,11 @@ export class PensionInvoiceComponent implements OnChanges {
   private alertService = inject(AlertService);
   private qbPayrollService = inject(QBPayrollService);
 
+  /**
+   * On every change of the input variables, recalculate the allocated pension costs.
+   * @param changes The inputs that have changed. Not used but retained to match interface.
+   * @returns void
+   */
   ngOnChanges(changes: SimpleChanges): void {
     if (!this.payslips.length || !this.allocations.length) return;
 
@@ -127,6 +132,7 @@ export class PensionInvoiceComponent implements OnChanges {
     }
   }
 
+  /** This is the property that the list must check to see iof the line is in QBO or not*/
   inQBOProperty() {
     return function (payslip: IrisPayslip): boolean {
       return payslip.qbFlags.pensionBill;
