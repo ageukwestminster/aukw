@@ -19,7 +19,7 @@ export class EmployerNiComponent extends ParentComponent implements OnChanges {
 
   /**
    * On every change of the input variables, recalculate the allocated employer ni costs.
-   * @param changes The inputs that have changed. Not used but retained to match interface.
+   * @param changes SimpleChanges The inputs that have changed. Not used but retained to match interface.
    * @returns void
    */
   ngOnChanges(changes: SimpleChanges): void {
