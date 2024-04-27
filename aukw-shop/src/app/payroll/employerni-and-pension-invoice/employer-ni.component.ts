@@ -1,22 +1,13 @@
 import {
   Component,
-  EventEmitter,
-  inject,
-  Input,
   OnChanges,
-  Output,
   SimpleChanges,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { EmployeeAllocation, IrisPayslip, LineItemDetail } from '@app/_models';
-import {
-  AlertService,
-  LoadingIndicatorService,
-  QBPayrollService,
-  PayrollService,
-} from '@app/_services';
+import { IrisPayslip, LineItemDetail } from '@app/_models';
 import { scan, shareReplay, tap } from 'rxjs';
-import { AllocatedCostsListComponent } from '../allocated-costs-list/list.component';
+import { AllocatedCostsListComponent } from './allocated-costs-list/list.component';
+import { ParentComponent } from './parent.component';
 
 @Component({
   selector: 'employer-ni',
@@ -24,19 +15,7 @@ import { AllocatedCostsListComponent } from '../allocated-costs-list/list.compon
   imports: [AllocatedCostsListComponent, CommonModule],
   templateUrl: './employer-ni.component.html',
 })
-export class EmployerNiComponent implements OnChanges {
-  lines: LineItemDetail[] = [];
-  total: number = 0;
-
-  @Input() allocations: EmployeeAllocation[] = [];
-  @Input() payslips: IrisPayslip[] = [];
-  @Input() payrollDate: string = '';
-  @Output() onTransactionCreated = new EventEmitter();
-
-  private loadingIndicatorService = inject(LoadingIndicatorService);
-  private payrollService = inject(PayrollService);
-  private qbPayrollService = inject(QBPayrollService);
-  private alertService = inject(AlertService);
+export class EmployerNiComponent extends ParentComponent implements OnChanges {
 
   /**
    * On every change of the input variables, recalculate the allocated employer ni costs.

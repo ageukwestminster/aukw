@@ -1,22 +1,13 @@
 import {
   Component,
-  EventEmitter,
-  inject,
-  Input,
   OnChanges,
-  Output,
   SimpleChanges,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { EmployeeAllocation, IrisPayslip, LineItemDetail } from '@app/_models';
-import {
-  AlertService,
-  LoadingIndicatorService,
-  QBPayrollService,
-  PayrollService,
-} from '@app/_services';
+import { IrisPayslip, LineItemDetail } from '@app/_models';
 import { scan, shareReplay, tap } from 'rxjs';
-import { AllocatedCostsListComponent } from '../allocated-costs-list/list.component';
+import { AllocatedCostsListComponent } from './allocated-costs-list/list.component';
+import { ParentComponent } from './parent.component';
 
 @Component({
   selector: 'pension-invoice',
@@ -24,21 +15,9 @@ import { AllocatedCostsListComponent } from '../allocated-costs-list/list.compon
   imports: [AllocatedCostsListComponent, CommonModule],
   templateUrl: './pension-invoice.component.html',
 })
-export class PensionInvoiceComponent implements OnChanges {
-  lines: LineItemDetail[] = [];
-  total: number = 0;
+export class PensionInvoiceComponent extends ParentComponent implements OnChanges {
   totalSalarySacrifice: number = 0;
   totalEmployeePension: number = 0;
-
-  @Input() allocations: EmployeeAllocation[] = [];
-  @Input() payslips: IrisPayslip[] = [];
-  @Input() payrollDate: string = '';
-  @Output() onTransactionCreated = new EventEmitter();
-
-  private payrollService = inject(PayrollService);
-  private loadingIndicatorService = inject(LoadingIndicatorService);
-  private alertService = inject(AlertService);
-  private qbPayrollService = inject(QBPayrollService);
 
   /**
    * On every change of the input variables, recalculate the allocated pension costs.
@@ -132,8 +111,8 @@ export class PensionInvoiceComponent implements OnChanges {
     }
   }
 
-  /** This is the property that the list must check to see iof the line is in QBO or not*/
-  inQBOProperty() {
+  /** This is the property that the list must check to see if the line is in QBO or not*/
+  inQBOProperty(): (p: IrisPayslip) => boolean {
     return function (payslip: IrisPayslip): boolean {
       return payslip.qbFlags.pensionBill;
     };

@@ -21,10 +21,10 @@ import {
 } from '@app/_services';
 import { EmployeeAllocation, IrisPayslip, QBRealm, User } from '@app/_models';
 import { EmployeeAllocationsComponent } from './allocations/employee-allocations.component';
-import { EmployerNiComponent } from './employerni/employer-ni.component';
+import { EmployerNiComponent } from './employerni-and-pension-invoice/employer-ni.component';
 import { PayslipListComponent } from './payslips/list.component';
 import { SharedModule } from '@app/shared/shared.module';
-import { PensionInvoiceComponent } from './pension-invoice/pension-invoice.component';
+import { PensionInvoiceComponent } from './employerni-and-pension-invoice/pension-invoice.component';
 import { ShopJournalComponent } from './shop-journal/shop-journal.component';
 import { EmployeeJournalsComponent } from './employee-journals/employee-journals.component';
 
@@ -153,7 +153,7 @@ export class PayrollComponent implements OnInit {
         if (!allocation) {
           throw new Error(
             'The recurring transaction in Quickbooks that ' +
-              `defines the class allocations does not have an entry for '${payslip.employeeName}'.`+
+              `defines the class allocations does not have an entry for '${payslip.employeeName}'.` +
               `Please add them to the salary allocations recurring transaction and then try again.`,
           );
         }
@@ -166,7 +166,6 @@ export class PayrollComponent implements OnInit {
         }
       });
     } catch (error) {
-
       //Code from https://kentcdodds.com/blog/get-a-catch-block-error-message-with-typescript
       let message: string;
       if (error instanceof Error) {
@@ -175,7 +174,7 @@ export class PayrollComponent implements OnInit {
         message = String(error);
       }
       this.alertService.error(message, { autoClose: false });
-      return; // Returnb and do not proceed with processing payslips.... will cause further errors
+      return; // Return and do not proceed with processing payslips
     }
 
     // Update the payslips subject so it will be availabe to all subscribers
