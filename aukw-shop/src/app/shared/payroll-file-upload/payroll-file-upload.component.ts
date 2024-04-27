@@ -140,7 +140,7 @@ export class PayrollFileUploadComponent implements OnInit {
           'Examining file for pension and salary details.',
         ),
       ),
-      concatMap(() => this.fileService.parse(filename)),
+      concatMap(() => this.fileService.parse()),
     );
   }
 }
