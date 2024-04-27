@@ -56,6 +56,12 @@ class QuickbooksReport{
      * @var string
      */
     public string $columns = '';
+    /**
+     * The QBO column to sort by. Usu 'date'?
+     *
+     * @var string
+     */
+    public string $sortBy = '';
 
         /**
      * Generate a Profit & Loss report
@@ -140,20 +146,15 @@ class QuickbooksReport{
             return;
         }
   
-        $reportService
+        $report = $reportService
             ->setStartDate($this->startdate)
             ->setEndDate($this->enddate)
-            ->setSummarizeColumnBy($this->summarizeColumn);
-
-        if ($this->account) {
-            $reportService->setAccount($this->account);
-        }
-
-        if ($this->columns) {
-            $reportService->setColumns($this->columns);
-        }
-
-        $report = $reportService->executeReport(ReportName::GENERALLEDGER);
+            ->setSummarizeColumnBy($this->summarizeColumn)
+            ->setAccount($this->account)
+            ->setColumns($this->columns)
+            ->setSortBy($this->sortBy)
+            ->setSortOrder('ascend') //'descend' corrupts the running balance figures
+            ->executeReport(ReportName::GENERALLEDGER);
 
         $error = $dataService->getLastError();
         if ($error) {
@@ -163,14 +164,16 @@ class QuickbooksReport{
             return [];
         }
         else {
+
+            //Now convert the report object to something readable
+
+            $report_arr=array();            
             
-            $report_arr=array();
             /** @disregard Intelephense error on next line */
             $data = $report->Rows->Row[0]->Rows->Row;
 
             foreach ($data as $value) {
                 $line=array();
-
                 
                 $line['date'] = $value->ColData[0]->value;
 

@@ -10,6 +10,7 @@ export * from './qb-connection.service';
 export * from './qb-employee.service';
 export * from './qb-payroll.service';
 export * from './qb-realm.service';
+export * from './qb-report.service';
 export * from './report.service';
 export * from './shop.service';
 export * from './summary.service';

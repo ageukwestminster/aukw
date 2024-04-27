@@ -88,9 +88,21 @@ class QBReportCtl{
       $model->account = $_GET['account'];
     } 
 
-      $model->columns = "tx_date,txn_type,doc_num,emp_name,memo,account_name,subt_nat_amount,rbal_nat_amount";
+    $model->columns = "tx_date,txn_type,doc_num,emp_name,memo,split_acc,subt_nat_amount,rbal_nat_amount";
+    $model->sortBy = "tx_date";
 
-    echo json_encode($model->general_ledger(), JSON_NUMERIC_CHECK);
+    try {
+      echo json_encode($model->general_ledger(), JSON_NUMERIC_CHECK);
+    }  catch (\Exception $e) {
+      http_response_code(400);  
+      echo json_encode(
+          array(
+              "message" => "Unable to generate general ledger report. ",
+              "extra" => $e->getMessage()
+              )
+      );
+      exit(1);
+  }
   }
 
   /**
