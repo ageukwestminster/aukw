@@ -210,7 +210,7 @@ export class PayrollService {
     );
 
     const entry = new PayrollJournalEntry({
-      employeeId: allocations[0].quickbooksId,
+      quickbooksId: allocations[0].quickbooksId,
       totalPay: [],
       paye: p.paye,
       employeeNI: p.employeeNI,
@@ -219,7 +219,8 @@ export class PayrollService {
       employeePension: -p.employeePension,
       studentLoan: p.studentLoan,
       netPay: -p.netPay,
-      name: p.employeeName,
+      employeeName: p.employeeName,
+      payrollNumber: p.payrollNumber,
     });
 
     let sum: number = 0;
@@ -227,7 +228,9 @@ export class PayrollService {
       const alloc = new LineItemDetail({
         quickbooksId: allocations[0].quickbooksId,
         name: p.employeeName,
+        isShopEmployee: p.isShopEmployee,
         class: v.class,
+        className: v.className,
         account: v.account,
         amount: Number(
           (Math.round(p.totalPay * v.percentage) / 100).toFixed(2),

@@ -1,22 +1,10 @@
-export class EmployerNIEntry {
-  employeeId: number;
-  amount: number;
-  account: number;
-  class: number;
-
-  constructor(obj?: any) {
-    this.employeeId = (obj && obj.employeeId) || null;
-    this.amount = (obj && obj.amount) || null;
-    this.account = (obj && obj.account) || null;
-    this.class = (obj && obj.class) || null;
-  }
-}
-
 import { LineItemDetail } from './line-item-detail';
 
 export class PayrollJournalEntry {
+  /** Iris payroll number for employee */
+  payrollNumber: number;
   /** Quickbooks employee id */
-  employeeId: number;
+  quickbooksId: number;
   /** Gross monthly salary, split into allocated amounts */
   totalPay: LineItemDetail[];
   /** Income tax deduction */
@@ -34,11 +22,12 @@ export class PayrollJournalEntry {
   /** Net monthly salary, the amount paid to the employee. */
   netPay: number;
   /** Display name of employee */
-  name: string;
+  employeeName: string;
 
   constructor(obj?: any) {
-    this.employeeId = (obj && obj.employeeId) || null;
-    this.name = (obj && obj.name) || null;
+    this.payrollNumber = (obj && obj.payrollNumber) || null;
+    this.quickbooksId = (obj && obj.quickbooksId) || null;
+    this.employeeName = (obj && obj.employeeName) || null;
     this.paye = (obj && obj.paye) || 0;
     this.employeeNI = (obj && obj.employeeNI) || 0;
     this.otherDeductions = (obj && obj.otherDeductions) || 0;

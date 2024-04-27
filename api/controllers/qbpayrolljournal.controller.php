@@ -35,13 +35,13 @@ class QBPayrollJournalCtl{
 
     // The Ref No. that appears on QBO ui. 
     // Format is "Payroll_YYYY_MM-`${employee_number}`" 
-    $docNumber = QBO::payrollDocNumber($payrollDate).'-'.$data->employeeId;
+    $docNumber = QBO::payrollDocNumber($payrollDate).'-'.$data->quickbooksId;
 
     try {
       $model = QuickbooksPayrollJournal::getInstance()
         ->setDocNumber($docNumber)
         ->setTxnDate($payrollDate)
-        ->setQuickbooksEmployeeId($data->employeeId)
+        ->setQuickbooksEmployeeId($data->quickbooksId)
         ->setGrossSalary($data->totalPay)
         ->setPAYE(empty($data->paye)?0:$data->paye)
         ->setEmployeeNI(empty($data->employeeNI)?0:$data->employeeNI)
@@ -68,7 +68,7 @@ class QBPayrollJournalCtl{
       echo json_encode(
         array(
           "message" => "Unable to enter payroll journal in Quickbooks. Transaction is not in balance for '" .
-          $data->name . "'.")
+          $data->employeeName . "'.")
           , JSON_NUMERIC_CHECK);
       exit(1);      
     }
@@ -76,7 +76,7 @@ class QBPayrollJournalCtl{
     $result = $model->create_employee_journal();
     if ($result) {
         echo json_encode(
-            array("message" => "Payroll journal for '". $data->name  ."' has been added for " . $result['date'] . ".",
+            array("message" => "Payroll journal for '". $data->employeeName  ."' has been added for " . $result['date'] . ".",
                 "id" => $result['id'])
           );
     }

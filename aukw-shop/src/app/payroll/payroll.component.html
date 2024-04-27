@@ -82,10 +82,10 @@
       <ng-template ngbNavContent>
         <div *ngIf="loadingComplete">
           <employee-journals
-          [payslips]="payslips"
-          [allocations]="allocations"
-          [payrollDate]="payrollDate"
-          (onTransactionCreated)="updateQBOFlags()"
+            [payslips]="payslips"
+            [allocations]="allocations"
+            [payrollDate]="payrollDate"
+            (onTransactionCreated)="updateQBOFlags()"
           ></employee-journals>
         </div>
       </ng-template>

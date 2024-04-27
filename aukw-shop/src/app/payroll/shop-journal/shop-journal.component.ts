@@ -132,8 +132,8 @@ export class ShopJournalComponent implements OnChanges {
     }
   }
 
-    /**
-   * Check if the values contianed in the given LineItemDetail have been flagged as having already been
+  /**
+   * Check if the values contained in the given LineItemDetail have been flagged as having already been
    * entered in Quickbooks.
    * @param line The details of the entry
    * @returns 'True' if already in QBO.
