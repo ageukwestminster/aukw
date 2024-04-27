@@ -61,45 +61,48 @@ export class EmployeeJournalsComponent implements OnChanges {
       });
   }
 
-    /**
-   * Create a set of new journals in the Charity Quickbooks file that records the salary,  
+  /**
+   * Create a set of new journals in the Charity Quickbooks file that records the salary,
    * deductions and net pay amounts for each employee.
    */
   createTransaction() {
-        // Filter out lines for which there is already a QBO entry
-        const journalsToAdd = this.lines.filter((item) => {
-          let ps = this.payslips.filter(
-            (p) =>
-              p.payrollNumber == item.payrollNumber &&
-              (!p.qbFlags || !p.qbFlags.employeeJournal),
-          );
-          return ps.length > 0;
-        });
+    // Filter out lines for which there is already a QBO entry
+    const journalsToAdd = this.lines.filter((item) => {
+      let ps = this.payslips.filter(
+        (p) =>
+          p.payrollNumber == item.payrollNumber &&
+          (!p.qbFlags || !p.qbFlags.employeeJournal),
+      );
+      return ps.length > 0;
+    });
 
-        if (journalsToAdd && journalsToAdd.length) {
-          //console.log(JSON.stringify(this.lines));
-          from(journalsToAdd).pipe(
-            mergeMap((j) => this.qbPayrollService.createEmployeeJournal(j, this.payrollDate)),
-            toArray(),
-            this.loadingIndicatorService.createObserving({
-              loading: () => `Adding employee journals to Charity Quickbooks`,
-              success: (result) =>
-                `Successfully created ${result.length} journals in Quickbooks.`,
-              error: (err) => `${err}`,
-            }),
-            shareReplay(1),
-          )
-          .subscribe({
-            error: (e) => {
-              this.alertService.error(e, { autoClose: false });
-            },
-            complete: () => this.onTransactionCreated.emit(),
-          });
-        } else {
-          this.alertService.info(
-            'There are no entries to add: they are all in Quickbooks already.',
-          );
-        }
+    if (journalsToAdd && journalsToAdd.length) {
+      //console.log(JSON.stringify(this.lines));
+      from(journalsToAdd)
+        .pipe(
+          mergeMap((j) =>
+            this.qbPayrollService.createEmployeeJournal(j, this.payrollDate),
+          ),
+          toArray(),
+          this.loadingIndicatorService.createObserving({
+            loading: () => `Adding employee journals to Charity Quickbooks`,
+            success: (result) =>
+              `Successfully created ${result.length} journals in Quickbooks.`,
+            error: (err) => `${err}`,
+          }),
+          shareReplay(1),
+        )
+        .subscribe({
+          error: (e) => {
+            this.alertService.error(e, { autoClose: false });
+          },
+          complete: () => this.onTransactionCreated.emit(),
+        });
+    } else {
+      this.alertService.info(
+        'There are no entries to add: they are all in Quickbooks already.',
+      );
+    }
   }
 
   /**
@@ -112,7 +115,8 @@ export class EmployeeJournalsComponent implements OnChanges {
     if (!this.payslips || !this.payslips.length) return false;
     return (
       this.payslips.filter(
-        (p) => p.payrollNumber == line.payrollNumber && p.qbFlags.employeeJournal,
+        (p) =>
+          p.payrollNumber == line.payrollNumber && p.qbFlags.employeeJournal,
       ).length != 0
     );
   }

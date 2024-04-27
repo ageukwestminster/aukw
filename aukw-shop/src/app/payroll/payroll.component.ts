@@ -144,19 +144,39 @@ export class PayrollComponent implements OnInit {
   xlsxWasUploaded(payslips: IrisPayslip[]): void {
     if (!payslips || !payslips.length) return;
 
-    payslips.forEach((payslip) => {
-      // Set flag for shop employees using the allocations array
-      if (
-        this.allocations.find(
-          (item) =>
-            item.isShopEmployee && item.payrollNumber == payslip.payrollNumber,
-        )
-      ) {
-        payslip.isShopEmployee = true;
+    try {
+      payslips.forEach((payslip) => {
+        const allocation = this.allocations.find(
+          (item) => item.payrollNumber == payslip.payrollNumber,
+        );
+
+        if (!allocation) {
+          throw new Error(
+            'The recurring transaction in Quickbooks that ' +
+              `defines the class allocations does not have an entry for '${payslip.employeeName}'.`+
+              `Please add them to the salary allocations recurring transaction and then try again.`,
+          );
+        }
+
+        // Set flag for shop employees using the allocations array
+        if (allocation.isShopEmployee) {
+          payslip.isShopEmployee = true;
+        } else {
+          payslip.isShopEmployee = false;
+        }
+      });
+    } catch (error) {
+
+      //Code from https://kentcdodds.com/blog/get-a-catch-block-error-message-with-typescript
+      let message: string;
+      if (error instanceof Error) {
+        message = error.message;
       } else {
-        payslip.isShopEmployee = false;
+        message = String(error);
       }
-    });
+      this.alertService.error(message, { autoClose: false });
+      return; // Returnb and do not proceed with processing payslips.... will cause further errors
+    }
 
     // Update the payslips subject so it will be availabe to all subscribers
     this.qbPayrollService.sendPayslips(payslips);
