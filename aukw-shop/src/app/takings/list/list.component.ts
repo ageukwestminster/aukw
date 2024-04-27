@@ -8,7 +8,19 @@ import {
 import { TakingsFilter, TakingsSummary, User } from '@app/_models';
 import { environment } from '@environments/environment';
 
-import { from, Observable, of, merge, map, shareReplay, switchMap, reduce, tap, mergeMap, toArray } from 'rxjs';
+import {
+  from,
+  Observable,
+  of,
+  merge,
+  map,
+  shareReplay,
+  switchMap,
+  reduce,
+  tap,
+  mergeMap,
+  toArray,
+} from 'rxjs';
 
 @Component({ templateUrl: 'list.component.html' })
 export class TakingsListComponent implements OnInit {
@@ -32,8 +44,11 @@ export class TakingsListComponent implements OnInit {
   }
 
   get showAddToQuickbooksButton() {
-    return this.user.isAdmin && this.takingslist && 
-      this.takingslist.filter(t => !t.quickbooks).length > 0;
+    return (
+      this.user.isAdmin &&
+      this.takingslist &&
+      this.takingslist.filter((t) => !t.quickbooks).length > 0
+    );
   }
 
   ngOnInit() {
@@ -41,26 +56,29 @@ export class TakingsListComponent implements OnInit {
   }
 
   refreshList() {
-    this.takingsService.getSummary(environment.HARROWROAD_SHOPID, '').pipe(
-      tap((response) => this.takingslist = response),
-      // switchMap converts Observable<TakingSummary[]> (complex object)
-      // to Observable<number> (daily sales)
-      switchMap((dataArray: TakingsSummary[]) => {
-        const obs = dataArray.map((x) => {
-          return of(x.daily_net_sales);
-        });
-        return merge(...obs);
-      }),
-      // reduce calculates total sum & count
-      reduce(
-        (prev: { sum: number; count: number; }, current) => {
-          return { sum: prev.sum + current, count: prev.count + 1 };
-        },
-        { sum: 0, count: 0 }
-      ),
-      // map calculates average
-      map((x) => x.sum / x.count)
-    ).subscribe((average) => this.average = average);
+    this.takingsService
+      .getSummary(environment.HARROWROAD_SHOPID, '')
+      .pipe(
+        tap((response) => (this.takingslist = response)),
+        // switchMap converts Observable<TakingSummary[]> (complex object)
+        // to Observable<number> (daily sales)
+        switchMap((dataArray: TakingsSummary[]) => {
+          const obs = dataArray.map((x) => {
+            return of(x.daily_net_sales);
+          });
+          return merge(...obs);
+        }),
+        // reduce calculates total sum & count
+        reduce(
+          (prev: { sum: number; count: number }, current) => {
+            return { sum: prev.sum + current, count: prev.count + 1 };
+          },
+          { sum: 0, count: 0 },
+        ),
+        // map calculates average
+        map((x) => x.sum / x.count),
+      )
+      .subscribe((average) => (this.average = average));
   }
 
   /* remove takings from visible list */
@@ -79,27 +97,27 @@ export class TakingsListComponent implements OnInit {
   }
 
   addAllToQuickbooks() {
-    const takingslistNotInQB = this.takingslist.filter(t => !t.quickbooks )
+    const takingslistNotInQB = this.takingslist.filter((t) => !t.quickbooks);
 
-    from(takingslistNotInQB).pipe(
-      mergeMap((t) => 
-        this.takingsService.addToQuickbooks(t.id),
-      ),
-      toArray(),
-      this.loadingIndicatorService.createObserving({
-        loading: () => `Adding daily sales receipts to Enterprises Quickbooks`,
-        success: (result) =>
-          `Successfully added ${result.length} sales receipts to Quickbooks.`,
-        error: (err) => `${err}`,
-      }),
-      shareReplay(1),
-    )
-    .subscribe({
-      error: (e) => {
-        this.alertService.error(e, { autoClose: false });
-      },
-      complete: ()=> this.refreshList(),
-    });
+    from(takingslistNotInQB)
+      .pipe(
+        mergeMap((t) => this.takingsService.addToQuickbooks(t.id)),
+        toArray(),
+        this.loadingIndicatorService.createObserving({
+          loading: () =>
+            `Adding daily sales receipts to Enterprises Quickbooks`,
+          success: (result) =>
+            `Successfully added ${result.length} sales receipts to Quickbooks.`,
+          error: (err) => `${err}`,
+        }),
+        shareReplay(1),
+      )
+      .subscribe({
+        error: (e) => {
+          this.alertService.error(e, { autoClose: false });
+        },
+        complete: () => this.refreshList(),
+      });
   }
 
   takingsUpdated(takings: TakingsSummary[]) {

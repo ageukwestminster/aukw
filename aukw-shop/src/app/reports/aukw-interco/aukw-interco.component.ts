@@ -10,10 +10,11 @@ import { SummaryService } from '@app/_services';
 import { AbstractChartReportComponent } from '../chart-report.component';
 
 @Component({
-  selector: 'sales-list',
-  templateUrl: './sales-list.component.html',
+  selector: 'aukw-interco',
+  templateUrl: './aukw-interco.component.html',
 })
-export class SalesListComponent extends AbstractChartReportComponent<SalesChartData> {
+export class AukwIntercoComponent extends AbstractChartReportComponent<SalesChartData> {
+  form!: FormGroup;
   constructor(
     private summaryService: SummaryService,
     private dateRangeAdapter1: DateRangeAdapter,
@@ -37,11 +38,5 @@ export class SalesListComponent extends AbstractChartReportComponent<SalesChartD
         }),
       )
       .subscribe();
-  }
-
-  onRowSelected(takingsID: number | null) {
-    if (takingsID) {
-      this.router1.navigate([`takings/edit/${takingsID}`]);
-    }
   }
 }

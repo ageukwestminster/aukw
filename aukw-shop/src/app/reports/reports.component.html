@@ -47,5 +47,21 @@
         </div>
       </div>
     </div>
+    <div ngbAccordionItem *ngIf="user.isAdmin">
+      <h2 ngbAccordionHeader>
+        <button ngbAccordionButton>Quickbooks</button>
+      </h2>
+      <div ngbAccordionCollapse>
+        <div ngbAccordionBody>
+          <ng-template>
+            <ul>
+              <li>
+                <a routerLink="aukw-interco">AUKW Interco Account</a>
+              </li>
+            </ul>
+          </ng-template>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

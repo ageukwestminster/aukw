@@ -1,8 +1,4 @@
-import {
-  Component,
-  OnChanges,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IrisPayslip, LineItemDetail } from '@app/_models';
 import { scan, shareReplay, tap } from 'rxjs';
@@ -16,7 +12,6 @@ import { ParentComponent } from './parent.component';
   templateUrl: './employer-ni.component.html',
 })
 export class EmployerNiComponent extends ParentComponent implements OnChanges {
-
   /**
    * On every change of the input variables, recalculate the allocated employer ni costs.
    * @param changes SimpleChanges The inputs that have changed. Not used but retained to match interface.

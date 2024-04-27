@@ -1,7 +1,7 @@
 <div class="card mt-4 col-sm-11">
   <div class="card-header justify-content-between">
     <div class="col-sm">
-      <h4>Most Recent Sales Vs Historical Averages</h4>
+      <h4>AUKW Intercompany Account</h4>
     </div>
     <div>
       <button type="button" routerLink="/reports" class="btn btn-outline-dark">
@@ -12,8 +12,6 @@
   <div class="card-body">
     <form [formGroup]="form">
       <div *ngIf="!data" class="spinner-border spinner-border-sm"></div>
-
-      <sales-chart [salesChartData]="data"></sales-chart>
 
       <div class="row class">
         <div class="col-sm">
@@ -28,10 +26,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr
-                *ngFor="let item of data?.sales; index as i"
-                (click)="onRowSelected(data.takingsids[i])"
-              >
+              <tr *ngFor="let item of data?.sales; index as i">
                 <th>
                   <span class="text-dark" *ngIf="data">{{
                     data.dates[i]

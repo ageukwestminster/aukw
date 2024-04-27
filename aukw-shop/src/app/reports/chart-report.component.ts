@@ -85,12 +85,6 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
 
   refreshSummary(startDate: string, endDate: string) {}
 
-  onRowSelected(takingsID: number | null) {
-    if (takingsID) {
-      this.router.navigate([`takings/edit/${takingsID}`]);
-    }
-  }
-
   private ngbDateToString(date: NgbDateStruct | null): string | null {
     return date
       ? date.year.toString() +

@@ -10,6 +10,7 @@ import { ReportsLayoutComponent } from './layout.component';
 import { ReportsComponent } from './reports.component';
 import { SalesListComponent } from './sales-list';
 import { SalesHistogramComponent } from './sales-histogram';
+import { AukwIntercoComponent } from './aukw-interco';
 
 @NgModule({
   imports: [
@@ -20,6 +21,7 @@ import { SalesHistogramComponent } from './sales-histogram';
     NgbModule,
   ],
   declarations: [
+    AukwIntercoComponent,
     ReportsComponent,
     ReportsLayoutComponent,
     SalesListComponent,

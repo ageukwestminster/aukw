@@ -55,24 +55,16 @@ class QBReportCtl{
   }
 
     /**
-   * Show a QBO eneral Ledger report.
-   * HTTP parameters are: start, end, summarizeColumn
+   * Show a QBO general Ledger report.
+   * HTTP parameters are: account, start, end, summarizeColumn
    *
    * @return void Output is echoed directly to response
    * 
    */
-  public static function general_ledger(){  
-
-    if(!isset($_GET['realmid']) ) {
-      http_response_code(400);   
-      echo json_encode(
-        array("message" => "Please supply a value for the 'realmid' parameter.")
-      );
-      exit(1);
-    } 
+  public static function general_ledger(string $realmid){  
 
     $model = new \Models\QuickbooksReport();
-    $model->realmid = $_GET['realmid'];
+    $model->realmid = $realmid;
 
     if(isset($_GET['start']) || isset($_GET['end'])) {
       $start='';
@@ -95,6 +87,8 @@ class QBReportCtl{
     if (isset($_GET['account']) && !empty($_GET['account'])) {
       $model->account = $_GET['account'];
     } 
+
+      $model->columns = "tx_date,txn_type,doc_num,emp_name,memo,account_name,subt_nat_amount,rbal_nat_amount";
 
     echo json_encode($model->general_ledger(), JSON_NUMERIC_CHECK);
   }

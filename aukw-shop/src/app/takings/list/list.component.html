@@ -19,9 +19,7 @@
   (loading)="filterIsLoading($event)"
   (filter)="takingsFilterUpdated($event)"
 ></takings-filter>
-<div *ngIf="average">
-  Average Sales £{{ average | number: "1.2-2" }}
-</div>
+<div *ngIf="average">Average Sales £{{ average | number: "1.2-2" }}</div>
 <table class="table table-striped table-responsive">
   <thead>
     <tr>

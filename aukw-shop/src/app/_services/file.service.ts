@@ -42,9 +42,7 @@ export class FileService {
 
   parse(fileName: string = '') {
     if (fileName == '') {
-      return this.http.get<IrisPayslip[]>(
-        `${baseUrl}/parse`,
-      );
+      return this.http.get<IrisPayslip[]>(`${baseUrl}/parse`);
     } else {
       return this.http.get<IrisPayslip[]>(
         `${baseUrl}/parse?filename=${fileName}`,

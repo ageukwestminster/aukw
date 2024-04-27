@@ -1,8 +1,4 @@
-import {
-  Component,
-  OnChanges,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IrisPayslip, LineItemDetail } from '@app/_models';
 import { scan, shareReplay, tap } from 'rxjs';
@@ -15,7 +11,10 @@ import { ParentComponent } from './parent.component';
   imports: [AllocatedCostsListComponent, CommonModule],
   templateUrl: './pension-invoice.component.html',
 })
-export class PensionInvoiceComponent extends ParentComponent implements OnChanges {
+export class PensionInvoiceComponent
+  extends ParentComponent
+  implements OnChanges
+{
   totalSalarySacrifice: number = 0;
   totalEmployeePension: number = 0;
 

@@ -50,6 +50,12 @@ class QuickbooksReport{
      * @var int
      */
     public int $account = 0;
+    /**
+     * A QBO column list
+     *
+     * @var string
+     */
+    public string $columns = '';
 
         /**
      * Generate a Profit & Loss report
@@ -83,11 +89,12 @@ class QuickbooksReport{
             return;
         }
   
-        $reportService->setStartDate($this->startdate);
-        $reportService->setEndDate($this->enddate);
-        $reportService->setSummarizeColumnBy($this->summarizeColumn);
-
-        $profitAndLossReport = $reportService->executeReport(ReportName::PROFITANDLOSS);
+        $profitAndLossReport = $reportService
+            ->setStartDate($this->startdate)
+            ->setEndDate($this->enddate)
+            ->setSummarizeColumnBy($this->summarizeColumn)
+            ->setColumns($this->columns)
+            ->executeReport(ReportName::PROFITANDLOSS);
 
         $error = $dataService->getLastError();
         if ($error) {
@@ -142,16 +149,56 @@ class QuickbooksReport{
             $reportService->setAccount($this->account);
         }
 
-        $profitAndLossReport = $reportService->executeReport(ReportName::GENERALLEDGER);
+        if ($this->columns) {
+            $reportService->setColumns($this->columns);
+        }
+
+        $report = $reportService->executeReport(ReportName::GENERALLEDGER);
 
         $error = $dataService->getLastError();
         if ($error) {
             echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
             echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
             echo "The Response message is: " . $error->getResponseBody() . "\n";
+            return [];
         }
         else {
-            return $profitAndLossReport;
+            
+            $report_arr=array();
+            /** @disregard Intelephense error on next line */
+            $data = $report->Rows->Row[0]->Rows->Row;
+
+            foreach ($data as $value) {
+                $line=array();
+
+                
+                $line['date'] = $value->ColData[0]->value;
+
+                $txn=array();
+                $txn['value'] = $value->ColData[1]->value;
+                if (isset($value->ColData[1]->id)) $txn['id'] = $value->ColData[1]->id;                
+                $line['type'] = $txn;
+
+                $line['docnumber'] = $value->ColData[2]->value;
+
+                $employee=array();
+                $employee['value'] = $value->ColData[3]->value;
+                if (isset($value->ColData[3]->id)) $employee['id'] = $value->ColData[3]->id;
+                $line['emp_name'] = $employee;
+
+                $line['memo'] = $value->ColData[4]->value;
+
+                $account=array();
+                $account['value'] = $value->ColData[5]->value;
+                if (isset($value->ColData[5]->id)) $account['id'] = $value->ColData[5]->id; 
+                $line['account'] = $account;
+
+                $line['amount'] = $value->ColData[6]->value;
+                $line['balance'] = $value->ColData[7]->value;
+                array_push($report_arr, $line);
+            }
+
+            return $report_arr;
         }
 
     }
