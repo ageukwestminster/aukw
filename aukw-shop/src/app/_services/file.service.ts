@@ -40,9 +40,15 @@ export class FileService {
     );
   }
 
-  parse(fileName: string) {
-    return this.http.get<IrisPayslip[]>(
-      `${baseUrl}/parse?filename=${fileName}`,
-    );
+  parse(fileName: string = '') {
+    if (fileName == '') {
+      return this.http.get<IrisPayslip[]>(
+        `${baseUrl}/parse`,
+      );
+    } else {
+      return this.http.get<IrisPayslip[]>(
+        `${baseUrl}/parse?filename=${fileName}`,
+      );
+    }
   }
 }
