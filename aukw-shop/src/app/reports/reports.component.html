@@ -29,7 +29,7 @@
         </div>
       </div>
     </div>
-    <div ngbAccordionItem>
+    <div ngbAccordionItem *ngIf="user.isAdmin">
       <h2 ngbAccordionHeader>
         <button ngbAccordionButton>Security & Audit</button>
       </h2>
