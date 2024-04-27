@@ -77,7 +77,7 @@ export class EmployeeJournalsComponent implements OnChanges {
     });
 
     if (journalsToAdd && journalsToAdd.length) {
-      //console.log(JSON.stringify(this.lines));
+      
       from(journalsToAdd)
         .pipe(
           mergeMap((j) =>

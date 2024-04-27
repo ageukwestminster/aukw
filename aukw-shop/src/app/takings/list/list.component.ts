@@ -1,29 +1,29 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { Component, inject, OnInit } from '@angular/core';
 import {
   AlertService,
   AuthenticationService,
+  LoadingIndicatorService,
   TakingsService,
 } from '@app/_services';
-import { ApiMessage, TakingsFilter, TakingsSummary, User } from '@app/_models';
+import { TakingsFilter, TakingsSummary, User } from '@app/_models';
 import { environment } from '@environments/environment';
 
-import { from, Observable, of, merge, map } from 'rxjs';
-import { concatMap, switchMap, reduce } from 'rxjs/operators';
+import { from, Observable, of, merge, map, shareReplay, switchMap, reduce, tap, mergeMap, toArray } from 'rxjs';
 
 @Component({ templateUrl: 'list.component.html' })
 export class TakingsListComponent implements OnInit {
   takingslist!: TakingsSummary[];
-  takingslistNotInQB!: TakingsSummary[];
-  average$!: Observable<number>;
+  average: number = 0;
   user!: User;
   loading: boolean = false;
   filter!: TakingsFilter;
 
-  constructor(
-    private takingsService: TakingsService,
-    private authenticationService: AuthenticationService,
-    private alertService: AlertService,
-  ) {
+  private loadingIndicatorService = inject(LoadingIndicatorService);
+  private takingsService = inject(TakingsService);
+  private authenticationService = inject(AuthenticationService);
+  private alertService = inject(AlertService);
+
+  constructor() {
     this.user = this.authenticationService.userValue;
   }
 
@@ -31,11 +31,18 @@ export class TakingsListComponent implements OnInit {
     return environment.production;
   }
 
-  ngOnInit() {
-    const takings$: Observable<TakingsSummary[]> =
-      this.takingsService.getSummary(environment.HARROWROAD_SHOPID, '');
+  get showAddToQuickbooksButton() {
+    return this.user.isAdmin && this.takingslist && 
+      this.takingslist.filter(t => !t.quickbooks).length > 0;
+  }
 
-    this.average$ = takings$.pipe(
+  ngOnInit() {
+    this.refreshList();
+  }
+
+  refreshList() {
+    this.takingsService.getSummary(environment.HARROWROAD_SHOPID, '').pipe(
+      tap((response) => this.takingslist = response),
       // switchMap converts Observable<TakingSummary[]> (complex object)
       // to Observable<number> (daily sales)
       switchMap((dataArray: TakingsSummary[]) => {
@@ -46,21 +53,14 @@ export class TakingsListComponent implements OnInit {
       }),
       // reduce calculates total sum & count
       reduce(
-        (prev: { sum: number; count: number }, current) => {
+        (prev: { sum: number; count: number; }, current) => {
           return { sum: prev.sum + current, count: prev.count + 1 };
         },
-        { sum: 0, count: 0 },
+        { sum: 0, count: 0 }
       ),
       // map calculates average
-      map((x) => x.sum / x.count),
-    );
-
-    takings$.subscribe((takingslist: TakingsSummary[]) => {
-      this.takingslist = takingslist;
-      this.takingslistNotInQB = this.takingslist.filter(
-        (x) => x.quickbooks == false,
-      );
-    });
+      map((x) => x.sum / x.count)
+    ).subscribe((average) => this.average = average);
   }
 
   /* remove takings from visible list */
@@ -71,42 +71,35 @@ export class TakingsListComponent implements OnInit {
   takingsWasAddedToQB(takings: TakingsSummary): void {
     let updateItem = this.takingslist.find((x) => x.id == takings.id);
 
-    if (updateItem != null) {
+    if (updateItem) {
       let index = this.takingslist.indexOf(updateItem);
+      //Replace the stored takings item with the supplied takings item
       this.takingslist[index] = takings;
-      this.takingslistNotInQB = this.takingslist.filter(
-        (x) => x.quickbooks == false,
-      );
     }
   }
 
   addAllToQuickbooks() {
-    if (!this.takingslistNotInQB || !this.takingslistNotInQB.length) return;
+    const takingslistNotInQB = this.takingslist.filter(t => !t.quickbooks )
 
-    from(this.takingslistNotInQB)
-      .pipe(
-        concatMap((t: TakingsSummary) => {
-          t.isUpdating = true;
-
-          return this.takingsService.addToQuickbooks(t.id).pipe(
-            concatMap((msg: ApiMessage) => {
-              t.quickbooks = true;
-              t.isUpdating = false;
-              this.alertService.success(msg.message, {
-                keepAfterRouteChange: true,
-              });
-              return of(msg);
-            }),
-          );
-        }),
-      )
-      .subscribe({
-        error: (error) => {
-          this.alertService.error(error.message, {
-            autoClose: false,
-          });
-        },
-      });
+    from(takingslistNotInQB).pipe(
+      mergeMap((t) => 
+        this.takingsService.addToQuickbooks(t.id),
+      ),
+      toArray(),
+      this.loadingIndicatorService.createObserving({
+        loading: () => `Adding daily sales receipts to Enterprises Quickbooks`,
+        success: (result) =>
+          `Successfully added ${result.length} sales receipts to Quickbooks.`,
+        error: (err) => `${err}`,
+      }),
+      shareReplay(1),
+    )
+    .subscribe({
+      error: (e) => {
+        this.alertService.error(e, { autoClose: false });
+      },
+      complete: ()=> this.refreshList(),
+    });
   }
 
   takingsUpdated(takings: TakingsSummary[]) {
