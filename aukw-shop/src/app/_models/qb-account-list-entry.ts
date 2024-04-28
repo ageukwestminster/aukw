@@ -31,6 +31,10 @@ export class QBAccountListEntry {
    */
   amount: number | string;  
   /**
+   * A string showing the reconciled status of the transaction.
+   */
+  is_cleared: 'R' | 'C' | '';  
+  /**
    * The running total of the account
    */
   balance: number;  
@@ -44,6 +48,7 @@ export class QBAccountListEntry {
     this.account = (obj && obj.account) || null;
     this.amount = (obj && obj.amount) || null;
     this.balance = (obj && obj.balance) || null;
+    this.is_cleared = (obj && obj.is_cleared) || null;
   }
 }
 

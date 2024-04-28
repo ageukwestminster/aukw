@@ -87,8 +87,15 @@ class QBReportCtl{
     if (isset($_GET['account']) && !empty($_GET['account'])) {
       $model->account = $_GET['account'];
     } 
+    if (isset($_GET['sortAscending'])) {
+      $model->sortAscending = true;
+    } 
+    if (isset($_GET['sortDescending'])) {
+      $model->sortAscending = false;
+    } 
 
-    $model->columns = "tx_date,txn_type,doc_num,emp_name,memo,split_acc,subt_nat_amount,rbal_nat_amount";
+    $model->columns = "tx_date,txn_type,doc_num,emp_name,memo," . 
+              "split_acc,is_cleared,subt_nat_amount,rbal_nat_amount";
     $model->sortBy = "tx_date";
 
     try {

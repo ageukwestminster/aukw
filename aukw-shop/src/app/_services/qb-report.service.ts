@@ -21,7 +21,7 @@ export class QBReportService {
    */
   getIntercoAccountLedger(start: string = '', end: string = ''): Observable<QBAccountListEntry[]> {
     return this.http.get<QBAccountListEntry[]>(`${baseUrl}/${environment.qboEnterprisesRealmID}/report/generalledger`+
-      `?start=${start}&end=${end}&account=80`
+      `?start=${start}&end=${end}&account=80&sortDescending`
     );
   }
 }

@@ -94,11 +94,17 @@
             <thead>
               <tr>
                 <th>Date</th>
-                <th>Type</th>
-                <th>Name</th>
-                <th>Memo</th>
-                <th>Increase</th>
-                <th>Decrease</th>
+                <th class="d-none d-sm-table-cell">Type</th>
+                <th class="d-none d-sm-table-cell">Name</th>
+                <th class="d-none d-sm-table-cell">Memo</th>
+                <th>
+                  <!-- Tooltip must be on element inside header, not header itself-->
+                  <!-- From https://stackoverflow.com/a/48324991/6941165 -->
+                  <div ngbTooltip="Reconciliation status">Rec?</div>
+                </th>
+                <th class="d-none d-sm-table-cell">Increase</th>
+                <th class="d-none d-sm-table-cell">Decrease</th>
+                <th class="d-table-cell d-md-none">Amount</th>
                 <th>Balance</th>
               </tr>
             </thead>
@@ -109,11 +115,13 @@
                     item.date
                   }}</span>
                 </th>
-                <td class="text-start">{{ item.type.value }}</td>
-                <td class="text-start">{{ item.emp_name.value }}</td>
-                <td class="text-start">{{ item.memo }}</td>
-                <td class="text-end">{{ increaseAmount(item.amount) | number: "1.2-2" }}</td>
-                <td class="text-end">{{ decreaseAmount(item.amount) | number: "1.2-2" }}</td>
+                <td class="d-none d-sm-table-cell text-start">{{ item.type.value }}</td>
+                <td class="d-none d-sm-table-cell text-start">{{ item.emp_name.value }}</td>
+                <td class="d-none d-sm-table-cell text-start">{{ item.memo }}</td>
+                <td class="text-center">{{ item.is_cleared }}</td>
+                <td class="d-none d-sm-table-cell text-end">{{ increaseAmount(item.amount) | number: "1.2-2" }}</td>
+                <td class="d-none d-sm-table-cell text-end">{{ decreaseAmount(item.amount) | number: "1.2-2" }}</td>
+                <td class="d-table-cell d-md-none">{{ item.amount | number: "1.2-2" }}</td>
                 <td class="text-end">{{ item.balance | number: "1.2-2" }}</td>
               </tr>
               <tr *ngIf="!data">

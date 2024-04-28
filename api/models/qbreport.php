@@ -57,11 +57,17 @@ class QuickbooksReport{
      */
     public string $columns = '';
     /**
-     * The QBO column to sort by. Usu 'date'?
+     * The QBO column to sort by. Usu 'tx_date'.
      *
      * @var string
      */
     public string $sortBy = '';
+    /**
+     * 'True' if should be sorted by date ascending
+     *
+     * @var bool
+     */
+    public bool $sortAscending = true;
 
         /**
      * Generate a Profit & Loss report
@@ -196,12 +202,17 @@ class QuickbooksReport{
                 if (isset($value->ColData[5]->id)) $account['id'] = $value->ColData[5]->id; 
                 $line['account'] = $account;
 
-                $line['amount'] = $value->ColData[6]->value;
-                $line['balance'] = $value->ColData[7]->value;
+                $line['is_cleared'] = $value->ColData[6]->value;
+                $line['amount'] = $value->ColData[7]->value;
+                $line['balance'] = $value->ColData[8]->value;
                 array_push($report_arr, $line);
             }
 
-            return $report_arr;
+            if ($this->sortAscending) {
+                return $report_arr;    
+            } else {           
+                return array_reverse($report_arr);
+            }
         }
 
     }

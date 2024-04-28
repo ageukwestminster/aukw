@@ -37,7 +37,8 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
   }
 
   /** Required so that the template can access the Enum.
-   * Source: https://stackoverflow.com/a/59289208 */
+   * {@link  https://stackoverflow.com/a/59289208} 
+   */
   readonly DateRange = DateRangeEnum;
 
   /** Used to stop the keyvalues pipe re-arranging the order of the Enum.

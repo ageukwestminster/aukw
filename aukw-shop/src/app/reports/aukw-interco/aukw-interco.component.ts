@@ -1,9 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-
-import { tap } from 'rxjs/operators';
-
 import { DateRangeAdapter } from '@app/_helpers';
 import { AlertService, QBReportService } from '@app/_services';
 import { AbstractChartReportComponent } from '../chart-report.component';
