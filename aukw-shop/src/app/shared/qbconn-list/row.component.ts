@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { QBAuthUri, QBConnectionDetails, QBRealm, User } from '@app/_models';
 import {
   AlertService,
@@ -12,6 +13,8 @@ import {
   selector: 'tr[qb-connection-row]',
   templateUrl: './row.component.html',
   styleUrls: ['./row.component.css'],
+  standalone: true,
+  imports: [ CommonModule ],
 })
 export class QBConnectionRowComponent {
   user!: User;

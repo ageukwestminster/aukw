@@ -1,5 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { NgIf, NgClass } from '@angular/common';
+import { CommonModule, NgClass, NgIf } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { Location } from '@angular/common';
 import {
@@ -19,12 +20,12 @@ import {
 } from '@app/_services';
 import { MustMatch } from '@app/_helpers';
 import { Shop, User, UserFormMode } from '@app/_models';
-import { SharedModule } from '@app/shared/shared.module';
+import { QBConnectionListComponent } from '@app/shared';
 
 @Component({
   templateUrl: 'add-edit.component.html',
   standalone: true,
-  imports: [NgIf, NgClass, RouterLink, SharedModule],
+  imports: [ CommonModule, NgClass, NgIf, ReactiveFormsModule, RouterLink, QBConnectionListComponent],
 })
 export class UserAddEditComponent implements OnInit {
   form!: FormGroup;
@@ -34,7 +35,6 @@ export class UserAddEditComponent implements OnInit {
   loading = false;
   submitted = false;
   user!: User;
-  windowHandle: any = null;
 
   constructor(
     private formBuilder: FormBuilder,

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NgIf } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import {
   DateRangeEnum,
@@ -35,6 +36,7 @@ import {
     SalesChartComponent,
     SalesHistogramChartComponent,
     SummaryTableComponent,
+    NgIf
   ],
 })
 export class HomeComponent implements OnInit {

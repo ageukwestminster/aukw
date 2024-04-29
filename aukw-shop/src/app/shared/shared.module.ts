@@ -5,8 +5,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { PayrollFileUploadComponent } from './payroll-file-upload/payroll-file-upload.component';
 import { MoneyInputComponent } from './money-input/money-input.component';
-import { QBConnectionListComponent } from './qbconn-list/list.component';
-import { QBConnectionRowComponent } from './qbconn-list/row.component';
 import { PasswordInputModalComponent } from './payroll-file-upload/password-input.component';
 
 @NgModule({
@@ -15,15 +13,11 @@ import { PasswordInputModalComponent } from './payroll-file-upload/password-inpu
     PayrollFileUploadComponent,
     MoneyInputComponent,
     PasswordInputModalComponent,
-    QBConnectionListComponent,
-    QBConnectionRowComponent,
   ],
   exports: [
     PayrollFileUploadComponent,
     MoneyInputComponent,
     PasswordInputModalComponent,
-    QBConnectionListComponent,
-    QBConnectionRowComponent,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
