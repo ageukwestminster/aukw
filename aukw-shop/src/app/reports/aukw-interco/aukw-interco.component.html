@@ -11,9 +11,12 @@
   </div>
   <div class="row justify-content-between mt-2">
     <div class="col-sm-6">
-      <span *ngIf="loading"
-        class="spinner-border spinner-border-lg align-center"
-      ></span>
+      <div>
+        <span
+          *ngIf="loading"
+          class="spinner-border spinner-border-lg align-center"
+        ></span>
+      </div>
       <div *ngIf="data && data.length" class="m-2">
         Found {{ data && data.length }} entries
       </div>
@@ -42,7 +45,6 @@
   </div>
   <div class="card-body">
     <form [formGroup]="form">
-
       <div class="row mb-4">
         <div class="col-sm">
           <div class="input-group">
@@ -141,17 +143,27 @@
             <tbody>
               <tr *ngFor="let item of data">
                 <th>
-                  <span class="text-dark">{{
-                    item.date
-                  }}</span>
+                  <span class="text-dark">{{ item.date }}</span>
                 </th>
-                <td class="d-none d-sm-table-cell text-start">{{ item.type.value }}</td>
-                <td class="d-none d-sm-table-cell text-start">{{ item.emp_name.value }}</td>
-                <td class="d-none d-sm-table-cell text-start">{{ item.memo }}</td>
+                <td class="d-none d-sm-table-cell text-start">
+                  {{ item.type.value }}
+                </td>
+                <td class="d-none d-sm-table-cell text-start">
+                  {{ item.emp_name.value }}
+                </td>
+                <td class="d-none d-sm-table-cell text-start">
+                  {{ item.memo }}
+                </td>
                 <td class="text-center">{{ item.is_cleared }}</td>
-                <td class="d-none d-sm-table-cell text-end">{{ increaseAmount(item.amount) | number: "1.2-2" }}</td>
-                <td class="d-none d-sm-table-cell text-end">{{ decreaseAmount(item.amount) | number: "1.2-2" }}</td>
-                <td class="d-table-cell d-md-none">{{ item.amount | number: "1.2-2" }}</td>
+                <td class="d-none d-sm-table-cell text-end">
+                  {{ increaseAmount(item.amount) | number: "1.2-2" }}
+                </td>
+                <td class="d-none d-sm-table-cell text-end">
+                  {{ decreaseAmount(item.amount) | number: "1.2-2" }}
+                </td>
+                <td class="d-table-cell d-md-none">
+                  {{ item.amount | number: "1.2-2" }}
+                </td>
                 <td class="text-end">{{ item.balance | number: "1.2-2" }}</td>
               </tr>
               <tr *ngIf="!data">

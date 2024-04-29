@@ -11,10 +11,7 @@
   </div>
   <div class="card-body">
     <form [formGroup]="form">
-      <div
-        *ngIf="!data"
-        class="spinner-border spinner-border-sm"
-      ></div>
+      <div *ngIf="!data" class="spinner-border spinner-border-sm"></div>
       <div class="row mb-4">
         <div class="col-sm">
           <div class="input-group">
@@ -88,15 +85,11 @@
         </div>
       </div>
 
-      <sales-histogram
-        [histogramChartData]="data"
-      ></sales-histogram>
+      <sales-histogram [histogramChartData]="data"></sales-histogram>
 
       <div class="row class">
         <div class="col-sm">
-          <p class="p-2" *ngIf="data">
-            Click on a row to see sales detail.
-          </p>
+          <p class="p-2" *ngIf="data">Click on a row to see sales detail.</p>
           <table
             class="table table-striped table-hover table-responsive w-auto"
           >
@@ -107,10 +100,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr
-                *ngFor="let item of data?.list"
-                (click)="onRowSelected(item)"
-              >
+              <tr *ngFor="let item of data?.list" (click)="onRowSelected(item)">
                 <th>
                   <span class="text-dark">{{ item[1] }}</span>
                 </th>
@@ -120,8 +110,7 @@
                 <td>Total</td>
                 <td class="text-center">
                   <strong *ngIf="data">{{
-                    data!.count * data!.average
-                      | number: "1.2-2"
+                    data!.count * data!.average | number: "1.2-2"
                   }}</strong>
                 </td>
               </tr>

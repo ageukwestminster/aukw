@@ -9,17 +9,16 @@ import { DateRangeAdapter } from '@app/_helpers';
 import { DateRange, DateRangeEnum } from '@app/_models';
 import { ExportToCsvService } from '@app/_services';
 
-@Component({ 
-  template: '',  
+@Component({
+  template: '',
   standalone: true,
   imports: [],
- })
+})
 export abstract class AbstractChartReportComponent<T = any> implements OnInit {
   protected form!: FormGroup;
   protected loading: boolean = false;
 
   @Input() data!: T;
-  
 
   protected exportToCsvService = inject(ExportToCsvService);
 
@@ -45,7 +44,7 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
   }
 
   /** Required so that the template can access the Enum.
-   * {@link  https://stackoverflow.com/a/59289208} 
+   * {@link  https://stackoverflow.com/a/59289208}
    */
   readonly DateRange = DateRangeEnum;
 

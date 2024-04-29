@@ -27,17 +27,17 @@ export class QBAccountListEntry {
    */
   account: ValueIdPair;
   /**
-   * The amount 
+   * The amount
    */
-  amount: number | string;  
+  amount: number | string;
   /**
    * A string showing the reconciled status of the transaction.
    */
-  is_cleared: 'R' | 'C' | '';  
+  is_cleared: 'R' | 'C' | '';
   /**
    * The running total of the account
    */
-  balance: number;  
+  balance: number;
 
   constructor(obj?: any) {
     this.date = (obj && obj.date) || null;
@@ -52,7 +52,8 @@ export class QBAccountListEntry {
   }
 
   public stringRepresentation() {
-    return { date: this.date,
+    return {
+      date: this.date,
       type: this.type.value,
       docnumber: this.docnumber,
       emp_name: this.emp_name.value,

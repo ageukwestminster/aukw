@@ -20,18 +20,19 @@ export class QBReportService {
    * @returns Array of employee ids and names
    */
   getIntercoAccountLedger(
-    start: string = '', 
-    end: string = '', 
-    enterprises: boolean = true
+    start: string = '',
+    end: string = '',
+    enterprises: boolean = true,
   ): Observable<QBAccountListEntry[]> {
     let realmId = environment.qboEnterprisesRealmID;
     let accountId = 80;
-    if (!enterprises) { 
+    if (!enterprises) {
       realmId = environment.qboCharityRealmID;
       accountId = 65;
     }
-      return this.http.get<QBAccountListEntry[]>(`${baseUrl}/${realmId}/report/generalledger`+
-        `?start=${start}&end=${end}&account=${accountId}&sortDescending`
-      );
+    return this.http.get<QBAccountListEntry[]>(
+      `${baseUrl}/${realmId}/report/generalledger` +
+        `?start=${start}&end=${end}&account=${accountId}&sortDescending`,
+    );
   }
 }
