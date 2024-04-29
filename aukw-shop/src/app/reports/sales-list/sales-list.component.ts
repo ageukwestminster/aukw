@@ -16,7 +16,6 @@ import { SalesChartComponent } from '@app/shared';
   imports: [CommonModule, ReactiveFormsModule, RouterLink, SalesChartComponent],
 })
 export class SalesListComponent extends AbstractChartReportComponent<SalesChartData> {
-
   private summaryService = inject(SummaryService);
 
   refreshSummary() {

@@ -8,7 +8,7 @@ import { Summary } from '@app/_models';
   templateUrl: './summary-table.component.html',
   styleUrls: ['./summary-table.component.css'],
   standalone: true,
-  imports: [ CommonModule, NgbTooltipModule ],
+  imports: [CommonModule, NgbTooltipModule],
 })
 export class SummaryTableComponent implements OnInit {
   loading = false;

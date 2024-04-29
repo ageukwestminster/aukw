@@ -36,7 +36,7 @@ import {
     SalesChartComponent,
     SalesHistogramChartComponent,
     SummaryTableComponent,
-    NgIf
+    NgIf,
   ],
 })
 export class HomeComponent implements OnInit {

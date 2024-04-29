@@ -5,5 +5,5 @@ export * from './moving-avg-chart/moving-avg-chart.component';
 export * from './qbconn-list/list.component';
 export * from './qbconn-list/row.component';
 export * from './sales-chart/sales-chart.component';
-export * from './sales-histogram/sales-histogram-chart.component'
+export * from './sales-histogram/sales-histogram-chart.component';
 export * from './summary-table/summary-table.component';

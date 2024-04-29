@@ -15,10 +15,15 @@ import { SalesHistogramChartComponent } from '@app/shared';
 @Component({
   templateUrl: './sales-histogram.component.html',
   standalone: true,
-  imports: [CommonModule, NgbDatepickerModule, ReactiveFormsModule, RouterLink, SalesHistogramChartComponent],
+  imports: [
+    CommonModule,
+    NgbDatepickerModule,
+    ReactiveFormsModule,
+    RouterLink,
+    SalesHistogramChartComponent,
+  ],
 })
 export class SalesHistogramComponent extends AbstractChartReportComponent<HistogramChartData> {
-
   private reportService = inject(ReportService);
 
   /** Convenience getter for easy access to form fields */

@@ -25,7 +25,14 @@ import { QBConnectionListComponent } from '@app/shared';
 @Component({
   templateUrl: 'add-edit.component.html',
   standalone: true,
-  imports: [ CommonModule, NgClass, NgIf, ReactiveFormsModule, RouterLink, QBConnectionListComponent],
+  imports: [
+    CommonModule,
+    NgClass,
+    NgIf,
+    ReactiveFormsModule,
+    RouterLink,
+    QBConnectionListComponent,
+  ],
 })
 export class UserAddEditComponent implements OnInit {
   form!: FormGroup;

@@ -14,7 +14,7 @@ import {
   templateUrl: './row.component.html',
   styleUrls: ['./row.component.css'],
   standalone: true,
-  imports: [ CommonModule ],
+  imports: [CommonModule],
 })
 export class QBConnectionRowComponent {
   user!: User;

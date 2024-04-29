@@ -8,7 +8,7 @@ import { QBConnectionRowComponent } from './row.component';
   selector: 'qbconn-list',
   templateUrl: 'list.component.html',
   standalone: true,
-  imports: [ CommonModule, QBConnectionRowComponent],
+  imports: [CommonModule, QBConnectionRowComponent],
 })
 export class QBConnectionListComponent implements OnInit {
   @Input() userID: number = 0;
