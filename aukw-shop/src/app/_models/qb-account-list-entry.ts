@@ -7,7 +7,8 @@ export class QBAccountListEntry {
    */
   date: string;
   /**
-   * The type of QB transaction
+   * The type of QB transaction. The only values seen to date are: 
+   * Journal Entry, Bill, Transfer, Expense, Supplier Credit, Deposit, Cheque, Sales Receipt
    */
   type: ValueIdPair;
   /**
