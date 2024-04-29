@@ -21,12 +21,9 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
   @Input() data!: T;
 
   protected exportToCsvService = inject(ExportToCsvService);
-
-  constructor(
-    private dateRangeAdapter: DateRangeAdapter,
-    private formBuilder: FormBuilder,
-    private router: Router,
-  ) {}
+  protected dateRangeAdapter = inject(DateRangeAdapter);
+  protected formBuilder = inject(FormBuilder);
+  protected router = inject(Router);
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({

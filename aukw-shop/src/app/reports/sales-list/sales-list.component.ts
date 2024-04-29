@@ -1,27 +1,22 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 import { tap } from 'rxjs/operators';
 
-import { DateRangeAdapter } from '@app/_helpers';
 import { SalesChartData } from '@app/_models';
 import { SummaryService } from '@app/_services';
 import { AbstractChartReportComponent } from '../chart-report.component';
+import { SharedModule } from '@app/shared/shared.module';
 
 @Component({
-  selector: 'sales-list',
   templateUrl: './sales-list.component.html',
+  standalone: true,
+  imports: [ReactiveFormsModule, RouterLink, SharedModule],
 })
 export class SalesListComponent extends AbstractChartReportComponent<SalesChartData> {
-  constructor(
-    private summaryService: SummaryService,
-    private dateRangeAdapter1: DateRangeAdapter,
-    private formBuilder1: FormBuilder,
-    private router1: Router,
-  ) {
-    super(dateRangeAdapter1, formBuilder1, router1);
-  }
+
+  private summaryService = inject(SummaryService);
 
   refreshSummary() {
     this.summaryService
@@ -41,7 +36,7 @@ export class SalesListComponent extends AbstractChartReportComponent<SalesChartD
 
   onRowSelected(takingsID: number | null) {
     if (takingsID) {
-      this.router1.navigate([`takings/edit/${takingsID}`]);
+      this.router.navigate([`takings/edit/${takingsID}`]);
     }
   }
 }

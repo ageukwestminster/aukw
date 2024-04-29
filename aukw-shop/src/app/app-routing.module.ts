@@ -14,7 +14,7 @@ const payrollRoutes = () =>
 const takingsModule = () =>
   import('./takings/takings.module').then((x) => x.TakingsModule);
 const reportsModule = () =>
-  import('./reports/reports.module').then((x) => x.ReportsModule);
+  import('./reports/reports.routes').then((x) => x.REPORTS_ROUTES);
 
 const routes: Routes = [
   {

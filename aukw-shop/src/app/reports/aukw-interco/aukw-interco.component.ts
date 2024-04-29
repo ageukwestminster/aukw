@@ -1,33 +1,35 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
-import { DateRangeAdapter } from '@app/_helpers';
+import { Component, inject } from '@angular/core';
+import { CommonModule, NgIf, NgClass } from '@angular/common';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
-  AlertService,
-  ExportToCsvService,
-  QBReportService,
-} from '@app/_services';
+  NgbAccordionModule,
+  NgbDatepickerModule,
+} from '@ng-bootstrap/ng-bootstrap';
+import { RouterLink } from '@angular/router';
+import { AlertService, QBReportService } from '@app/_services';
 import { AbstractChartReportComponent } from '../chart-report.component';
 import { QBAccountListEntry } from '@app/_models/qb-account-list-entry';
 
 @Component({
-  selector: 'aukw-interco',
   templateUrl: './aukw-interco.component.html',
+  standalone: true,
+  imports: [
+    CommonModule,
+    NgbAccordionModule,
+    NgbDatepickerModule,
+    NgIf,
+    RouterLink,
+    ReactiveFormsModule,
+  ],
 })
 export class AukwIntercoComponent extends AbstractChartReportComponent<
   QBAccountListEntry[]
 > {
   form!: FormGroup;
   enterprises: boolean = true;
-  constructor(
-    private alertService: AlertService,
-    private reportService: QBReportService,
-    private dateRangeAdapter1: DateRangeAdapter,
-    private formBuilder1: FormBuilder,
-    private router1: Router,
-  ) {
-    super(dateRangeAdapter1, formBuilder1, router1);
-  }
+
+  private alertService = inject(AlertService);
+  private reportService = inject(QBReportService);
 
   checkboxClick() {
     this.enterprises = !this.enterprises;
