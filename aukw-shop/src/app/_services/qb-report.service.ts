@@ -19,9 +19,19 @@ export class QBReportService {
    * @param realmID The company ID for the QBO company.
    * @returns Array of employee ids and names
    */
-  getIntercoAccountLedger(start: string = '', end: string = ''): Observable<QBAccountListEntry[]> {
-    return this.http.get<QBAccountListEntry[]>(`${baseUrl}/${environment.qboEnterprisesRealmID}/report/generalledger`+
-      `?start=${start}&end=${end}&account=80&sortDescending`
-    );
+  getIntercoAccountLedger(
+    start: string = '', 
+    end: string = '', 
+    enterprises: boolean = true
+  ): Observable<QBAccountListEntry[]> {
+    let realmId = environment.qboEnterprisesRealmID;
+    let accountId = 80;
+    if (!enterprises) { 
+      realmId = environment.qboCharityRealmID;
+      accountId = 65;
+    }
+      return this.http.get<QBAccountListEntry[]>(`${baseUrl}/${realmId}/report/generalledger`+
+        `?start=${start}&end=${end}&account=${accountId}&sortDescending`
+      );
   }
 }

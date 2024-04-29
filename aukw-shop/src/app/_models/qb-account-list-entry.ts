@@ -50,6 +50,19 @@ export class QBAccountListEntry {
     this.balance = (obj && obj.balance) || null;
     this.is_cleared = (obj && obj.is_cleared) || null;
   }
+
+  public stringRepresentation() {
+    return { date: this.date,
+      type: this.type.value,
+      docnumber: this.docnumber,
+      emp_name: this.emp_name.value,
+      memo: this.memo,
+      account: this.account.value,
+      amount: this.amount,
+      is_cleared: this.is_cleared,
+      balance: this.balance,
+    };
+  }
 }
 
 export class ValueIdPair {
@@ -58,5 +71,9 @@ export class ValueIdPair {
   constructor(obj?: any) {
     this.value = (obj && obj.value) || null;
     this.id = (obj && obj.id) || null;
+  }
+
+  public toString(): string {
+    return this.value;
   }
 }

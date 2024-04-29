@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { KeyValue } from '@angular/common';
 import { Router } from '@angular/router';
@@ -7,13 +7,21 @@ import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
 import { DateRangeAdapter } from '@app/_helpers';
 import { DateRange, DateRangeEnum } from '@app/_models';
+import { ExportToCsvService } from '@app/_services';
 
-@Component({ template: '' })
+@Component({ 
+  template: '',  
+  standalone: true,
+  imports: [],
+ })
 export abstract class AbstractChartReportComponent<T = any> implements OnInit {
   protected form!: FormGroup;
+  protected loading: boolean = false;
 
-  @Input()
-  data!: T;
+  @Input() data!: T;
+  
+
+  protected exportToCsvService = inject(ExportToCsvService);
 
   constructor(
     private dateRangeAdapter: DateRangeAdapter,
@@ -94,5 +102,12 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
           '-' +
           String('00' + date.day).slice(-2)
       : null;
+  }
+
+  /**
+   * Export the data array to a CSV file
+   */
+  exportToCSV(): void {
+    this.exportToCsvService.exportToCSV(this.data);
   }
 }
