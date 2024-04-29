@@ -21,21 +21,22 @@
         Found {{ data && data.length }} entries
       </div>
     </div>
-    <div class="col-sm-2">
-      <div class="form-check">
+    <div class="col-xs-2">
+      <div class="form-check m-2">
         <input
           type="checkbox"
           class="form-check-input"
           [checked]="enterprises"
           (click)="checkboxClick()"
+          id="checkboxEnterprises"
         />
-        <label class="form-check-label" for="flexCheckChecked">
+        <label class="form-check-label" for="checkboxEnterprises">
           Enterprises
         </label>
       </div>
     </div>
-    <div class="col-sm-3 mb-2">
-      <button class="btn btn-primary me-2" (click)="exportToCSV()">
+    <div class="col-xs-3 mb-2">
+      <button class="btn btn-primary mx-2" (click)="exportToCSV()">
         Export To CSV
       </button>
       <button type="button" routerLink="/reports" class="btn btn-outline-dark">
@@ -51,6 +52,7 @@
             <span class="input-group-text col-4" id="period-label">Date</span>
             <select
               class="form-control"
+              id="selectList"
               #selectList
               (change)="onDateRangeChanged(selectList.value)"
               formControlName="dateRange"
@@ -126,17 +128,17 @@
             <thead>
               <tr>
                 <th>Date</th>
-                <th class="d-none d-sm-table-cell">Type</th>
-                <th class="d-none d-sm-table-cell">Name</th>
+                <th class="d-none d-md-table-cell">Type</th>
+                <th class="d-none d-md-table-cell">Name</th>
                 <th class="d-none d-sm-table-cell">Memo</th>
                 <th>
                   <!-- Tooltip must be on element inside header, not header itself-->
                   <!-- From https://stackoverflow.com/a/48324991/6941165 -->
                   <div ngbTooltip="Reconciliation status">Rec?</div>
                 </th>
-                <th class="d-none d-sm-table-cell">Increase</th>
-                <th class="d-none d-sm-table-cell">Decrease</th>
-                <th class="d-table-cell d-md-none">Amount</th>
+                <th class="d-none d-lg-table-cell">Increase</th>
+                <th class="d-none d-lg-table-cell">Decrease</th>
+                <th class="d-table-cell d-lg-none">Amount</th>
                 <th>Balance</th>
               </tr>
             </thead>
@@ -145,23 +147,23 @@
                 <th>
                   <span class="text-dark">{{ item.date }}</span>
                 </th>
-                <td class="d-none d-sm-table-cell text-start">
+                <td class="d-none d-md-table-cell text-start">
                   {{ item.type.value }}
                 </td>
-                <td class="d-none d-sm-table-cell text-start">
+                <td class="d-none d-md-table-cell text-start">
                   {{ item.emp_name.value }}
                 </td>
                 <td class="d-none d-sm-table-cell text-start">
                   {{ item.memo }}
                 </td>
                 <td class="text-center">{{ item.is_cleared }}</td>
-                <td class="d-none d-sm-table-cell text-end">
+                <td class="d-none d-lg-table-cell text-end">
                   {{ increaseAmount(item.amount) | number: "1.2-2" }}
                 </td>
-                <td class="d-none d-sm-table-cell text-end">
+                <td class="d-none d-lg-table-cell text-end">
                   {{ decreaseAmount(item.amount) | number: "1.2-2" }}
                 </td>
-                <td class="d-table-cell d-md-none">
+                <td class="d-table-cell d-lg-none">
                   {{ item.amount | number: "1.2-2" }}
                 </td>
                 <td class="text-end">{{ item.balance | number: "1.2-2" }}</td>
