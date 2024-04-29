@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import {
   DateRangeEnum,
   HistogramChartData,
@@ -19,7 +20,7 @@ import { SharedModule } from '@app/shared/shared.module';
 @Component({
   templateUrl: 'home.component.html',
   standalone: true,
-  imports: [SharedModule],
+  imports: [ RouterLink, SharedModule ],
 })
 export class HomeComponent implements OnInit {
   loading = false;
