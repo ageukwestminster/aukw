@@ -12,6 +12,8 @@ import { HistogramChartData } from '@app/_models';
   selector: 'sales-histogram',
   templateUrl: './sales-histogram-chart.component.html',
   styleUrls: ['./sales-histogram-chart.component.css'],
+  standalone: true,
+  imports: [],
 })
 export class SalesHistogramChartComponent implements OnInit, OnChanges {
   @Input() histogramChartData?: HistogramChartData;

@@ -23,6 +23,8 @@ Exporting(Highcharts);
   selector: 'dept-pie-chart',
   templateUrl: './dept-chart.component.html',
   styleUrls: ['./dept-chart.component.css'],
+  standalone: true,
+  imports: [],
 })
 export class DepartmentChartComponent implements OnInit {
   public options: any = {

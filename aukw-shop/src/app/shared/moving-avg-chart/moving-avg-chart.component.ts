@@ -19,6 +19,8 @@ Exporting(Highcharts);
 @Component({
   selector: 'moving-average',
   templateUrl: './moving-avg-chart.component.html',
+  standalone: true,
+  imports: [],
 })
 export class MovingAverageChartComponent implements OnInit, OnChanges {
   @Input() movingAvgChartData?: MovingAverageSalesChartData;

@@ -12,6 +12,8 @@ import { SalesChartData } from '@app/_models';
   selector: 'sales-chart',
   templateUrl: './sales-chart.component.html',
   styleUrls: ['./sales-chart.component.css'],
+  standalone: true,
+  imports: [],
 })
 export class SalesChartComponent implements OnInit, OnChanges {
   @Input() salesChartData?: SalesChartData;

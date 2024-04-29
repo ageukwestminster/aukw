@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
@@ -7,12 +8,12 @@ import { tap } from 'rxjs/operators';
 import { SalesChartData } from '@app/_models';
 import { SummaryService } from '@app/_services';
 import { AbstractChartReportComponent } from '../chart-report.component';
-import { SharedModule } from '@app/shared/shared.module';
+import { SalesChartComponent } from '@app/shared';
 
 @Component({
   templateUrl: './sales-list.component.html',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, SharedModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, SalesChartComponent],
 })
 export class SalesListComponent extends AbstractChartReportComponent<SalesChartData> {
 

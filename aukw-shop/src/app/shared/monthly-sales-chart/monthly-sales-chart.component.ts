@@ -12,6 +12,8 @@ import { switchMap } from 'rxjs/operators';
   selector: 'monthly-sales-chart',
   templateUrl: './monthly-sales-chart.component.html',
   styleUrls: ['./monthly-sales-chart.component.css'],
+  standalone: true,
+  imports: [],
 })
 /*
  * Create two bar charts displaying  monthly sales using Highcarts
