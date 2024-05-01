@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { NgbModule, NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
 
 import { TakingsRoutingModule } from './takings-routing.module';
-import { SharedModule } from '@app/shared/shared.module';
 import { NgbUTCStringAdapter } from '@app/_helpers';
 
 import { TakingsLayoutComponent } from './layout.component';
@@ -18,7 +17,6 @@ import { TakingsFilterComponent } from './filter/takings-filter.component';
     CommonModule,
     ReactiveFormsModule,
     TakingsRoutingModule,
-    SharedModule,
     NgbModule,
   ],
   declarations: [
