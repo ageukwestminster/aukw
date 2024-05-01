@@ -1,4 +1,8 @@
 ﻿import { Component, inject, OnInit } from '@angular/core';
+import { CommonModule, NgFor, NgIf } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { environment } from '@environments/environment';
+
 import {
   AlertService,
   AuthenticationService,
@@ -6,11 +10,12 @@ import {
   TakingsService,
 } from '@app/_services';
 import { TakingsFilter, TakingsSummary, User } from '@app/_models';
-import { environment } from '@environments/environment';
+import { TakingsRowComponent } from './row.component';
+import { TakingsFilterComponent } from '../filter/takings-filter.component';
+
 
 import {
   from,
-  Observable,
   of,
   merge,
   map,
@@ -22,7 +27,11 @@ import {
   toArray,
 } from 'rxjs';
 
-@Component({ templateUrl: 'list.component.html' })
+@Component({ 
+  templateUrl: 'list.component.html',
+  standalone: true,
+  imports: [CommonModule, NgFor, NgIf, RouterLink, TakingsRowComponent, TakingsFilterComponent],
+})
 export class TakingsListComponent implements OnInit {
   takingslist!: TakingsSummary[];
   average: number = 0;

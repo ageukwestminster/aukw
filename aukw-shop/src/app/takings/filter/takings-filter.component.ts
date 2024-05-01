@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
-import { KeyValue } from '@angular/common';
+import { CommonModule, KeyValue, NgFor, NgIf } from '@angular/common';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgbAccordionModule, NgbDatepickerModule, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '@environments/environment';
 import { Observable, BehaviorSubject } from 'rxjs';
 
@@ -16,6 +17,8 @@ import { DateRangeAdapter } from '@app/_helpers';
 @Component({
   selector: 'takings-filter',
   templateUrl: './takings-filter.component.html',
+  standalone: true,
+  imports: [CommonModule, NgFor, NgIf, NgbDatepickerModule, NgbAccordionModule, FormsModule, ReactiveFormsModule],
 })
 export class TakingsFilterComponent implements OnInit {
   @Output()
@@ -101,5 +104,24 @@ export class TakingsFilterComponent implements OnInit {
       .subscribe((response: any) => {
         this.filteredTakings.emit(response);
       });
+  }
+
+  onRefreshPressed() {
+    if (this.f['startDate'].value && this.f['endDate'].value) {
+      const start = this.ngbDateToString(this.f['startDate'].value);
+      const end = this.ngbDateToString(this.f['endDate'].value);
+      this.f['dateRange'].setValue(DateRangeEnum.CUSTOM);
+      this.refreshSummary(start!, end!);
+    }
+  }
+
+  private ngbDateToString(date: NgbDateStruct | null): string | null {
+    return date
+      ? date.year.toString() +
+          '-' +
+          String('00' + date.month).slice(-2) +
+          '-' +
+          String('00' + date.day).slice(-2)
+      : null;
   }
 }

@@ -37,6 +37,7 @@
       [user]="user"
       (onTakingsDeleted)="takingsWasDeleted($event)"
       (onTakingsAddedToQB)="takingsWasAddedToQB($event)"
+      routerLink="edit/{{ myTakings.id }}"
     ></tr>
     <tr *ngIf="!takingslist">
       <td colspan="4" class="text-center">

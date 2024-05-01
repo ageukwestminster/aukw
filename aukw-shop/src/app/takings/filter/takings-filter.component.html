@@ -39,7 +39,7 @@
                     #d1="ngbDatepicker"
                     formControlName="startDate"
                     id="inputStartDate"
-                    placement="top"
+                    placement="bottom"
                   />
                   <div class="input-group-append">
                     <button
@@ -63,7 +63,7 @@
                     #d2="ngbDatepicker"
                     formControlName="endDate"
                     id="inputEndDate"
-                    placement="top"
+                    placement="bottom"
                   />
                   <div class="input-group-append">
                     <button
@@ -75,6 +75,9 @@
                     </button>
                   </div>
                 </div>
+              </div>
+              <div class="col-sm-auto p-0">
+                <a class="btn btn-link" (click)="onRefreshPressed()">Refresh</a>
               </div>
             </div>
           </ng-template>

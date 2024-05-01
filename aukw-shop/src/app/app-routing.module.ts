@@ -12,7 +12,7 @@ const usersRoutes = () =>
 const payrollRoutes = () =>
   import('./payroll/payroll.routes').then((x) => x.PAYROLL_ROUTES);
 const takingsModule = () =>
-  import('./takings/takings.module').then((x) => x.TakingsModule);
+  import('./takings/takings.routes').then((x) => x.TAKINGS_ROUTES);
 const reportsModule = () =>
   import('./reports/reports.routes').then((x) => x.REPORTS_ROUTES);
 

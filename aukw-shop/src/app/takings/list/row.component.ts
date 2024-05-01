@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { formatDate } from '@angular/common';
+import { CommonModule, formatDate, NgIf } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { ReactiveFormsModule } from '@angular/forms';
 import { environment } from '@environments/environment';
 import { TakingsSummary, User } from '@app/_models';
 import { TakingsService, AlertService } from '@app/_services';
@@ -9,6 +11,8 @@ import { TakingsService, AlertService } from '@app/_services';
 @Component({
   selector: 'tr[takings-row]',
   templateUrl: './row.component.html',
+  standalone: true,
+  imports: [CommonModule, NgIf, ReactiveFormsModule, RouterLink],
 })
 export class TakingsRowComponent {
   @Input() takings!: TakingsSummary;
