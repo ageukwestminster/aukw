@@ -42,6 +42,13 @@
     >
       <ul class="navbar-nav ml-2 flex-nowrap">
         <li [ngbNavItem]="1">
+          <!--
+            Using routerLinkActive="active" to highlight the current nav link with the CSS class active. 
+            The [routerLinkActiveOptions]="{exact: true}" option only highlights the home link when the 
+            path exactly matches the routerLink (/), otherwise it matches any path that begins with the 
+            link path (e.g. /users*).
+            From: https://jasonwatmore.com/angular-15-free-course-6-user-management-crud-section
+          -->
           <a
             class="nav-item nav-link"
             routerLink="/"
