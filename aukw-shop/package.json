@@ -1,6 +1,6 @@
 {
   "name": "aukw-shop",
-  "version": "1.4.3.2",
+  "version": "1.4.4",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host=127.0.0.1",

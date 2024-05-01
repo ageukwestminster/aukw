@@ -6,6 +6,7 @@ use QuickBooksOnline\API\DataService\DataService;
 use QuickBooksOnline\API\Core\OAuth\OAuth2\OAuth2AccessToken;
 use QuickBooksOnline\API\Core\ServiceContext;
 
+use Core\QuickbooksConstants as QBO;
 use Models\JWTWrapper;
 use Models\QuickbooksToken;
 
@@ -116,17 +117,22 @@ class QuickbooksAuth{
         $this->init($realmId);
             
         try {
+            if ($realmId != QBO::CHARITY_REALMID && $realmId != QBO::ENTERPRISES_REALMID) {
+                http_response_code(401);  
+                echo json_encode(
+                    array("message" => "Unable to proceed with QB callback: 'realmid' does not match valid values.")
+                );
+                exit(0);
+            }
+
             // The state value is used to verify that this is a legitimiate callback, not a hoax
             if ($state != $this->config['state']) {
-                http_response_code(400);  
+                http_response_code(401);  
                 echo json_encode(
                     array("message" => "Unable to proceed with QB callback: 'state' does not match initial value.")
                 );
                 exit(0);
             }
-
-            //$accessTokenObj = QuickbooksDummyAuthProvider::getToken($this->config);
-            //$userInfo = QuickbooksDummyAuthProvider::getUserInfo();
             
             $OAuth2LoginHelper = $this->dataService->getOAuth2LoginHelper();
             $accessTokenObj = $OAuth2LoginHelper->exchangeAuthorizationCodeForToken($code, $realmId);
@@ -137,7 +143,7 @@ class QuickbooksAuth{
                                         strtolower($this->config['baseUrl']));
 
             if (!$userInfo['emailVerified']) {
-                http_response_code(400);  
+                http_response_code(401);  
                 echo json_encode(
                   array("message" => "Your Quickbooks email address is not verified. Please " . 
                     "verify it at https://accounts.intuit.com/app/account-manager/security and try again.")

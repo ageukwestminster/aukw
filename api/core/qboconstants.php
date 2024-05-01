@@ -9,9 +9,11 @@ use DateTime;
  * 
  * @category Core
  */
-class QuickbooksConstants {
+class QuickbooksConstants {  
 
   // Charity Constants
+  const CHARITY_REALMID = "123145825016867";
+
   // if any account number clashes with AUEW account numbers then check parsePayrollJournals() carefully
   const AUEW_ACCOUNT = "65";
   const EMPLOYEE_PENSION_CONTRIB_ACCOUNT = "66";
@@ -41,6 +43,8 @@ class QuickbooksConstants {
   const LEGAL_AND_GENERAL_VENDOR = "357";
 
   // Enterprises Constants
+  const ENTERPRISES_REALMID = "9130350604308576";
+  
   const AUKW_INTERCO_ACCOUNT = "80";
   const AUEW_SALARIES_ACCOUNT = "106";
   const AUEW_NI_ACCOUNT = "150";

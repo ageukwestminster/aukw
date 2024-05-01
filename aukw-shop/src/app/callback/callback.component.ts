@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { environment } from '@environments/environment';
 import { AlertService, AuthenticationService } from '@app/_services';
+import { env } from 'process';
 
 @Component({
   template: '',
@@ -25,19 +26,23 @@ export class CallbackComponent implements OnInit {
     }
 
     if (!code || !state || !realmId) {
-      console.error(
+      this.alertService.error(
         'Error: Invalid parameters passed to callback. To use ' +
           'this endpoint you must supply values for: ' +
           "'code', 'realmId' and 'state'.",
+        { autoClose: false, keepAfterRouteChange: true },
       );
       window.location.href = environment.loginUrl;
+    } else if (
+      realmId != environment.qboCharityRealmID &&
+      realmId != environment.qboEnterprisesRealmID
+    ) {
+      this.alertService.error('Error: Invalid realmid', {
+        autoClose: false,
+        keepAfterRouteChange: true,
+      });
+      window.location.href = environment.loginUrl;
     }
-
-    //Check that we have the correct company to proceed
-    //if (realmId != '9130350604308576') {
-    //console.error("Error: 'realmId' does not match expected value.");
-    // window.location.href = environment.loginUrl;
-    //}
 
     // use the auth service and the supplied token to log in
     this.authenticationService.callback(code!, realmId!, state!).subscribe({
@@ -50,7 +55,7 @@ export class CallbackComponent implements OnInit {
         }
       },
       error: (error) => {
-        this.alertService.error('QB Callback failed: ' + error, {
+        this.alertService.error('Quickbooks Callback failed: ' + error, {
           autoClose: false,
         });
       },
