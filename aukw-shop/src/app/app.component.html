@@ -42,19 +42,45 @@
     >
       <ul class="navbar-nav ml-2 flex-nowrap">
         <li [ngbNavItem]="1">
-          <a class="nav-item nav-link" routerLink="/">Home</a>
+          <a
+            class="nav-item nav-link"
+            routerLink="/"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            >Home</a
+          >
         </li>
         <li [ngbNavItem]="4">
-          <a class="nav-item nav-link" routerLink="/takings">Takings</a>
+          <a
+            class="nav-item nav-link"
+            routerLink="/takings"
+            routerLinkActive="active"
+            >Takings</a
+          >
         </li>
         <li [ngbNavItem]="2">
-          <a class="nav-item nav-link" routerLink="/reports">Reports</a>
+          <a
+            class="nav-item nav-link"
+            routerLink="/reports"
+            routerLinkActive="active"
+            >Reports</a
+          >
         </li>
         <li [ngbNavItem]="3" *ngIf="user.isAdmin">
-          <a class="nav-item nav-link" routerLink="/payroll">Payroll</a>
+          <a
+            class="nav-item nav-link"
+            routerLink="/payroll"
+            routerLinkActive="active"
+            >Payroll</a
+          >
         </li>
         <li [ngbNavItem]="3" *ngIf="user.isAdmin">
-          <a class="nav-item nav-link" routerLink="/users">Users</a>
+          <a
+            class="nav-item nav-link"
+            routerLink="/users"
+            routerLinkActive="active"
+            >Users</a
+          >
         </li>
         <li [ngbNavItem]="5" ngbDropdown class="nav-item">
           <a href (click)="(false)" class="nav-link" ngbDropdownToggle>
@@ -62,7 +88,7 @@
             <span class="fas fa-user"></span> Account
           </a>
           <div ngbDropdownMenu>
-            <button ngbDropdownItem [routerLink]="'/users/edit/' + user.id">
+            <button ngbDropdownItem [routerLink]="'/users/edit/' + user!.id">
               Profile
             </button>
             <div class="dropdown-divider"></div>
