@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { environment } from '@environments/environment';
 import { AlertService, AuthenticationService } from '@app/_services';
-import { env } from 'process';
 
 @Component({
   template: '',
