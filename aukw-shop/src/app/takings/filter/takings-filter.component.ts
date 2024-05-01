@@ -1,7 +1,16 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CommonModule, KeyValue, NgFor, NgIf } from '@angular/common';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgbAccordionModule, NgbDatepickerModule, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import {
+  NgbAccordionModule,
+  NgbDatepickerModule,
+  NgbDateStruct,
+} from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '@environments/environment';
 import { Observable, BehaviorSubject } from 'rxjs';
 
@@ -18,7 +27,15 @@ import { DateRangeAdapter } from '@app/_helpers';
   selector: 'takings-filter',
   templateUrl: './takings-filter.component.html',
   standalone: true,
-  imports: [CommonModule, NgFor, NgIf, NgbDatepickerModule, NgbAccordionModule, FormsModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    NgFor,
+    NgIf,
+    NgbDatepickerModule,
+    NgbAccordionModule,
+    FormsModule,
+    ReactiveFormsModule,
+  ],
 })
 export class TakingsFilterComponent implements OnInit {
   @Output()

@@ -1,7 +1,20 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { CommonModule, DatePipe, Location, NgClass, NgIf, NgStyle } from '@angular/common';
+import {
+  CommonModule,
+  DatePipe,
+  Location,
+  NgClass,
+  NgIf,
+  NgStyle,
+} from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import {
   NgbDateAdapter,
   NgbDateParserFormatter,
@@ -32,7 +45,15 @@ import { CustomDateParserFormatter, NgbUTCStringAdapter } from '@app/_helpers';
     DatePipe,
   ],
   standalone: true,
-  imports: [ CommonModule, FormsModule, NgbDatepickerModule, NgClass, NgIf, NgStyle, ReactiveFormsModule ],
+  imports: [
+    CommonModule,
+    FormsModule,
+    NgbDatepickerModule,
+    NgClass,
+    NgIf,
+    NgStyle,
+    ReactiveFormsModule,
+  ],
 })
 export class TakingsAddEditComponent implements OnInit {
   form!: FormGroup;

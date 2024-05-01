@@ -40,7 +40,7 @@ import { EmployeeJournalsComponent } from './employee-journals/employee-journals
     PayrollFileUploadComponent,
     PensionInvoiceComponent,
     RouterLink,
-  
+
     ShopJournalComponent,
   ],
   templateUrl: 'payroll.component.html',

@@ -1,9 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {
-  NgbModalModule,
-  NgbActiveModal
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbModalModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'password-input-modal',

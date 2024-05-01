@@ -13,7 +13,6 @@ import { TakingsFilter, TakingsSummary, User } from '@app/_models';
 import { TakingsRowComponent } from './row.component';
 import { TakingsFilterComponent } from '../filter/takings-filter.component';
 
-
 import {
   from,
   of,
@@ -27,10 +26,17 @@ import {
   toArray,
 } from 'rxjs';
 
-@Component({ 
+@Component({
   templateUrl: 'list.component.html',
   standalone: true,
-  imports: [CommonModule, NgFor, NgIf, RouterLink, TakingsRowComponent, TakingsFilterComponent],
+  imports: [
+    CommonModule,
+    NgFor,
+    NgIf,
+    RouterLink,
+    TakingsRowComponent,
+    TakingsFilterComponent,
+  ],
 })
 export class TakingsListComponent implements OnInit {
   takingslist!: TakingsSummary[];

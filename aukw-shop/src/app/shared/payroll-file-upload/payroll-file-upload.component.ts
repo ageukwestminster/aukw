@@ -9,7 +9,11 @@ import {
 import { CommonModule, NgIf } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { from, concatMap, tap, Observable } from 'rxjs';
-import { NgbModal, NgbModalModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbModal,
+  NgbModalModule,
+  NgbTooltipModule,
+} from '@ng-bootstrap/ng-bootstrap';
 import {
   AlertService,
   ConsoleService,
@@ -24,7 +28,14 @@ import { PasswordInputModalComponent } from './password-input.component';
   templateUrl: './payroll-file-upload.component.html',
   styleUrls: ['./payroll-file-upload.component.css'],
   standalone: true,
-  imports: [ CommonModule, NgIf, NgbModalModule, NgbTooltipModule, PasswordInputModalComponent, ReactiveFormsModule ],
+  imports: [
+    CommonModule,
+    NgIf,
+    NgbModalModule,
+    NgbTooltipModule,
+    PasswordInputModalComponent,
+    ReactiveFormsModule,
+  ],
 })
 export class PayrollFileUploadComponent implements OnInit {
   /** When 'true' background work is being performed */
