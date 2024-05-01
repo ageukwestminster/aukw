@@ -23,7 +23,7 @@ import { EmployeeAllocation, IrisPayslip, QBRealm, User } from '@app/_models';
 import { EmployeeAllocationsComponent } from './allocations/employee-allocations.component';
 import { EmployerNiComponent } from './employerni-and-pension-invoice/employer-ni.component';
 import { PayslipListComponent } from './payslips/list.component';
-import { SharedModule } from '@app/shared/shared.module';
+import { PayrollFileUploadComponent } from '@app/shared';
 import { PensionInvoiceComponent } from './employerni-and-pension-invoice/pension-invoice.component';
 import { ShopJournalComponent } from './shop-journal/shop-journal.component';
 import { EmployeeJournalsComponent } from './employee-journals/employee-journals.component';
@@ -37,9 +37,10 @@ import { EmployeeJournalsComponent } from './employee-journals/employee-journals
     PayslipListComponent,
     NgbNavModule,
     NgIf,
+    PayrollFileUploadComponent,
     PensionInvoiceComponent,
     RouterLink,
-    SharedModule,
+  
     ShopJournalComponent,
   ],
   templateUrl: 'payroll.component.html',
@@ -138,7 +139,7 @@ export class PayrollComponent implements OnInit {
   }
 
   /** This is a callback from the file upload component. It is called when
-   *  the API has uploaded and decrypoted the file and converted it into
+   *  the API has uploaded and decrypted the file and converted it into
    *  an array of IrisPayslip.
    */
   xlsxWasUploaded(payslips: IrisPayslip[]): void {
