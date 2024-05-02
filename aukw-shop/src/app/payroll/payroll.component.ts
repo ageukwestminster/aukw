@@ -84,7 +84,7 @@ export class PayrollComponent implements OnInit {
     this.qbRealmService
       .getAll(this.user.id)
       .pipe(
-        mergeAll(),
+        mergeAll(), // Convert Obs<QBRealm[]> to Obs<QBRealm>
         tap((r: QBRealm) => {
           if (!r.connection || !r.connection.refreshtoken) {
             this.qboAuthorisationMissing = true;
