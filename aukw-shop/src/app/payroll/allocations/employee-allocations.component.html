@@ -1,4 +1,4 @@
-<div class="border p-2">
+<div class="border p-2 mt-2">
   
   <div class="ms-2">
     <h4>Project Allocations</h4>
@@ -36,7 +36,7 @@
               {{ alloc.isShopEmployee ? "Charity Shop" : alloc.className }}
             </td>
           </tr>
-          <tr *ngIf="!(qbPayrollService.allocations$ | async)">
+          <tr *ngIf="!(qbPayrollService.allocations$ | async)!.length">
             <td colspan="5" class="text-center">
               <span class="spinner-border spinner-border-lg align-center"></span>
             </td>

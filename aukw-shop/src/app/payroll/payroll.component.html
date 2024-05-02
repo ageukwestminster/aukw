@@ -5,6 +5,17 @@
       <p>This page is used for adding payroll transactions to QuickBooks.</p>
       <p>Click on Allocations to begin</p>
     </div>
+    <div>
+      <div class="col-md-4" *ngIf="stateService.state | async">
+        <h4>Upload Iris Spreadsheet</h4>
+        <payroll-file-upload
+          *ngIf="!payslips || !payslips.length"
+          (onFileUploaded)="xlsxWasUploaded($event)"
+        ></payroll-file-upload>
+        <h4 class="mt-2">EE Summary</h4>
+      </div>
+      
+    </div>
   </div>
   <router-outlet></router-outlet>
   <!--<ul

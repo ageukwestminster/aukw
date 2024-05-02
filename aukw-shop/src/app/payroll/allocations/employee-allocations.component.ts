@@ -1,7 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
-import { PayrollProcessState } from '@app/_models';
+import { EmployeeAllocation, PayrollProcessState } from '@app/_models';
 import { AlertService, PayrollProcessStateService, QBPayrollService } from '@app/_services';
+import { filter, switchMap } from 'rxjs';
 
 @Component({
   selector: 'employee-allocations',
@@ -11,6 +12,7 @@ import { AlertService, PayrollProcessStateService, QBPayrollService } from '@app
   styleUrl: './employee-allocations.component.css',
 })
 export class EmployeeAllocationsComponent implements OnInit {
+  
   /** Used for allocations$ Observable */
   public qbPayrollService = inject(QBPayrollService);
   
@@ -20,12 +22,16 @@ export class EmployeeAllocationsComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    this.qbPayrollService.getAllocations()
-    .subscribe({
-      error: (error: any) => {
-        this.alertService.error(error, { autoClose: false, keepAfterRouteChange: true });
-      },
-      complete: () => { this.payrollProcessStateService.setState(PayrollProcessState.ALLOCATIONS) },
-  });
+    this.qbPayrollService.allocations$.pipe(
+      filter((x) => !x.length),
+      switchMap(() => this.qbPayrollService.getAllocations()),
+    )
+      .subscribe({
+        error: (error: any) => {
+          this.alertService.error(error, { autoClose: false, keepAfterRouteChange: true });
+        },
+        complete: () => { this.payrollProcessStateService.setState(PayrollProcessState.ALLOCATIONS) },
+    });
+
   }
 }

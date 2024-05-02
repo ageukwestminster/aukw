@@ -110,6 +110,8 @@ export class PayrollComponent implements OnInit {
     this.subscribeToSubjects();
   }
 
+  PayrollProcessState = PayrollProcessState;
+
   /**
    * This pattern is used to subscribe to an rxjs Subject and automatically
    * unsubscribe when the object is destroyed. Angular gives us the destroyRef

@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, forkJoin, of, Subject } from 'rxjs';
+import { Observable, forkJoin, of, Subject, BehaviorSubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
 import { environment } from '@environments/environment';
@@ -28,10 +28,12 @@ const baseUrl = `${environment.apiUrl}/qb`;
 export class QBPayrollService {
   private http = inject(HttpClient);
 
-  private allocationsSubject = new Subject<EmployeeAllocation[]>();
-  allocations$ = this.allocationsSubject.asObservable();
+  private allocationsSubject = new BehaviorSubject<EmployeeAllocation[]>([]);
   private payslipsSubject = new Subject<IrisPayslip[]>();
+
+  allocations$ = this.allocationsSubject.asObservable();
   payslips$ = this.payslipsSubject.asObservable();
+  
   sendPayslips(payslips: IrisPayslip[]) {
     this.payslipsSubject.next(payslips);
   }
