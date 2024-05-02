@@ -24,7 +24,7 @@ import { MessageFactories } from '@app/_interfaces/message-factories';
           <span class="spinner-border spinner-border-sm"></span>
         </div>
         <div *ngIf="status == 'error'">
-          <i class="fa-solid fa-circle-exclamation" style="color:#FF0000"></i>
+          <i class="fas fa-circle-exclamation" style="color:#FF0000"></i>
         </div>
         <p>
           {{ message }}
