@@ -12,7 +12,10 @@ export const PAYROLL_ROUTES: Routes = [
     children :[
       {
         path: '',
-        component: PayrollComponent
+        component: PayrollComponent,
+        children: [
+          { path: 'allocations', component: EmployeeAllocationsComponent },
+        ]
       }
     ]
   },

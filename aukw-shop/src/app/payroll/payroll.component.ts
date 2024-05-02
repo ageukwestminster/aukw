@@ -1,6 +1,6 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { NgIf } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { AsyncPipe, NgIf } from '@angular/common';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import {
   concatMap,
@@ -32,6 +32,7 @@ import { EmployeeJournalsComponent } from './employee-journals/employee-journals
 @Component({
   standalone: true,
   imports: [
+    AsyncPipe,
     EmployeeAllocationsComponent,
     EmployeeJournalsComponent,
     EmployerNiComponent,
@@ -41,6 +42,7 @@ import { EmployeeJournalsComponent } from './employee-journals/employee-journals
     PayrollFileUploadComponent,
     PensionInvoiceComponent,
     RouterLink,
+    RouterOutlet,
     ShopJournalComponent,
   ],
   templateUrl: 'payroll.component.html',
@@ -68,7 +70,7 @@ export class PayrollComponent implements OnInit {
   private qbPayrollService = inject(QBPayrollService);
   private loadingIndicatorService = inject(LoadingIndicatorService);
   private destroyRef = inject(DestroyRef);
-  private payrollProcessStateService = inject (PayrollProcessStateService);
+  public stateService = inject (PayrollProcessStateService);
 
   constructor() {
     this.user = this.authenticationService.userValue;
@@ -98,22 +100,11 @@ export class PayrollComponent implements OnInit {
             }
           }
         }),
-        toArray(),
-        concatMap(() => this.qbPayrollService.getAllocations()),
-        retry(2),
-        this.loadingIndicatorService.createObserving({
-          loading: () => 'Loading employee allocations from Quickbooks',
-          success: (result) =>
-            `Successfully loaded ${result.length} employee allocations`,
-          error: (err) => `${err}`,
-        }),
-        shareReplay(1),
       )
       .subscribe({
         error: (error: any) => {
           this.alertService.error(error, { autoClose: false });
         },
-        complete: () => { this.payrollProcessStateService.setState(PayrollProcessState.ALLOCATIONS) },
       });
 
     this.subscribeToSubjects();
@@ -232,7 +223,7 @@ export class PayrollComponent implements OnInit {
         },
         complete: () => {
           this.loadingComplete = true;
-          this.payrollProcessStateService.setState(PayrollProcessState.PAYSLIPS)
+          this.stateService.setState(PayrollProcessState.PAYSLIPS)
         },
       });
   }

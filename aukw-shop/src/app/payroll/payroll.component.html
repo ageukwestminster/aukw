@@ -1,5 +1,13 @@
 <div *ngIf="user.isAdmin && !qboAuthorisationMissing">
-  <ul
+  <div class="card mt-2" *ngIf="!(stateService.state | async)">
+    <div class="card-body">
+      <h4>Payroll Utility</h4>
+      <p>This page is used for adding payroll transactions to QuickBooks.</p>
+      <p>Click on Allocations to begin</p>
+    </div>
+  </div>
+  <router-outlet></router-outlet>
+  <!--<ul
     ngbNav
     #nav="ngbNav"
     [(activeId)]="active"
@@ -9,20 +17,7 @@
     <li [ngbNavItem]="1">
       <button ngbNavLink>Employee Allocations</button>
       <ng-template ngbNavContent>
-        <div class="border p-2">
-          <h4>Notes</h4>
-          <p>
-            Employee allocations are managed by editing a recurring transaction
-            in the Charity quickbooks file.
-          </p>
-          <p>The transaction is called "Salary Allocations - DoNotDelete".</p>
-          <p>
-            Before adding a new employee to the recurring transaction, ensure
-            that they are listed among the employees in the QBO Payroll section.
-            Edit the new employee and add their iris payroll number to the
-            Employee ID field.
-          </p>
-        </div>
+
         <div
           *ngIf="
             charityRealm && charityRealm.connection && charityRealm.realmid
@@ -99,7 +94,7 @@
     </li>
   </ul>
 
-  <div [ngbNavOutlet]="nav" class="mt-2"></div>
+  <div [ngbNavOutlet]="nav" class="mt-2"></div> -->
 </div>
 <div *ngIf="!user.isAdmin">
   <strong>This page is accesible to Admin users only.</strong>
