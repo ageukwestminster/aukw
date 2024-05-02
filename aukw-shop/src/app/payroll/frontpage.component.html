@@ -8,16 +8,12 @@
     <i class="fas fa-check stilltodo"></i> 
     <i class="fas fa-check stilltodo"></i> 
   </div>
-  <div ngbNav #payrollNav="ngbNav" class="navbar navbar-expand-lg w-100 payroll-navbar">
+  <div ngbNav #payrollNav="ngbNav" class="navbar navbar-expand-lg payroll-navbar">
     <div class="collapse navbar-collapse justify-content-around" id="navbarSupportedContent">
       <ul class="navbar-nav ml-2 justify-content-between">
         <li [ngbNavItem]="1">
           <!--
             Using routerLinkActive="active" to highlight the current nav link with the CSS class active. 
-            The [routerLinkActiveOptions]="{exact: true}" option only highlights the home link when the 
-            path exactly matches the routerLink (/), otherwise it matches any path that begins with the 
-            link path (e.g. /users*).
-            From: https://jasonwatmore.com/angular-15-free-course-6-user-management-crud-section
           -->
           <a
             class="nav-item nav-link"
@@ -53,5 +49,5 @@
       </ul>
     </div>
   </div>
-  <div [ngbNavOutlet]="payrollNav" class="mt-2"></div>
+  <div [ngbNavOutlet]="payrollNav"></div>
 </div>
