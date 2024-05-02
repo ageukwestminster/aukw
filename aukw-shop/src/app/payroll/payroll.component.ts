@@ -16,10 +16,11 @@ import {
   AlertService,
   AuthenticationService,
   LoadingIndicatorService,
+  PayrollProcessStateService,
   QBPayrollService,
   QBRealmService,
 } from '@app/_services';
-import { EmployeeAllocation, IrisPayslip, QBRealm, User } from '@app/_models';
+import { EmployeeAllocation, IrisPayslip, PayrollProcessState, QBRealm, User } from '@app/_models';
 import { EmployeeAllocationsComponent } from './allocations/employee-allocations.component';
 import { EmployerNiComponent } from './employerni-and-pension-invoice/employer-ni.component';
 import { PayslipListComponent } from './payslips/list.component';
@@ -40,7 +41,6 @@ import { EmployeeJournalsComponent } from './employee-journals/employee-journals
     PayrollFileUploadComponent,
     PensionInvoiceComponent,
     RouterLink,
-
     ShopJournalComponent,
   ],
   templateUrl: 'payroll.component.html',
@@ -68,6 +68,7 @@ export class PayrollComponent implements OnInit {
   private qbPayrollService = inject(QBPayrollService);
   private loadingIndicatorService = inject(LoadingIndicatorService);
   private destroyRef = inject(DestroyRef);
+  private payrollProcessStateService = inject (PayrollProcessStateService);
 
   constructor() {
     this.user = this.authenticationService.userValue;
@@ -112,6 +113,7 @@ export class PayrollComponent implements OnInit {
         error: (error: any) => {
           this.alertService.error(error, { autoClose: false });
         },
+        complete: () => { this.payrollProcessStateService.setState(PayrollProcessState.ALLOCATIONS) },
       });
 
     this.subscribeToSubjects();
@@ -228,7 +230,10 @@ export class PayrollComponent implements OnInit {
         error: (error: any) => {
           this.alertService.error(error, { autoClose: false });
         },
-        complete: () => (this.loadingComplete = true),
+        complete: () => {
+          this.loadingComplete = true;
+          this.payrollProcessStateService.setState(PayrollProcessState.PAYSLIPS)
+        },
       });
   }
 }

@@ -15,6 +15,7 @@ export * from './qb-flags';
 export * from './qb-payslip-flags';
 export * from './qb-realm';
 export * from './payroll-journal-entry';
+export * from './payroll-process-state.enum'
 export * from './role';
 export * from './shop';
 export * from './summary';
