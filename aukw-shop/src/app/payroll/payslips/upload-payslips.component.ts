@@ -1,120 +1,40 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { AsyncPipe, NgIf } from '@angular/common';
-import { RouterLink, RouterOutlet } from '@angular/router';
-import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
-import {
-  concatMap,
-  toArray,
-  mergeAll,
-  tap,
-  retry,
-  shareReplay,
-  Subject,
-  takeUntil,
-} from 'rxjs';
-import {
-  AlertService,
-  AuthenticationService,
-  LoadingIndicatorService,
-  PayrollProcessStateService,
-  QBPayrollService,
-  QBRealmService,
-} from '@app/_services';
-import { EmployeeAllocation, IrisPayslip, PayrollProcessState, QBRealm, User } from '@app/_models';
-import { EmployeeAllocationsComponent } from './allocations/employee-allocations.component';
-import { EmployerNiComponent } from './employerni-and-pension-invoice/employer-ni.component';
-import { PensionInvoiceComponent } from './employerni-and-pension-invoice/pension-invoice.component';
-import { ShopJournalComponent } from './shop-journal/shop-journal.component';
-import { EmployeeJournalsComponent } from './employee-journals/employee-journals.component';
+import { CommonModule, NgFor, NgIf } from '@angular/common';
+import { EmployeeAllocation, IrisPayslip, PayrollProcessState } from '@app/_models';
+import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
+import { concatMap, shareReplay, Subject, takeUntil } from 'rxjs';
+import { PayslipListComponent } from './list.component';
+import { PayrollFileUploadComponent } from '@app/shared';
+import { AlertService, LoadingIndicatorService, PayrollProcessStateService, QBPayrollService } from '@app/_services';
 
 @Component({
+  templateUrl: 'upload-payslips.component.html',
   standalone: true,
-  imports: [
-    AsyncPipe,
-    EmployeeAllocationsComponent,
-    EmployeeJournalsComponent,
-    EmployerNiComponent,
-    NgbNavModule,
-    NgIf,
-    PensionInvoiceComponent,
-    RouterLink,
-    RouterOutlet,
-    ShopJournalComponent,
-  ],
-  templateUrl: 'payroll.component.html',
+  imports: [ NgIf, PayslipListComponent, PayrollFileUploadComponent],
 })
-export class PayrollComponent implements OnInit {
-  user: User;
+export class UploadPayslipsComponent implements OnInit { 
 
-  active = 1;
-
-  charityRealm!: QBRealm;
-  enterpriseRealm!: QBRealm;
-  qboAuthorisationMissing: boolean = false;
-
-  payslips: IrisPayslip[] = [];
   allocations: EmployeeAllocation[] = [];
+  payslips: IrisPayslip[] = [];
   payrollDate: string = '';
   payrollYear: string = '';
   payrollMonth: string = '';
 
-  loadingComplete: boolean = false;
-
-  private authenticationService = inject(AuthenticationService);
-  private qbRealmService = inject(QBRealmService);
   private alertService = inject(AlertService);
   private qbPayrollService = inject(QBPayrollService);
   private loadingIndicatorService = inject(LoadingIndicatorService);
+  private stateService = inject (PayrollProcessStateService);
   private destroyRef = inject(DestroyRef);
-  public stateService = inject (PayrollProcessStateService);
-
-  constructor() {
-    this.user = this.authenticationService.userValue;
-  }
-
-  /**
-   * Initialize the component by populating the 2 realm properties and
-   * the boolean flag that warns if a QBO connection is absent.
-   * Also call getAllocations to retrieve percentage allocations for each
-   * employee.
-   */
-  ngOnInit() {
-    this.qbRealmService
-      .getAll(this.user.id)
-      .pipe(
-        mergeAll(), // Convert Obs<QBRealm[]> to Obs<QBRealm>
-        tap((r: QBRealm) => {
-          if (!r.connection || !r.connection.refreshtoken) {
-            this.qboAuthorisationMissing = true;
-          }
-
-          if (!r.issandbox && r.name) {
-            if (/enterprises/i.test(r.name)) {
-              this.enterpriseRealm = r;
-            } else {
-              this.charityRealm = r;
-            }
-          }
-        }),
-      )
-      .subscribe({
-        error: (error: any) => {
-          this.alertService.error(error, { autoClose: false });
-        },
-      });
-
-    this.subscribeToSubjects();
-  }
 
   PayrollProcessState = PayrollProcessState;
 
-  /**
+    /**
    * This pattern is used to subscribe to an rxjs Subject and automatically
    * unsubscribe when the object is destroyed. Angular gives us the destroyRef
    * hook to manage this.
    * { @link https://medium.com/@chandrashekharsingh25/exploring-the-takeuntildestroyed-operator-in-angular-d7244c24a43e }
    */
-  private subscribeToSubjects(): void {
+  ngOnInit() {
     const destroyed = new Subject();
     this.destroyRef.onDestroy(() => {
       destroyed.next('');
@@ -181,6 +101,7 @@ export class PayrollComponent implements OnInit {
     this.updateQBOFlags();
   }
 
+  
   /**
    * Set the 'in Quickbooks' flags for the array of payslips that is held in the
    * instance variable 'payslips'. There are 4 flags:
@@ -220,7 +141,6 @@ export class PayrollComponent implements OnInit {
           this.alertService.error(error, { autoClose: false });
         },
         complete: () => {
-          this.loadingComplete = true;
           this.stateService.setState(PayrollProcessState.PAYSLIPS)
         },
       });

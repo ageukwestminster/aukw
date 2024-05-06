@@ -1,8 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
-import { EmployeeAllocation, PayrollProcessState } from '@app/_models';
-import { AlertService, PayrollProcessStateService, QBPayrollService } from '@app/_services';
-import { filter, switchMap } from 'rxjs';
+import { PayrollProcessState } from '@app/_models';
+import { AlertService, LoadingIndicatorService, PayrollProcessStateService, QBPayrollService } from '@app/_services';
+import { shareReplay } from 'rxjs';
 
 @Component({
   selector: 'employee-allocations',
@@ -18,13 +18,20 @@ export class EmployeeAllocationsComponent implements OnInit {
   
   private alertService = inject(AlertService);
   private payrollProcessStateService = inject (PayrollProcessStateService);
+  private loadingIndicatorService = inject(LoadingIndicatorService);
 
   constructor() {}
 
   ngOnInit() {
-    this.qbPayrollService.allocations$.pipe(
-      filter((x) => !x.length),
-      switchMap(() => this.qbPayrollService.getAllocations()),
+    this.qbPayrollService.getAllocations()
+    .pipe(
+      this.loadingIndicatorService.createObserving({
+        loading: () =>
+          'Querying Quickbooks for project allocations.',
+        success: () => 'Allocations retrieved.',        
+        error: (err) => `${err}`,
+      }),
+      shareReplay(1),
     )
       .subscribe({
         error: (error: any) => {

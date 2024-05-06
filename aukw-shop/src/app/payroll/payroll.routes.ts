@@ -4,6 +4,7 @@ import { PayrollComponent } from './payroll.component';
 import { PayslipListComponent } from './payslips/list.component';
 import { PayrollFrontPageComponent } from './frontpage.component';
 import { EmployeeAllocationsComponent } from './allocations/employee-allocations.component'
+import { UploadPayslipsComponent } from './payslips/upload-payslips.component'
 
 export const PAYROLL_ROUTES: Routes = [
   { 
@@ -15,7 +16,7 @@ export const PAYROLL_ROUTES: Routes = [
         component: PayrollComponent,
         children: [
           { path: 'allocations', component: EmployeeAllocationsComponent },
-          { path: 'payslips', component: PayslipListComponent },
+          { path: 'payslips', component: UploadPayslipsComponent },
         ]
       }
     ]

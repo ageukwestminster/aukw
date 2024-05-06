@@ -67,3 +67,7 @@
 .nav-link {
     color: blue;
 }
+
+.no-underline {
+    text-decoration: none
+}

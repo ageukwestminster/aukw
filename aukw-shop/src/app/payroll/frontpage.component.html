@@ -3,10 +3,10 @@
 </div>
 <div clas="col">
   <div class="d-flex justify-content-between content-wrap">
-    <i class="fas fa-check finished" *ngIf="state$ | async as state; else notDone"></i>
-    <i class="fas fa-check finished" *ngIf="processState >= PayrollProcessState.PAYSLIPS; else notDone"></i>
-    <i class="fas fa-check finished" *ngIf="processState >= PayrollProcessState.CHARITY; else notDone"></i>
-    <i class="fas fa-check finished" *ngIf="processState >= PayrollProcessState.ENTERPRISES; else notDone"></i>
+    <a class="no-underline" routerLink="allocations"><i class="fas fa-check finished" *ngIf="state$ | async as state; else notDone"></i></a>
+    <a class="no-underline" routerLink="payslips"><i class="fas fa-check finished" *ngIf="processState >= PayrollProcessState.PAYSLIPS; else notDone"></i></a>
+    <a class="no-underline" routerLink="charity"><i class="fas fa-check finished" *ngIf="processState >= PayrollProcessState.CHARITY; else notDone"></i></a>
+    <a class="no-underline" routerLink="enterprises"><i class="fas fa-check finished" *ngIf="processState >= PayrollProcessState.ENTERPRISES; else notDone"></i></a>
   </div>
   <div ngbNav #payrollNav="ngbNav" class="navbar navbar-expand-lg payroll-navbar">
     <div class="collapse navbar-collapse justify-content-around" id="navbarSupportedContent">
@@ -52,6 +52,7 @@
   <div [ngbNavOutlet]="payrollNav"></div>
 </div>
 <router-outlet></router-outlet>
+<!-- Used if the ngif test is 'false'-->
 <ng-template #notDone>
   <i class="fas fa-check stilltodo"></i>
 </ng-template>

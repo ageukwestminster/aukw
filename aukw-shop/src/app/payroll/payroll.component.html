@@ -8,11 +8,7 @@
     <div>
       <div class="col-md-4" *ngIf="stateService.state | async">
         <h4>Upload Iris Spreadsheet</h4>
-        <payroll-file-upload
-          *ngIf="!payslips || !payslips.length"
-          (onFileUploaded)="xlsxWasUploaded($event)"
-        ></payroll-file-upload>
-        <h4 class="mt-2">EE Summary</h4>
+
       </div>
       
     </div>
