@@ -27,7 +27,7 @@ import { MessageFactories } from '@app/_interfaces/message-factories';
           <i class="fas fa-circle-exclamation" style="color:#FF0000"></i>
         </div>
         <p>
-          {{ message }}
+          &nbsp;{{ message }}
         </p>
       </div>
     </div>
