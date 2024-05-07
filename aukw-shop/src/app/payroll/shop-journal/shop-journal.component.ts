@@ -1,5 +1,6 @@
 import {
   Component,
+  DestroyRef,
   EventEmitter,
   inject,
   Input,
@@ -15,7 +16,7 @@ import {
   QBEmployeeService,
   QBPayrollService,
 } from '@app/_services';
-import { forkJoin, map, of, shareReplay } from 'rxjs';
+import { forkJoin, map, of, shareReplay, Subject, takeUntil } from 'rxjs';
 import { environment } from '@environments/environment';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 
@@ -30,7 +31,7 @@ export class ShopJournalComponent implements OnChanges {
   lines: Array<IrisPayslip> = [];
   total: IrisPayslip = new IrisPayslip();
 
-  @Input() payslips: IrisPayslip[] = [];
+  payslips: IrisPayslip[] = [];
   @Input() payrollDate: string = '';
   @Output() onTransactionCreated = new EventEmitter();
 
@@ -38,6 +39,25 @@ export class ShopJournalComponent implements OnChanges {
   private qbPayrollService = inject(QBPayrollService);
   private loadingIndicatorService = inject(LoadingIndicatorService);
   private qbEmployeeService = inject(QBEmployeeService);
+  private destroyRef = inject(DestroyRef);
+
+    /**
+   * This pattern is used to subscribe to an rxjs Subject and automatically
+   * unsubscribe when the object is destroyed. Angular gives us the destroyRef
+   * hook to manage this.
+   * { @link https://medium.com/@chandrashekharsingh25/exploring-the-takeuntildestroyed-operator-in-angular-d7244c24a43e }
+   */
+    ngOnInit() {
+      const destroyed = new Subject();
+      this.destroyRef.onDestroy(() => {
+        destroyed.next('');
+        destroyed.complete();
+      });
+  
+      this.qbPayrollService.payslips$
+        .pipe(takeUntil(destroyed))
+        .subscribe((response) => (this.payslips = response));
+    }
 
   /**
    * On every change of the input variables, recalculate the allocated employer ni costs.
@@ -107,7 +127,7 @@ export class ShopJournalComponent implements OnChanges {
     });
 
     if (linesToAdd && linesToAdd.length) {
-      //console.log(JSON.stringify(this.lines));
+
       this.qbPayrollService
         .createShopJournal(this.lines, this.payrollDate)
         .pipe(

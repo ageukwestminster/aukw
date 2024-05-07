@@ -1,10 +1,11 @@
 import { Routes } from '@angular/router';
 
 import { PayrollComponent } from './payroll.component';
-import { PayslipListComponent } from './payslips/list.component';
+import { CharityPayrollComponent } from './charity/charity-payroll.component'; 
 import { PayrollFrontPageComponent } from './frontpage.component';
 import { EmployeeAllocationsComponent } from './allocations/employee-allocations.component'
 import { UploadPayslipsComponent } from './payslips/upload-payslips.component'
+import { ShopJournalComponent } from './shop-journal/shop-journal.component';
 
 export const PAYROLL_ROUTES: Routes = [
   { 
@@ -17,6 +18,8 @@ export const PAYROLL_ROUTES: Routes = [
         children: [
           { path: 'allocations', component: EmployeeAllocationsComponent },
           { path: 'payslips', component: UploadPayslipsComponent },
+          { path: 'charity' , component: CharityPayrollComponent},
+          { path: 'enterprises', component: ShopJournalComponent}
         ]
       }
     ]

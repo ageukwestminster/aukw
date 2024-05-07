@@ -85,6 +85,11 @@ export class PayrollFileUploadComponent implements OnInit {
     this.upload();
   }
 
+  /**
+   * Upload a selected file to via the API to the server and then decrypt and parse the file.
+   * Called when user selects a file to upload. 
+   * @returns void
+   */
   upload() {
     if (!this.file) return;
 
@@ -103,7 +108,7 @@ export class PayrollFileUploadComponent implements OnInit {
           if (response.isEncrypted) {
             return this.decrypt_and_parse(this.file!.name);
           } else {
-            return this.fileService.parse(this.file!.name);
+            return this.just_parse(this.file!.name);
           }
         }),
       )
@@ -156,5 +161,9 @@ export class PayrollFileUploadComponent implements OnInit {
       ),
       concatMap(() => this.fileService.parse()),
     );
+  }
+
+  private just_parse(filename: string): Observable<IrisPayslip[]> {
+    return this.fileService.parse(filename);
   }
 }

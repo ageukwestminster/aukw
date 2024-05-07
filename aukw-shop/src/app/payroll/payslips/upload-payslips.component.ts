@@ -28,7 +28,7 @@ export class UploadPayslipsComponent implements OnInit {
 
   PayrollProcessState = PayrollProcessState;
 
-    /**
+  /**
    * This pattern is used to subscribe to an rxjs Subject and automatically
    * unsubscribe when the object is destroyed. Angular gives us the destroyRef
    * hook to manage this.
