@@ -4,9 +4,7 @@ import {
   EventEmitter,
   inject,
   Input,
-  OnChanges,
   Output,
-  SimpleChanges,
 } from '@angular/core';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { IrisPayslip } from '@app/_models';
@@ -16,7 +14,7 @@ import {
   QBEmployeeService,
   QBPayrollService,
 } from '@app/_services';
-import { forkJoin, map, of, shareReplay, Subject, takeUntil } from 'rxjs';
+import { forkJoin, map, of, shareReplay, Subject, takeUntil, tap } from 'rxjs';
 import { environment } from '@environments/environment';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 
@@ -27,7 +25,7 @@ import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
   templateUrl: './shop-journal.component.html',
   styleUrl: './shop-journal.component.css',
 })
-export class ShopJournalComponent implements OnChanges {
+export class ShopJournalComponent {
   lines: Array<IrisPayslip> = [];
   total: IrisPayslip = new IrisPayslip();
 
@@ -41,12 +39,6 @@ export class ShopJournalComponent implements OnChanges {
   private qbEmployeeService = inject(QBEmployeeService);
   private destroyRef = inject(DestroyRef);
 
-    /**
-   * This pattern is used to subscribe to an rxjs Subject and automatically
-   * unsubscribe when the object is destroyed. Angular gives us the destroyRef
-   * hook to manage this.
-   * { @link https://medium.com/@chandrashekharsingh25/exploring-the-takeuntildestroyed-operator-in-angular-d7244c24a43e }
-   */
     ngOnInit() {
       const destroyed = new Subject();
       this.destroyRef.onDestroy(() => {
@@ -55,19 +47,19 @@ export class ShopJournalComponent implements OnChanges {
       });
   
       this.qbPayrollService.payslips$
-        .pipe(takeUntil(destroyed))
-        .subscribe((response) => (this.payslips = response));
+        .pipe(
+          takeUntil(destroyed),
+          tap((response) => this.payslips = response)
+        )
+        .subscribe(() => {
+          this.recalculateEnterprisesTransactions();
+    });
     }
 
-  /**
-   * On every change of the input variables, recalculate the allocated employer ni costs.
-   * @param changes The inputs that have changed. Not used but retained to match interface.
-   * @returns void
-   */
-  ngOnChanges(changes: SimpleChanges): void {
+  recalculateEnterprisesTransactions(): void {
     if (!this.payslips.length) return;
 
-    this.total = new IrisPayslip();
+    this.total = new IrisPayslip(); // reset to zero
 
     forkJoin({
       payslips: of(this.payslips.filter((p) => p.isShopEmployee)),
@@ -79,7 +71,6 @@ export class ShopJournalComponent implements OnChanges {
         map((x) => {
           let returnArray: Array<IrisPayslip> = [];
 
-          // The quickbooks
           x.payslips.forEach((payslip) => {
             // Find the employee that matches the payslip
             const employeeName = x.employees.filter(
