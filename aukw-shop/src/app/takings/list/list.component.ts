@@ -28,6 +28,7 @@ import {
 
 @Component({
   templateUrl: 'list.component.html',
+  styleUrl: './list.component.css',
   standalone: true,
   imports: [
     CommonModule,
