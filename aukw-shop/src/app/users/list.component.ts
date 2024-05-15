@@ -9,6 +9,7 @@ import { UserRowComponent } from './row.component';
 
 @Component({
   templateUrl: 'list.component.html',
+  styleUrl: './list.component.css',
   standalone: true,
   imports: [RouterLink, NgFor, NgIf, UserRowComponent],
 })

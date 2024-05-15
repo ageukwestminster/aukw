@@ -39,7 +39,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let line of lines">
-          <td style="vertical-align: middle">
+          <td class="payroll-number">
             {{ line.payrollNumber }}
           </td>
           <td>{{ line.employeeName }}</td>
@@ -60,14 +60,14 @@
           </td>
           <td class="text-center">
             <div *ngIf="line.payrollNumber">
-              <span style="color: green">
+              <span class="in-qbo">
                 <i
                   class="fas fa-check"
                   *ngIf="inQBO(line)"
                   ngbTooltip="Shop journal done for {{ line.employeeName }}."
                 ></i>
               </span>
-              <span style="color: red">
+              <span class="not-in-qbo">
                 <i
                   class="fas fa-times"
                   *ngIf="!inQBO(line)"
@@ -77,7 +77,7 @@
             </div>
           </td>
         </tr>
-        <tr *ngIf="total && total.totalPay" style="font-weight: bold">
+        <tr *ngIf="total && total.totalPay" class="total-line">
           <td></td>
           <td>Total for {{ this.lines.length }} employees:</td>
           <td class="d-none d-sm-table-cell">

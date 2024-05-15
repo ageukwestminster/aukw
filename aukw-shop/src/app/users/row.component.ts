@@ -12,6 +12,7 @@ import { UserService, AlertService } from '@app/_services';
   standalone: true,
   templateUrl: './row.component.html',
   imports: [FormsModule, NgFor, NgIf, RouterLink],
+  styleUrl: './row.component.css',
 })
 export class UserRowComponent {
   roles = Object.keys(Role).map((key: string) => Role[key as Role]);

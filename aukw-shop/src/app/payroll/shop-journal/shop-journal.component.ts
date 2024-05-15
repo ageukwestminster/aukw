@@ -39,7 +39,7 @@ export class ShopJournalComponent {
   private qbEmployeeService = inject(QBEmployeeService);
   private destroyRef = inject(DestroyRef);
 
-    ngOnInit() {
+  ngOnInit() {
       const destroyed = new Subject();
       this.destroyRef.onDestroy(() => {
         destroyed.next('');
@@ -54,7 +54,7 @@ export class ShopJournalComponent {
         .subscribe(() => {
           this.recalculateEnterprisesTransactions();
     });
-    }
+  }
 
   recalculateEnterprisesTransactions(): void {
     if (!this.payslips.length) return;

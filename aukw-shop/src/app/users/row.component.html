@@ -1,6 +1,6 @@
 <td>{{ user.firstname }}</td>
-<td>{{ user.username }}</td>
-<td>
+<td class="d-none d-sm-table-cell">{{ user.username }}</td>
+<td class="text-center">
   <!-- Explicity cast target value to an Any type according to fix suggested at https://github.com/angular/angular/issues/35293#issuecomment-584293328 -->
   <select
     (change)="onRoleChange($any($event.target).value)"
@@ -15,8 +15,8 @@
     </option>
   </select>
 </td>
-<td class="text-center">
-  <div>
+<td>
+  <div class="d-flex justify-content-center">
     <div
       (change)="onSuspendedChange($any($event.target).value)"
       (click)="onClickEvent($event)"
@@ -35,7 +35,7 @@
     </div>
   </div>
 </td>
-<td style="white-space: nowrap">
+<td class="white-space-nowrap">
   <button
     routerLink="edit/{{ user.id }}"
     class="btn btn-sm btn-primary me-1"
