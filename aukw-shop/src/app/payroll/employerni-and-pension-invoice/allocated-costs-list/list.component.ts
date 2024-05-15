@@ -9,6 +9,7 @@ import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
   standalone: true,
   imports: [CommonModule, NgbTooltip, NgFor, NgIf],
   templateUrl: './list.component.html',
+  styleUrl: './list.component.css',
 })
 export class AllocatedCostsListComponent implements OnChanges {
   total: number = 0;

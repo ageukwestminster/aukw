@@ -25,14 +25,14 @@
           </td>
           <td class="text-center">
             <div *ngIf="line.payrollNumber">
-              <span style="color: green">
+              <span class="in-qbo">
                 <i
                   class="fas fa-check"
                   *ngIf="inQBO(line)"
                   ngbTooltip="{{ title }} {{ transactionType }} done."
                 ></i>
               </span>
-              <span style="color: red">
+              <span class="not-in-qbo">
                 <i
                   class="fas fa-times"
                   *ngIf="!inQBO(line)"
