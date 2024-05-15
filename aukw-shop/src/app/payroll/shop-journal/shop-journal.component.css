@@ -1,15 +1,15 @@
 .in-qbo {
     color: green;
-  }
-  
-  .not-in-qbo {
+}
+
+.not-in-qbo {
     color: red;
-  }
+}
 
-  .total-line {
+.total-line {
     font-weight: bold;
-  }
+}
 
-  .payroll-number {
+.payroll-number {
     vertical-align: middle
-  }
+}
