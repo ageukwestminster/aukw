@@ -5,6 +5,8 @@ export enum PayrollProcessState {
   INITIAL = 0,
   ALLOCATIONS,
   PAYSLIPS,
-  CHARITY,
+  JOURNALS,
+  EMPLOYERNI,
+  PENSIONS,
   ENTERPRISES,
 }

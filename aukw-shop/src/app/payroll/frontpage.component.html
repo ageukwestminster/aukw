@@ -9,19 +9,51 @@
         *ngIf="state$ | async as state; else notDone"
       ></i
     ></a>
-    <a class="no-underline" routerLink="payslips"
+    <a
+      class="no-underline"
+      [routerLink]="
+        processState >= PayrollProcessState.ALLOCATIONS ? 'payslips' : null
+      "
       ><i
         class="fas fa-check finished"
         *ngIf="processState >= PayrollProcessState.PAYSLIPS; else notDone"
       ></i
     ></a>
-    <a class="no-underline" routerLink="charity"
+    <a
+      class="no-underline"
+      [routerLink]="
+        processState >= PayrollProcessState.PAYSLIPS ? 'journals' : null
+      "
       ><i
         class="fas fa-check finished"
-        *ngIf="processState >= PayrollProcessState.CHARITY; else notDone"
+        *ngIf="processState >= PayrollProcessState.JOURNALS; else notDone"
       ></i
     ></a>
-    <a class="no-underline" routerLink="enterprises"
+    <a
+      class="no-underline"
+      [routerLink]="
+        processState >= PayrollProcessState.JOURNALS ? 'employerni' : null
+      "
+      ><i
+        class="fas fa-check finished"
+        *ngIf="processState >= PayrollProcessState.EMPLOYERNI; else notDone"
+      ></i
+    ></a>
+    <a
+      class="no-underline"
+      [routerLink]="
+        processState >= PayrollProcessState.EMPLOYERNI ? 'pensions' : null
+      "
+      ><i
+        class="fas fa-check finished"
+        *ngIf="processState >= PayrollProcessState.PENSIONS; else notDone"
+      ></i
+    ></a>
+    <a
+      class="no-underline"
+      [routerLink]="
+        processState >= PayrollProcessState.PENSIONS ? 'enterprises' : null
+      "
       ><i
         class="fas fa-check finished"
         *ngIf="processState >= PayrollProcessState.ENTERPRISES; else notDone"
@@ -50,27 +82,82 @@
           >
         </li>
         <li [ngbNavItem]="2">
+          <!--
+            Using [ngClass] and [routerLink] to enforce journey through process. Only enable link when 
+            previous step complete.
+            A null value for routerLink disables the link.
+          -->
           <a
-            class="nav-item nav-link"
-            routerLink="payslips"
+            [ngClass]="
+              processState >= PayrollProcessState.ALLOCATIONS
+                ? 'nav-item nav-link'
+                : 'nav-item nav-link-disabled'
+            "
+            [routerLink]="
+              processState >= PayrollProcessState.ALLOCATIONS
+                ? 'payslips'
+                : null
+            "
             routerLinkActive="active"
             >Upload Iris S/S</a
           >
         </li>
         <li [ngbNavItem]="3">
           <a
-            class="nav-item nav-link"
-            routerLink="charity"
+            [ngClass]="
+              processState >= PayrollProcessState.PAYSLIPS
+                ? 'nav-item nav-link'
+                : 'nav-item nav-link-disabled'
+            "
+            [routerLink]="
+              processState >= PayrollProcessState.PAYSLIPS ? 'journals' : null
+            "
             routerLinkActive="active"
-            >Charity Quickbooks</a
+            >Employee Journals</a
           >
         </li>
         <li [ngbNavItem]="4">
           <a
-            class="nav-item nav-link"
-            routerLink="enterprises"
+            [ngClass]="
+              processState >= PayrollProcessState.JOURNALS
+                ? 'nav-item nav-link'
+                : 'nav-item nav-link-disabled'
+            "
+            [routerLink]="
+              processState >= PayrollProcessState.JOURNALS ? 'employerni' : null
+            "
             routerLinkActive="active"
-            >Enterprises QB</a
+            >Employer NI</a
+          >
+        </li>
+        <li [ngbNavItem]="5">
+          <a
+            [ngClass]="
+              processState >= PayrollProcessState.EMPLOYERNI
+                ? 'nav-item nav-link'
+                : 'nav-item nav-link-disabled'
+            "
+            [routerLink]="
+              processState >= PayrollProcessState.EMPLOYERNI ? 'pensions' : null
+            "
+            routerLinkActive="active"
+            >Pension invoice</a
+          >
+        </li>
+        <li [ngbNavItem]="6">
+          <a
+            [ngClass]="
+              processState >= PayrollProcessState.PENSIONS
+                ? 'nav-item nav-link'
+                : 'nav-item nav-link-disabled'
+            "
+            [routerLink]="
+              processState >= PayrollProcessState.PENSIONS
+                ? 'enterprises'
+                : null
+            "
+            routerLinkActive="active"
+            >Enterprises</a
           >
         </li>
       </ul>

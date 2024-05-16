@@ -9,9 +9,9 @@ import { ParentComponent } from './parent.component';
   standalone: true,
   imports: [AllocatedCostsListComponent, CommonModule],
   templateUrl: './employer-ni.component.html',
+  selector: 'employer-ni',
 })
 export class EmployerNiComponent extends ParentComponent {
-
   override recalculateTransactions() {
     if (!this.payslips.length || !this.allocations.length) return;
 

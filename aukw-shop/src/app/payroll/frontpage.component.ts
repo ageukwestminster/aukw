@@ -1,5 +1,5 @@
 import { Component, inject, TemplateRef } from '@angular/core';
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe, NgIf, NgClass } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { BehaviorSubject } from 'rxjs';
@@ -12,6 +12,7 @@ import { PayrollProcessState } from '@app/_models';
   imports: [
     AsyncPipe,
     NgbNavModule,
+    NgClass,
     NgIf,
     RouterLink,
     RouterLinkActive,

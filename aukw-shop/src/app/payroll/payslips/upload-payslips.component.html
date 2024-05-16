@@ -1,8 +1,9 @@
 <div class="col-md-4">
   <payroll-file-upload
-    *ngIf="!payslips || !payslips.length"
     (onFileUploaded)="xlsxWasUploaded($event)"
   ></payroll-file-upload>
 </div>
-<h4>EE Summary</h4>
+<div class="d-flex justify-content-between content-wrap">
+  <h4>EE Summary</h4>
+</div>
 <payslip-list [payslips]="payslips"></payslip-list>

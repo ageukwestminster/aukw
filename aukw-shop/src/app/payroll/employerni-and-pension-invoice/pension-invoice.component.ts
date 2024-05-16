@@ -9,10 +9,9 @@ import { ParentComponent } from './parent.component';
   standalone: true,
   imports: [AllocatedCostsListComponent, CommonModule],
   templateUrl: './pension-invoice.component.html',
+  selector: 'pensions-invoice',
 })
-export class PensionInvoiceComponent
-  extends ParentComponent
-{
+export class PensionInvoiceComponent extends ParentComponent {
   totalSalarySacrifice: number = 0;
   totalEmployeePension: number = 0;
 

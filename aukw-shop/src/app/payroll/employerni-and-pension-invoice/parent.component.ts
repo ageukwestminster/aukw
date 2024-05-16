@@ -1,4 +1,11 @@
-import { Component, DestroyRef, EventEmitter, inject, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  EventEmitter,
+  inject,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { EmployeeAllocation, IrisPayslip, LineItemDetail } from '@app/_models';
 import {
   AlertService,
@@ -52,7 +59,5 @@ export abstract class ParentComponent implements OnInit {
       });
   }
 
-  recalculateTransactions() {
-    
-  }
+  recalculateTransactions() {}
 }

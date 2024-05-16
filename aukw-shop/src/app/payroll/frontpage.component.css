@@ -66,6 +66,10 @@
 .nav-link {
   color: blue;
 }
+.nav-link-disabled {
+  color: black;
+  text-decoration: none;
+}
 
 .no-underline {
   text-decoration: none;
