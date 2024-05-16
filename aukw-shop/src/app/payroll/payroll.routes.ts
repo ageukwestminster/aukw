@@ -6,6 +6,8 @@ import { EmployeeAllocationsComponent } from './allocations/employee-allocations
 import { UploadPayslipsComponent } from './payslips/upload-payslips.component';
 import { ShopJournalComponent } from './shop-journal/shop-journal.component';
 import { EmployeeJournalsComponent } from './employee-journals/employee-journals.component';
+import { PensionInvoiceComponent } from './employerni-and-pension-invoice/pension-invoice.component';
+import { EmployerNiComponent } from './employerni-and-pension-invoice/employer-ni.component';
 
 export const PAYROLL_ROUTES: Routes = [
   {
@@ -14,12 +16,11 @@ export const PAYROLL_ROUTES: Routes = [
     children: [
       { path: 'allocations', component: EmployeeAllocationsComponent },
       { path: 'payslips', component: UploadPayslipsComponent },
-      {
-        path: 'charity',
-        component: CharityPayrollComponent,
-      },
+      { path: 'charity', component: CharityPayrollComponent },
       { path: 'enterprises', component: ShopJournalComponent },
       { path: 'journals', component: EmployeeJournalsComponent },
+      { path: 'pensions', component: PensionInvoiceComponent },
+      { path: 'employerni', component: EmployerNiComponent },
     ],
   },
 ];

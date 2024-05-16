@@ -26,9 +26,6 @@ import {
   tap,
   takeUntil,
   toArray,
-  switchMap,
-  map,
-  filter,
 } from 'rxjs';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 
@@ -80,18 +77,15 @@ export class EmployeeJournalsComponent implements OnInit {
   recalculateJournalEntries() {
     if (!this.payslips.length) return;
 
-    this.payrollService.employeeJournalEntries(
-      this.payslips,
-      this.allocations,
-    ).pipe(
-      toArray()
-    )
-    .subscribe({
-      next: (response) => (this.lines = response),
-      error: (e) => {
-        this.alertService.error(e, { autoClose: false });
-      },
-    });
+    this.payrollService
+      .employeeJournalEntries(this.payslips, this.allocations)
+      .pipe(toArray())
+      .subscribe({
+        next: (response) => (this.lines = response),
+        error: (e) => {
+          this.alertService.error(e, { autoClose: false });
+        },
+      });
   }
 
   /**
