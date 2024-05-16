@@ -3,6 +3,7 @@ import {
   DestroyRef,
   EventEmitter,
   inject,
+  OnInit,
   Output,
 } from '@angular/core';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
@@ -24,7 +25,7 @@ import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
   templateUrl: './shop-journal.component.html',
   styleUrl: './shop-journal.component.css',
 })
-export class ShopJournalComponent {
+export class ShopJournalComponent implements OnInit {
   lines: Array<IrisPayslip> = [];
   total: IrisPayslip = new IrisPayslip();
 

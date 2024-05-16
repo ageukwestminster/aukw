@@ -3,6 +3,7 @@ import {
   EventEmitter,
   inject,
   DestroyRef,
+  OnInit,
   Output,
 } from '@angular/core';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
@@ -26,6 +27,8 @@ import {
   takeUntil,
   toArray,
   switchMap,
+  map,
+  filter,
 } from 'rxjs';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 
@@ -36,7 +39,7 @@ import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
   templateUrl: './employee-journals.component.html',
   styleUrl: './employee-journals.component.css',
 })
-export class EmployeeJournalsComponent {
+export class EmployeeJournalsComponent implements OnInit {
   lines: PayrollJournalEntry[] = [];
 
   allocations: EmployeeAllocation[] = [];
@@ -68,20 +71,27 @@ export class EmployeeJournalsComponent {
           this.payslips = response;
           this.payrollDate = response[0].payrollDate;
         }),
-        switchMap((payslips) => {
-          return this.payrollService.employeeJournalEntries(
-            payslips,
-            this.allocations,
-          );
-        }),
-        toArray(),
       )
-      .subscribe({
-        next: (response) => (this.lines = response),
-        error: (e) => {
-          this.alertService.error(e, { autoClose: false });
-        },
+      .subscribe(() => {
+        this.recalculateJournalEntries();
       });
+  }
+
+  recalculateJournalEntries() {
+    if (!this.payslips.length) return;
+
+    this.payrollService.employeeJournalEntries(
+      this.payslips,
+      this.allocations,
+    ).pipe(
+      toArray()
+    )
+    .subscribe({
+      next: (response) => (this.lines = response),
+      error: (e) => {
+        this.alertService.error(e, { autoClose: false });
+      },
+    });
   }
 
   /**
