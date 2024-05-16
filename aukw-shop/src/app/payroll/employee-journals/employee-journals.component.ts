@@ -2,10 +2,8 @@ import {
   Component,
   EventEmitter,
   inject,
-  Input,
-  OnChanges,
+  DestroyRef,
   Output,
-  SimpleChanges,
 } from '@angular/core';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import {
@@ -19,7 +17,16 @@ import {
   QBPayrollService,
   PayrollService,
 } from '@app/_services';
-import { from, mergeMap, scan, shareReplay, tap, toArray } from 'rxjs';
+import {
+  from,
+  mergeMap,
+  Subject,
+  shareReplay,
+  tap,
+  takeUntil,
+  toArray,
+  switchMap,
+} from 'rxjs';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -29,30 +36,46 @@ import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
   templateUrl: './employee-journals.component.html',
   styleUrl: './employee-journals.component.css',
 })
-export class EmployeeJournalsComponent implements OnChanges {
+export class EmployeeJournalsComponent {
   lines: PayrollJournalEntry[] = [];
 
-  @Input() allocations: EmployeeAllocation[] = [];
-  @Input() payslips: IrisPayslip[] = [];
-  @Input() payrollDate: string = '';
+  allocations: EmployeeAllocation[] = [];
+  payslips: IrisPayslip[] = [];
+  payrollDate: string = '';
   @Output() onTransactionCreated = new EventEmitter();
 
   private loadingIndicatorService = inject(LoadingIndicatorService);
   private payrollService = inject(PayrollService);
   private qbPayrollService = inject(QBPayrollService);
   private alertService = inject(AlertService);
+  private destroyRef = inject(DestroyRef);
 
-  /**
-   * On every change of the input variables, recalculate the allocated employer ni costs.
-   * @param changes The inputs that have changed. Not used but retained to match interface.
-   * @returns void
-   */
-  ngOnChanges(changes: SimpleChanges): void {
-    if (!this.payslips.length || !this.allocations.length) return;
+  ngOnInit() {
+    const destroyed = new Subject();
+    this.destroyRef.onDestroy(() => {
+      destroyed.next('');
+      destroyed.complete();
+    });
 
-    this.payrollService
-      .employeeJournalEntries(this.payslips, this.allocations)
-      .pipe(toArray())
+    this.qbPayrollService.allocations$
+      .pipe(takeUntil(destroyed))
+      .subscribe((response) => (this.allocations = response));
+
+    this.qbPayrollService.payslips$
+      .pipe(
+        takeUntil(destroyed),
+        tap((response) => {
+          this.payslips = response;
+          this.payrollDate = response[0].payrollDate;
+        }),
+        switchMap((payslips) => {
+          return this.payrollService.employeeJournalEntries(
+            payslips,
+            this.allocations,
+          );
+        }),
+        toArray(),
+      )
       .subscribe({
         next: (response) => (this.lines = response),
         error: (e) => {

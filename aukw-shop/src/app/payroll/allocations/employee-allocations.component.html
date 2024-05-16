@@ -1,21 +1,19 @@
 <div class="border p-2 mt-2">
-  
   <div class="ms-2">
     <h4>Project Allocations</h4>
     <div class="col-sm-8">
       <p>
-        Employee allocations are managed by editing a recurring transaction
-        in the Charity quickbooks file.
+        Employee allocations are managed by editing a recurring transaction in
+        the Charity quickbooks file.
       </p>
       <p>The transaction is called "Salary Allocations - DoNotDelete".</p>
       <p>
-        Before adding a new employee to the recurring transaction, ensure
-        that they are listed among the employees in the QBO Payroll section.
-        Edit the new employee and add their iris payroll number to the
-        Employee ID field.
+        Before adding a new employee to the recurring transaction, ensure that
+        they are listed among the employees in the QBO Payroll section. Edit the
+        new employee and add their iris payroll number to the Employee ID field.
       </p>
     </div>
-    <div class = "col-sm-8">
+    <div class="col-sm-8">
       <table class="table table-striped table-responsive mt-2">
         <thead>
           <tr>
@@ -38,7 +36,9 @@
           </tr>
           <tr *ngIf="!(qbPayrollService.allocations$ | async)!.length">
             <td colspan="5" class="text-center">
-              <span class="spinner-border spinner-border-lg align-center"></span>
+              <span
+                class="spinner-border spinner-border-lg align-center"
+              ></span>
             </td>
           </tr>
         </tbody>

@@ -39,23 +39,23 @@ export class ShopJournalComponent {
   private destroyRef = inject(DestroyRef);
 
   ngOnInit() {
-      const destroyed = new Subject();
-      this.destroyRef.onDestroy(() => {
-        destroyed.next('');
-        destroyed.complete();
-      });
-  
-      this.qbPayrollService.payslips$
-        .pipe(
-          takeUntil(destroyed),
-          tap((response) => {
-            this.payslips = response; 
-            this.payrollDate = response[0].payrollDate;
-          })
-        )
-        .subscribe(() => {
-          this.recalculateEnterprisesTransactions();
+    const destroyed = new Subject();
+    this.destroyRef.onDestroy(() => {
+      destroyed.next('');
+      destroyed.complete();
     });
+
+    this.qbPayrollService.payslips$
+      .pipe(
+        takeUntil(destroyed),
+        tap((response) => {
+          this.payslips = response;
+          this.payrollDate = response[0].payrollDate;
+        }),
+      )
+      .subscribe(() => {
+        this.recalculateEnterprisesTransactions();
+      });
   }
 
   recalculateEnterprisesTransactions(): void {
@@ -100,9 +100,7 @@ export class ShopJournalComponent {
           });
           return x;
         }),
-        tap((x: Array<IrisPayslip>) => {
-
-        }),
+        tap((x: Array<IrisPayslip>) => {}),
       )
       .subscribe((response) => (this.lines = response));
   }
@@ -123,7 +121,6 @@ export class ShopJournalComponent {
     });
 
     if (linesToAdd && linesToAdd.length) {
-
       this.qbPayrollService
         .createShopJournal(this.lines, this.payrollDate)
         .pipe(

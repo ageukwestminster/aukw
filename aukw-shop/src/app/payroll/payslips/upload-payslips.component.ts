@@ -1,19 +1,36 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
-import { EmployeeAllocation, IrisPayslip, PayrollProcessState } from '@app/_models';
+import {
+  EmployeeAllocation,
+  IrisPayslip,
+  PayrollProcessState,
+} from '@app/_models';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
-import { concatMap, distinctUntilChanged, forkJoin, shareReplay, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import {
+  concatMap,
+  distinctUntilChanged,
+  forkJoin,
+  shareReplay,
+  Subject,
+  switchMap,
+  takeUntil,
+  tap,
+} from 'rxjs';
 import { PayslipListComponent } from './list.component';
 import { PayrollFileUploadComponent } from '@app/shared';
-import { AlertService, LoadingIndicatorService, PayrollProcessStateService, QBPayrollService } from '@app/_services';
+import {
+  AlertService,
+  LoadingIndicatorService,
+  PayrollProcessStateService,
+  QBPayrollService,
+} from '@app/_services';
 
 @Component({
   templateUrl: 'upload-payslips.component.html',
   standalone: true,
-  imports: [ NgIf, PayslipListComponent, PayrollFileUploadComponent],
+  imports: [NgIf, PayslipListComponent, PayrollFileUploadComponent],
 })
-export class UploadPayslipsComponent implements OnInit { 
-
+export class UploadPayslipsComponent implements OnInit {
   allocations: EmployeeAllocation[] = [];
   payslips: IrisPayslip[] = [];
   payrollDate: string = '';
@@ -21,7 +38,7 @@ export class UploadPayslipsComponent implements OnInit {
   private alertService = inject(AlertService);
   private qbPayrollService = inject(QBPayrollService);
   private loadingIndicatorService = inject(LoadingIndicatorService);
-  private stateService = inject (PayrollProcessStateService);
+  private stateService = inject(PayrollProcessStateService);
   private destroyRef = inject(DestroyRef);
 
   PayrollProcessState = PayrollProcessState;
@@ -46,7 +63,6 @@ export class UploadPayslipsComponent implements OnInit {
     this.qbPayrollService.payslips$
       .pipe(takeUntil(destroyed))
       .subscribe((response) => (this.payslips = response));
-
   }
 
   /** This is a callback from the file upload component. It is called when
@@ -56,12 +72,11 @@ export class UploadPayslipsComponent implements OnInit {
   xlsxWasUploaded(payslips: IrisPayslip[]): void {
     if (!payslips || !payslips.length) return;
 
-
-    if (!this.allocations || ! this.allocations.length) {
+    if (!this.allocations || !this.allocations.length) {
       this.alertService.error(
-        'Something has gone wrong. There are no employee project allocations loaded. '+
-        'Please return to the Allocations page to reload the employee project allocations before proceeding.'
-        , { autoClose: false }
+        'Something has gone wrong. There are no employee project allocations loaded. ' +
+          'Please return to the Allocations page to reload the employee project allocations before proceeding.',
+        { autoClose: false },
       );
       return;
     }
@@ -105,7 +120,6 @@ export class UploadPayslipsComponent implements OnInit {
     this.updateQBOFlags(payslips, payslips[0].payrollDate);
   }
 
-
   /**
    * Set the 'in Quickbooks' flags for the array of payslips that is held in the
    * instance variable 'payslips'. There are 4 flags:
@@ -117,17 +131,13 @@ export class UploadPayslipsComponent implements OnInit {
    * and then sends the amended array of payslips back to the service for onward broadcast.
    */
   updateQBOFlags(payslips: IrisPayslip[], payrollDate: string) {
-
     this.qbPayrollService
-      .payslipFlagsForCharity(
-        payslips,
-        payrollDate,
-      )
+      .payslipFlagsForCharity(payslips, payrollDate)
       .pipe(
         concatMap((response) => {
           return this.qbPayrollService.payslipFlagsForShop(
             response,
-            payrollDate
+            payrollDate,
           );
         }),
         this.loadingIndicatorService.createObserving({
@@ -144,7 +154,7 @@ export class UploadPayslipsComponent implements OnInit {
           this.alertService.error(error, { autoClose: false });
         },
         complete: () => {
-          this.stateService.setState(PayrollProcessState.PAYSLIPS)
+          this.stateService.setState(PayrollProcessState.PAYSLIPS);
         },
       });
   }

@@ -20,7 +20,13 @@ import {
   QBPayrollService,
   QBRealmService,
 } from '@app/_services';
-import { EmployeeAllocation, IrisPayslip, PayrollProcessState, QBRealm, User } from '@app/_models';
+import {
+  EmployeeAllocation,
+  IrisPayslip,
+  PayrollProcessState,
+  QBRealm,
+  User,
+} from '@app/_models';
 import { EmployeeAllocationsComponent } from './allocations/employee-allocations.component';
 import { EmployerNiComponent } from './employerni-and-pension-invoice/employer-ni.component';
 import { PensionInvoiceComponent } from './employerni-and-pension-invoice/pension-invoice.component';
@@ -66,7 +72,7 @@ export class PayrollComponent implements OnInit {
   private qbPayrollService = inject(QBPayrollService);
   private loadingIndicatorService = inject(LoadingIndicatorService);
   private destroyRef = inject(DestroyRef);
-  public stateService = inject (PayrollProcessStateService);
+  public stateService = inject(PayrollProcessStateService);
 
   constructor() {
     this.user = this.authenticationService.userValue;
@@ -193,15 +199,12 @@ export class PayrollComponent implements OnInit {
    */
   updateQBOFlags() {
     this.qbPayrollService
-      .payslipFlagsForCharity(
-        this.payslips,
-        this.payrollDate
-      )
+      .payslipFlagsForCharity(this.payslips, this.payrollDate)
       .pipe(
         concatMap((response) => {
           return this.qbPayrollService.payslipFlagsForShop(
             response,
-            this.payrollDate
+            this.payrollDate,
           );
         }),
         this.loadingIndicatorService.createObserving({
@@ -219,7 +222,7 @@ export class PayrollComponent implements OnInit {
         },
         complete: () => {
           this.loadingComplete = true;
-          this.stateService.setState(PayrollProcessState.PAYSLIPS)
+          this.stateService.setState(PayrollProcessState.PAYSLIPS);
         },
       });
   }

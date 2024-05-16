@@ -1,73 +1,72 @@
 .content-wrap {
-    position: relative;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #F9F9F9;
-    padding: 0.5em;
-    overflow: hidden;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f9f9f9;
+  padding: 0.5em;
+  overflow: hidden;
 }
 
 .content-wrap::before {
-    position: absolute;
-    top: calc(50% - 1px);
-    right: 0;
-    left: 0;
-    Content: "";
-    Background-color: grey;
-    height: 2px;
+  position: absolute;
+  top: calc(50% - 1px);
+  right: 0;
+  left: 0;
+  content: "";
+  background-color: grey;
+  height: 2px;
 }
 
 .stilltodo {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 4rem;
-    height: 4rem;
-    font-size: 3rem;
-    color: #777;
-    border: 2px solid #777777;
-    border-radius: 50%;
-    padding: 1rem;
-    background: #F9F9F9;
-    box-shadow: 0 0 0 0.5em #F9F9F9;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 4rem;
+  height: 4rem;
+  font-size: 3rem;
+  color: #777;
+  border: 2px solid #777777;
+  border-radius: 50%;
+  padding: 1rem;
+  background: #f9f9f9;
+  box-shadow: 0 0 0 0.5em #f9f9f9;
 }
-
 
 .finished {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 4rem;
-    height: 4rem;
-    font-size: 3rem;
-    color: #F9F9F9;
-    border: 2px solid #777777;
-    border-radius: 50%;
-    padding: 1rem;
-    background: green;
-    box-shadow: 0 0 0 0.5em #F9F9F9;
-  }
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 4rem;
+  height: 4rem;
+  font-size: 3rem;
+  color: #f9f9f9;
+  border: 2px solid #777777;
+  border-radius: 50%;
+  padding: 1rem;
+  background: green;
+  box-shadow: 0 0 0 0.5em #f9f9f9;
+}
 
 .payroll-navbar {
-    background: #F9F9F9;
-    justify-content: space-between;
-  }
+  background: #f9f9f9;
+  justify-content: space-between;
+}
 
 .navbar-nav {
-    flex: 1;
-    margin: auto !important;
-    display: flex;
-    justify-content: space-between;
+  flex: 1;
+  margin: auto !important;
+  display: flex;
+  justify-content: space-between;
 }
 .nav-link {
-    color: blue;
+  color: blue;
 }
 
 .no-underline {
-    text-decoration: none
+  text-decoration: none;
 }

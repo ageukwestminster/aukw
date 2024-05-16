@@ -9,17 +9,24 @@ import { PayrollProcessState } from '@app/_models';
 @Component({
   templateUrl: 'frontpage.component.html',
   standalone: true,
-  imports: [ AsyncPipe, NgbNavModule, NgIf, RouterLink, RouterLinkActive, RouterOutlet ],
+  imports: [
+    AsyncPipe,
+    NgbNavModule,
+    NgIf,
+    RouterLink,
+    RouterLinkActive,
+    RouterOutlet,
+  ],
   styleUrl: './frontpage.component.css',
 })
 export class PayrollFrontPageComponent {
   state$: BehaviorSubject<PayrollProcessState>;
   private payrollProcessStateService = inject(PayrollProcessStateService);
-  constructor(){
+  constructor() {
     this.state$ = this.payrollProcessStateService.stateSubject;
   }
   PayrollProcessState = PayrollProcessState;
-  get processState():PayrollProcessState {
+  get processState(): PayrollProcessState {
     return this.state$.getValue();
   }
 }

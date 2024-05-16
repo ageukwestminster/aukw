@@ -5,6 +5,6 @@ import { RouterOutlet } from '@angular/router';
   selector: 'reports-layout-component',
   templateUrl: 'layout.component.html',
   standalone: true,
-  imports: [ RouterOutlet ],
+  imports: [RouterOutlet],
 })
 export class PayrollLayoutComponent {}

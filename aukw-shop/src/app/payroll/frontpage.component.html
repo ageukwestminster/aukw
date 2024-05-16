@@ -1,15 +1,42 @@
 <div>
-    <h2>Payroll</h2>
+  <h2>Payroll</h2>
 </div>
 <div clas="col">
   <div class="d-flex justify-content-between content-wrap">
-    <a class="no-underline" routerLink="allocations"><i class="fas fa-check finished" *ngIf="state$ | async as state; else notDone"></i></a>
-    <a class="no-underline" routerLink="payslips"><i class="fas fa-check finished" *ngIf="processState >= PayrollProcessState.PAYSLIPS; else notDone"></i></a>
-    <a class="no-underline" routerLink="charity"><i class="fas fa-check finished" *ngIf="processState >= PayrollProcessState.CHARITY; else notDone"></i></a>
-    <a class="no-underline" routerLink="enterprises"><i class="fas fa-check finished" *ngIf="processState >= PayrollProcessState.ENTERPRISES; else notDone"></i></a>
+    <a class="no-underline" routerLink="allocations"
+      ><i
+        class="fas fa-check finished"
+        *ngIf="state$ | async as state; else notDone"
+      ></i
+    ></a>
+    <a class="no-underline" routerLink="payslips"
+      ><i
+        class="fas fa-check finished"
+        *ngIf="processState >= PayrollProcessState.PAYSLIPS; else notDone"
+      ></i
+    ></a>
+    <a class="no-underline" routerLink="charity"
+      ><i
+        class="fas fa-check finished"
+        *ngIf="processState >= PayrollProcessState.CHARITY; else notDone"
+      ></i
+    ></a>
+    <a class="no-underline" routerLink="enterprises"
+      ><i
+        class="fas fa-check finished"
+        *ngIf="processState >= PayrollProcessState.ENTERPRISES; else notDone"
+      ></i
+    ></a>
   </div>
-  <div ngbNav #payrollNav="ngbNav" class="navbar navbar-expand-lg payroll-navbar">
-    <div class="collapse navbar-collapse justify-content-around" id="navbarSupportedContent">
+  <div
+    ngbNav
+    #payrollNav="ngbNav"
+    class="navbar navbar-expand-lg payroll-navbar"
+  >
+    <div
+      class="collapse navbar-collapse justify-content-around"
+      id="navbarSupportedContent"
+    >
       <ul class="navbar-nav ml-2 justify-content-between">
         <li [ngbNavItem]="1">
           <!--

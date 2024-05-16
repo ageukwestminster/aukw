@@ -1,11 +1,11 @@
 .in-qbo {
-    color: green;
+  color: green;
 }
 
 .not-in-qbo {
-    color: red;
+  color: red;
 }
 
 tr {
-    vertical-align: middle;
-  }
+  vertical-align: middle;
+}

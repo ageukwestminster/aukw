@@ -5,8 +5,6 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './charity-payroll.component.html',
-  styleUrl: './charity-payroll.component.css'
+  styleUrl: './charity-payroll.component.css',
 })
-export class CharityPayrollComponent {
-
-}
+export class CharityPayrollComponent {}
