@@ -27,7 +27,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let alloc of qbPayrollService.allocations$ | async">
-            <td class="text-center" style="vertical-align: middle">
+            <td class="text-center">
               {{ alloc.payrollNumber }}
             </td>
             <td>{{ alloc.name }}</td>
