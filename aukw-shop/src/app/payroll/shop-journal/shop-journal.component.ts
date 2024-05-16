@@ -3,7 +3,6 @@ import {
   DestroyRef,
   EventEmitter,
   inject,
-  Input,
   Output,
 } from '@angular/core';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
@@ -30,7 +29,7 @@ export class ShopJournalComponent {
   total: IrisPayslip = new IrisPayslip();
 
   payslips: IrisPayslip[] = [];
-  @Input() payrollDate: string = '';
+  payrollDate: string = '';
   @Output() onTransactionCreated = new EventEmitter();
 
   private alertService = inject(AlertService);
