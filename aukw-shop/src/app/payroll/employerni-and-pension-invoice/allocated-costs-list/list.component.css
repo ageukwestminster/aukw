@@ -5,3 +5,7 @@
 .not-in-qbo {
     color: red;
 }
+
+tr {
+    vertical-align: middle;
+  }
