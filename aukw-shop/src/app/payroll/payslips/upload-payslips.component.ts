@@ -129,7 +129,7 @@ export class UploadPayslipsComponent implements OnInit {
         }),
         this.loadingIndicatorService.createObserving({
           loading: () =>
-            ' Querying Quickbooks for existing payroll transactions.',
+            ' Querying Quickbooks to see if transactions already entered.',
           success: () => `Successfully loaded Quickbooks transactions.`,
           error: (err) => `${err}`,
         }),

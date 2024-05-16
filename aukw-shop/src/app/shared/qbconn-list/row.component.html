@@ -1,5 +1,5 @@
 <td>{{ realm.name }}</td>
-<td style="text-align: center">
+<td class="text-center">
   <span class="logged-in" *ngIf="isValidConnection">●</span>
   <span class="logged-out" *ngIf="!isValidConnection">●</span>
 </td>
@@ -8,7 +8,7 @@
     this.realm!.connection && this.realm!.connection!.refreshtokenexpiry | date
   }}
 </td>
-<td style="white-space: nowrap">
+<td >
   <div *ngIf="user.isAdmin">
     <!-- Don't display is user is not an admin-->
     <button
@@ -20,7 +20,7 @@
     </button>
     <button
       (click)="refreshConnection($event)"
-      class="btn btn-sm btn-primary me-1"
+      class="btn btn-sm btn-primary me-1 mt-1"
       [disabled]="
         !this.realm!.connection || this.realm!.connection!.isRefreshing
       "
@@ -37,7 +37,7 @@
     </button>
     <button
       (click)="revokeConnection($event)"
-      class="btn btn-sm btn-danger"
+      class="btn btn-sm btn-danger mt-1"
       [disabled]="!this.realm!.connection || this.realm!.connection!.isRevoking"
       *ngIf="isValidConnection"
     >

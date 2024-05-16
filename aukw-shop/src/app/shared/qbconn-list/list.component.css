@@ -1,0 +1,27 @@
+tr {
+  vertical-align: middle;
+}
+
+.total-line {
+  font-weight: bold;
+}
+
+.in-qbo {
+  color: green;
+}
+
+.not-in-qbo {
+  color: red;
+}
+
+.status-indicator {
+  width: 5%;
+  text-align: center;
+}
+
+.width-10 {
+  width: 10%;
+}
+.width-25 {
+  width: 25%;
+}

@@ -25,44 +25,44 @@
 <table class="table table-striped table-responsive">
   <thead>
     <tr>
-      <th style="width: 5%">No.</th>
-      <th style="width: 22%">Name</th>
-      <th style="width: 8%">
+      <th class="width-5">No.</th>
+      <th class="width-22">Name</th>
+      <th class="width-8">
         <!-- Tooltip must be on element inside header, not header itself-->
         <!-- From https://stackoverflow.com/a/48324991/6941165 -->
         <div ngbTooltip="Total salary for the month">Gross</div>
       </th>
-      <th style="width: 8%" class="d-none d-sm-table-cell">
+      <th class="width-8 d-none d-sm-table-cell">
         <!-- Tooltip must be on element inside header, not header itself-->
         <div ngbTooltip="Employee income tax">PAYE</div>
       </th>
-      <th style="width: 8%" class="d-none d-sm-table-cell">
+      <th class="width-8 d-none d-sm-table-cell">
         <!-- Tooltip must be on element inside header, not header itself-->
         <div ngbTooltip="Employee National Insurance">E'ee NI</div>
       </th>
-      <th style="width: 6%" class="d-none d-sm-table-cell">
+      <th class="width-6 d-none d-sm-table-cell">
         <!-- Tooltip must be on element inside header, not header itself-->
         <div ngbTooltip="Other Deductions">Other</div>
       </th>
-      <th style="width: 8%" class="d-none d-sm-table-cell">
+      <th class="width-8 d-none d-sm-table-cell">
         <!-- Tooltip must be on element inside header, not header itself-->
         <div ngbTooltip="Salary Sacrifice">S Sac</div>
       </th>
-      <th style="width: 8%" class="d-none d-sm-table-cell">
+      <th class="width-8 d-none d-sm-table-cell">
         <!-- Tooltip must be on element inside header, not header itself-->
         <div ngbTooltip="Student Loan repayments">St Loan</div>
       </th>
-      <th style="width: 8%" class="d-none d-sm-table-cell">Net</th>
-      <th style="width: 8%" class="d-none d-sm-table-cell">
+      <th class="width-8 d-none d-sm-table-cell">Net</th>
+      <th class="width-8 d-none d-sm-table-cell">
         <!-- Tooltip must be on element inside header, not header itself-->
         <div ngbTooltip="Employer National Insurance">E'er NI</div>
       </th>
-      <th class="text-center" style="width: 8%">In QBO?</th>
+      <th class="width-8 text-center">In QBO?</th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let p of payslips">
-      <td style="vertical-align: middle">
+      <td>
         {{ p.payrollNumber }}
       </td>
       <td>{{ p.employeeName }}</td>
@@ -96,14 +96,14 @@
               *ngIf="!p.employerNI"
               ngbTooltip="Employer NI is zero."
             ></i>
-            <span style="color: green">
+            <span class="in-qbo">
               <i
                 class="fas fa-check"
                 *ngIf="p.employerNI && p.qbFlags && p.qbFlags.employerNI"
                 ngbTooltip="Employer NI journal done."
               ></i>
             </span>
-            <span style="color: red">
+            <span class="not-in-qbo">
               <i
                 class="fas fa-times"
                 *ngIf="p.employerNI && (!p.qbFlags || !p.qbFlags.employerNI)"
@@ -112,14 +112,14 @@
             </span>
           </div>
           <div class="col">
-            <span style="color: green">
+            <span class="in-qbo">
               <i
                 class="fas fa-check"
                 *ngIf="p.qbFlags && p.qbFlags.employeeJournal"
                 ngbTooltip="Employee payslip GJ done."
               ></i>
             </span>
-            <span style="color: red">
+            <span class="not-in-qbo">
               <i
                 class="fas fa-times"
                 *ngIf="!p.qbFlags || !p.qbFlags.employeeJournal"
@@ -133,14 +133,14 @@
               *ngIf="!p.employerPension"
               ngbTooltip="Not in pension plan."
             ></i>
-            <span style="color: green">
+            <span class="in-qbo">
               <i
                 class="fas fa-check"
                 *ngIf="p.employerPension && p.qbFlags && p.qbFlags.pensionBill"
                 ngbTooltip="L&G pension bill done."
               ></i>
             </span>
-            <span style="color: red">
+            <span class="not-in-qbo">
               <i
                 class="fas fa-times"
                 *ngIf="
@@ -156,14 +156,14 @@
               *ngIf="!p.isShopEmployee"
               ngbTooltip="Not a shop employee."
             ></i>
-            <span style="color: green">
+            <span class="in-qbo">
               <i
                 class="fas fa-check"
                 *ngIf="p.isShopEmployee && p.qbFlags && p.qbFlags.shopJournal"
                 ngbTooltip="Shop journal entry done."
               ></i>
             </span>
-            <span style="color: red">
+            <span class="not-in-qbo">
               <i
                 class="fas fa-times"
                 *ngIf="
@@ -176,7 +176,7 @@
         </div>
       </td>
     </tr>
-    <tr *ngIf="total && total.totalPay" style="font-weight: bold">
+    <tr *ngIf="total && total.totalPay" class="total-line">
       <td></td>
       <td>Total for {{ this.payslips.length }} employees:</td>
       <td>{{ total.totalPay | number: "1.2-2" }}</td>

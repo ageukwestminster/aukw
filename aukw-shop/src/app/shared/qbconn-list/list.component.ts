@@ -7,6 +7,7 @@ import { QBConnectionRowComponent } from './row.component';
 @Component({
   selector: 'qbconn-list',
   templateUrl: 'list.component.html',
+  styleUrls: ['list.component.css'],
   standalone: true,
   imports: [CommonModule, QBConnectionRowComponent],
 })
