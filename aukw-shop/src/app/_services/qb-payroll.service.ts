@@ -35,24 +35,24 @@ export class QBPayrollService {
   allocations$ = this.allocationsSubject.asObservable();
   payslips$ = this.payslipsSubject.asObservable();
   payrollDate$ = this.payrollDateSubject.asObservable();
-  
+
   sendPayslips(payslips: IrisPayslip[]) {
     this.payslipsSubject.next(payslips);
-    this.payrollDateSubject.next(payslips[0].payrollDate)
+    this.payrollDateSubject.next(payslips[0].payrollDate);
   }
 
   /**
    * Get the Month and Year of the payroll date. Both are strings, the year is in the format
-   * 'YYYY' and the month is in the format 'MM'. For example 25/3/2024 will return 
+   * 'YYYY' and the month is in the format 'MM'. For example 25/3/2024 will return
    * { month: '03',year: '2024'}
    * @param payrollDate The date the payroll run is for. Usually the 25th of the month..
-   * @returns 
+   * @returns
    */
   private getYearAndMonth(payrollDate: string) {
     const dt = new Date(payrollDate + 'T12:00:00');
     return {
       month: (dt.getMonth() + 1).toString().padStart(2, '0'),
-      year: dt.getFullYear().toString()
+      year: dt.getFullYear().toString(),
     };
   }
 
@@ -134,7 +134,7 @@ export class QBPayrollService {
     );
   }
 
-    /**
+  /**
    * Create a new general journal entry in the shop Quickbooks file that records the cost of employing
    * the shop employees.
    * @param params An array that specifies the employee costs
@@ -161,12 +161,12 @@ export class QBPayrollService {
    */
   payslipFlagsForCharity(
     xlsxPayslips: IrisPayslip[],
-    payrollDate: string
+    payrollDate: string,
   ): Observable<IrisPayslip[]> {
     return forkJoin({
       qbPayslips: this.getWhatsAlreadyInQBO(
         environment.qboCharityRealmID,
-        payrollDate
+        payrollDate,
       ),
       payrollPayslips: of(xlsxPayslips),
     }).pipe(
@@ -208,12 +208,12 @@ export class QBPayrollService {
    */
   payslipFlagsForShop(
     xlsxPayslips: IrisPayslip[],
-    payrollDate: string
+    payrollDate: string,
   ): Observable<IrisPayslip[]> {
     return forkJoin({
       qbPayslips: this.getWhatsAlreadyInQBO(
         environment.qboEnterprisesRealmID,
-        payrollDate
+        payrollDate,
       ),
       payrollPayslips: of(xlsxPayslips),
     }).pipe(

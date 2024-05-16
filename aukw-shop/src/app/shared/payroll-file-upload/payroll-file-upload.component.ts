@@ -87,7 +87,7 @@ export class PayrollFileUploadComponent implements OnInit {
 
   /**
    * Upload a selected file to via the API to the server and then decrypt and parse the file.
-   * Called when user selects a file to upload. 
+   * Called when user selects a file to upload.
    * @returns void
    */
   upload() {
