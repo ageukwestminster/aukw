@@ -1,0 +1,36 @@
+.in-qbo {
+  color: green;
+}
+
+.not-in-qbo {
+  color: red;
+}
+
+tr {
+  vertical-align: middle;
+}
+
+.width-5 {
+  width: 5%;
+}
+.width-6 {
+  width: 6%;
+}
+.width-7 {
+  width: 7%;
+}
+.width-8 {
+  width: 8%;
+}
+.width-9 {
+  width: 9%;
+}
+.width-17 {
+  width: 17%;
+}
+.width-21 {
+  width: 21%;
+}
+.width-22 {
+  width: 21%;
+}

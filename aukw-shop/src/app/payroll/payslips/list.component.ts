@@ -9,7 +9,7 @@ import { Observable, mergeAll, scan } from 'rxjs';
   templateUrl: 'list.component.html',
   standalone: true,
   imports: [CommonModule, NgbTooltip, NgFor, NgIf],
-  styleUrls: ['list.component.css'],
+  styleUrls: ['list.component.css', '../shared.css'],
 })
 export class PayslipListComponent {
   private _payslips!: IrisPayslip[];

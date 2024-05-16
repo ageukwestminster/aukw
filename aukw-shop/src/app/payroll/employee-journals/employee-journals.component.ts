@@ -34,7 +34,7 @@ import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
   standalone: true,
   imports: [CommonModule, NgbTooltip, NgFor, NgIf],
   templateUrl: './employee-journals.component.html',
-  styleUrl: './employee-journals.component.css',
+  styleUrls: ['./employee-journals.component.css', '../shared.css'],
 })
 export class EmployeeJournalsComponent implements OnInit {
   lines: PayrollJournalEntry[] = [];

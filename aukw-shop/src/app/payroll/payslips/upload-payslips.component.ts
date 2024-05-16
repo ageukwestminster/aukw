@@ -147,6 +147,7 @@ export class UploadPayslipsComponent implements OnInit {
           error: (err) => `${err}`,
         }),
         shareReplay(1),
+        tap((payslips) => this.updateProcessState(payslips)),
       )
       .subscribe({
         next: (response) => this.qbPayrollService.sendPayslips(response),
@@ -154,8 +155,30 @@ export class UploadPayslipsComponent implements OnInit {
           this.alertService.error(error, { autoClose: false });
         },
         complete: () => {
-          this.stateService.setState(PayrollProcessState.PAYSLIPS);
+          if (this.stateService.stateSubject.value < PayrollProcessState.PAYSLIPS)
+            this.stateService.setState(PayrollProcessState.PAYSLIPS);
         },
       });
+  }
+
+  updateProcessState(payslips: IrisPayslip[]){
+    this.stateService.setState(PayrollProcessState.PAYSLIPS);
+    //Loop through all flags and if all flags of a particular kind are set then update state
+    for (const element of payslips) {
+      if(!element.qbFlags.employeeJournal) return;
+    }
+    this.stateService.setState(PayrollProcessState.JOURNALS);
+    for (const element of payslips) {
+      if(!element.qbFlags.employerNI) return;
+    }
+    this.stateService.setState(PayrollProcessState.EMPLOYERNI);
+    for (const element of payslips) {
+      if(!element.qbFlags.pensionBill) return;
+    }
+    this.stateService.setState(PayrollProcessState.PENSIONS);
+    for (const element of payslips) {
+      if(!element.qbFlags.shopJournal && element.isShopEmployee) return;
+    }
+    this.stateService.setState(PayrollProcessState.ENTERPRISES);
   }
 }

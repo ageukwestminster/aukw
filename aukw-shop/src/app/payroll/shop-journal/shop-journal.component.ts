@@ -23,7 +23,7 @@ import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
   standalone: true,
   imports: [CommonModule, NgbTooltip, NgFor, NgIf],
   templateUrl: './shop-journal.component.html',
-  styleUrl: './shop-journal.component.css',
+  styleUrls: ['./shop-journal.component.css', '../shared.css'],
 })
 export class ShopJournalComponent implements OnInit {
   lines: Array<IrisPayslip> = [];

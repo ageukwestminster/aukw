@@ -14,7 +14,7 @@ import { shareReplay } from 'rxjs';
   standalone: true,
   imports: [AsyncPipe, NgFor, NgIf],
   templateUrl: './employee-allocations.component.html',
-  styleUrl: './employee-allocations.component.css',
+  styleUrls: ['./employee-allocations.component.css', '../shared.css'],
 })
 export class EmployeeAllocationsComponent implements OnInit {
   /** Used for allocations$ Observable */
