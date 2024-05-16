@@ -23,7 +23,7 @@
           <th class="d-none d-sm-table-cell">
             <!-- Tooltip must be on element inside header, not header itself-->
             <!-- From https://stackoverflow.com/a/48324991/6941165 -->
-            <div ngbTooltip="Total salary for the month">Salary</div>
+            <div ngbTooltip="Salary before tax">Salary</div>
           </th>
           <th class="d-none d-sm-table-cell">
             <!-- Tooltip must be on element inside header, not header itself-->
@@ -97,8 +97,8 @@
           </td>
           <td></td>
         </tr>
-        <tr *ngIf="!lines">
-          <td colspan="5" class="text-center">
+        <tr *ngIf="!lines || !lines.length">
+          <td colspan="7" class="text-center">
             <span class="spinner-border spinner-border-lg align-center"></span>
           </td>
         </tr>
