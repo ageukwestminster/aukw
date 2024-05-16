@@ -83,8 +83,8 @@ export class SalesHistogramChartComponent implements OnInit, OnChanges {
         zIndex: -1,
         tooltip: {
           pointFormat:
-            '<span style="font-size: 10px">Sales between £{point.x:.2f} & £{point.x2:.2f}</span>' +
-            '<br/><span style="color:{point.color}">●</span> {series.name} <b>{point.y}</b>',
+            '<span class="small-font">Sales between £{point.x:.2f} & £{point.x2:.2f}</span>' +
+            '<br/><b>{point.y} different days</b>',
         },
       },
       {

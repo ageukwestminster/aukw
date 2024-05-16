@@ -24,7 +24,7 @@ import { MessageFactories } from '@app/_interfaces/message-factories';
           <span class="spinner-border spinner-border-sm"></span>
         </div>
         <div *ngIf="status == 'error'">
-          <i class="fas fa-circle-exclamation" style="color:#FF0000"></i>
+          <i class="fas fa-circle-exclamation" class="red-color"></i>
         </div>
         <p>
           &nbsp;{{ message }}
@@ -32,6 +32,7 @@ import { MessageFactories } from '@app/_interfaces/message-factories';
       </div>
     </div>
   `,
+  styles: ['.red-color { color: red; }'],
   imports: [NgIf],
 })
 export class LoadingIndicatorContent {
