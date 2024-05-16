@@ -49,7 +49,10 @@ export class ShopJournalComponent {
       this.qbPayrollService.payslips$
         .pipe(
           takeUntil(destroyed),
-          tap((response) => this.payslips = response)
+          tap((response) => {
+            this.payslips = response; 
+            this.payrollDate = response[0].payrollDate;
+          })
         )
         .subscribe(() => {
           this.recalculateEnterprisesTransactions();
@@ -97,6 +100,9 @@ export class ShopJournalComponent {
             this.total.add(element);
           });
           return x;
+        }),
+        tap((x: Array<IrisPayslip>) => {
+
         }),
       )
       .subscribe((response) => (this.lines = response));

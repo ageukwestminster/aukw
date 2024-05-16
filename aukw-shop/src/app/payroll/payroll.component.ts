@@ -195,15 +195,13 @@ export class PayrollComponent implements OnInit {
     this.qbPayrollService
       .payslipFlagsForCharity(
         this.payslips,
-        this.payrollYear,
-        this.payrollMonth,
+        this.payrollDate
       )
       .pipe(
         concatMap((response) => {
           return this.qbPayrollService.payslipFlagsForShop(
             response,
-            this.payrollYear,
-            this.payrollMonth,
+            this.payrollDate
           );
         }),
         this.loadingIndicatorService.createObserving({

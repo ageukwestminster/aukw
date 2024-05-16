@@ -2,7 +2,7 @@ import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { EmployeeAllocation, IrisPayslip, PayrollProcessState } from '@app/_models';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
-import { concatMap, shareReplay, Subject, takeUntil } from 'rxjs';
+import { concatMap, distinctUntilChanged, forkJoin, shareReplay, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { PayslipListComponent } from './list.component';
 import { PayrollFileUploadComponent } from '@app/shared';
 import { AlertService, LoadingIndicatorService, PayrollProcessStateService, QBPayrollService } from '@app/_services';
@@ -17,8 +17,6 @@ export class UploadPayslipsComponent implements OnInit {
   allocations: EmployeeAllocation[] = [];
   payslips: IrisPayslip[] = [];
   payrollDate: string = '';
-  payrollYear: string = '';
-  payrollMonth: string = '';
 
   private alertService = inject(AlertService);
   private qbPayrollService = inject(QBPayrollService);
@@ -44,9 +42,11 @@ export class UploadPayslipsComponent implements OnInit {
     this.qbPayrollService.allocations$
       .pipe(takeUntil(destroyed))
       .subscribe((response) => (this.allocations = response));
+
     this.qbPayrollService.payslips$
       .pipe(takeUntil(destroyed))
       .subscribe((response) => (this.payslips = response));
+
   }
 
   /** This is a callback from the file upload component. It is called when
@@ -55,6 +55,16 @@ export class UploadPayslipsComponent implements OnInit {
    */
   xlsxWasUploaded(payslips: IrisPayslip[]): void {
     if (!payslips || !payslips.length) return;
+
+
+    if (!this.allocations || ! this.allocations.length) {
+      this.alertService.error(
+        'Something has gone wrong. There are no employee project allocations loaded. '+
+        'Please return to the Allocations page to reload the employee project allocations before proceeding.'
+        , { autoClose: false }
+      );
+      return;
+    }
 
     try {
       payslips.forEach((payslip) => {
@@ -92,16 +102,10 @@ export class UploadPayslipsComponent implements OnInit {
     // Update the payslips subject so it will be availabe to all subscribers
     this.qbPayrollService.sendPayslips(payslips);
 
-    // Calculate month and year from payroll date
-    this.payrollDate = payslips[0].payrollDate;
-    const dt = new Date(this.payrollDate + 'T12:00:00');
-    this.payrollMonth = (dt.getMonth() + 1).toString().padStart(2, '0');
-    this.payrollYear = dt.getFullYear().toString();
-
-    this.updateQBOFlags();
+    this.updateQBOFlags(payslips, payslips[0].payrollDate);
   }
 
-  
+
   /**
    * Set the 'in Quickbooks' flags for the array of payslips that is held in the
    * instance variable 'payslips'. There are 4 flags:
@@ -112,19 +116,18 @@ export class UploadPayslipsComponent implements OnInit {
    * The function takes the given payslips, sets or unsets the boolean flags for each payslip
    * and then sends the amended array of payslips back to the service for onward broadcast.
    */
-  updateQBOFlags() {
+  updateQBOFlags(payslips: IrisPayslip[], payrollDate: string) {
+
     this.qbPayrollService
       .payslipFlagsForCharity(
-        this.payslips,
-        this.payrollYear,
-        this.payrollMonth,
+        payslips,
+        payrollDate,
       )
       .pipe(
         concatMap((response) => {
           return this.qbPayrollService.payslipFlagsForShop(
             response,
-            this.payrollYear,
-            this.payrollMonth,
+            payrollDate
           );
         }),
         this.loadingIndicatorService.createObserving({

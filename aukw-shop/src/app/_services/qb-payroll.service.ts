@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, forkJoin, of, BehaviorSubject } from 'rxjs';
+import { Observable, forkJoin, of, BehaviorSubject, Subject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
 import { environment } from '@environments/environment';
@@ -30,12 +30,30 @@ export class QBPayrollService {
 
   private allocationsSubject = new BehaviorSubject<EmployeeAllocation[]>([]);
   private payslipsSubject = new BehaviorSubject<IrisPayslip[]>([]);
+  private payrollDateSubject = new Subject<string>();
 
   allocations$ = this.allocationsSubject.asObservable();
   payslips$ = this.payslipsSubject.asObservable();
+  payrollDate$ = this.payrollDateSubject.asObservable();
   
   sendPayslips(payslips: IrisPayslip[]) {
     this.payslipsSubject.next(payslips);
+    this.payrollDateSubject.next(payslips[0].payrollDate)
+  }
+
+  /**
+   * Get the Month and Year of the payroll date. Both are strings, the year is in the format
+   * 'YYYY' and the month is in the format 'MM'. For example 25/3/2024 will return 
+   * { month: '03',year: '2024'}
+   * @param payrollDate The date the payroll run is for. Usually the 25th of the month..
+   * @returns 
+   */
+  private getYearAndMonth(payrollDate: string) {
+    const dt = new Date(payrollDate + 'T12:00:00');
+    return {
+      month: (dt.getMonth() + 1).toString().padStart(2, '0'),
+      year: dt.getFullYear().toString()
+    };
   }
 
   /**
@@ -45,13 +63,13 @@ export class QBPayrollService {
    * The transactions are then converted by the API into IrisPayslip objects for
    * each employee.
    * @param realmID The Quickbooks ID of the company file.
-   * @param year The year in which the payroll run happened e.g. '2024'
-   * @param month The month in which the payroll run happened e.g. '03' for March
+   * @param payrollDate The transaction date of the journal entry.
    * @returns An array of payslips, one for each employee, or an empty array.
    */
-  getWhatsAlreadyInQBO(realmID: string, year: string, month: string) {
+  getWhatsAlreadyInQBO(realmID: string, payrollDate: string) {
+    const monthYear = this.getYearAndMonth(payrollDate);
     return this.http.get<IrisPayslip[]>(
-      `${baseUrl}/${realmID}/query/payroll/${year}/${month}`,
+      `${baseUrl}/${realmID}/query/payroll/${monthYear.year}/${monthYear.month}`,
     );
   }
 
@@ -116,6 +134,13 @@ export class QBPayrollService {
     );
   }
 
+    /**
+   * Create a new general journal entry in the shop Quickbooks file that records the cost of employing
+   * the shop employees.
+   * @param params An array that specifies the employee costs
+   * @param payrollDate The transaction date of the journal entry.
+   * @returns A success or failure message. A success message will have the quickbooks id of the new transaction.
+   */
   createShopJournal(params: any, payrollDate: string) {
     return this.http.post<ApiMessage>(
       `${baseUrl}/${environment.qboEnterprisesRealmID}/journal/enterprises?payrolldate=${payrollDate}`,
@@ -131,20 +156,17 @@ export class QBPayrollService {
    * The function takes the given payslips, sets or unsets the boolean flags for each payslip
    * and then returns the amended array of payslips.
    * @param xlsxPayslips An array of payslips obtained from the Iris payroll spreadsheet (XLSX)
-   * @param year The year in which the payroll run happened e.g. '2024'
-   * @param month The month in which the payroll run happened e.g. '03' for March
+   * @param payrollDate The date of the payroll run. Usually the 25th of the month.
    * @returns An array of payslips, one for each employee, or an empty array.
    */
   payslipFlagsForCharity(
     xlsxPayslips: IrisPayslip[],
-    year: string,
-    month: string,
+    payrollDate: string
   ): Observable<IrisPayslip[]> {
     return forkJoin({
       qbPayslips: this.getWhatsAlreadyInQBO(
         environment.qboCharityRealmID,
-        year,
-        month,
+        payrollDate
       ),
       payrollPayslips: of(xlsxPayslips),
     }).pipe(
@@ -181,20 +203,17 @@ export class QBPayrollService {
    * The function takes the given payslips, sets or unsets the boolean flags for each payslip
    * and then returns the amended array of payslips.
    * @param xlsxPayslips An array of payslips obtained from the Iris payroll spreadsheet (XLSX)
-   * @param year The year in which the payroll run happened e.g. '2024'
-   * @param month The month in which the payroll run happened e.g. '03' for March
+   * @param payrollDate The date of the payroll run. Usually the 25th of the month.
    * @returns An array of payslips, one for each employee, or an empty array.
    */
   payslipFlagsForShop(
     xlsxPayslips: IrisPayslip[],
-    year: string,
-    month: string,
+    payrollDate: string
   ): Observable<IrisPayslip[]> {
     return forkJoin({
       qbPayslips: this.getWhatsAlreadyInQBO(
         environment.qboEnterprisesRealmID,
-        year,
-        month,
+        payrollDate
       ),
       payrollPayslips: of(xlsxPayslips),
     }).pipe(
