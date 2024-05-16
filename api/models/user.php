@@ -293,12 +293,13 @@ class User{
      *
      * @param int $id The id of the user to update.
      * @param int $failedloginattempts The number of failed attempts to login.
-     * @param bool $suspended If 'true' then the user is suspended.
+     * @param bool $suspendUser If 'true' then the user will be set to 'suspended'. 
+     * If 'false' then 'suspended' is unset.
      * 
      * @return bool 'true' if database update succeeded.
      * 
      */
-    public function updateFailedAttempts(int $id, int $failedloginattempts, bool $suspended){
+    public function updateFailedAttempts(int $id, int $failedloginattempts, bool $suspendUser){
         $query = "UPDATE
                     " . $this->table_name . "
                     SET 
@@ -313,7 +314,7 @@ class User{
         // bind values
         $stmt->bindParam(":id", $id);      
         $stmt->bindParam(":failedloginattempts", $failedloginattempts);     
-        $stmt->bindValue(":suspended", $suspended ? 1 : 0);
+        $stmt->bindValue(":suspended", $suspendUser ? 1 : 0);
 
         // execute query
         if($stmt->execute()){
