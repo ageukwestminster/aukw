@@ -72,12 +72,11 @@ class EncryptedXlsx{
     return new self();
   }
 
-    /**
-   * Decrypt an encrypted Excel xlsx file and save as a decrypted file.
-   * (Requires PEAR/OLE to open the file and extract the encryption data and payload.)
-   * 
-   * Code is from https://github.com/jaydadhania08/PHPDecryptXLSXWithPassword
-   */
+/**
+ * Test the given file for encryption.
+ * @param $filename Fully qualified path and filename
+ * @return bool 'true' if the file is encrypted
+ */
   public function isEncrypted(string $filename):bool {
     $oleObj = new OLE();
 
@@ -110,7 +109,9 @@ class EncryptedXlsx{
    * Decrypt an encrypted Excel xlsx file and save as a decrypted file.
    * (Requires PEAR/OLE to open the file and extract the encryption data and payload.)
    * 
-   * Code is from https://github.com/jaydadhania08/PHPDecryptXLSXWithPassword
+   * Does not test that decryption is successful!
+   * 
+   * Code is from { @link https://github.com/jaydadhania08/PHPDecryptXLSXWithPassword }
    */
   public function decrypt() {
     $oleObj = new OLE();
@@ -214,6 +215,23 @@ class EncryptedXlsx{
     // write to file
     file_put_contents($this->decryptedFilePath, $decrypted);
 
+    // test decryption
+    try{
+        /**  Create a new Reader of type 'Xlsx' **/
+        $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader('Xlsx');
+        /**  Advise the Reader that we only want to load cell data  **/
+        $reader->setReadDataOnly(true);
+        /**  Load $inputFileName to a Spreadsheet Object  **/
+        $reader->load($this->decryptedFilePath);
+    }
+    catch (\Exception $e){
+      http_response_code(400);   
+      echo json_encode(
+          array("message" => "Decryption of spreadsheet failed. Incorrect password.",
+          "details" => $e->getMessage())
+      );
+      exit(1);
+  }
   }
 
   /**
