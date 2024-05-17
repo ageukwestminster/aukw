@@ -109,7 +109,7 @@ class EncryptedXlsx{
    * Decrypt an encrypted Excel xlsx file and save as a decrypted file.
    * (Requires PEAR/OLE to open the file and extract the encryption data and payload.)
    * 
-   * Does not test that decryption is successful!
+   * Then test that decryption is successful!
    * 
    * Code is from { @link https://github.com/jaydadhania08/PHPDecryptXLSXWithPassword }
    */
