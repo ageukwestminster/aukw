@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IrisPayslip, LineItemDetail } from '@app/_models';
+import { IrisPayslip, LineItemDetail, PayrollProcessState } from '@app/_models';
 import { scan, shareReplay, tap } from 'rxjs';
 import { AllocatedCostsListComponent } from './allocated-costs-list/list.component';
 import { ParentComponent } from './parent.component';
@@ -90,10 +90,13 @@ export class PensionInvoiceComponent extends ParentComponent {
           shareReplay(1),
         )
         .subscribe({
-          error: (error: any) => {
-            this.alertService.error(error, { autoClose: false });
+          error: (e) => {
+            this.alertService.error(e, { autoClose: false });
           },
-          complete: () => this.onTransactionCreated.emit(),
+          complete: () => {
+            this.qbPayrollService.sendPayslips(this.setQBOFlagsToTrue())
+            this.stateService.setState(PayrollProcessState.PENSIONS);
+          }
         });
     } else {
       this.alertService.info(
@@ -107,5 +110,12 @@ export class PensionInvoiceComponent extends ParentComponent {
     return function (payslip: IrisPayslip): boolean {
       return payslip.qbFlags.pensionBill;
     };
+  }
+
+  setQBOFlagsToTrue(){
+    for(const payslip of this.payslips) {
+      payslip.qbFlags.pensionBill = true;
+    }
+    return this.payslips;
   }
 }

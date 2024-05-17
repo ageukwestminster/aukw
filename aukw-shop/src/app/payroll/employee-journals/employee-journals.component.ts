@@ -1,22 +1,23 @@
 import {
   Component,
-  EventEmitter,
   inject,
   DestroyRef,
   OnInit,
-  Output,
 } from '@angular/core';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import {
   EmployeeAllocation,
   IrisPayslip,
   PayrollJournalEntry,
+  PayrollProcessState,
+  QBTransactionFlags,
 } from '@app/_models';
 import {
   AlertService,
   LoadingIndicatorService,
   QBPayrollService,
   PayrollService,
+  PayrollProcessStateService
 } from '@app/_services';
 import {
   from,
@@ -42,13 +43,13 @@ export class EmployeeJournalsComponent implements OnInit {
   allocations: EmployeeAllocation[] = [];
   payslips: IrisPayslip[] = [];
   payrollDate: string = '';
-  @Output() onTransactionCreated = new EventEmitter();
 
   private loadingIndicatorService = inject(LoadingIndicatorService);
   private payrollService = inject(PayrollService);
   private qbPayrollService = inject(QBPayrollService);
   private alertService = inject(AlertService);
   private destroyRef = inject(DestroyRef);
+  private stateService = inject(PayrollProcessStateService);
 
   ngOnInit() {
     const destroyed = new Subject();
@@ -122,7 +123,10 @@ export class EmployeeJournalsComponent implements OnInit {
           error: (e) => {
             this.alertService.error(e, { autoClose: false });
           },
-          complete: () => this.onTransactionCreated.emit(),
+          complete: () => {
+            this.qbPayrollService.sendPayslips(this.setQBOFlagsToTrue())
+            this.stateService.setState(PayrollProcessState.JOURNALS);
+          }
         });
     } else {
       this.alertService.info(
@@ -145,5 +149,12 @@ export class EmployeeJournalsComponent implements OnInit {
           p.payrollNumber == line.payrollNumber && p.qbFlags.employeeJournal,
       ).length != 0
     );
+  }
+
+  setQBOFlagsToTrue(){
+    for(const payslip of this.payslips) {
+      payslip.qbFlags.employeeJournal = true;
+    }
+    return this.payslips;
   }
 }

@@ -145,14 +145,15 @@ export class PayrollService {
                 calculatedAllocatedAmount = Number(remainder.toFixed(2));
 
               const line = new LineItemDetail({
-                quickbooksId: empAllocation.quickbooksId,
+                // '+' = https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Unary_plus
+                quickbooksId: +empAllocation.quickbooksId,
                 name: empAllocation.name,
                 account: empAllocation.account,
                 accountName: empAllocation.accountName,
                 class: empAllocation.class,
                 className: empAllocation.className,
                 amount: calculatedAllocatedAmount,
-                payrollNumber: empAllocation.payrollNumber,
+                payrollNumber: +empAllocation.payrollNumber,
                 isShopEmployee: empAllocation.isShopEmployee,
               });
 

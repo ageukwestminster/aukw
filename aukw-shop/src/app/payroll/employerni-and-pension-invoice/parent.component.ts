@@ -1,10 +1,8 @@
 import {
   Component,
   DestroyRef,
-  EventEmitter,
   inject,
   OnInit,
-  Output,
 } from '@angular/core';
 import { EmployeeAllocation, IrisPayslip, LineItemDetail } from '@app/_models';
 import {
@@ -12,6 +10,7 @@ import {
   LoadingIndicatorService,
   QBPayrollService,
   PayrollService,
+  PayrollProcessStateService,
 } from '@app/_services';
 import { Subject, takeUntil, tap } from 'rxjs';
 
@@ -27,13 +26,13 @@ export abstract class ParentComponent implements OnInit {
   allocations: EmployeeAllocation[] = [];
   payslips: IrisPayslip[] = [];
   payrollDate: string = '';
-  @Output() onTransactionCreated = new EventEmitter();
 
   protected loadingIndicatorService = inject(LoadingIndicatorService);
   protected payrollService = inject(PayrollService);
   protected qbPayrollService = inject(QBPayrollService);
   protected alertService = inject(AlertService);
   private destroyRef = inject(DestroyRef);
+  protected stateService = inject(PayrollProcessStateService);
 
   ngOnInit() {
     const destroyed = new Subject();

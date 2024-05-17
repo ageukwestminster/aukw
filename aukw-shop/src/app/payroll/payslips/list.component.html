@@ -91,27 +91,6 @@
         <td class="text-center">
           <div class="row">
             <div class="col">
-              <i
-                class="fas fa-minus"
-                *ngIf="!p.employerNI"
-                ngbTooltip="Employer NI is zero."
-              ></i>
-              <span class="in-qbo">
-                <i
-                  class="fas fa-check"
-                  *ngIf="p.employerNI && p.qbFlags && p.qbFlags.employerNI"
-                  ngbTooltip="Employer NI journal done."
-                ></i>
-              </span>
-              <span class="not-in-qbo">
-                <i
-                  class="fas fa-times"
-                  *ngIf="p.employerNI && (!p.qbFlags || !p.qbFlags.employerNI)"
-                  ngbTooltip="Employer NI journal missing."
-                ></i>
-              </span>
-            </div>
-            <div class="col">
               <span class="in-qbo">
                 <i
                   class="fas fa-check"
@@ -149,6 +128,27 @@
                     p.employerPension && (!p.qbFlags || !p.qbFlags.pensionBill)
                   "
                   ngbTooltip="L&G pension bill missing."
+                ></i>
+              </span>
+            </div>
+            <div class="col">
+              <i
+                class="fas fa-minus"
+                *ngIf="!p.employerNI"
+                ngbTooltip="Employer NI is zero."
+              ></i>
+              <span class="in-qbo">
+                <i
+                  class="fas fa-check"
+                  *ngIf="p.employerNI && p.qbFlags && p.qbFlags.employerNI"
+                  ngbTooltip="Employer NI journal done."
+                ></i>
+              </span>
+              <span class="not-in-qbo">
+                <i
+                  class="fas fa-times"
+                  *ngIf="p.employerNI && (!p.qbFlags || !p.qbFlags.employerNI)"
+                  ngbTooltip="Employer NI journal missing."
                 ></i>
               </span>
             </div>

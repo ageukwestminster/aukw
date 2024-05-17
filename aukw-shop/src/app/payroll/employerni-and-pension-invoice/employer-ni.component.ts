@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IrisPayslip, LineItemDetail } from '@app/_models';
+import { IrisPayslip, LineItemDetail, PayrollProcessState } from '@app/_models';
 import { scan, shareReplay, tap } from 'rxjs';
 import { AllocatedCostsListComponent } from './allocated-costs-list/list.component';
 import { ParentComponent } from './parent.component';
@@ -32,14 +32,17 @@ export class EmployerNiComponent extends ParentComponent {
    * account and class allocations for each employee.
    */
   createTransaction() {
+
     // Filter out lines for which there is already a QBO entry
-    const linesToAdd = this.lines.filter((item) => {
+    const linesToAdd = this.lines.filter((item) => 
       this.payslips.filter(
         (p) =>
-          p.payrollNumber == item.payrollNumber &&
-          (!p.qbFlags || !p.qbFlags.shopJournal),
-      ).length > 0;
-    });
+          (p.payrollNumber == item.payrollNumber) &&
+          (!p.qbFlags || !p.qbFlags.employerNI)
+      ).length > 0
+    );
+
+    // If lines have been found that match the above criteria then add to QBO
     if (linesToAdd && linesToAdd.length) {
       this.qbPayrollService
         .createEmployerNIJournal(linesToAdd, this.payrollDate)
@@ -52,7 +55,15 @@ export class EmployerNiComponent extends ParentComponent {
           }),
           shareReplay(1),
         )
-        .subscribe();
+        .subscribe({
+          error: (e) => {
+            this.alertService.error(e, { autoClose: false });
+          },
+          complete: () => {
+            this.qbPayrollService.sendPayslips(this.setQBOFlagsToTrue())
+            this.stateService.setState(PayrollProcessState.EMPLOYERNI);
+          }
+        });
     } else {
       this.alertService.info(
         'There are no entries to add: they are all in Quickbooks already.',
@@ -65,5 +76,12 @@ export class EmployerNiComponent extends ParentComponent {
     return function (payslip: IrisPayslip): boolean {
       return payslip.qbFlags.employerNI;
     };
+  }
+
+  setQBOFlagsToTrue(){
+    for(const payslip of this.payslips) {
+      payslip.qbFlags.employerNI = true;
+    }
+    return this.payslips;
   }
 }

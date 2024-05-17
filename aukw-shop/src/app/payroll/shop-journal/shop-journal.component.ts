@@ -1,18 +1,17 @@
 import {
   Component,
   DestroyRef,
-  EventEmitter,
   inject,
   OnInit,
-  Output,
 } from '@angular/core';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
-import { IrisPayslip } from '@app/_models';
+import { IrisPayslip, PayrollProcessState } from '@app/_models';
 import {
   AlertService,
   LoadingIndicatorService,
   QBEmployeeService,
   QBPayrollService,
+  PayrollProcessStateService
 } from '@app/_services';
 import { forkJoin, map, of, shareReplay, Subject, takeUntil, tap } from 'rxjs';
 import { environment } from '@environments/environment';
@@ -31,13 +30,13 @@ export class ShopJournalComponent implements OnInit {
 
   payslips: IrisPayslip[] = [];
   payrollDate: string = '';
-  @Output() onTransactionCreated = new EventEmitter();
 
   private alertService = inject(AlertService);
   private qbPayrollService = inject(QBPayrollService);
   private loadingIndicatorService = inject(LoadingIndicatorService);
   private qbEmployeeService = inject(QBEmployeeService);
   private destroyRef = inject(DestroyRef);
+  private stateService = inject(PayrollProcessStateService);
 
   ngOnInit() {
     const destroyed = new Subject();
@@ -134,10 +133,13 @@ export class ShopJournalComponent implements OnInit {
           shareReplay(1),
         )
         .subscribe({
-          error: (error: any) => {
-            this.alertService.error(error, { autoClose: false });
+          error: (e) => {
+            this.alertService.error(e, { autoClose: false });
           },
-          complete: () => this.onTransactionCreated.emit(),
+          complete: () => {
+            this.qbPayrollService.sendPayslips(this.setQBOFlagsToTrue())
+            this.stateService.setState(PayrollProcessState.EMPLOYERNI);
+          }
         });
     } else {
       this.alertService.info(
@@ -159,5 +161,12 @@ export class ShopJournalComponent implements OnInit {
         (p) => p.payrollNumber == line.payrollNumber && p.qbFlags.shopJournal,
       ).length != 0
     );
+  }
+  
+  setQBOFlagsToTrue(){
+    for(const payslip of this.payslips) {
+      payslip.qbFlags.shopJournal = true;
+    }
+    return this.payslips;
   }
 }
