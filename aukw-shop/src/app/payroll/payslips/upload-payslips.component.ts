@@ -1,18 +1,13 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { CommonModule, NgFor, NgIf } from '@angular/common';
 import {
   EmployeeAllocation,
   IrisPayslip,
   PayrollProcessState,
 } from '@app/_models';
-import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import {
   concatMap,
-  distinctUntilChanged,
-  forkJoin,
   shareReplay,
   Subject,
-  switchMap,
   takeUntil,
   tap,
 } from 'rxjs';
@@ -28,7 +23,7 @@ import {
 @Component({
   templateUrl: 'upload-payslips.component.html',
   standalone: true,
-  imports: [NgIf, PayslipListComponent, PayrollFileUploadComponent],
+  imports: [PayslipListComponent, PayrollFileUploadComponent],
 })
 export class UploadPayslipsComponent implements OnInit {
   allocations: EmployeeAllocation[] = [];

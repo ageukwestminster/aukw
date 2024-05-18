@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IrisPayslip, LineItemDetail, PayrollProcessState } from '@app/_models';
 import { scan, shareReplay, tap } from 'rxjs';
 import { AllocatedCostsListComponent } from './allocated-costs-list/list.component';
-import { ParentComponent } from './parent.component';
+import { BasePayrollTransactionComponent } from '../parent.component';
 
 @Component({
   standalone: true,
@@ -11,7 +11,8 @@ import { ParentComponent } from './parent.component';
   templateUrl: './pension-invoice.component.html',
   selector: 'pensions-invoice',
 })
-export class PensionInvoiceComponent extends ParentComponent {
+export class PensionInvoiceComponent extends BasePayrollTransactionComponent<LineItemDetail> {
+  total: number = 0;
   totalSalarySacrifice: number = 0;
   totalEmployeePension: number = 0;
 
@@ -55,23 +56,16 @@ export class PensionInvoiceComponent extends ParentComponent {
    */
   createTransaction() {
     // Filter out lines for which there is already a QBO entry
-    const linesToAdd = this.lines.filter((item) => {
-      let ps = this.payslips.filter(
-        (p) =>
-          p.payrollNumber == item.payrollNumber &&
-          (!p.qbFlags || !p.qbFlags.pensionBill),
-      );
-      return ps.length > 0;
-    });
+    const filteredTransactions = this.filteredTransactions(this.getQBFlagsProperty())
 
     //Add the invoice
-    if (linesToAdd && linesToAdd.length) {
+    if (filteredTransactions && filteredTransactions.length) {
       this.qbPayrollService
         .createPensionBill(
           {
             salarySacrificeTotal: this.totalSalarySacrifice.toFixed(2),
             employeePensionTotal: this.totalEmployeePension.toFixed(2),
-            pensionCosts: linesToAdd,
+            pensionCosts: filteredTransactions,
             total: (
               this.totalEmployeePension +
               this.totalSalarySacrifice +
@@ -106,16 +100,14 @@ export class PensionInvoiceComponent extends ParentComponent {
   }
 
   /** This is the property that the list must check to see if the line is in QBO or not*/
-  inQBOProperty(): (p: IrisPayslip) => boolean {
-    return function (payslip: IrisPayslip): boolean {
+  override getQBFlagsProperty() {
+    return function (payslip: IrisPayslip) {
       return payslip.qbFlags.pensionBill;
     };
   }
-
-  setQBOFlagsToTrue() {
-    for (const payslip of this.payslips) {
-      payslip.qbFlags.pensionBill = true;
-    }
-    return this.payslips;
+  override setQBFlagsProperty() {
+    return function (payslip: IrisPayslip, value: boolean) {
+      payslip.qbFlags.pensionBill = value;
+    };
   }
 }

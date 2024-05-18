@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IrisPayslip, LineItemDetail, PayrollProcessState } from '@app/_models';
 import { scan, shareReplay, tap } from 'rxjs';
 import { AllocatedCostsListComponent } from './allocated-costs-list/list.component';
-import { ParentComponent } from './parent.component';
+import { BasePayrollTransactionComponent } from '../parent.component';
 
 @Component({
   standalone: true,
@@ -11,7 +11,9 @@ import { ParentComponent } from './parent.component';
   templateUrl: './employer-ni.component.html',
   selector: 'employer-ni',
 })
-export class EmployerNiComponent extends ParentComponent {
+export class EmployerNiComponent extends BasePayrollTransactionComponent<LineItemDetail> {
+  total: number = 0;
+
   override recalculateTransactions() {
     if (!this.payslips.length || !this.allocations.length) return;
 
@@ -33,19 +35,12 @@ export class EmployerNiComponent extends ParentComponent {
    */
   createTransaction() {
     // Filter out lines for which there is already a QBO entry
-    const linesToAdd = this.lines.filter(
-      (item) =>
-        this.payslips.filter(
-          (p) =>
-            p.payrollNumber == item.payrollNumber &&
-            (!p.qbFlags || !p.qbFlags.employerNI),
-        ).length > 0,
-    );
+    const filteredTransactions = this.filteredTransactions(this.getQBFlagsProperty())
 
     // If lines have been found that match the above criteria then add to QBO
-    if (linesToAdd && linesToAdd.length) {
+    if (filteredTransactions && filteredTransactions.length) {
       this.qbPayrollService
-        .createEmployerNIJournal(linesToAdd, this.payrollDate)
+        .createEmployerNIJournal(filteredTransactions, this.payrollDate)
         .pipe(
           this.loadingIndicatorService.createObserving({
             loading: () => 'Adding employer NI journal to Quickbooks',
@@ -71,17 +66,15 @@ export class EmployerNiComponent extends ParentComponent {
     }
   }
 
-  /** This is the property that the list must check to see iof the line is in QBO or not*/
-  inQBOProperty() {
-    return function (payslip: IrisPayslip): boolean {
+  /** This is the property that the list must check to see if the line is in QBO or not*/
+  override getQBFlagsProperty() {
+    return function (payslip: IrisPayslip) {
       return payslip.qbFlags.employerNI;
     };
   }
-
-  setQBOFlagsToTrue() {
-    for (const payslip of this.payslips) {
-      payslip.qbFlags.employerNI = true;
-    }
-    return this.payslips;
+  override setQBFlagsProperty() {
+    return function (payslip: IrisPayslip, value: boolean) {
+      payslip.qbFlags.employerNI = value;
+    };
   }
 }

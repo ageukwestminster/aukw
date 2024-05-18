@@ -1,29 +1,19 @@
-import { Component, inject, DestroyRef, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import {
-  EmployeeAllocation,
   IrisPayslip,
   PayrollJournalEntry,
   PayrollProcessState,
-  QBTransactionFlags,
 } from '@app/_models';
-import {
-  AlertService,
-  LoadingIndicatorService,
-  QBPayrollService,
-  PayrollService,
-  PayrollProcessStateService,
-} from '@app/_services';
 import {
   from,
   mergeMap,
-  Subject,
   shareReplay,
-  tap,
-  takeUntil,
   toArray,
 } from 'rxjs';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
+import { BasePayrollTransactionComponent } from '../parent.component';
+import { PayrollIdentifier } from '@app/_interfaces/payroll-identifier';
 
 @Component({
   selector: 'employee-journals',
@@ -32,45 +22,9 @@ import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
   templateUrl: './employee-journals.component.html',
   styleUrls: ['./employee-journals.component.css', '../shared.css'],
 })
-export class EmployeeJournalsComponent implements OnInit {
-  lines: PayrollJournalEntry[] = [];
+export class EmployeeJournalsComponent extends BasePayrollTransactionComponent<PayrollJournalEntry> {
 
-  allocations: EmployeeAllocation[] = [];
-  payslips: IrisPayslip[] = [];
-  payrollDate: string = '';
-
-  private loadingIndicatorService = inject(LoadingIndicatorService);
-  private payrollService = inject(PayrollService);
-  private qbPayrollService = inject(QBPayrollService);
-  private alertService = inject(AlertService);
-  private destroyRef = inject(DestroyRef);
-  private stateService = inject(PayrollProcessStateService);
-
-  ngOnInit() {
-    const destroyed = new Subject();
-    this.destroyRef.onDestroy(() => {
-      destroyed.next('');
-      destroyed.complete();
-    });
-
-    this.qbPayrollService.allocations$
-      .pipe(takeUntil(destroyed))
-      .subscribe((response) => (this.allocations = response));
-
-    this.qbPayrollService.payslips$
-      .pipe(
-        takeUntil(destroyed),
-        tap((response) => {
-          this.payslips = response;
-          this.payrollDate = response[0].payrollDate;
-        }),
-      )
-      .subscribe(() => {
-        this.recalculateJournalEntries();
-      });
-  }
-
-  recalculateJournalEntries() {
+  override recalculateTransactions() {
     if (!this.payslips.length) return;
 
     this.payrollService
@@ -90,17 +44,19 @@ export class EmployeeJournalsComponent implements OnInit {
    */
   createTransaction() {
     // Filter out lines for which there is already a QBO entry
-    const journalsToAdd = this.lines.filter((item) => {
+    /*const journalsToAdd = this.lines.filter((item) => {
       let ps = this.payslips.filter(
         (p) =>
           p.payrollNumber == item.payrollNumber &&
           (!p.qbFlags || !p.qbFlags.employeeJournal),
       );
       return ps.length > 0;
-    });
+    });*/
 
-    if (journalsToAdd && journalsToAdd.length) {
-      from(journalsToAdd)
+    const filteredTransactions = this.filteredTransactions(this.getQBFlagsProperty())
+
+    if (filteredTransactions && filteredTransactions.length) {
+      from(filteredTransactions)
         .pipe(
           mergeMap((j) =>
             this.qbPayrollService.createEmployeeJournal(j, this.payrollDate),
@@ -130,26 +86,18 @@ export class EmployeeJournalsComponent implements OnInit {
     }
   }
 
-  /**
-   * Check if the values contained in the given LineItemDetail have been flagged as having already been
-   * entered in Quickbooks.
-   * @param line The details of the entry
-   * @returns 'True' if already in QBO.
-   */
-  inQBO(line: any): boolean {
-    if (!this.payslips || !this.payslips.length) return false;
-    return (
-      this.payslips.filter(
-        (p) =>
-          p.payrollNumber == line.payrollNumber && p.qbFlags.employeeJournal,
-      ).length != 0
-    );
+
+  override getQBFlagsProperty() {
+    return function (payslip: IrisPayslip) {
+      return payslip.qbFlags.employeeJournal;
+    };
+  }
+  override setQBFlagsProperty() {
+    return function (payslip: IrisPayslip, value: boolean) {
+      payslip.qbFlags.employeeJournal = value;
+    };
   }
 
-  setQBOFlagsToTrue() {
-    for (const payslip of this.payslips) {
-      payslip.qbFlags.employeeJournal = true;
-    }
-    return this.payslips;
-  }
+
+
 }

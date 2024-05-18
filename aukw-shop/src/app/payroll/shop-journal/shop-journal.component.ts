@@ -1,16 +1,11 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, inject} from '@angular/core';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { IrisPayslip, PayrollProcessState } from '@app/_models';
-import {
-  AlertService,
-  LoadingIndicatorService,
-  QBEmployeeService,
-  QBPayrollService,
-  PayrollProcessStateService,
-} from '@app/_services';
-import { forkJoin, map, of, shareReplay, Subject, takeUntil, tap } from 'rxjs';
+import { QBEmployeeService } from '@app/_services';
+import { forkJoin, map, of, shareReplay, tap } from 'rxjs';
 import { environment } from '@environments/environment';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
+import { BasePayrollTransactionComponent } from '../parent.component';
 
 @Component({
   selector: 'shop-journal',
@@ -19,41 +14,12 @@ import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
   templateUrl: './shop-journal.component.html',
   styleUrls: ['./shop-journal.component.css', '../shared.css'],
 })
-export class ShopJournalComponent implements OnInit {
-  lines: Array<IrisPayslip> = [];
+export class ShopJournalComponent extends BasePayrollTransactionComponent<IrisPayslip>{
   total: IrisPayslip = new IrisPayslip();
 
-  payslips: IrisPayslip[] = [];
-  payrollDate: string = '';
-
-  private alertService = inject(AlertService);
-  private qbPayrollService = inject(QBPayrollService);
-  private loadingIndicatorService = inject(LoadingIndicatorService);
   private qbEmployeeService = inject(QBEmployeeService);
-  private destroyRef = inject(DestroyRef);
-  private stateService = inject(PayrollProcessStateService);
 
-  ngOnInit() {
-    const destroyed = new Subject();
-    this.destroyRef.onDestroy(() => {
-      destroyed.next('');
-      destroyed.complete();
-    });
-
-    this.qbPayrollService.payslips$
-      .pipe(
-        takeUntil(destroyed),
-        tap((response) => {
-          this.payslips = response;
-          this.payrollDate = response[0].payrollDate;
-        }),
-      )
-      .subscribe(() => {
-        this.recalculateEnterprisesTransactions();
-      });
-  }
-
-  recalculateEnterprisesTransactions(): void {
+  override recalculateTransactions(): void {
     if (!this.payslips.length) return;
 
     this.total = new IrisPayslip(); // reset to zero
@@ -106,16 +72,9 @@ export class ShopJournalComponent implements OnInit {
    */
   createTransaction() {
     // Filter out lines for which there is already a QBO entry
-    const linesToAdd = this.lines.filter((item) => {
-      let ps = this.payslips.filter(
-        (p) =>
-          p.payrollNumber == item.payrollNumber &&
-          (!p.qbFlags || !p.qbFlags.shopJournal),
-      );
-      return ps.length > 0;
-    });
+    const filteredTransactions = this.filteredTransactions(this.getQBFlagsProperty())
 
-    if (linesToAdd && linesToAdd.length) {
+    if (filteredTransactions && filteredTransactions.length) {
       this.qbPayrollService
         .createShopJournal(this.lines, this.payrollDate)
         .pipe(
@@ -143,25 +102,15 @@ export class ShopJournalComponent implements OnInit {
     }
   }
 
-  /**
-   * Check if the values contained in the given LineItemDetail have been flagged as having already been
-   * entered in Quickbooks.
-   * @param line The details of the entry
-   * @returns 'True' if already in QBO.
-   */
-  inQBO(line: IrisPayslip): boolean {
-    if (!this.payslips || !this.payslips.length) return false;
-    return (
-      this.payslips.filter(
-        (p) => p.payrollNumber == line.payrollNumber && p.qbFlags.shopJournal,
-      ).length != 0
-    );
+  /** This is the property that the list must check to see if the line is in QBO or not*/
+  override getQBFlagsProperty() {
+    return function (payslip: IrisPayslip) {
+      return payslip.qbFlags.shopJournal;
+    };
   }
-
-  setQBOFlagsToTrue() {
-    for (const payslip of this.payslips) {
-      payslip.qbFlags.shopJournal = true;
-    }
-    return this.payslips;
+  override setQBFlagsProperty() {
+    return function (payslip: IrisPayslip, value: boolean) {
+      payslip.qbFlags.shopJournal = value;
+    };
   }
 }
