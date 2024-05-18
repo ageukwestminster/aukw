@@ -1,7 +1,9 @@
+import { PayrollIdentifier } from '@app/_interfaces/payroll-identifier';
+
 /**
  * Stores the detail of a QBO entity 'Line'
  */
-export class LineItemDetail {
+export class LineItemDetail implements PayrollIdentifier {
   /** Iris payroll number for employee */
   payrollNumber: number;
   /** Quickbooks employee id */
