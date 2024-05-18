@@ -94,9 +94,9 @@ export class PensionInvoiceComponent extends ParentComponent {
             this.alertService.error(e, { autoClose: false });
           },
           complete: () => {
-            this.qbPayrollService.sendPayslips(this.setQBOFlagsToTrue())
+            this.qbPayrollService.sendPayslips(this.setQBOFlagsToTrue());
             this.stateService.setState(PayrollProcessState.PENSIONS);
-          }
+          },
         });
     } else {
       this.alertService.info(
@@ -112,8 +112,8 @@ export class PensionInvoiceComponent extends ParentComponent {
     };
   }
 
-  setQBOFlagsToTrue(){
-    for(const payslip of this.payslips) {
+  setQBOFlagsToTrue() {
+    for (const payslip of this.payslips) {
       payslip.qbFlags.pensionBill = true;
     }
     return this.payslips;

@@ -32,14 +32,14 @@ export class EmployerNiComponent extends ParentComponent {
    * account and class allocations for each employee.
    */
   createTransaction() {
-
     // Filter out lines for which there is already a QBO entry
-    const linesToAdd = this.lines.filter((item) => 
-      this.payslips.filter(
-        (p) =>
-          (p.payrollNumber == item.payrollNumber) &&
-          (!p.qbFlags || !p.qbFlags.employerNI)
-      ).length > 0
+    const linesToAdd = this.lines.filter(
+      (item) =>
+        this.payslips.filter(
+          (p) =>
+            p.payrollNumber == item.payrollNumber &&
+            (!p.qbFlags || !p.qbFlags.employerNI),
+        ).length > 0,
     );
 
     // If lines have been found that match the above criteria then add to QBO
@@ -60,9 +60,9 @@ export class EmployerNiComponent extends ParentComponent {
             this.alertService.error(e, { autoClose: false });
           },
           complete: () => {
-            this.qbPayrollService.sendPayslips(this.setQBOFlagsToTrue())
+            this.qbPayrollService.sendPayslips(this.setQBOFlagsToTrue());
             this.stateService.setState(PayrollProcessState.EMPLOYERNI);
-          }
+          },
         });
     } else {
       this.alertService.info(
@@ -78,8 +78,8 @@ export class EmployerNiComponent extends ParentComponent {
     };
   }
 
-  setQBOFlagsToTrue(){
-    for(const payslip of this.payslips) {
+  setQBOFlagsToTrue() {
+    for (const payslip of this.payslips) {
       payslip.qbFlags.employerNI = true;
     }
     return this.payslips;

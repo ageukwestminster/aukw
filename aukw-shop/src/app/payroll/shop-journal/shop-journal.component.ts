@@ -1,9 +1,4 @@
-import {
-  Component,
-  DestroyRef,
-  inject,
-  OnInit,
-} from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { IrisPayslip, PayrollProcessState } from '@app/_models';
 import {
@@ -11,7 +6,7 @@ import {
   LoadingIndicatorService,
   QBEmployeeService,
   QBPayrollService,
-  PayrollProcessStateService
+  PayrollProcessStateService,
 } from '@app/_services';
 import { forkJoin, map, of, shareReplay, Subject, takeUntil, tap } from 'rxjs';
 import { environment } from '@environments/environment';
@@ -137,9 +132,9 @@ export class ShopJournalComponent implements OnInit {
             this.alertService.error(e, { autoClose: false });
           },
           complete: () => {
-            this.qbPayrollService.sendPayslips(this.setQBOFlagsToTrue())
+            this.qbPayrollService.sendPayslips(this.setQBOFlagsToTrue());
             this.stateService.setState(PayrollProcessState.EMPLOYERNI);
-          }
+          },
         });
     } else {
       this.alertService.info(
@@ -162,9 +157,9 @@ export class ShopJournalComponent implements OnInit {
       ).length != 0
     );
   }
-  
-  setQBOFlagsToTrue(){
-    for(const payslip of this.payslips) {
+
+  setQBOFlagsToTrue() {
+    for (const payslip of this.payslips) {
       payslip.qbFlags.shopJournal = true;
     }
     return this.payslips;

@@ -1,9 +1,4 @@
-import {
-  Component,
-  inject,
-  DestroyRef,
-  OnInit,
-} from '@angular/core';
+import { Component, inject, DestroyRef, OnInit } from '@angular/core';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import {
   EmployeeAllocation,
@@ -17,7 +12,7 @@ import {
   LoadingIndicatorService,
   QBPayrollService,
   PayrollService,
-  PayrollProcessStateService
+  PayrollProcessStateService,
 } from '@app/_services';
 import {
   from,
@@ -124,9 +119,9 @@ export class EmployeeJournalsComponent implements OnInit {
             this.alertService.error(e, { autoClose: false });
           },
           complete: () => {
-            this.qbPayrollService.sendPayslips(this.setQBOFlagsToTrue())
+            this.qbPayrollService.sendPayslips(this.setQBOFlagsToTrue());
             this.stateService.setState(PayrollProcessState.JOURNALS);
-          }
+          },
         });
     } else {
       this.alertService.info(
@@ -151,8 +146,8 @@ export class EmployeeJournalsComponent implements OnInit {
     );
   }
 
-  setQBOFlagsToTrue(){
-    for(const payslip of this.payslips) {
+  setQBOFlagsToTrue() {
+    for (const payslip of this.payslips) {
       payslip.qbFlags.employeeJournal = true;
     }
     return this.payslips;
