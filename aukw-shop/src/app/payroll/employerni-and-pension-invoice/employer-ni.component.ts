@@ -35,7 +35,9 @@ export class EmployerNiComponent extends BasePayrollTransactionComponent<LineIte
    */
   createTransaction() {
     // Filter out lines for which there is already a QBO entry
-    const filteredTransactions = this.filteredTransactions(this.getQBFlagsProperty())
+    const filteredTransactions = this.filteredTransactions(
+      this.getQBFlagsProperty(),
+    );
 
     // If lines have been found that match the above criteria then add to QBO
     if (filteredTransactions && filteredTransactions.length) {

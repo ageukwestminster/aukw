@@ -1,4 +1,4 @@
-import { Component, inject} from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { IrisPayslip, PayrollProcessState } from '@app/_models';
 import { QBEmployeeService } from '@app/_services';
@@ -14,7 +14,7 @@ import { BasePayrollTransactionComponent } from '../parent.component';
   templateUrl: './shop-journal.component.html',
   styleUrls: ['./shop-journal.component.css', '../shared.css'],
 })
-export class ShopJournalComponent extends BasePayrollTransactionComponent<IrisPayslip>{
+export class ShopJournalComponent extends BasePayrollTransactionComponent<IrisPayslip> {
   total: IrisPayslip = new IrisPayslip();
 
   private qbEmployeeService = inject(QBEmployeeService);
@@ -72,7 +72,9 @@ export class ShopJournalComponent extends BasePayrollTransactionComponent<IrisPa
    */
   createTransaction() {
     // Filter out lines for which there is already a QBO entry
-    const filteredTransactions = this.filteredTransactions(this.getQBFlagsProperty())
+    const filteredTransactions = this.filteredTransactions(
+      this.getQBFlagsProperty(),
+    );
 
     if (filteredTransactions && filteredTransactions.length) {
       this.qbPayrollService

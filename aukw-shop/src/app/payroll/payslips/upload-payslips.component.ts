@@ -4,13 +4,7 @@ import {
   IrisPayslip,
   PayrollProcessState,
 } from '@app/_models';
-import {
-  concatMap,
-  shareReplay,
-  Subject,
-  takeUntil,
-  tap,
-} from 'rxjs';
+import { concatMap, shareReplay, Subject, takeUntil, tap } from 'rxjs';
 import { PayslipListComponent } from './list.component';
 import { PayrollFileUploadComponent } from '@app/shared';
 import {

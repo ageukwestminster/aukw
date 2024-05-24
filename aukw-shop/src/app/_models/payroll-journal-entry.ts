@@ -1,7 +1,7 @@
 import { LineItemDetail } from './line-item-detail';
 import { PayrollIdentifier } from '@app/_interfaces/payroll-identifier';
 
-export class PayrollJournalEntry implements PayrollIdentifier{
+export class PayrollJournalEntry implements PayrollIdentifier {
   /** Iris payroll number for employee */
   payrollNumber: number;
   /** Quickbooks employee id */

@@ -5,12 +5,7 @@ import {
   PayrollJournalEntry,
   PayrollProcessState,
 } from '@app/_models';
-import {
-  from,
-  mergeMap,
-  shareReplay,
-  toArray,
-} from 'rxjs';
+import { from, mergeMap, shareReplay, toArray } from 'rxjs';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { BasePayrollTransactionComponent } from '../parent.component';
 import { PayrollIdentifier } from '@app/_interfaces/payroll-identifier';
@@ -23,7 +18,6 @@ import { PayrollIdentifier } from '@app/_interfaces/payroll-identifier';
   styleUrls: ['./employee-journals.component.css', '../shared.css'],
 })
 export class EmployeeJournalsComponent extends BasePayrollTransactionComponent<PayrollJournalEntry> {
-
   override recalculateTransactions() {
     if (!this.payslips.length) return;
 
@@ -53,7 +47,9 @@ export class EmployeeJournalsComponent extends BasePayrollTransactionComponent<P
       return ps.length > 0;
     });*/
 
-    const filteredTransactions = this.filteredTransactions(this.getQBFlagsProperty())
+    const filteredTransactions = this.filteredTransactions(
+      this.getQBFlagsProperty(),
+    );
 
     if (filteredTransactions && filteredTransactions.length) {
       from(filteredTransactions)
@@ -86,7 +82,6 @@ export class EmployeeJournalsComponent extends BasePayrollTransactionComponent<P
     }
   }
 
-
   override getQBFlagsProperty() {
     return function (payslip: IrisPayslip) {
       return payslip.qbFlags.employeeJournal;
@@ -97,7 +92,4 @@ export class EmployeeJournalsComponent extends BasePayrollTransactionComponent<P
       payslip.qbFlags.employeeJournal = value;
     };
   }
-
-
-
 }

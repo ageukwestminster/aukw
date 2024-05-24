@@ -56,7 +56,9 @@ export class PensionInvoiceComponent extends BasePayrollTransactionComponent<Lin
    */
   createTransaction() {
     // Filter out lines for which there is already a QBO entry
-    const filteredTransactions = this.filteredTransactions(this.getQBFlagsProperty())
+    const filteredTransactions = this.filteredTransactions(
+      this.getQBFlagsProperty(),
+    );
 
     //Add the invoice
     if (filteredTransactions && filteredTransactions.length) {

@@ -15,7 +15,10 @@ import { Subject, takeUntil, tap } from 'rxjs';
   imports: [],
   template: '',
 })
-export abstract class BasePayrollTransactionComponent<T extends PayrollIdentifier> implements OnInit {
+export abstract class BasePayrollTransactionComponent<
+  T extends PayrollIdentifier,
+> implements OnInit
+{
   lines: T[] = [];
 
   allocations: EmployeeAllocation[] = [];
@@ -60,12 +63,10 @@ export abstract class BasePayrollTransactionComponent<T extends PayrollIdentifie
     return this.lines.filter((item) => {
       let ps = this.payslips.filter(
         (p) =>
-          p.payrollNumber == item.payrollNumber &&
-          (!p.qbFlags || !prop(p)),
+          p.payrollNumber == item.payrollNumber && (!p.qbFlags || !prop(p)),
       );
       return ps.length > 0;
     });
-    
   }
 
   /**
@@ -79,7 +80,7 @@ export abstract class BasePayrollTransactionComponent<T extends PayrollIdentifie
     return (
       this.payslips.filter(
         (p) =>
-          p.payrollNumber == line.payrollNumber && this.getQBFlagsProperty()(p)
+          p.payrollNumber == line.payrollNumber && this.getQBFlagsProperty()(p),
       ).length != 0
     );
   }
@@ -90,12 +91,11 @@ export abstract class BasePayrollTransactionComponent<T extends PayrollIdentifie
     };
   }
   setQBFlagsProperty() {
-    return function (payslip: IrisPayslip, value: boolean) {
-    };
+    return function (payslip: IrisPayslip, value: boolean) {};
   }
   setQBOFlagsToTrue() {
     for (const payslip of this.payslips) {
-      this.setQBFlagsProperty()(payslip, true)
+      this.setQBFlagsProperty()(payslip, true);
     }
     return this.payslips;
   }
