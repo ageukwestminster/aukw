@@ -3,6 +3,7 @@
 namespace Controllers;
 
 use Models\EncryptedXlsx;
+use Models\PayrollCsv;
 use Models\PayrollXlsx;
 
 /**
@@ -24,6 +25,7 @@ class XlsxCtl{
 
     // Clean upload directory
     XlsxCtl::delete_all_spreadsheets($uploaddir); 
+    XlsxCtl::delete_all_CSVs($uploaddir); 
 
     // Check that a file has been uploaded
     if (!$_FILES || !array_key_exists('file', $_FILES) || !$_FILES['file']) {
@@ -73,11 +75,17 @@ class XlsxCtl{
 
     try {
         if (!is_file($decryptedFilePath)) {
-            throw new \Exception('Decrypted file not found. File name: ('. $decryptedFilePath .')');
+            throw new \Exception('File not found. File name: ('. $decryptedFilePath .')');
         }
 
-        $model = PayrollXlsx::getInstance()
-            ->setFilePath($decryptedFilePath); 
+        // test if file is CSV or XLSX
+        if (XlsxCtl::is_csv($decryptedFilePath)) {
+            $model = PayrollCsv::getInstance()
+                ->setFilePath($decryptedFilePath); 
+        } else {
+            $model = PayrollXlsx::getInstance()
+                ->setFilePath($decryptedFilePath); 
+        }
 
         if($model->parse()) {
             if( !isset($_GET['keep_decrypted_file']) ) {
@@ -126,8 +134,14 @@ class XlsxCtl{
             throw new \Exception('Decrypted file not found. File name: ('. $decryptedFilePath .')');
         }
 
-        $model = PayrollXlsx::getInstance()
-        ->setFilePath($decryptedFilePath); 
+        // test if file is CSV or XLSX
+        if (XlsxCtl::is_csv($decryptedFilePath)) {
+            $model = PayrollCsv::getInstance()
+                ->setFilePath($decryptedFilePath); 
+        } else {
+            $model = PayrollXlsx::getInstance()
+                ->setFilePath($decryptedFilePath); 
+        }
 
         echo json_encode($model->parse_worksheets(), JSON_NUMERIC_CHECK);
         
@@ -251,7 +265,36 @@ class XlsxCtl{
             unlink($file); // delete each spreadsheet
         }
     }
+}
+
+/**
+   * Helper function to delete all files that end with 'csv' in the specified directory
+   * @param string $directory_name The directory to search for files to delete
+   * @return void
+   */
+  private static function delete_all_CSVs(string $directory_name) {
+    $files = glob($directory_name.'*csv'); // get csv file names in upload dir
+    foreach($files as $file){ // iterate files
+        if(is_file($file)) {
+            unlink($file); // delete each file
+        }
+    }
   }
    
+    /**
+     * 
+     */
+    private static function is_csv(string $filename):bool {
 
+        $csvMimes = array('text/x-comma-separated-values', 'text/comma-separated-values', 'application/octet-stream', 'application/vnd.ms-excel', 'application/x-csv', 'text/x-csv', 'text/csv', 'application/csv', 'application/excel', 'application/vnd.msexcel', 'text/plain');
+
+        $returnvalue = false;
+
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime = finfo_file($finfo, $filename);
+        in_array($mime, $csvMimes) === true ? $returnvalue = true : $returnvalue = false;
+        finfo_close($finfo);
+
+        return $returnvalue;
+    }
 }

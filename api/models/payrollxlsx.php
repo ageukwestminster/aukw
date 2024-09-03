@@ -13,15 +13,7 @@ use Models\Payslip;
  * 
  * @category Model
  */
-class PayrollXlsx{
-
-  /**
-   * The file path to the payroll data spreadsheet,
-   * including full file name.
-   *
-   * @var string
-   */
-  protected string $filePath;
+class PayrollXlsx extends PayrollBase{
 
   /**
    * The WorkSheet object for the EE Summary sheet
@@ -36,52 +28,6 @@ class PayrollXlsx{
    * @var object
    */
   protected object $pensionsWorkSheet;
-
-  /**
-   * The payroll payment date, give in cell A5 of Summary sheet
-   *
-   * @var DateTime
-   */
-  protected DateTime $paymentDate;
-
-  /**
-   * The employee payslips
-   *
-   * @var Array
-   */
-  protected Array $payslips;
- 
-  /**
-   * Encrypted File Path setter
-   */
-  public function setFilePath(string $filePath) {
-    $this->filePath = $filePath;
-    return $this;
-  }
-  
-  /**
-   * Payment date setter
-   */
-  public function setPaymentDate(string $paymentDate) {
-    $this->paymentDate = $paymentDate;
-    return $this;
-  }
-  /**
-   * Payment date getter
-   * @return DateTime
-   */
-  public function getPaymentDate():DateTime {
-    return $this->paymentDate;
-  }
-
-  /**
-   * Payslips getter
-   * @return Array
-   */
-  public function getPayslips():Array {
-    // array_values converts from ['1':{}, '2':{}, ...] to [{},{}...]
-    return array_values($this->payslips);
-  }
 
   /**
    * Constructor

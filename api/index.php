@@ -49,7 +49,9 @@ require 'controllers/xlsx.controller.php';
 // Define models
 require 'models/encryptedxlsx.php';
 require 'models/jwt.php';
-require 'models/payrollxlsx.php';
+require 'models/payrollbase.php'; // This must be included before the files that depend on it.
+require 'models/payrollcsv.php'; // Depends on payrollbase.php
+require 'models/payrollxlsx.php'; // Depends on payrollbase.php
 require 'models/payslip.php';
 require 'models/qbauth.php';
 require 'models/qbbill.php'; // This must be included before the files that depend on it.
