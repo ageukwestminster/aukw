@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import * as Highcharts from 'highcharts';
+import Highcharts from 'highcharts';
+import { HighchartsChartModule } from 'highcharts-angular';
 import { SummaryService } from '@app/_services';
 
 import { MonthlySalesChartData } from '@app/_models';
@@ -8,12 +9,18 @@ import { environment } from '@environments/environment';
 import { merge, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
+/* from https://www.highcharts.com/docs/advanced-chart-features/highcharts-typescript-declarations */
+import Accessibility from 'highcharts/modules/accessibility';
+import Exporting from 'highcharts/modules/exporting';
+Accessibility(Highcharts);
+Exporting(Highcharts);
+
 @Component({
   selector: 'monthly-sales-chart',
   templateUrl: './monthly-sales-chart.component.html',
   styleUrls: ['./monthly-sales-chart.component.css'],
   standalone: true,
-  imports: [],
+  imports: [HighchartsChartModule],
 })
 /*
  * Create two bar charts displaying  monthly sales using Highcarts

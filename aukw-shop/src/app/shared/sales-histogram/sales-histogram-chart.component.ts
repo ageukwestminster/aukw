@@ -5,15 +5,24 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import * as Highcharts from 'highcharts';
+import Highcharts from 'highcharts';
+import { HighchartsChartModule } from 'highcharts-angular';
 import { HistogramChartData } from '@app/_models';
+
+/* from https://www.highcharts.com/docs/advanced-chart-features/highcharts-typescript-declarations */
+import Accessibility from 'highcharts/modules/accessibility';
+import Exporting from 'highcharts/modules/exporting';
+import Histogram from 'highcharts/modules/histogram-bellcurve';
+Accessibility(Highcharts);
+Exporting(Highcharts);
+Histogram(Highcharts);
 
 @Component({
   selector: 'sales-histogram',
   templateUrl: './sales-histogram-chart.component.html',
   styleUrls: ['./sales-histogram-chart.component.css'],
   standalone: true,
-  imports: [],
+  imports: [HighchartsChartModule],
 })
 export class SalesHistogramChartComponent implements OnInit, OnChanges {
   @Input() histogramChartData?: HistogramChartData;

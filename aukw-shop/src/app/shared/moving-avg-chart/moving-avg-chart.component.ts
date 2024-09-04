@@ -5,14 +5,13 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import * as Highcharts from 'highcharts/highstock';
+import Highcharts from 'highcharts/highstock';
+import { HighchartsChartModule } from 'highcharts-angular';
 import { MovingAverageSalesChartData } from '@app/_models';
 
-/* from https://www.highcharts.com/blog/tutorials/highcharts-and-angular-7/ */
-declare var require: any;
-let Accessibility = require('highcharts/modules/accessibility');
-let Exporting = require('highcharts/modules/exporting');
-
+/* from https://www.highcharts.com/docs/advanced-chart-features/highcharts-typescript-declarations */
+import Accessibility from 'highcharts/modules/accessibility';
+import Exporting from 'highcharts/modules/exporting';
 Accessibility(Highcharts);
 Exporting(Highcharts);
 
@@ -20,7 +19,7 @@ Exporting(Highcharts);
   selector: 'moving-average',
   templateUrl: './moving-avg-chart.component.html',
   standalone: true,
-  imports: [],
+  imports: [HighchartsChartModule],
 })
 export class MovingAverageChartComponent implements OnInit, OnChanges {
   @Input() movingAvgChartData?: MovingAverageSalesChartData;
