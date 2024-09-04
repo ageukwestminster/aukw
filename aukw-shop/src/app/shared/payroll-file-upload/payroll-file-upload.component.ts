@@ -21,8 +21,8 @@ import {
   PayslipListService,
 } from '@app/_services';
 import { IrisPayslip, UploadResponse } from '@app/_models';
-import { PasswordInputModalComponent } from './password-input.component';
-import { PayrollDateInputModalComponent } from './payrolldate-input.component';
+import { PasswordInputModalComponent } from './modals/password-input.component';
+import { PayrollDateInputModalComponent } from './modals/payrolldate-input.component';
 
 @Component({
   selector: 'payroll-file-upload',
