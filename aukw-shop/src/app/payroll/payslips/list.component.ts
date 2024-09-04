@@ -13,20 +13,24 @@ import { Observable, mergeAll, scan } from 'rxjs';
 })
 export class PayslipListComponent {
   private _payslips!: IrisPayslip[];
-  total = new IrisPayslip();
+  public total!: IrisPayslip;
 
-  @Input() set payslips(value: IrisPayslip[]) {
-    value.forEach((payslip) => {
+  @Input() set payslips(payslips: IrisPayslip[]) {
+
+    // loop through all payslips and sum the values 
+    // to form a new "total" payslip and put in class level variable
+    this.total = new IrisPayslip();
+    payslips.forEach((payslip) => {
       this.total = this.total.add(payslip);
     });
 
-    this._payslips = value;
+    this._payslips = payslips;
   }
 
   get payslips(): IrisPayslip[] {
     return this._payslips;
   }
-
+/*
   totalPayslips(payslips$: Observable<IrisPayslip[]>): Observable<IrisPayslip> {
     return payslips$.pipe(
       mergeAll(),
@@ -34,5 +38,5 @@ export class PayslipListComponent {
         return a.add(v);
       }, new IrisPayslip()),
     );
-  }
+  }*/
 }
