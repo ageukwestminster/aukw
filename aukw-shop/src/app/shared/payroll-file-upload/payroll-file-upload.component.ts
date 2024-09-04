@@ -22,6 +22,7 @@ import {
 } from '@app/_services';
 import { IrisPayslip, UploadResponse } from '@app/_models';
 import { PasswordInputModalComponent } from './password-input.component';
+import { PayrollDateInputModalComponent } from './payrolldate-input.component';
 
 @Component({
   selector: 'payroll-file-upload',
@@ -34,6 +35,7 @@ import { PasswordInputModalComponent } from './password-input.component';
     NgbModalModule,
     NgbTooltipModule,
     PasswordInputModalComponent,
+    PayrollDateInputModalComponent,
     ReactiveFormsModule,
   ],
 })
@@ -164,6 +166,17 @@ export class PayrollFileUploadComponent implements OnInit {
   }
 
   private just_parse(filename: string): Observable<IrisPayslip[]> {
-    return this.fileService.parse(filename);
+    const modalRef = this.modalService.open(PayrollDateInputModalComponent);
+
+    return from(modalRef.result).pipe(
+      concatMap((payrollDate: string) =>
+        this.fileService.parse(filename, payrollDate),
+      ),
+      tap(() =>
+        this.consoleService.sendConsoleMessage(
+          'Examining file for pension and salary details.',
+        ),
+      ),
+    );
   }
 }
