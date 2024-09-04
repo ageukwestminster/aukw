@@ -75,7 +75,7 @@ class PayrollBase{
   protected function __construct(){}
 
 
-  public function parse(): bool {
+  public function parse(string $payrollDate = ''): bool {
     return false;
   }
 

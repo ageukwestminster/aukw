@@ -33,11 +33,11 @@ class PayrollCsv extends PayrollBase{
   }
 
 
-  public function parse(): bool {
+  public function parse(string $payrollDate = ''): bool {
     if (!isset($this->grossToNetWorkSheet)) {
       $this->parse_worksheets();
     }
-    if ($this->parseGrosstoNet()) {
+    if ($this->parseGrosstoNet($payrollDate)) {
         
         unset($this->grossToNetWorkSheet);
         return true;
@@ -68,7 +68,18 @@ class PayrollCsv extends PayrollBase{
     return $worksheets;
   }
 
-  private function parseGrosstoNet(): bool {
+  private function parseGrosstoNet(string $payrollDate = ''): bool {
+
+    if ($payrollDate != '') {
+      if (DateTime::createFromFormat('Y-m-d', $payrollDate) !== false) {
+        $this->paymentDate = DateTime::createFromFormat('Y-m-d', $payrollDate);
+      } else {
+        throw new \Exception('Unable to set date from supplied http parameter value: "'. $payrollDate . '".');
+      }  
+    } else {
+      $this->paymentDate = DateTime::createFromFormat('Y-m-d', date('Y-m-d'));
+    }
+
     $salaryData   = $this->grossToNetWorkSheet->toArray();
 
     // Loop through employees, creating payslips
@@ -78,7 +89,7 @@ class PayrollCsv extends PayrollBase{
       $payslip = Payslip::getInstance()
         ->setPayrollNumber($payrollNumber) 
         ->setEmployeeName(trim($salaryData[$i][1])) // '1' = column B
-        ->setPayrollDate(date('Y-m-d'))
+        ->setPayrollDate($this->paymentDate->format('Y-m-d'))
         ->setTotalPay(round( ( (float)$salaryData[$i][4] ) - ((float)$salaryData[$i][15]),2))
         ->setPAYE(-round(((float)$salaryData[$i][7]),2))
         ->setEmployeeNI(-round(((float)$salaryData[$i][8]),2))

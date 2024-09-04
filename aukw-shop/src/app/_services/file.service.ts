@@ -40,13 +40,25 @@ export class FileService {
     );
   }
 
-  parse(fileName: string = '') {
-    if (fileName == '') {
-      return this.http.get<IrisPayslip[]>(`${baseUrl}/parse`);
-    } else {
-      return this.http.get<IrisPayslip[]>(
-        `${baseUrl}/parse?filename=${fileName}`,
+  parse(fileName: string = '', payrollDate: string ='') {
+
+    let params: string[] = [`${baseUrl}/parse`];
+
+    if (fileName != '') { 
+      params.push(
+        '?',
+       `filename=${fileName}`
       );
     }
+    if (payrollDate != '') {
+      if (params.length == 1) {
+        params.push('?');
+      } else {
+        params.push('&');
+      }
+      params.push(`payrolldate=${payrollDate}`);
+    }
+
+    return this.http.get<IrisPayslip[]>(params.join(""));
   }
 }

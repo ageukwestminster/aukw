@@ -42,12 +42,12 @@ class PayrollXlsx extends PayrollBase{
   }
 
 
-  public function parse(): bool {
+  public function parse(string $payrollDate = ''): bool {
     if (!isset($this->pensionsWorkSheet) || !isset($this->summaryWorkSheet)) {
       $this->parse_worksheets();
     }
 
-    if ($this->parseSummary()) {
+    if ($this->parseSummary($payrollDate)) {
       if ($this->parsePensions()) {
         
         unset($this->summaryWorkSheet,$this->pensionsWorkSheet);
@@ -88,7 +88,7 @@ class PayrollXlsx extends PayrollBase{
   }
 
 
-  private function parseSummary(): bool {
+  private function parseSummary(string $payrollDate = ''): bool {
     $worksheet = $this->summaryWorkSheet;
     // Get the highest row and column numbers referenced in the worksheet
     $highestRow = $worksheet->getHighestDataRow(); // e.g. 10
@@ -114,6 +114,15 @@ class PayrollXlsx extends PayrollBase{
         }
       }
     } // end of payment date search
+
+    // Payment date override
+    if ($payrollDate != '') {
+      if (DateTime::createFromFormat('Y-m-d', $payrollDate) !== false) {
+        $this->paymentDate = DateTime::createFromFormat('Y-m-d', $payrollDate);
+      } else {
+        throw new \Exception('Unable to set date from supplied http parameter value: "'. $payrollDate . '".');
+      }  
+    }
 
     // Now find first & last employee record
     $firstEmployeeRow=0;

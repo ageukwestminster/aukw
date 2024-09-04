@@ -87,7 +87,7 @@ class XlsxCtl{
                 ->setFilePath($decryptedFilePath); 
         }
 
-        if($model->parse()) {
+        if($model->parse(isset($_GET['payrolldate'])?$_GET['payrolldate']:'')) {
             if( !isset($_GET['keep_decrypted_file']) ) {
                 // delete decrypted file
                 if(is_file($decryptedFilePath)) {
@@ -286,7 +286,12 @@ class XlsxCtl{
      */
     private static function is_csv(string $filename):bool {
 
-        $csvMimes = array('text/x-comma-separated-values', 'text/comma-separated-values', 'application/octet-stream', 'application/vnd.ms-excel', 'application/x-csv', 'text/x-csv', 'text/csv', 'application/csv', 'application/excel', 'application/vnd.msexcel', 'text/plain');
+        $csvMimes = array('text/x-comma-separated-values', 'text/comma-separated-values', 
+            'application/octet-stream', 'application/vnd.ms-excel', 
+            'application/x-csv', 'text/x-csv', 'text/csv', 
+            'application/csv', 'application/excel', 
+            'application/vnd.msexcel', 'text/plain'
+        );
 
         $returnvalue = false;
 
