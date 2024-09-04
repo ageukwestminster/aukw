@@ -13,7 +13,7 @@ import { HistogramChartData } from '@app/_models';
 import Accessibility from 'highcharts/modules/accessibility';
 import Exporting from 'highcharts/modules/exporting';
 import Histogram from 'highcharts/modules/histogram-bellcurve';
-import HighchartsBoost from "highcharts/modules/boost";
+import HighchartsBoost from 'highcharts/modules/boost';
 Accessibility(Highcharts);
 Exporting(Highcharts);
 Histogram(Highcharts);

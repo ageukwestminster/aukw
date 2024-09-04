@@ -16,8 +16,7 @@ export class PayslipListComponent {
   public total!: IrisPayslip;
 
   @Input() set payslips(payslips: IrisPayslip[]) {
-
-    // loop through all payslips and sum the values 
+    // loop through all payslips and sum the values
     // to form a new "total" payslip and put in class level variable
     this.total = new IrisPayslip();
     payslips.forEach((payslip) => {
@@ -30,7 +29,7 @@ export class PayslipListComponent {
   get payslips(): IrisPayslip[] {
     return this._payslips;
   }
-/*
+  /*
   totalPayslips(payslips$: Observable<IrisPayslip[]>): Observable<IrisPayslip> {
     return payslips$.pipe(
       mergeAll(),

@@ -12,7 +12,7 @@ import { MovingAverageSalesChartData } from '@app/_models';
 /* from https://www.highcharts.com/docs/advanced-chart-features/highcharts-typescript-declarations */
 import Accessibility from 'highcharts/modules/accessibility';
 import Exporting from 'highcharts/modules/exporting';
-import HighchartsBoost from "highcharts/modules/boost";
+import HighchartsBoost from 'highcharts/modules/boost';
 Accessibility(Highcharts);
 Exporting(Highcharts);
 HighchartsBoost(Highcharts); // Always do last

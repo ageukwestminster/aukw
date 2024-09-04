@@ -40,15 +40,11 @@ export class FileService {
     );
   }
 
-  parse(fileName: string = '', payrollDate: string ='') {
-
+  parse(fileName: string = '', payrollDate: string = '') {
     let params: string[] = [`${baseUrl}/parse`];
 
-    if (fileName != '') { 
-      params.push(
-        '?',
-       `filename=${fileName}`
-      );
+    if (fileName != '') {
+      params.push('?', `filename=${fileName}`);
     }
     if (payrollDate != '') {
       if (params.length == 1) {
@@ -59,6 +55,6 @@ export class FileService {
       params.push(`payrolldate=${payrollDate}`);
     }
 
-    return this.http.get<IrisPayslip[]>(params.join(""));
+    return this.http.get<IrisPayslip[]>(params.join(''));
   }
 }

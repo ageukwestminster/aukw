@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgbModalModule, 
+import {
+  NgbModalModule,
   NgbActiveModal,
   NgbDateAdapter,
   NgbDateParserFormatter,
-  NgbDatepickerModule
- } from '@ng-bootstrap/ng-bootstrap';
- import { CustomDateParserFormatter, NgbUTCStringAdapter } from '@app/_helpers';
+  NgbDatepickerModule,
+} from '@ng-bootstrap/ng-bootstrap';
+import { CustomDateParserFormatter, NgbUTCStringAdapter } from '@app/_helpers';
 
 @Component({
   selector: 'payrolldate-input-modal',
@@ -16,7 +17,7 @@ import { NgbModalModule,
   providers: [
     { provide: NgbDateAdapter, useClass: NgbUTCStringAdapter },
     { provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter },
-  ]
+  ],
 })
 export class PayrollDateInputModalComponent {
   payrollDate: string = '';
