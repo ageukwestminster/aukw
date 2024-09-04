@@ -17,7 +17,7 @@ import HighchartsBoost from "highcharts/modules/boost";
 Accessibility(Highcharts);
 Exporting(Highcharts);
 Histogram(Highcharts);
-HighchartsBoost(Highcharts);
+HighchartsBoost(Highcharts); // Always do last
 
 @Component({
   selector: 'sales-histogram',

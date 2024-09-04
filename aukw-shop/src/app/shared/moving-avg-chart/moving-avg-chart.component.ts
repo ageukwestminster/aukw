@@ -15,7 +15,7 @@ import Exporting from 'highcharts/modules/exporting';
 import HighchartsBoost from "highcharts/modules/boost";
 Accessibility(Highcharts);
 Exporting(Highcharts);
-HighchartsBoost(Highcharts);
+HighchartsBoost(Highcharts); // Always do last
 
 @Component({
   selector: 'moving-average',
