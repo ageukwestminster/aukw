@@ -7,7 +7,7 @@
   <div class="col-sm-4">
     <button
       (click)="createTransaction()"
-      class="btn btn-sm btn-success m-1 mt-1 #employerNI"
+      class="btn btn-sm btn-success m-1 mt-1"
       [disabled]="!lines || !lines.length"
     >
       Create Salary Journals
@@ -66,12 +66,12 @@
             {{ line.payrollNumber }}
           </td>
           <td>{{ line.employeeName }}</td>
-          <td class="d-none d-sm-table-cell">
+          <td>
             <div class="align-middle" *ngFor="let item of line.totalPay">
               {{ item.className }}
             </div>
           </td>
-          <td class="d-none d-sm-table-cell">
+          <td>
             <div class="align-middle" *ngFor="let item of line.totalPay">
               {{ item.amount }}
             </div>

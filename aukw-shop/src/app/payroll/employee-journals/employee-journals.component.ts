@@ -38,15 +38,6 @@ export class EmployeeJournalsComponent extends BasePayrollTransactionComponent<P
    */
   createTransaction() {
     // Filter out lines for which there is already a QBO entry
-    /*const journalsToAdd = this.lines.filter((item) => {
-      let ps = this.payslips.filter(
-        (p) =>
-          p.payrollNumber == item.payrollNumber &&
-          (!p.qbFlags || !p.qbFlags.employeeJournal),
-      );
-      return ps.length > 0;
-    });*/
-
     const filteredTransactions = this.filteredTransactions(
       this.getQBFlagsProperty(),
     );
@@ -54,8 +45,10 @@ export class EmployeeJournalsComponent extends BasePayrollTransactionComponent<P
     if (filteredTransactions && filteredTransactions.length) {
       from(filteredTransactions)
         .pipe(
-          mergeMap((j) =>
-            this.qbPayrollService.createEmployeeJournal(j, this.payrollDate),
+          mergeMap((prospectivePayrollJournal) =>
+            this.qbPayrollService.createEmployeeJournal(
+              prospectivePayrollJournal, this.payrollDate
+            ),
           ),
           toArray(),
           this.loadingIndicatorService.createObserving({
