@@ -8,23 +8,3 @@
     #fileUpload
   />
 </form>
-
-<div class="file-section">
-  <div class="d-flex flex-column">
-    <button
-      (click)="fileUpload.click()"
-      class="btn btn-sm btn-success mt-1"
-      [disabled]="setButtonDisabled"
-    >
-      <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
-      <i class="fas fa-file-upload"></i>&nbsp;Upload Iris Payroll Spreadsheet
-    </button>
-    <p></p>
-    <div class="d-flex justify-content-between">
-      <div>
-        <strong>File:</strong>
-        {{ (file && file.name) || "No file uploaded yet." }}
-      </div>
-    </div>
-  </div>
-</div>

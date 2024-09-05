@@ -1,10 +1,14 @@
 import {
+  AfterViewInit,
   Component,
+  ElementRef,
   EventEmitter,
   Input,
   inject,
   OnInit,
   Output,
+  Renderer2,
+  ViewChild,
 } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
@@ -39,7 +43,8 @@ import { PayrollDateInputModalComponent } from './modals/payrolldate-input.compo
     ReactiveFormsModule,
   ],
 })
-export class PayrollFileUploadComponent implements OnInit {
+export class PayrollFileUploadComponent implements AfterViewInit, OnInit {
+
   /** When 'true' background work is being performed */
   loading: boolean = false;
   /** The file that the user has selected, or null */
@@ -60,11 +65,22 @@ export class PayrollFileUploadComponent implements OnInit {
   private formBuilder = inject(FormBuilder);
   private consoleService = inject(ConsoleService);
   private payslipListService = inject(PayslipListService);
+  private renderer = inject(Renderer2);
+
+  @ViewChild('fileUpload') fileUploadRef!: ElementRef;
 
   constructor() {}
 
   ngOnInit(): void {
-    this.form = this.formBuilder.group({ chooseFile: [null] });
+    this.form = this.formBuilder.group({ chooseFile: [null] });    
+  }
+
+  /**
+   * This lifecycle hook that is called after Angular has fully initialized a component's view
+   */
+  ngAfterViewInit() : void {
+    // 'click' the file upload input to show the file open dialog immediately upon init
+    this.fileUploadRef.nativeElement.click()
   }
 
   /**
@@ -144,8 +160,8 @@ export class PayrollFileUploadComponent implements OnInit {
 
   /**
    * Open a modal window to obtain the password, then parse the Spreadsheet
-   * @param filename string
-   * @returns Open
+   * @param filename string The file to parse.
+   * @returns An Observable of an array of employee payslips
    */
   private decrypt_and_parse(filename: string): Observable<IrisPayslip[]> {
     const modalRef = this.modalService.open(PasswordInputModalComponent);
@@ -165,6 +181,11 @@ export class PayrollFileUploadComponent implements OnInit {
     );
   }
 
+    /**
+   * Parse the Spreadsheet into Pasyslip objects
+   * @param filename string The file to parse.
+   * @returns An Observable of an array of employee payslips
+   */
   private just_parse(filename: string): Observable<IrisPayslip[]> {
     const modalRef = this.modalService.open(PayrollDateInputModalComponent);
 
