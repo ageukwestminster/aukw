@@ -8,8 +8,9 @@
       "type": "chrome",
       "request": "launch",
       "name": "Launch Chrome against localhost",
-      "preLaunchTask": "npm: start",
       "url": "http://localhost:4200",
+      "preLaunchTask": "npm: start",
+      "trace": true,
       "webRoot": "${workspaceFolder}",
       "skipFiles": ["<node_modules>/**"]
     },
@@ -18,6 +19,7 @@
       "request": "launch",
       "name": "Launch MS Edge against localhost",
       "preLaunchTask": "npm: start",
+      "trace": true,
       "url": "http://localhost:4200",
       "webRoot": "${workspaceFolder}",
       "skipFiles": ["<node_modules>/**"]

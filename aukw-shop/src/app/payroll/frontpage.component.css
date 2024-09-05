@@ -35,6 +35,28 @@
   box-shadow: 0 0 0 0.5em #f9f9f9;
 }
 
+.inactive {
+  color: #777;
+}
+
+.allocationsDone {
+  position: relative;
+  font-weight: 600;
+  color: green;
+  position: absolute;
+  right: 30px;
+  top: 55px;
+}
+
+.complete {
+  position: relative;
+  font-weight: 600;
+  color: green;
+  position: absolute;
+  right: 10px;
+  top: 55px;
+}
+
 .finished {
   position: relative;
   z-index: 1;

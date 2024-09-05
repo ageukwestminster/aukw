@@ -1,172 +1,181 @@
 <div>
   <h2>Payroll</h2>
 </div>
-<div clas="col">
-  <div class="d-flex justify-content-between content-wrap">
-    <a class="no-underline" routerLink="allocations"
-      ><i
-        class="fas fa-check finished"
-        *ngIf="state$ | async as state; else notDone"
-      ></i
-    ></a>
-    <a
-      class="no-underline"
-      [routerLink]="
-        processState >= PayrollProcessState.ALLOCATIONS ? 'payslips' : null
-      "
-      ><i
-        class="fas fa-check finished"
-        *ngIf="processState >= PayrollProcessState.PAYSLIPS; else notDone"
-      ></i
-    ></a>
-    <a
-      class="no-underline"
-      [routerLink]="
-        processState >= PayrollProcessState.PAYSLIPS ? 'journals' : null
-      "
-      ><i
-        class="fas fa-check finished"
-        *ngIf="processState >= PayrollProcessState.JOURNALS; else notDone"
-      ></i
-    ></a>
-    <a
-      class="no-underline"
-      [routerLink]="
-        processState >= PayrollProcessState.JOURNALS ? 'employerni' : null
-      "
-      ><i
-        class="fas fa-check finished"
-        *ngIf="processState >= PayrollProcessState.EMPLOYERNI; else notDone"
-      ></i
-    ></a>
-    <a
-      class="no-underline"
-      [routerLink]="
-        processState >= PayrollProcessState.EMPLOYERNI ? 'pensions' : null
-      "
-      ><i
-        class="fas fa-check finished"
-        *ngIf="processState >= PayrollProcessState.PENSIONS; else notDone"
-      ></i
-    ></a>
-    <a
-      class="no-underline"
-      [routerLink]="
-        processState >= PayrollProcessState.PENSIONS ? 'enterprises' : null
-      "
-      ><i
-        class="fas fa-check finished"
-        *ngIf="processState >= PayrollProcessState.ENTERPRISES; else notDone"
-      ></i
-    ></a>
-  </div>
-  <div
-    ngbNav
-    #payrollNav="ngbNav"
-    class="navbar navbar-expand-lg payroll-navbar"
-  >
-    <div
-      class="collapse navbar-collapse justify-content-around"
-      id="navbarSupportedContent"
-    >
-      <ul class="navbar-nav ml-2 justify-content-between">
-        <li [ngbNavItem]="1">
-          <!--
-            Using routerLinkActive="active" to highlight the current nav link with the CSS class active. 
-          -->
+<div class="container-fluid">
+  <div class="card-deck mb-3 text-center">
+    <div class="d-flex">
+      <div class="card mb-4 box-shadow">
+        <div class="card-header pb-2">
+          <h4 class="my-0 font-weight-normal">Allocations</h4>
+        </div>
+        <div class="card-body">
+          <a class="link-unstyled" routerLink="allocations"
+            ><i class="fas fa-user-tag fa-8x"> </i
+            ><i
+              class="fa fa-check-circle-o status-icon fa-3x allocationsDone"
+              *ngIf="processState >= PayrollProcessState.ALLOCATIONS"
+            ></i
+          ></a>
+        </div>
+      </div>
+      <div class="card ms-4 mb-4 box-shadow">
+        <div class="card-header pb-2">
+          <h4 class="my-0 font-weight-normal">Upload File</h4>
+        </div>
+        <div class="card-body">
           <a
-            class="nav-item nav-link"
-            routerLink="allocations"
+            class="link-unstyled"
             routerLinkActive="active"
-            >Allocations</a
-          >
-        </li>
-        <li [ngbNavItem]="2">
-          <!--
-            Using [ngClass] and [routerLink] to enforce journey through process. Only enable link when 
-            previous step complete.
-            A null value for routerLink disables the link.
-          -->
-          <a
-            [ngClass]="
-              processState >= PayrollProcessState.ALLOCATIONS
-                ? 'nav-item nav-link'
-                : 'nav-item nav-link-disabled'
-            "
             [routerLink]="
               processState >= PayrollProcessState.ALLOCATIONS
                 ? 'payslips'
                 : null
             "
-            routerLinkActive="active"
-            >Upload Iris S/S</a
-          >
-        </li>
-        <li [ngbNavItem]="3">
-          <a
-            [ngClass]="
-              processState >= PayrollProcessState.PAYSLIPS
-                ? 'nav-item nav-link'
-                : 'nav-item nav-link-disabled'
-            "
-            [routerLink]="
-              processState >= PayrollProcessState.PAYSLIPS ? 'journals' : null
-            "
-            routerLinkActive="active"
-            >Employee Journals</a
-          >
-        </li>
-        <li [ngbNavItem]="4">
-          <a
-            [ngClass]="
-              processState >= PayrollProcessState.JOURNALS
-                ? 'nav-item nav-link'
-                : 'nav-item nav-link-disabled'
-            "
-            [routerLink]="
-              processState >= PayrollProcessState.JOURNALS ? 'employerni' : null
-            "
-            routerLinkActive="active"
-            >Employer NI</a
-          >
-        </li>
-        <li [ngbNavItem]="5">
-          <a
-            [ngClass]="
-              processState >= PayrollProcessState.EMPLOYERNI
-                ? 'nav-item nav-link'
-                : 'nav-item nav-link-disabled'
-            "
-            [routerLink]="
-              processState >= PayrollProcessState.EMPLOYERNI ? 'pensions' : null
-            "
-            routerLinkActive="active"
-            >Pension invoice</a
-          >
-        </li>
-        <li [ngbNavItem]="6">
-          <a
-            [ngClass]="
-              processState >= PayrollProcessState.PENSIONS
-                ? 'nav-item nav-link'
-                : 'nav-item nav-link-disabled'
-            "
-            [routerLink]="
-              processState >= PayrollProcessState.PENSIONS
-                ? 'enterprises'
-                : null
-            "
-            routerLinkActive="active"
-            >Enterprises</a
-          >
-        </li>
-      </ul>
+            ><i
+              class="fas fa-upload fa-8x"
+              *ngIf="
+                processState >= PayrollProcessState.ALLOCATIONS;
+                else inactiveUpload
+              "
+            ></i
+            ><i
+              class="fa fa-check-circle-o status-icon fa-3x complete"
+              *ngIf="processState >= PayrollProcessState.PAYSLIPS"
+            ></i
+          ></a>
+        </div>
+      </div>
     </div>
   </div>
-  <div [ngbNavOutlet]="payrollNav"></div>
+</div>
+<div *ngIf="processState >= PayrollProcessState.PAYSLIPS">
+  <div clas="col">
+    <div class="d-flex justify-content-between content-wrap">
+      <a
+        class="no-underline"
+        [routerLink]="
+          processState >= PayrollProcessState.PAYSLIPS ? 'journals' : null
+        "
+        ><i
+          class="fas fa-check finished"
+          *ngIf="processState >= PayrollProcessState.JOURNALS; else notDone"
+        ></i
+      ></a>
+      <a
+        class="no-underline"
+        [routerLink]="
+          processState >= PayrollProcessState.JOURNALS ? 'employerni' : null
+        "
+        ><i
+          class="fas fa-check finished"
+          *ngIf="processState >= PayrollProcessState.EMPLOYERNI; else notDone"
+        ></i
+      ></a>
+      <a
+        class="no-underline"
+        [routerLink]="
+          processState >= PayrollProcessState.EMPLOYERNI ? 'pensions' : null
+        "
+        ><i
+          class="fas fa-check finished"
+          *ngIf="processState >= PayrollProcessState.PENSIONS; else notDone"
+        ></i
+      ></a>
+      <a
+        class="no-underline"
+        [routerLink]="
+          processState >= PayrollProcessState.PENSIONS ? 'enterprises' : null
+        "
+        ><i
+          class="fas fa-check finished"
+          *ngIf="processState >= PayrollProcessState.ENTERPRISES; else notDone"
+        ></i
+      ></a>
+    </div>
+
+    <div
+      ngbNav
+      #payrollNav="ngbNav"
+      class="navbar navbar-expand-lg payroll-navbar"
+    >
+      <div
+        class="collapse navbar-collapse justify-content-around"
+        id="navbarSupportedContent"
+      >
+        <ul class="navbar-nav ml-2 justify-content-between">
+          <li [ngbNavItem]="3">
+            <a
+              [ngClass]="
+                processState >= PayrollProcessState.PAYSLIPS
+                  ? 'nav-item nav-link'
+                  : 'nav-item nav-link-disabled'
+              "
+              [routerLink]="
+                processState >= PayrollProcessState.PAYSLIPS ? 'journals' : null
+              "
+              routerLinkActive="active"
+              >Employee Journals</a
+            >
+          </li>
+          <li [ngbNavItem]="4">
+            <a
+              [ngClass]="
+                processState >= PayrollProcessState.JOURNALS
+                  ? 'nav-item nav-link'
+                  : 'nav-item nav-link-disabled'
+              "
+              [routerLink]="
+                processState >= PayrollProcessState.JOURNALS
+                  ? 'employerni'
+                  : null
+              "
+              routerLinkActive="active"
+              >Employer NI</a
+            >
+          </li>
+          <li [ngbNavItem]="5">
+            <a
+              [ngClass]="
+                processState >= PayrollProcessState.EMPLOYERNI
+                  ? 'nav-item nav-link'
+                  : 'nav-item nav-link-disabled'
+              "
+              [routerLink]="
+                processState >= PayrollProcessState.EMPLOYERNI
+                  ? 'pensions'
+                  : null
+              "
+              routerLinkActive="active"
+              >Pension invoice</a
+            >
+          </li>
+          <li [ngbNavItem]="6">
+            <a
+              [ngClass]="
+                processState >= PayrollProcessState.PENSIONS
+                  ? 'nav-item nav-link'
+                  : 'nav-item nav-link-disabled'
+              "
+              [routerLink]="
+                processState >= PayrollProcessState.PENSIONS
+                  ? 'enterprises'
+                  : null
+              "
+              routerLinkActive="active"
+              >Enterprises</a
+            >
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div [ngbNavOutlet]="payrollNav"></div>
+  </div>
 </div>
 <router-outlet></router-outlet>
 <!-- Used if the ngif test is 'false'-->
 <ng-template #notDone>
   <i class="fas fa-check stilltodo"></i>
+</ng-template>
+<ng-template #inactiveUpload>
+  <i class="fas fa-upload fa-8x inactive"></i>
 </ng-template>
