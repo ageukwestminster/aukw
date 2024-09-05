@@ -3,7 +3,7 @@
   "version": "1.4.5",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --host=127.0.0.1",
+    "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
@@ -24,7 +24,6 @@
     "apexcharts": "^3.53.0",
     "bootstrap": "^5.3.3",
     "highcharts": "^11.4.8",
-    "highcharts-angular": "^4.0.1",
     "json-to-csv-export": "^3.0.1",
     "rxjs": "~7.8.1",
     "tslib": "^2.7.0",
