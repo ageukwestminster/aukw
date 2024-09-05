@@ -18,7 +18,7 @@ import { SalesChartComponent } from '@app/shared';
 export class SalesListComponent extends AbstractChartReportComponent<SalesChartData> {
   private summaryService = inject(SummaryService);
 
-  refreshSummary() {
+  override refreshSummary() {
     this.summaryService
       .getSalesChartData()
       .pipe(

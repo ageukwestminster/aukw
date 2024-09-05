@@ -31,7 +31,7 @@ export class SalesHistogramComponent extends AbstractChartReportComponent<Histog
     return this.data;
   }
 
-  refreshSummary(startDate: string, endDate: string) {
+  override refreshSummary(startDate: string, endDate: string) {
     this.reportService
       .getSalesHistogram(startDate, endDate, environment.HARROWROAD_SHOPID)
       .pipe(

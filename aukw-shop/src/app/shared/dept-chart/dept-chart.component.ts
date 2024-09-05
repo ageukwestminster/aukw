@@ -1,31 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import Highcharts from 'highcharts';
-import { HighchartsChartModule } from 'highcharts-angular';
+import Highcharts from 'highcharts/es-modules/masters/highcharts.src.js'; // From https://github.com/highcharts/highcharts/issues/14183
 import { SummaryService } from '@app/_services';
 import { DepartmentSalesChartData } from '@app/_models';
-
-/* from https://www.highcharts.com/blog/tutorials/highcharts-and-angular-7/ */
-/*declare var require: any;
-let Boost = require('highcharts/modules/boost');
-let Histogram = require('highcharts/modules/histogram-bellcurve');
-let noData = require('highcharts/modules/no-data-to-display');
-let More = require('highcharts/highcharts-more');
-let Accessibility = require('highcharts/modules/accessibility');
-let Exporting = require('highcharts/modules/exporting');
-
-Boost(Highcharts);
-noData(Highcharts);
-More(Highcharts);
-Histogram(Highcharts);
-Accessibility(Highcharts);
-Exporting(Highcharts);*/
 
 @Component({
   selector: 'dept-pie-chart',
   templateUrl: './dept-chart.component.html',
   styleUrls: ['./dept-chart.component.css'],
   standalone: true,
-  imports: [HighchartsChartModule],
+  imports: [],
 })
 export class DepartmentChartComponent implements OnInit {
   public options: any = {

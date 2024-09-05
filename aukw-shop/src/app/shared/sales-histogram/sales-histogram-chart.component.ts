@@ -5,26 +5,21 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import Highcharts from 'highcharts';
-import { HighchartsChartModule } from 'highcharts-angular';
+import Highcharts from 'highcharts/es-modules/masters/highcharts.src.js'; // From https://github.com/highcharts/highcharts/issues/14183
 import { HistogramChartData } from '@app/_models';
 
 /* from https://www.highcharts.com/docs/advanced-chart-features/highcharts-typescript-declarations */
-import Accessibility from 'highcharts/modules/accessibility';
-import Exporting from 'highcharts/modules/exporting';
-import Histogram from 'highcharts/modules/histogram-bellcurve';
-import HighchartsBoost from 'highcharts/modules/boost';
-Accessibility(Highcharts);
-Exporting(Highcharts);
-Histogram(Highcharts);
-HighchartsBoost(Highcharts); // Always do last
+import 'highcharts/es-modules/masters/modules/accessibility.src.js';
+import 'highcharts/es-modules/masters/modules/exporting.src.js';
+import 'highcharts/es-modules/masters/modules/histogram-bellcurve.src.js';
+import 'highcharts/es-modules/masters/modules/boost.src.js'; //Always import this last
 
 @Component({
   selector: 'sales-histogram',
   templateUrl: './sales-histogram-chart.component.html',
   styleUrls: ['./sales-histogram-chart.component.css'],
   standalone: true,
-  imports: [HighchartsChartModule],
+  imports: [],
 })
 export class SalesHistogramChartComponent implements OnInit, OnChanges {
   @Input() histogramChartData?: HistogramChartData;
