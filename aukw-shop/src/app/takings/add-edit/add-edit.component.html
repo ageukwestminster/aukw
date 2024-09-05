@@ -92,7 +92,7 @@
   <div class="w-100"></div>
 
   <!-- Department Sales -->
-  <div *ngIf="f.quickbooks.value">
+  <div *ngIf="f['quickbooks'].value">
     <p class="mb-0" [ngStyle]="{ color: 'red' }">
       <small>Note: These values have already been uploaded to QB</small>
     </p>
@@ -327,15 +327,15 @@
               class="form-control"
               formControlName="customers_num_total"
               [ngClass]="{
-                'is-invalid': submitted && f.customers_num_total.errors,
+                'is-invalid': submitted && f['customers_num_total'].errors,
               }"
             />
             <div
-              *ngIf="submitted && f.customers_num_total.errors"
+              *ngIf="submitted && f['customers_num_total'].errors"
               class="invalid-feedback"
               id="inputGroupPrepend2"
             >
-              <div *ngIf="f.customers_num_total.errors.required">
+              <div *ngIf="f['customers_num_total'].errors['required']">
                 Number of Transactions (NET number) is required
               </div>
             </div>
@@ -395,13 +395,13 @@
               placeholder="£0.00"
               pattern="^\d*(\.\d{0,2})?$"
               formControlName="cash_to_bank"
-              [ngClass]="{ 'is-invalid': submitted && f.cash_to_bank.errors }"
+              [ngClass]="{ 'is-invalid': submitted && f['cash_to_bank'].errors }"
             />
             <div
-              *ngIf="submitted && f.cash_to_bank.errors"
+              *ngIf="submitted && f['cash_to_bank'].errors"
               class="invalid-feedback"
             >
-              <div *ngIf="f.cash_to_bank.errors.required">
+              <div *ngIf="f['cash_to_bank'].errors['required']">
                 Cash amount is required
               </div>
             </div>

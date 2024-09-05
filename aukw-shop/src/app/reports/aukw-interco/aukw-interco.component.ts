@@ -25,7 +25,6 @@ import { QBAccountListEntry } from '@app/_models/qb-account-list-entry';
 export class AukwIntercoComponent extends AbstractChartReportComponent<
   QBAccountListEntry[]
 > {
-  form!: FormGroup;
   enterprises: boolean = true;
 
   private alertService = inject(AlertService);
@@ -36,7 +35,7 @@ export class AukwIntercoComponent extends AbstractChartReportComponent<
     this.onDateRangeChanged(this.f['dateRange'].value);
   }
 
-  refreshSummary(startDate: string, endDate: string) {
+  override refreshSummary(startDate: string, endDate: string) {
     this.loading = true;
     this.reportService
       .getIntercoAccountLedger(startDate, endDate, this.enterprises)
