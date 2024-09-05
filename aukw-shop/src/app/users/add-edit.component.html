@@ -43,7 +43,9 @@
           placement="bottom"
         />
         <div *ngIf="submitted && f['username'].errors" class="invalid-feedback">
-          <div *ngIf="f['username'].errors['required']">Username is required</div>
+          <div *ngIf="f['username'].errors['required']">
+            Username is required
+          </div>
         </div>
       </div>
       <div class="input-group mb-1">
@@ -98,8 +100,13 @@
           ngbTooltip="The user's first or given name."
           container="body"
         />
-        <div *ngIf="submitted && f['firstname'].errors" class="invalid-feedback">
-          <div *ngIf="f['firstname'].errors['required']">First Name is required</div>
+        <div
+          *ngIf="submitted && f['firstname'].errors"
+          class="invalid-feedback"
+        >
+          <div *ngIf="f['firstname'].errors['required']">
+            First Name is required
+          </div>
         </div>
       </div>
       <div class="input-group mb-1">
@@ -154,7 +161,9 @@
           [ngClass]="{ 'is-invalid': submitted && f['email'].errors }"
         />
         <div *ngIf="submitted && f['email'].errors" class="invalid-feedback">
-          <div *ngIf="f['email'].errors['email']">Enter a valid email address</div>
+          <div *ngIf="f['email'].errors['email']">
+            Enter a valid email address
+          </div>
         </div>
       </div>
       <div class="input-group mb-1">

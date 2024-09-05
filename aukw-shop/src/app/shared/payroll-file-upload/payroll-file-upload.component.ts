@@ -44,7 +44,6 @@ import { PayrollDateInputModalComponent } from './modals/payrolldate-input.compo
   ],
 })
 export class PayrollFileUploadComponent implements AfterViewInit, OnInit {
-
   /** When 'true' background work is being performed */
   loading: boolean = false;
   /** The file that the user has selected, or null */
@@ -72,15 +71,15 @@ export class PayrollFileUploadComponent implements AfterViewInit, OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    this.form = this.formBuilder.group({ chooseFile: [null] });    
+    this.form = this.formBuilder.group({ chooseFile: [null] });
   }
 
   /**
    * This lifecycle hook that is called after Angular has fully initialized a component's view
    */
-  ngAfterViewInit() : void {
+  ngAfterViewInit(): void {
     // 'click' the file upload input to show the file open dialog immediately upon init
-    this.fileUploadRef.nativeElement.click()
+    this.fileUploadRef.nativeElement.click();
   }
 
   /**
@@ -181,7 +180,7 @@ export class PayrollFileUploadComponent implements AfterViewInit, OnInit {
     );
   }
 
-    /**
+  /**
    * Parse the Spreadsheet into Pasyslip objects
    * @param filename string The file to parse.
    * @returns An Observable of an array of employee payslips

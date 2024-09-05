@@ -15,8 +15,13 @@
             autocomplete="username"
             id="usernameInput"
           />
-          <div *ngIf="submitted && f['username'].errors" class="invalid-feedback">
-            <div *ngIf="f['username'].errors['required']">Username is required</div>
+          <div
+            *ngIf="submitted && f['username'].errors"
+            class="invalid-feedback"
+          >
+            <div *ngIf="f['username'].errors['required']">
+              Username is required
+            </div>
           </div>
         </div>
         <div class="form-group">
@@ -29,8 +34,13 @@
             autocomplete="current-password"
             id="passwordInput"
           />
-          <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
-            <div *ngIf="f['password'].errors['required']">Password is required</div>
+          <div
+            *ngIf="submitted && f['password'].errors"
+            class="invalid-feedback"
+          >
+            <div *ngIf="f['password'].errors['required']">
+              Password is required
+            </div>
           </div>
         </div>
         <div class="d-flex justify-content-between">

@@ -395,7 +395,9 @@
               placeholder="£0.00"
               pattern="^\d*(\.\d{0,2})?$"
               formControlName="cash_to_bank"
-              [ngClass]="{ 'is-invalid': submitted && f['cash_to_bank'].errors }"
+              [ngClass]="{
+                'is-invalid': submitted && f['cash_to_bank'].errors,
+              }"
             />
             <div
               *ngIf="submitted && f['cash_to_bank'].errors"
