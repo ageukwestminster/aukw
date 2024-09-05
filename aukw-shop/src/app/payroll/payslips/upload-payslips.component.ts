@@ -103,7 +103,7 @@ export class UploadPayslipsComponent implements OnInit {
       return; // Return and do not proceed with processing payslips
     }
 
-    // Update the payslips subject so it will be availabe to all subscribers
+    // Update the payslips subject so it will be available to all subscribers
     this.qbPayrollService.sendPayslips(payslips);
 
     this.updateQBOFlags(payslips, payslips[0].payrollDate);
