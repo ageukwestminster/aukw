@@ -5,6 +5,7 @@ import { HomeComponent } from './home';
 import { LoginComponent } from './login';
 import { authGuard } from './_helpers';
 import { Role } from './_models';
+import { TestComponent } from './test/test.component';
 
 const usersRoutes = () =>
   import('./users/users.routes').then((x) => x.USERS_ROUTES);
@@ -18,9 +19,13 @@ const reportsRoutes = () =>
 export const APP_ROUTES: Routes = [
   {
     path: '',
+    component: TestComponent,
+  },
+  /*{
+    path: '',
     component: HomeComponent,
     canActivate: [authGuard],
-  },
+  },*/
   {
     path: 'login',
     component: LoginComponent,
