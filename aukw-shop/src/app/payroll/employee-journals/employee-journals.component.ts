@@ -47,7 +47,8 @@ export class EmployeeJournalsComponent extends BasePayrollTransactionComponent<P
         .pipe(
           mergeMap((prospectivePayrollJournal) =>
             this.qbPayrollService.createEmployeeJournal(
-              prospectivePayrollJournal, this.payrollDate
+              prospectivePayrollJournal,
+              this.payrollDate,
             ),
           ),
           toArray(),

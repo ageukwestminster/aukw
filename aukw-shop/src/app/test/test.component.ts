@@ -19,7 +19,7 @@ import { PayrollProcessState } from '@app/_models';
     RouterOutlet,
   ],
   templateUrl: './test.component.html',
-  styleUrl: './test.component.css'
+  styleUrl: './test.component.css',
 })
 export class TestComponent {
   state$: BehaviorSubject<PayrollProcessState>;
