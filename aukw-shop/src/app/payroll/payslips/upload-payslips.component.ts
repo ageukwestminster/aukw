@@ -80,7 +80,7 @@ export class UploadPayslipsComponent implements OnInit {
           throw new Error(
             'The recurring transaction in Quickbooks that ' +
               `defines the class allocations does not have an entry for '${payslip.employeeName}'.` +
-              `Please add them to the salary allocations recurring transaction and then try again.`,
+              ` Please add them to the salary allocations recurring transaction and then try again.`,
           );
         }
 
