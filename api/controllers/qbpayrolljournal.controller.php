@@ -223,7 +223,12 @@ class QBPayrollJournalCtl{
 
           foreach ($response->JournalEntry->Line as $line) {
 
-            if (!isset($line->Description) || !preg_match('/ignore/i', $line->Description)) {
+            // Check for a line with no account name. This will show as a "DescriptionOnly" journal line
+            if (isset($line->DetailType) && $line->DetailType == 'DescriptionOnly') {
+              throw new \Exception("The recurring transaction is in an invalid state. Is there a line with a missing account name?");
+            }
+            
+            if ( !isset($line->Description) || !preg_match('/ignore/i', $line->Description) ) {
 
               $amount = $line->Amount;
               
@@ -252,8 +257,7 @@ class QBPayrollJournalCtl{
         } catch (\Exception $e) {
           http_response_code(400);   
           echo json_encode(
-              array("message" => "Unable to parse recurring transaction to obtain employee allocations.",
-              "details" => $e->getMessage())
+              array("message" => "Unable to parse recurring transaction to obtain employee allocations." . $e->getMessage())
           );
           exit(1);
         }
