@@ -31,7 +31,7 @@ class XlsxCtl{
     if (!$_FILES || !array_key_exists('file', $_FILES) || !$_FILES['file']) {
         http_response_code(400);   
         echo json_encode(
-            array("message" => "Uploaded file collection (_FILES) is empty or is missing the key named 'file'.")
+            array("message" => "Uploaded file collection is empty or the uploaded object is missing the key named 'file'.")
         );
         exit(1);
     }
