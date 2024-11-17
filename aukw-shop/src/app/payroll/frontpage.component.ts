@@ -10,7 +10,6 @@ import { PayrollProcessState } from '@app/_models';
   templateUrl: 'frontpage.component.html',
   standalone: true,
   imports: [
-    AsyncPipe,
     NgbNavModule,
     NgClass,
     NgIf,
@@ -26,8 +25,15 @@ export class PayrollFrontPageComponent {
   constructor() {
     this.state$ = this.payrollProcessStateService.stateSubject;
   }
-  PayrollProcessState = PayrollProcessState;
+  
   get processState(): PayrollProcessState {
     return this.state$.getValue();
+  }
+
+  // line added to expose enum to template
+  PayrollProcessState = PayrollProcessState;
+
+  get math() {
+    return Math;
   }
 }

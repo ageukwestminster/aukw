@@ -4,6 +4,7 @@
     class="file-input"
     accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
     (change)="onChange($event)"
+    (cancel)="onCancel($event)"
     formControlName="chooseFile"
     #fileUpload
   />

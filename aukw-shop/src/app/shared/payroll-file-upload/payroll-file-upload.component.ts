@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  AfterContentInit,
   Component,
   ElementRef,
   EventEmitter,
@@ -7,7 +8,6 @@ import {
   inject,
   OnInit,
   Output,
-  Renderer2,
   ViewChild,
 } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
@@ -35,15 +35,12 @@ import { PayrollDateInputModalComponent } from './modals/payrolldate-input.compo
   standalone: true,
   imports: [
     CommonModule,
-    NgIf,
     NgbModalModule,
     NgbTooltipModule,
-    PasswordInputModalComponent,
-    PayrollDateInputModalComponent,
     ReactiveFormsModule,
   ],
 })
-export class PayrollFileUploadComponent implements AfterViewInit, OnInit {
+export class PayrollFileUploadComponent implements AfterViewInit, OnInit, AfterContentInit {
   /** When 'true' background work is being performed */
   loading: boolean = false;
   /** The file that the user has selected, or null */
@@ -52,6 +49,7 @@ export class PayrollFileUploadComponent implements AfterViewInit, OnInit {
   form!: FormGroup;
 
   @Output() onFileUploaded = new EventEmitter<IrisPayslip[]>();
+  @Output() onFileUploadCancelled = new EventEmitter();
 
   /**
    * Input flag to allow disabling the loading of a file until the parent object is ready
@@ -64,13 +62,13 @@ export class PayrollFileUploadComponent implements AfterViewInit, OnInit {
   private formBuilder = inject(FormBuilder);
   private consoleService = inject(ConsoleService);
   private payslipListService = inject(PayslipListService);
-  private renderer = inject(Renderer2);
 
   @ViewChild('fileUpload') fileUploadRef!: ElementRef;
 
   constructor() {}
 
   ngOnInit(): void {
+    console.log('OnInit');
     this.form = this.formBuilder.group({ chooseFile: [null] });
   }
 
@@ -78,9 +76,15 @@ export class PayrollFileUploadComponent implements AfterViewInit, OnInit {
    * This lifecycle hook that is called after Angular has fully initialized a component's view
    */
   ngAfterViewInit(): void {
+    console.log('AfterViewInit');
     // 'click' the file upload input to show the file open dialog immediately upon init
     this.fileUploadRef.nativeElement.click();
   }
+
+  ngAfterContentInit(): void {
+    console.log('AfterContentInit');
+  }
+
 
   /**
    * Called when the user chooses a file using the file input control
@@ -100,6 +104,19 @@ export class PayrollFileUploadComponent implements AfterViewInit, OnInit {
     }
 
     this.upload();
+  }
+
+    /**
+   * Called when the user cancels the file input control
+   * @param event
+   * @returns void
+   */
+  onCancel(event: Event): void {
+    if (!event) return;
+
+    this.file = null;
+    this.form.reset();
+    this.onFileUploadCancelled.emit();
   }
 
   /**

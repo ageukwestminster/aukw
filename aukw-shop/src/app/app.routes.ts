@@ -17,15 +17,15 @@ const reportsRoutes = () =>
   import('./reports/reports.routes').then((x) => x.REPORTS_ROUTES);
 
 export const APP_ROUTES: Routes = [
-  {
+  /*{
     path: '',
     component: TestComponent,
-  },
-  /*{
+  },*/
+  {
     path: '',
     component: HomeComponent,
     canActivate: [authGuard],
-  },*/
+  },
   {
     path: 'login',
     component: LoginComponent,

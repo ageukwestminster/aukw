@@ -1,5 +1,8 @@
 <div>
-  <h2>Payroll</h2>
+  <h2>PayrollProcessState[Payroll]</h2>
+</div>
+<div>
+  {{ processState }}
 </div>
 <div class="container-fluid">
   <div class="card-deck mb-3 text-center">
@@ -30,11 +33,11 @@
             class="link-unstyled"
             routerLinkActive="active"
             [routerLink]="
-              processState >= PayrollProcessState.ALLOCATIONS
+              processState >= PayrollProcessState.INITIAL
                 ? 'payslips'
                 : null
             "
-            ><div *ngIf="processState >= PayrollProcessState.ALLOCATIONS">
+            ><div>
               <i
                 class="fas fa-upload fa-8x"
                 *ngIf="
@@ -46,6 +49,66 @@
             <div *ngIf="processState >= PayrollProcessState.PAYSLIPS">
               <i class="fa fa-check-circle-o status-icon fa-3x complete"
                 ><span class="visually-hidden">Upload complete</span></i
+              >
+            </div></a
+          >
+        </div>
+      </div>
+      <div class="card ms-4 mb-4 box-shadow">
+        <div class="card-header pb-2">
+          <h4 class="my-0 font-weight-normal">Payroll Journals</h4>
+        </div>
+        <div class="card-body">
+          <a
+            class="link-unstyled"
+            routerLinkActive="active"
+            [routerLink]="
+              processState >= PayrollProcessState.PAYSLIPS
+                ? 'journals'
+                : null
+            "
+            ><div>
+              <i
+                class="fas fa-book-open fa-8x"
+                *ngIf="
+                  processState >= PayrollProcessState.PAYSLIPS;
+                  else inactiveJournal
+                "
+              ></i>
+            </div>
+            <div *ngIf="processState >= PayrollProcessState.JOURNALS">
+              <i class="fa fa-check-circle-o status-icon fa-3x complete"
+                ><span class="visually-hidden">Journals complete</span></i
+              >
+            </div></a
+          >
+        </div>
+      </div>
+      <div class="card ms-4 mb-4 box-shadow">
+        <div class="card-header pb-2">
+          <h4 class="my-0 font-weight-normal">NI Journal</h4>
+        </div>
+        <div class="card-body">
+          <a
+            class="link-unstyled"
+            routerLinkActive="active"
+            [routerLink]="
+              processState >= PayrollProcessState.JOURNALS
+                ? 'payslips'
+                : null
+            "
+            ><div>
+              <i
+                class="fas fa-book-open fa-8x"
+                *ngIf="
+                  processState >= PayrollProcessState.JOURNALS;
+                  else inactiveJournal
+                "
+              ></i>
+            </div>
+            <div *ngIf="processState >= PayrollProcessState.JOURNALS">
+              <i class="fa fa-check-circle-o status-icon fa-3x complete"
+                ><span class="visually-hidden">Journals complete</span></i
               >
             </div></a
           >
@@ -184,4 +247,7 @@
 </ng-template>
 <ng-template #inactiveUpload>
   <i class="fas fa-upload fa-8x inactive"></i>
+</ng-template>
+<ng-template #inactiveJournal>
+  <i class="fas fa-book-open fa-8x inactive"></i>
 </ng-template>

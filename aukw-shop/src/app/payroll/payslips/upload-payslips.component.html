@@ -1,6 +1,7 @@
 <div class="col-md-4">
   <payroll-file-upload
     (onFileUploaded)="xlsxWasUploaded($event)"
+    (onFileUploadCancelled)="fileUploadWasCancelled()"
   ></payroll-file-upload>
 </div>
 

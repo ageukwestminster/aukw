@@ -13,6 +13,7 @@ import {
   PayrollProcessStateService,
   QBPayrollService,
 } from '@app/_services';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   templateUrl: 'upload-payslips.component.html',
@@ -29,6 +30,7 @@ export class UploadPayslipsComponent implements OnInit {
   private loadingIndicatorService = inject(LoadingIndicatorService);
   private stateService = inject(PayrollProcessStateService);
   private destroyRef = inject(DestroyRef);
+  private router = inject(Router);
 
   PayrollProcessState = PayrollProcessState;
 
@@ -52,6 +54,13 @@ export class UploadPayslipsComponent implements OnInit {
     this.qbPayrollService.payslips$
       .pipe(takeUntil(destroyed))
       .subscribe((response) => (this.payslips = response));
+  }
+
+  /** This is a callback from the file upload component. It is called when
+   *  the user cancelled th efile uplaod operation
+   */
+  fileUploadWasCancelled(): void {
+    this.router.navigate(['payroll']);
   }
 
   /** This is a callback from the file upload component. It is called when
