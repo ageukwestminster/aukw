@@ -12,7 +12,7 @@ import { shareReplay } from 'rxjs';
 @Component({
   selector: 'employee-allocations',
   standalone: true,
-  imports: [AsyncPipe, NgFor, NgIf],
+  imports: [AsyncPipe, NgFor],
   templateUrl: './employee-allocations.component.html',
   styleUrls: ['./employee-allocations.component.css', '../shared.css'],
 })
