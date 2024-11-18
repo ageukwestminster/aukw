@@ -334,7 +334,7 @@ class QuickbooksAuth{
         if ($refreshtokenexpiry == null) {
             http_response_code(400);  
             echo json_encode(
-                array("message" => "QB refresh token missing from local database. Have you authorised the app?")
+                array("message" => "QuickBooks authorisation seems to be missing. Have you authorised the app?")
             );
             exit();
         }
