@@ -1,15 +1,26 @@
-import { Component,signal, ViewChild, ElementRef } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Output,
+  signal,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { NgIf } from '@angular/common';
+import { AlertService } from '@app/_services';
 
 @Component({
   selector: 'excel-upload',
   standalone: true,
-  imports: [ NgIf ],
+  imports: [NgIf],
   templateUrl: './excel-upload.component.html',
-  styleUrl: './excel-upload.component.css'
+  styleUrl: './excel-upload.component.css',
 })
+/**
+ * Code from https://medium.com/@paul.pietzko/custom-file-uploader-angular-18-ca566131f128
+ */
 export class ExcelUploadComponent {
-
   fileName = signal('');
   fileSize = signal(0);
   fileTypeIsCSV = signal(false);
@@ -18,12 +29,30 @@ export class ExcelUploadComponent {
   uploadSuccess: boolean = false;
   uploadError: boolean = false;
 
-  readonly XLSX_FILETYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+  readonly XLSX_FILETYPE =
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
   readonly XLS_FILETYPE = 'application/vnd.ms-excel';
+
+  @Output() onFileUploaded = new EventEmitter<File>();
+
+  private alertService = inject(AlertService);
 
   constructor() {}
 
-  // Handler for file input change
+  /**
+   * Called when the user cancels the file input control
+   * @param event
+   * @returns void
+   */
+  onCancel(event: Event): void {
+    if (!event) return;
+    this.removeFile();
+  }
+
+  /**
+   * Handler for file input change
+   * @param event
+   */
   onFileChange(event: any): void {
     const file = event.target.files[0] as File | null;
     this.uploadFile(file);
@@ -43,23 +72,34 @@ export class ExcelUploadComponent {
 
   // Method to handle file upload
   uploadFile(file: File | null): void {
-    if (file && (file.type.endsWith('csv') 
-                  || file.type == this.XLSX_FILETYPE
-                  || file.type == this.XLS_FILETYPE)) {
+    if (
+      file &&
+      (file.type.endsWith('csv') ||
+        file.type == this.XLSX_FILETYPE ||
+        file.type == this.XLS_FILETYPE)
+    ) {
       this.selectedFile = file;
       this.fileSize.set(Math.round(file.size / 1024)); // Set file size in KB
-      if (file.type.endsWith('csv') ) this.fileTypeIsCSV.set(true);
+      if (file.type.endsWith('csv')) this.fileTypeIsCSV.set(true);
 
       this.uploadSuccess = true;
       this.uploadError = false;
       this.fileName.set(file.name);
 
-      //TODO Output file data 
+      this.onFileUploaded.emit(file);
     } else {
       this.uploadSuccess = false;
       this.uploadError = true;
-      
-      //TODO Add alert msg
+
+      if (file) {
+        this.alertService.error(
+          'The file type is incorrect. It must be one of ' +
+            'CSV, XLS or XLSX. Please upload a different file.',
+          {
+            autoClose: true,
+          },
+        );
+      }
     }
   }
 
@@ -71,5 +111,4 @@ export class ExcelUploadComponent {
     this.uploadSuccess = false;
     this.uploadError = false;
   }
-
 }
