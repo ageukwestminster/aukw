@@ -6,7 +6,7 @@ import {
 } from '@app/_models';
 import { concatMap, shareReplay, Subject, takeUntil, tap } from 'rxjs';
 import { PayslipListComponent } from './list.component';
-import { ExcelUploadComponent } from './excel-upload/excel-upload.component';
+import { ExcelParserComponent } from './excel-upload/excel-parser.component';
 import {
   AlertService,
   LoadingIndicatorService,
@@ -18,7 +18,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 @Component({
   templateUrl: 'upload-payslips.component.html',
   standalone: true,
-  imports: [PayslipListComponent, ExcelUploadComponent],
+  imports: [PayslipListComponent, ExcelParserComponent],
 })
 export class UploadPayslipsComponent implements OnInit {
   allocations: EmployeeAllocation[] = [];
@@ -115,7 +115,7 @@ export class UploadPayslipsComponent implements OnInit {
     // Update the payslips subject so it will be available to all subscribers
     this.qbPayrollService.sendPayslips(payslips);
 
-    this.updateQBOFlags(payslips, payslips[0].payrollDate);    
+    this.updateQBOFlags(payslips, payslips[0].payrollDate);
   }
 
   /**
@@ -161,21 +161,31 @@ export class UploadPayslipsComponent implements OnInit {
       });
   }
 
+  /**
+   * 
+   * @param payslips Use the QBO flags 
+   * @returns 
+   */
   updateProcessState(payslips: IrisPayslip[]) {
     this.stateService.setState(PayrollProcessState.PAYSLIPS);
+
     //Loop through all flags and if all flags of a particular kind are set then update state
+    for (const element of payslips) {
+      if (!element.qbFlags.employerNI) return;
+    }
+    // If got this far then increment state
+    this.stateService.setState(PayrollProcessState.EMPLOYERNI);  
+    
     for (const element of payslips) {
       if (!element.qbFlags.employeeJournal) return;
     }
     this.stateService.setState(PayrollProcessState.JOURNALS);
-    for (const element of payslips) {
-      if (!element.qbFlags.employerNI) return;
-    }
-    this.stateService.setState(PayrollProcessState.EMPLOYERNI);
+
     for (const element of payslips) {
       if (!element.qbFlags.pensionBill) return;
     }
     this.stateService.setState(PayrollProcessState.PENSIONS);
+
     for (const element of payslips) {
       if (!element.qbFlags.shopJournal && element.isShopEmployee) return;
     }

@@ -1,8 +1,11 @@
 <div>
-  <h2>PayrollProcessState[Payroll]</h2>
+  <h2>Payroll</h2>
 </div>
 <div>
-  {{ processState }}
+  {{ processStateValue }}
+</div>
+<div>
+  {{ locationString }}
 </div>
 <div class="container-fluid">
   <div class="card-deck mb-3 text-center">
@@ -13,7 +16,7 @@
         </div>
         <div class="card-body">
           <a class="link-unstyled" routerLink="allocations"
-            ><i class="fas fa-user-tag fa-8x"></i>
+            ><i class="fas fa-user-tag fa-6x"></i>
             <div *ngIf="processState >= PayrollProcessState.ALLOCATIONS">
               <i class="fa fa-check-circle-o status-icon fa-3x allocationsDone"
                 ><span class="visually-hidden"
@@ -23,6 +26,13 @@
             </div></a
           >
         </div>
+        <hr
+          class="mx-3 border-top border-5 border-primary solid"
+          *ngIf="
+            locationString == 'PAYROLL' || locationString == 'ALLOCATIONS';
+            else inactiveBorder
+          "
+        />
       </div>
       <div class="card ms-4 mb-4 box-shadow">
         <div class="card-header pb-2">
@@ -33,13 +43,13 @@
             class="link-unstyled"
             routerLinkActive="active"
             [routerLink]="
-              processState >= PayrollProcessState.INITIAL
+              processState >= PayrollProcessState.ALLOCATIONS
                 ? 'payslips'
                 : null
             "
             ><div>
               <i
-                class="fas fa-upload fa-8x"
+                class="fas fa-upload fa-6x"
                 *ngIf="
                   processState >= PayrollProcessState.ALLOCATIONS;
                   else inactiveUpload
@@ -53,55 +63,61 @@
             </div></a
           >
         </div>
+        <hr
+          class="mx-3 border-top border-5 border-primary solid"
+          *ngIf="locationString == 'PAYSLIPS'; else inactiveBorder"
+        />
       </div>
+
       <div class="card ms-4 mb-4 box-shadow">
         <div class="card-header pb-2">
-          <h4 class="my-0 font-weight-normal">Payroll Journals</h4>
+          <h4 class="my-0 font-weight-normal">Employer NI</h4>
         </div>
         <div class="card-body">
           <a
             class="link-unstyled"
             routerLinkActive="active"
             [routerLink]="
-              processState >= PayrollProcessState.PAYSLIPS
-                ? 'journals'
-                : null
+              processState >= PayrollProcessState.PAYSLIPS ? 'employerni' : null
             "
             ><div>
               <i
-                class="fas fa-book-open fa-8x"
+                class="fas fa-book-open fa-6x"
                 *ngIf="
                   processState >= PayrollProcessState.PAYSLIPS;
                   else inactiveJournal
                 "
               ></i>
             </div>
-            <div *ngIf="processState >= PayrollProcessState.JOURNALS">
+            <div *ngIf="processState >= PayrollProcessState.EMPLOYERNI">
               <i class="fa fa-check-circle-o status-icon fa-3x complete"
                 ><span class="visually-hidden">Journals complete</span></i
               >
             </div></a
           >
         </div>
+        <hr
+          class="mx-3 border-top border-5 border-primary solid"
+          *ngIf="locationString == 'EMPLOYERNI'; else inactiveBorder"
+        />
       </div>
+
       <div class="card ms-4 mb-4 box-shadow">
         <div class="card-header pb-2">
-          <h4 class="my-0 font-weight-normal">NI Journal</h4>
+          <h4 class="my-0 font-weight-normal">Employee GJs</h4>
         </div>
         <div class="card-body">
           <a
             class="link-unstyled"
             routerLinkActive="active"
             [routerLink]="
-              processState >= PayrollProcessState.JOURNALS
-                ? 'payslips'
-                : null
+              processState >= PayrollProcessState.EMPLOYERNI ? 'journals' : null
             "
             ><div>
               <i
-                class="fas fa-book-open fa-8x"
+                class="fas fa-book-open fa-6x"
                 *ngIf="
-                  processState >= PayrollProcessState.JOURNALS;
+                  processState >= PayrollProcessState.EMPLOYERNI;
                   else inactiveJournal
                 "
               ></i>
@@ -113,141 +129,101 @@
             </div></a
           >
         </div>
+        <hr
+          class="mx-3 border-top border-5 border-primary solid"
+          *ngIf="locationString == 'JOURNALS'; else inactiveBorder"
+        />
       </div>
-    </div>
-  </div>
-</div>
-<div *ngIf="processState >= PayrollProcessState.PAYSLIPS">
-  <div clas="col">
-    <div class="d-flex justify-content-between content-wrap">
-      <a
-        class="no-underline"
-        [routerLink]="
-          processState >= PayrollProcessState.PAYSLIPS ? 'journals' : null
-        "
-        ><i
-          class="fas fa-check finished"
-          *ngIf="processState >= PayrollProcessState.JOURNALS; else notDone"
-        ></i
-      ></a>
-      <a
-        class="no-underline"
-        [routerLink]="
-          processState >= PayrollProcessState.JOURNALS ? 'employerni' : null
-        "
-        ><i
-          class="fas fa-check finished"
-          *ngIf="processState >= PayrollProcessState.EMPLOYERNI; else notDone"
-        ></i
-      ></a>
-      <a
-        class="no-underline"
-        [routerLink]="
-          processState >= PayrollProcessState.EMPLOYERNI ? 'pensions' : null
-        "
-        ><i
-          class="fas fa-check finished"
-          *ngIf="processState >= PayrollProcessState.PENSIONS; else notDone"
-        ></i
-      ></a>
-      <a
-        class="no-underline"
-        [routerLink]="
-          processState >= PayrollProcessState.PENSIONS ? 'enterprises' : null
-        "
-        ><i
-          class="fas fa-check finished"
-          *ngIf="processState >= PayrollProcessState.ENTERPRISES; else notDone"
-        ></i
-      ></a>
-    </div>
 
-    <div
-      ngbNav
-      #payrollNav="ngbNav"
-      class="navbar navbar-expand-lg payroll-navbar"
-    >
-      <div
-        class="collapse navbar-collapse justify-content-around"
-        id="navbarSupportedContent"
-      >
-        <ul class="navbar-nav ml-2 justify-content-between">
-          <li [ngbNavItem]="3">
-            <a
-              [ngClass]="
-                processState >= PayrollProcessState.PAYSLIPS
-                  ? 'nav-item nav-link'
-                  : 'nav-item nav-link-disabled'
-              "
-              [routerLink]="
-                processState >= PayrollProcessState.PAYSLIPS ? 'journals' : null
-              "
-              routerLinkActive="active"
-              >Employee Journals</a
-            >
-          </li>
-          <li [ngbNavItem]="4">
-            <a
-              [ngClass]="
-                processState >= PayrollProcessState.JOURNALS
-                  ? 'nav-item nav-link'
-                  : 'nav-item nav-link-disabled'
-              "
-              [routerLink]="
-                processState >= PayrollProcessState.JOURNALS
-                  ? 'employerni'
-                  : null
-              "
-              routerLinkActive="active"
-              >Employer NI</a
-            >
-          </li>
-          <li [ngbNavItem]="5">
-            <a
-              [ngClass]="
-                processState >= PayrollProcessState.EMPLOYERNI
-                  ? 'nav-item nav-link'
-                  : 'nav-item nav-link-disabled'
-              "
-              [routerLink]="
-                processState >= PayrollProcessState.EMPLOYERNI
-                  ? 'pensions'
-                  : null
-              "
-              routerLinkActive="active"
-              >Pension invoice</a
-            >
-          </li>
-          <li [ngbNavItem]="6">
-            <a
-              [ngClass]="
-                processState >= PayrollProcessState.PENSIONS
-                  ? 'nav-item nav-link'
-                  : 'nav-item nav-link-disabled'
-              "
-              [routerLink]="
-                processState >= PayrollProcessState.PENSIONS
-                  ? 'enterprises'
-                  : null
-              "
-              routerLinkActive="active"
-              >Enterprises</a
-            >
-          </li>
-        </ul>
+      <div class="card ms-4 mb-4 box-shadow">
+        <div class="card-header pb-2">
+          <h4 class="my-0 font-weight-normal">Pensions</h4>
+        </div>
+        <div class="card-body">
+          <a
+            class="link-unstyled"
+            routerLinkActive="active"
+            [routerLink]="
+              processState >= PayrollProcessState.JOURNALS ? 'pensions' : null
+            "
+            ><div>
+              <i
+                class="fas fa-piggy-bank fa-6x"
+                *ngIf="
+                  processState >= PayrollProcessState.JOURNALS;
+                  else inactivePensions
+                "
+              ></i>
+            </div>
+            <div *ngIf="processState >= PayrollProcessState.PENSIONS">
+              <i class="fa fa-check-circle-o status-icon fa-3x complete"
+                ><span class="visually-hidden">Pensions complete</span></i
+              >
+            </div></a
+          >
+        </div>
+        <hr
+          class="mx-3 border-top border-5 border-primary solid"
+          *ngIf="locationString == 'PENSIONS'; else inactiveBorder"
+        />
+      </div>
+
+      <div class="card ms-4 mb-4 box-shadow">
+        <div class="card-header pb-2">
+          <h4 class="my-0 font-weight-normal">Enterprises</h4>
+        </div>
+        <div class="card-body">
+          <div>
+
+          </div>
+          <a
+            class="link-unstyled"
+            routerLinkActive="active"
+            [routerLink]="
+              processState >= PayrollProcessState.PENSIONS
+                ? 'enterprises'
+                : null
+            "
+            ><div>
+              <i
+                class="fas fa-store fa-6x"
+                *ngIf="
+                  processState >= PayrollProcessState.PENSIONS;
+                  else inactiveShop
+                "
+              ></i>
+            </div>
+            <div *ngIf="processState >= PayrollProcessState.ENTERPRISES">
+              <i class="fa fa-check-circle-o status-icon fa-3x complete"
+                ><span class="visually-hidden">Enterprises complete</span></i
+              >
+            </div></a
+          >
+        </div>
+        <hr
+          class="mx-3 border-top border-5 border-primary solid"
+          *ngIf="locationString == 'ENTERPRISES'; else inactiveBorder"
+        />
       </div>
     </div>
-    <div [ngbNavOutlet]="payrollNav"></div>
   </div>
 </div>
+
 <router-outlet></router-outlet>
+
 <!-- Used if the ngif test is 'false'-->
-<ng-template #notDone>
-  <i class="fas fa-check stilltodo"></i>
-</ng-template>
 <ng-template #inactiveUpload>
-  <i class="fas fa-upload fa-8x inactive"></i>
+  <i class="fas fa-upload fa-6x inactive"></i>
 </ng-template>
 <ng-template #inactiveJournal>
-  <i class="fas fa-book-open fa-8x inactive"></i>
+  <i class="fas fa-book-open fa-6x inactive"></i>
+</ng-template>
+<ng-template #inactivePensions>
+  <i class="fas fa-piggy-bank fa-6x inactive"></i>
+</ng-template>
+<ng-template #inactiveShop>
+  <i class="fas fa-store fa-6x inactive"></i>
+</ng-template>
+<ng-template #inactiveBorder>
+  <hr class="mx-3 border-top border-5 border-secondary" />
 </ng-template>
