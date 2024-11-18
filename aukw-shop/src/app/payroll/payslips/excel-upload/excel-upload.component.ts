@@ -110,5 +110,6 @@ export class ExcelUploadComponent {
     this.fileSize.set(0);
     this.uploadSuccess = false;
     this.uploadError = false;
+    this.fileInput!.nativeElement.value = "";
   }
 }

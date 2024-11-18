@@ -162,9 +162,9 @@ export class UploadPayslipsComponent implements OnInit {
   }
 
   /**
-   * 
-   * @param payslips Use the QBO flags 
-   * @returns 
+   *
+   * @param payslips Use the QBO flags
+   * @returns
    */
   updateProcessState(payslips: IrisPayslip[]) {
     this.stateService.setState(PayrollProcessState.PAYSLIPS);
@@ -174,8 +174,8 @@ export class UploadPayslipsComponent implements OnInit {
       if (!element.qbFlags.employerNI) return;
     }
     // If got this far then increment state
-    this.stateService.setState(PayrollProcessState.EMPLOYERNI);  
-    
+    this.stateService.setState(PayrollProcessState.EMPLOYERNI);
+
     for (const element of payslips) {
       if (!element.qbFlags.employeeJournal) return;
     }

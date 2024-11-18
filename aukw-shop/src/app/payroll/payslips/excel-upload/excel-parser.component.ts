@@ -1,5 +1,12 @@
-import { Component, EventEmitter, inject, Output } from '@angular/core';
-import { from, concatMap, tap, Observable } from 'rxjs';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Output,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
+import { from, concatMap, of, Observable, catchError } from 'rxjs';
 import {
   NgbModal,
   NgbModalModule,
@@ -16,13 +23,15 @@ import { ExcelUploadComponent } from './excel-upload.component';
   standalone: true,
   imports: [ExcelUploadComponent],
   template:
-    '<excel-upload (onFileUploaded)= "onFileUploaded($event)" ></excel-upload>',
+    '<excel-upload (onFileUploaded)= "onFileUploaded($event)" #uploadComponent></excel-upload>',
 })
 export class ExcelParserComponent {
   /** When 'true' background work is being performed */
   loading: boolean = false;
   /** The file that the user has selected, or null */
   file: File | null = null;
+
+  @ViewChild('uploadComponent') uploadComponent: ExcelUploadComponent | undefined;
 
   @Output() onPayslipsProduced = new EventEmitter<IrisPayslip[]>();
 
@@ -94,6 +103,12 @@ export class ExcelParserComponent {
       concatMap((payrollDate: string) =>
         this.fileService.parse(filename, payrollDate),
       ),
+      catchError((err) => {
+        if (err == 'cancel click') {
+          this.uploadComponent?.removeFile();
+        }
+        return of();
+      }),
     );
   }
 }
