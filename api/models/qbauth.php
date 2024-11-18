@@ -374,7 +374,7 @@ class QuickbooksAuth{
             catch (\Exception $e) {
                 http_response_code(401);  
                 echo json_encode(
-                    array("message" => "Unable to get new QB Access token with supplied Refresh Token.")
+                    array("message" => "Unable to log in to QuickBooks. Log out of this site and log in again using 'Sign in With Intuit'.")
                 );
                 exit();
             }
