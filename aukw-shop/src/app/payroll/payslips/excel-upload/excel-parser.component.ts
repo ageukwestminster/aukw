@@ -87,6 +87,12 @@ export class ExcelParserComponent {
       concatMap((password: string) =>
         this.fileService.decrypt(filename, password),
       ),
+      catchError((err) => {
+        if (err == 'cancel click') {
+          this.uploadComponent?.removeFile();
+        }
+        return of();
+      }),
       concatMap(() => this.fileService.parse()),
     );
   }
