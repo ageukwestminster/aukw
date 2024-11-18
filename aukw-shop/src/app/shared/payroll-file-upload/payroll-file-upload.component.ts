@@ -1,6 +1,5 @@
 import {
   AfterViewInit,
-  AfterContentInit,
   Component,
   ElementRef,
   EventEmitter,
@@ -10,7 +9,7 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { CommonModule, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { from, concatMap, tap, Observable } from 'rxjs';
 import {
@@ -40,7 +39,7 @@ import { PayrollDateInputModalComponent } from './modals/payrolldate-input.compo
     ReactiveFormsModule,
   ],
 })
-export class PayrollFileUploadComponent implements AfterViewInit, OnInit, AfterContentInit {
+export class PayrollFileUploadComponent implements AfterViewInit, OnInit {
   /** When 'true' background work is being performed */
   loading: boolean = false;
   /** The file that the user has selected, or null */
@@ -68,7 +67,6 @@ export class PayrollFileUploadComponent implements AfterViewInit, OnInit, AfterC
   constructor() {}
 
   ngOnInit(): void {
-    console.log('OnInit');
     this.form = this.formBuilder.group({ chooseFile: [null] });
   }
 
@@ -76,13 +74,8 @@ export class PayrollFileUploadComponent implements AfterViewInit, OnInit, AfterC
    * This lifecycle hook that is called after Angular has fully initialized a component's view
    */
   ngAfterViewInit(): void {
-    console.log('AfterViewInit');
     // 'click' the file upload input to show the file open dialog immediately upon init
     this.fileUploadRef.nativeElement.click();
-  }
-
-  ngAfterContentInit(): void {
-    console.log('AfterContentInit');
   }
 
 
@@ -152,6 +145,8 @@ export class PayrollFileUploadComponent implements AfterViewInit, OnInit, AfterC
             `Processing complete for '${this.file!.name}'.`,
           );
           this.payslipListService.sendPayslips(response);
+          this.file = null;
+          this.form.reset();
           this.onFileUploaded.emit(response);
         },
         error: (error: any) => {
@@ -160,6 +155,7 @@ export class PayrollFileUploadComponent implements AfterViewInit, OnInit, AfterC
           if (error == 'cancel click') {
             this.file = null;
             this.form.reset();
+            this.onFileUploadCancelled.emit();
             return;
           }
 

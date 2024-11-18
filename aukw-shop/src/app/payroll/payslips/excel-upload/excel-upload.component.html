@@ -1,0 +1,36 @@
+<div
+  class="file-upload-wrapper"
+  [class.success]="uploadSuccess"
+  [class.error]="uploadError"
+  (drop)="onFileDrop($event)"
+  (dragover)="onDragOver($event)"
+>
+  <input
+    type="file"
+    accept=".csv, application/vnd.ms-excel
+            ,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+          "
+    (change)="onFileChange($event)"
+    hidden
+    #fileInput
+  />
+  <div class="file-dropper" (click)="fileInput.click()">
+    <i class="fas fa-upload"></i>
+    <p>Drag and drop or click</p>
+    <div *ngIf="fileName()">
+      <div *ngIf="selectedFile">        
+        <p>          
+          <i class="fas fa-file-csv" *ngIf="fileTypeIsCSV() else excelFileIcon"></i>
+          &nbsp;
+          <span class="file-name">{{ fileName() }}</span> ({{
+            fileSize()
+          }} KB)
+        </p>
+        <i class="fas fa-trash delete-icon" (click)="removeFile()"></i>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #excelFileIcon>
+  <i class="far fa-file-excel"></i>
+</ng-template>

@@ -1,8 +1,6 @@
+<p> Please supply the Gross to Net file from the Iris website</p>
 <div class="col-md-4">
-  <payroll-file-upload
-    (onFileUploaded)="xlsxWasUploaded($event)"
-    (onFileUploadCancelled)="fileUploadWasCancelled()"
-  ></payroll-file-upload>
+  <excel-upload></excel-upload>
 </div>
 
 <payslip-list [payslips]="payslips"></payslip-list>

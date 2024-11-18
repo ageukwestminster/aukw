@@ -6,7 +6,7 @@ import {
 } from '@app/_models';
 import { concatMap, shareReplay, Subject, takeUntil, tap } from 'rxjs';
 import { PayslipListComponent } from './list.component';
-import { PayrollFileUploadComponent } from '@app/shared';
+import { ExcelUploadComponent } from './excel-upload/excel-upload.component';
 import {
   AlertService,
   LoadingIndicatorService,
@@ -18,7 +18,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 @Component({
   templateUrl: 'upload-payslips.component.html',
   standalone: true,
-  imports: [PayslipListComponent, PayrollFileUploadComponent],
+  imports: [PayslipListComponent, ExcelUploadComponent],
 })
 export class UploadPayslipsComponent implements OnInit {
   allocations: EmployeeAllocation[] = [];
@@ -115,7 +115,7 @@ export class UploadPayslipsComponent implements OnInit {
     // Update the payslips subject so it will be available to all subscribers
     this.qbPayrollService.sendPayslips(payslips);
 
-    this.updateQBOFlags(payslips, payslips[0].payrollDate);
+    this.updateQBOFlags(payslips, payslips[0].payrollDate);    
   }
 
   /**
