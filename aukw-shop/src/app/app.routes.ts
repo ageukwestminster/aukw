@@ -5,7 +5,6 @@ import { HomeComponent } from './home';
 import { LoginComponent } from './login';
 import { authGuard } from './_helpers';
 import { Role } from './_models';
-import { TestComponent } from './test/test.component';
 
 const usersRoutes = () =>
   import('./users/users.routes').then((x) => x.USERS_ROUTES);
@@ -17,10 +16,6 @@ const reportsRoutes = () =>
   import('./reports/reports.routes').then((x) => x.REPORTS_ROUTES);
 
 export const APP_ROUTES: Routes = [
-  /*{
-    path: '',
-    component: TestComponent,
-  },*/
   {
     path: '',
     component: HomeComponent,
