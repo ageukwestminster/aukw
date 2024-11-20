@@ -31,7 +31,9 @@ export class ExcelParserComponent {
   /** The file that the user has selected, or null */
   file: File | null = null;
 
-  @ViewChild('uploadComponent') uploadComponent: ExcelUploadComponent | undefined;
+  @ViewChild('uploadComponent') uploadComponent:
+    | ExcelUploadComponent
+    | undefined;
 
   @Output() onPayslipsProduced = new EventEmitter<IrisPayslip[]>();
 
