@@ -36,7 +36,7 @@ export class SalesHistogramChartComponent implements OnInit, OnChanges {
 
     credits: {
       text: 'Source Data',
-      href: '/#/reports/sales-histogram',
+      href: '/reports/sales-histogram',
     },
 
     xAxis: [

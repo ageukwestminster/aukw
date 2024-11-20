@@ -26,7 +26,7 @@ export class SalesChartComponent implements OnInit, OnChanges {
     },
     credits: {
       text: 'Source Data',
-      href: '/#/reports/sales-list',
+      href: '/reports/sales-list',
     },
     yAxis: {
       title: {
