@@ -27,8 +27,7 @@ export class QBConnectionListComponent implements OnInit {
   }
 
   reloadQBRealms() {
-    if (!this.userID) return;
-    this.qbRealmService.getAll(this.userID).subscribe((response: QBRealm[]) => {
+    this.qbRealmService.getAll().subscribe((response: QBRealm[]) => {
       this.realms = response;
     });
   }

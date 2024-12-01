@@ -27,13 +27,13 @@ export class QBRealmService {
    * QBConnection details, if any.
    * @returns Observable of Arrays of QBO realms, with connection property populated.
    */
-  getAll(userid: number) {
+  getAll() {
     // forkJoin accepts an array of Observables and emits an array of the
     // last values of each Observable.
     //  'zip' is similar but emits intermediate values
     return forkJoin({
       realmArray: this.http.get<QBRealm[]>(baseUrl),
-      qbconnArray: this.qbConnectionService.getAll(userid),
+      qbconnArray: this.qbConnectionService.getAll(),
     }).pipe(
       map((value) => {
         value.realmArray.forEach((realm: QBRealm) => {

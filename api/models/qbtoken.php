@@ -7,6 +7,13 @@ use \PDO;
 /**
  * Holds QB token information and has data persistance capability.
  * 
+ * The QB token is an OAuth2 access/refresh token pair that can be used to perform QuickBooks tasks.
+ * There is a different token for each realm: one for the Charity and one for Enterprises.
+ * 
+ * An App can have links to multiple realms but it can only have one link to each realm.
+ * 
+ * Only the QB Company Admin can create an app<->realm link.
+ * 
  * @category Model
  */
 class QuickbooksToken{
@@ -29,10 +36,15 @@ class QuickbooksToken{
     }
 
     /**
-     * The ID of the user
+     * The ID of the user in the aukw database
      * @var int
      */
     public $userid;
+    /**
+     * The full name of the user
+     * @var string
+     */
+    public $fullname;
     /**
      * QBO realm ID, aka company ID
      * @var string
@@ -146,16 +158,17 @@ class QuickbooksToken{
      * 
      * @return void Output is echo'd directly to response
      */
-    function read($userid, $realmid){
+    function read($realmid){
         $query = "SELECT t.`accesstoken`,t.`accesstokenexpiry`,t.`refreshtoken`,t.`refreshtokenexpiry`
-                        ,t.userid,t.realmid, q.companyName
+                        ,t.userid, t.realmid, q.companyName
+                        ,CONCAT(u.firstname, ' ', u.surname) as fullname
                     FROM " . $this->table_name . " t JOIN qbrealm q ON t.realmid = q.realmid" .
-                    " WHERE t.userid=:userid AND t.realmid=:realmid";
-        
+                    " JOIN user u ON t.userid = u.id " .
+                    " WHERE t.realmid=:realmid";
+
         // prepare query
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":userid", $userid, PDO::PARAM_INT);
-        $stmt->bindParam(":realmid", $realmid);
+        $stmt->bindParam(":realmid", $realmid);   
 
         // execute query
         $stmt->execute();
@@ -166,6 +179,7 @@ class QuickbooksToken{
         // set values to object properties
         if ( !empty($row) ) {
             $this->userid = $row['userid'];
+            $this->fullname = $row['fullname'];
             $this->realmid = $row['realmid'];
             $this->companyname = $row['companyName'] ?? '';
             $this->accesstoken = $row['accesstoken'];
@@ -180,16 +194,25 @@ class QuickbooksToken{
      * 
      * @return QuickbooksToken[] Array of access and refresh tokens
      */
-    function read_all($userid){
+    function read_all($userid = 0){
+        
         $query = "SELECT t.`accesstoken`,t.`accesstokenexpiry`,t.`refreshtoken`,t.`refreshtokenexpiry`
                         ,t.userid,t.realmid, q.companyName
+                        ,CONCAT(u.firstname, ' ', u.surname) as fullname
                     FROM " . $this->table_name . " t JOIN qbrealm q ON t.realmid = q.realmid" .
-                    " WHERE t.userid=:userid";
+                    " JOIN user u ON t.userid = u.id ";
+
+        if ($userid != 0) {
+            $query .= " WHERE t.userid=:userid";
+        }
         
         // prepare query
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":userid", $userid, PDO::PARAM_INT);
 
+        if ($userid != 0) {
+            $stmt->bindParam(":userid", $userid, PDO::PARAM_INT);
+        }
+   
         // execute query
         $stmt->execute();
 
@@ -202,6 +225,7 @@ class QuickbooksToken{
                 extract($row);
                 $item_arr[] = array(
                     "userid" => $userid,
+                    "fullname" => $fullname,
                     "realmid" => $realmid,
                     "companyname" => $companyName ?? '',
                     "accesstoken" => $accesstoken,
@@ -218,15 +242,15 @@ class QuickbooksToken{
     /**
      * Delete the QB access and refresh tokens from the database
      * 
+     * @param string $realmid QBO Company id
      * @return bool 'true' if operation succeeded
      */
-    public function delete(){
+    public function delete($realmid){
         $query = "DELETE FROM " . $this->table_name . 
-            " WHERE userid=:userid AND realmid=:realmid";
+            " WHERE realmid=:realmid";
 
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":userid", $this->userid, PDO::PARAM_INT);
-        $stmt->bindParam(":realmid", $this->realmid);
+        $stmt->bindParam(":realmid", $realmid);
 
         // execute query
         if($stmt->execute()){

@@ -25,9 +25,9 @@ export class QBConnectionService {
    * Get details of the current connection to QuickBooks
    * @returns
    */
-  getDetails(userid: number, realmid: string) {
+  getDetails(realmid: string) {
     return this.http.get<QBConnectionDetails>(
-      `${baseUrl}/${realmid}/connection/${userid}`,
+      `${baseUrl}/${realmid}/connection`,
     );
   }
 
@@ -35,9 +35,9 @@ export class QBConnectionService {
    * Get details of all the current connections to QuickBooks
    * @returns
    */
-  getAll(userid: number) {
+  getAll() {
     return this.http.get<QBConnectionDetails[]>(
-      `${baseUrl}/connections/${userid}`,
+      `${baseUrl}/connections`,
     );
   }
 
@@ -45,13 +45,13 @@ export class QBConnectionService {
     return this.http.get<QBAuthUri>(`${authUrl}`);
   }
 
-  delete(userid: number, realmid: string) {
+  delete(realmid: string) {
     return this.http.delete<ApiMessage>(
-      `${baseUrl}/${realmid}/connection/${userid}`,
+      `${baseUrl}/${realmid}/connection`,
     );
   }
 
-  refresh(userid: number, realmid: string) {
-    return this.http.get<ApiMessage>(`${baseUrl}/${realmid}/refresh/${userid}`);
+  refresh(realmid: string) {
+    return this.http.get<ApiMessage>(`${baseUrl}/${realmid}/refresh`);
   }
 }

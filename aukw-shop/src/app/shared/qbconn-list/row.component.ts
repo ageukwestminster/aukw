@@ -64,7 +64,7 @@ export class QBConnectionRowComponent {
 
     connection.isRevoking = true;
     this.connectionService
-      .delete(this.user.id, connection.realmid)
+      .delete(connection.realmid)
       .subscribe(() => {
         this.alertService.success(
           'Connection revoked for ' + connection.companyname,
@@ -91,7 +91,7 @@ export class QBConnectionRowComponent {
 
     connection.isRefreshing = true;
     this.connectionService
-      .refresh(this.user.id, connection.realmid)
+      .refresh(connection.realmid)
       .subscribe(() => {
         this.alertService.success(
           'Connection refreshed for ' + connection.companyname,

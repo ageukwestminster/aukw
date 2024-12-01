@@ -4,6 +4,7 @@ namespace Models;
 
 use QuickBooksOnline\API\DataService\DataService;
 use QuickBooksOnline\API\Core\OAuth\OAuth2\OAuth2AccessToken;
+use QuickBooksOnline\API\Core\OAuth\OAuth2\OAuth2LoginHelper;
 use QuickBooksOnline\API\Core\ServiceContext;
 
 use Core\QuickbooksConstants as QBO;
@@ -96,7 +97,7 @@ class QuickbooksAuth{
         }
 
         $this->dataService = DataService::Configure($this->config);
-        $OAuth2LoginHelper = $this->dataService->getOAuth2LoginHelper();
+        $OAuth2LoginHelper = $this->GetOAuth2LoginHelper();
         $authorizationCodeUrl = $OAuth2LoginHelper->getAuthorizationCodeURL();
         return array(
             "message" => "Open this line on a new page and follow the instructions.",
@@ -133,8 +134,8 @@ class QuickbooksAuth{
                 );
                 exit(0);
             }
-            
-            $OAuth2LoginHelper = $this->dataService->getOAuth2LoginHelper();
+                        
+            $OAuth2LoginHelper = $this->GetOAuth2LoginHelper();
             $accessTokenObj = $OAuth2LoginHelper->exchangeAuthorizationCodeForToken($code, $realmId);
 
             $this->dataService->updateOAuth2Token($accessTokenObj);
@@ -165,7 +166,8 @@ class QuickbooksAuth{
                 $user->create();
             } 
             
-            // Has user got QBO id link? If not then update user
+            // Has the aukw user got a QBO id link in the MariaDB database? 
+            // If not then update user with the quickbooksUserId
             if ($user->quickbooksUserId != $userInfo['sub']) {
                 // update to add QB sub
                 $user->quickbooksUserId = $userInfo['sub'];
@@ -175,12 +177,12 @@ class QuickbooksAuth{
             // Store QB tokens
             $this->store_tokens_in_database($user->id, $accessTokenObj);
 
-            // Generate user tokens
+            // Generate user tokens (these are the auth tokens for the aukw app, not QB)
             $jwt = new \Models\JWTWrapper();
             $user_with_token = $jwt->getUserWithAccessToken($user);
 
-            //Create a new refresh token and put it into a cookie.
-            // Also store in databse
+            //Create a new aukw refresh token and put it into a cookie.
+            // Also store in database
             $jwt->setRefreshTokenCookieFor($user_with_token);
 
             // Return logged in info
@@ -201,11 +203,11 @@ class QuickbooksAuth{
 
       /**
        * Refresh the QB access token from the refresh token
-       * @param string $realmid The company ID f
+       * @param string $realmid The company ID 
        * 
        * @return true if success
        */
-    public function refresh($userid, $realmid) {
+    public function refresh($realmid, $userid) {
 
         if($this->jwt->id != $userid) {
             http_response_code(401);  
@@ -218,14 +220,14 @@ class QuickbooksAuth{
 
         $this->init($realmid);
 
-        $this->tokenModel->read($userid, $realmid);
+        $this->tokenModel->read($realmid);
 
         if ($this->tokenModel === NULL || $this->tokenModel->refreshtoken === NULL) {
             return false;
         }
 
         try {
-            $OAuth2LoginHelper = $this->dataService->getOAuth2LoginHelper();
+            $OAuth2LoginHelper = $this->GetOAuth2LoginHelper();
             $accessTokenObj = $OAuth2LoginHelper->refreshAccessTokenWithRefreshToken(
                             $this->tokenModel->refreshtoken);
                             
@@ -265,7 +267,7 @@ class QuickbooksAuth{
         }
 
         try {
-            $OAuth2LoginHelper = $this->dataService->getOAuth2LoginHelper();
+            $OAuth2LoginHelper = $this->GetOAuth2LoginHelper();
             $accessTokenObj = $OAuth2LoginHelper->refreshAccessTokenWithRefreshToken(
                 $this->tokenModel->refreshtoken);
                             
@@ -293,19 +295,28 @@ class QuickbooksAuth{
 
     /**
      * Break the link between this app and Quickbooks
-     * @param int $userid The user id of the User
      * @param string $realmid The company ID for the QBO company.
      * @return true if success
      */
-    public function revoke($userid, $realmid) {
+    public function revoke($realmid) {
+
+        // Only admins can break QB link
+        if(!$this->jwt->isAdmin) {
+            http_response_code(401);  
+            echo json_encode(
+              array("message" => "Only admins can revoke QB tokens. ",
+              "details" => "")
+            );
+            return false;
+        }
 
         $this->init($realmid);
 
-        $this->tokenModel->read($userid, $realmid);
+        $this->tokenModel->read($realmid);
 
         if ($this->tokenModel->accesstoken) {
-            $this->remove_tokens_from_database();
-            $OAuth2LoginHelper = $this->dataService->getOAuth2LoginHelper();
+            $this->remove_tokens_from_database($realmid);
+            $OAuth2LoginHelper = $this->GetOAuth2LoginHelper();
             return $OAuth2LoginHelper->revokeToken($this->tokenModel->accesstoken);
         } else {
             return true;
@@ -321,13 +332,13 @@ class QuickbooksAuth{
      *      * Configure a new DataService object from the given realID and default values.
      *      * Append the new or unexpired access token to the QBO DataService object
      *      * Return this prepared DataService object
-     * 
+     * @param string $realmid QBO Company id 
      * @return DataService|null 
      */
     public function prepare($realmid){
 
         $this->tokenModel = new QuickbooksToken();
-        $this->tokenModel->read($this->jwt->id, $realmid);
+        $this->tokenModel->read($realmid);
 
         // Is the refresh token still valid?
         $refreshtokenexpiry = $this->tokenModel->refreshtokenexpiry;
@@ -360,7 +371,7 @@ class QuickbooksAuth{
             'baseUrl' => $this->config['baseUrl'],
         ));
 
-        $OAuth2LoginHelper = $this->dataService->getOAuth2LoginHelper();
+        $OAuth2LoginHelper = $this->GetOAuth2LoginHelper();
         if ($this->config['enablelog']) {
             $OAuth2LoginHelper->setLogForOAuthCalls(true, true, $this->config['loglocation']);
         }
@@ -472,12 +483,22 @@ class QuickbooksAuth{
 
     /**
      * Delete the QB access and refresh tokens from the database
-     * 
+     * @param string $realmid QBO Company id
      * @return bool 'true' if operation succeeded
      */
-    private function remove_tokens_from_database(){
+    private function remove_tokens_from_database($realmid){
 
-        return $this->tokenModel->delete();
+        return $this->tokenModel->delete($realmid);
         
+    }
+
+    /**
+     * Get the OAuth2LoginHelper object from the QuickBooks SDK dataService
+     * @return OAuth2LoginHelper The QB OAuth2LoginHelper object
+     */
+    private function GetOAuth2LoginHelper() : OAuth2LoginHelper {
+        $OAuth2LoginHelper = $this->dataService->getOAuth2LoginHelper();
+        assert($OAuth2LoginHelper instanceof OAuth2LoginHelper);
+        return $OAuth2LoginHelper;
     }
 }

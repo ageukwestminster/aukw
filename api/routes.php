@@ -119,7 +119,7 @@ $router->mount('/qb', function () use ($router) {
     // QB Payroll Journal for shop (aka 'Enterprises')
     $router->post('/(\d+)/journal/enterprises', 'QBPayrollJournalCtl@create_enterprises_journal');
 
-    // The param is the Quickbooks Journal Id. This number is not easily seen on 
+    // The 2nd param is the Quickbooks Journal Id. This number is not easily seen on 
     // the normal QB website but it can been seen in Audit Log.
     // It is not the DocNumber which can be seen when adding/editing on QBO.
     $router->get('/(\d+)/salesreceipt/(\w+)', 'QBSalesReceiptCtl@read_one');
@@ -138,17 +138,17 @@ $router->mount('/qb', function () use ($router) {
     // Returns the uri needed to start the QBO authorisation process
     $router->get('/auth', 'QBAuthCtl@oauth2_begin');    
     // Exchange a refresh token for a new access token
-    $router->get('/(\d+)/refresh/(\d+)', 'QBAuthCtl@oauth2_refresh');
+    $router->get('/(\d+)/refresh', 'QBAuthCtl@oauth2_refresh');
     // Delete QBO authorisation
-    $router->delete('/(\d+)/connection/(\d+)', 'QBAuthCtl@oauth2_revoke');
+    $router->delete('/(\d+)/connection', 'QBAuthCtl@oauth2_revoke');
     // Retrieve details of one of the connections to QB (if any)
-    $router->get('/(\d+)/connection/(\d+)', 'QBAuthCtl@connection_details');
+    $router->get('/(\d+)/connection', 'QBAuthCtl@connection_details');
     // Retrieve details of the connections to QB (if any)
-    $router->get('/connections/(\d+)', 'QBAuthCtl@all_connection_details');
+    $router->get('/connections', 'QBAuthCtl@all_connection_details');
     
     // Retrieve details of the QBO company
     $router->get('/(\d+)/companyinfo', 'QBCompanyCtl@companyInfo');
-    // return list of all QB realms in databse
+    // return list of all QB realms in database
     $router->get('/realm', 'QBRealmCtl@read_all');
     // return single user that has the given realm id
     $router->get('/realm/(\w+)', 'QBRealmCtl@read_one');

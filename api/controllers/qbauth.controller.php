@@ -52,13 +52,12 @@ class QBAuthCtl{
   /**
    * Break the link between this app and Quickbooks.
    * @param string $realmid The id of the QBO company.
-   * @param string $userid The database id of the user whose token is being revoked.
    * @return void Output is echo'd directly to response.
    */
-  public static function oauth2_revoke(string $realmid, string $userid) : void{
+  public static function oauth2_revoke(string $realmid) : void{
     $model = new QuickbooksAuth();
 
-    if ($model->revoke($userid, $realmid)) {
+    if ($model->revoke($realmid)) {
       echo json_encode(
       array("message" => "Your Quickbooks tokens have been revoked.")
       );
@@ -82,7 +81,7 @@ class QBAuthCtl{
   public static function oauth2_refresh(string $realmid, string $userid) : void{
     $model = new QuickbooksAuth();
 
-    if ($model->refresh($userid, $realmid)) {
+    if ($model->refresh($realmid, $userid)) {
     echo json_encode(
       array("message" => "Quickbooks Tokens refreshed.")
       );
@@ -100,11 +99,11 @@ class QBAuthCtl{
    * @param string $userid The database id of the user whose connections are being sought
    * @return QuickbooksToken[] Containing the access and refresh tokens for QBO
    */
-  public static function connection_details(string $realmid, string $userid){  
+  public static function connection_details(string $realmid){  
 
     $model = new \Models\QuickbooksToken();
     
-    $model->read($userid, $realmid);
+    $model->read($realmid);
 
     if ($model->accesstoken) {
       echo json_encode($model, JSON_NUMERIC_CHECK);
@@ -122,11 +121,11 @@ class QBAuthCtl{
    * 
    * @return QuickbooksToken[] Containing the access and refresh tokens for QBO
    */
-  public static function all_connection_details($userid){  
+  public static function all_connection_details(){  
 
     $model = new \Models\QuickbooksToken();
 
-    echo json_encode($model->read_all($userid), JSON_NUMERIC_CHECK);
+    echo json_encode($model->read_all(), JSON_NUMERIC_CHECK);
   }
 
 }
