@@ -46,6 +46,11 @@ class QuickbooksToken{
      */
     public $email;
     /**
+     * The full name of the QB user that created the link
+     * @var string
+     */
+    public $fullname;
+    /**
      * QBO realm ID, aka company ID
      * @var string
      */
@@ -165,7 +170,9 @@ class QuickbooksToken{
     function read($realmid){
         $query = "SELECT t.`accesstoken`,t.`accesstokenexpiry`,t.`refreshtoken`,t.`refreshtokenexpiry`
                         ,t.userid, t.realmid, q.companyName, t.email
+                        ,CONCAT(u.firstname, ' ', u.surname) as fullname
                     FROM " . $this->table_name . " t JOIN qbrealm q ON t.realmid = q.realmid" .
+                    " JOIN user u ON t.userid = u.id " .
                     " WHERE t.realmid=:realmid";
 
         // prepare query
@@ -182,6 +189,7 @@ class QuickbooksToken{
         if ( !empty($row) ) {
             $this->userid = $row['userid'];
             $this->email = $row['email'];
+            $this->fullname = $row['fullname'];
             $this->realmid = $row['realmid'];
             $this->companyname = $row['companyName'] ?? '';
             $this->accesstoken = $row['accesstoken'];
@@ -200,7 +208,9 @@ class QuickbooksToken{
         
         $query = "SELECT t.`accesstoken`,t.`accesstokenexpiry`,t.`refreshtoken`,t.`refreshtokenexpiry`
                         ,t.userid, t.realmid, q.companyName, t.email
-                    FROM " . $this->table_name . " t JOIN qbrealm q ON t.realmid = q.realmid";
+                        ,CONCAT(u.firstname, ' ', u.surname) as fullname
+                    FROM " . $this->table_name . " t JOIN qbrealm q ON t.realmid = q.realmid" .
+                    " JOIN user u ON t.userid = u.id ";
         
         // prepare query
         $stmt = $this->conn->prepare($query);
@@ -218,6 +228,7 @@ class QuickbooksToken{
                 $item_arr[] = array(
                     "userid" => $userid,
                     "email" => $email,
+                    "fullname" => $fullname,
                     "realmid" => $realmid,
                     "companyname" => $companyName ?? '',
                     "accesstoken" => $accesstoken,
