@@ -68,43 +68,6 @@ export class LoginComponent implements OnInit {
           this.error = error;
           this.loading = false;
         },
-      });
-  }
-
-  /**
-   * Change to the 'hover' image, when hovering over the intuit button
-   * @param element The img element for the Intuit button
-   */
-  hoverOverIntuitButton(element: HTMLImageElement) {
-    element.setAttribute('src', 'assets/images/Sign_in_blue_btn_med_hover.svg');
-  }
-
-  /**
-   * Change back to the default image when hovering ends
-   * @param element The img element for the Intuit button
-   */
-  unhoverOverIntuitButton(element: HTMLImageElement) {
-    element.setAttribute(
-      'src',
-      'assets/images/Sign_in_blue_btn_med_default.svg',
-    );
-  }
-
-  /**
-   * Redirect the user to the QBO OAuth2 login screen. This begins the OAuth2 process.
-   * If the QBO login is successful the user will be directed back to the
-   * callback component.
-   * @param event Click on the button
-   * @returns false
-   */
-  redirectToIntuitSSO(event: Event) {
-    event.stopPropagation();
-    this.qbConnService.getAuthUri().subscribe((uri: QBAuthUri) => {
-      if (uri && uri.authUri) {
-        // Open the QB Auth uri in this window or tab
-        window.location.href = uri.authUri;
-      }
-    });
-    return false;
-  }
+      })
+    }
 }
