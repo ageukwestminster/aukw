@@ -175,7 +175,7 @@ class QuickbooksAuth{
             }
 
             // Store QB tokens
-            $this->store_tokens_in_database($user->id, $accessTokenObj);
+            $this->store_tokens_in_database($accessTokenObj, $user->id, $user->email);
 
             // Generate user tokens (these are the auth tokens for the aukw app, not QB)
             $jwt = new \Models\JWTWrapper();
@@ -237,7 +237,7 @@ class QuickbooksAuth{
 
             $this->dataService->updateOAuth2Token($accessTokenObj);      
 
-            $this->store_tokens_in_database($userid, $accessTokenObj);
+            $this->store_tokens_in_database($accessTokenObj);
         }
         catch (\Exception $e) {
             http_response_code(400);  
@@ -252,15 +252,15 @@ class QuickbooksAuth{
     }
 
      /**
-       * Get information abou the company
+       * Get information about the company
        * @param string $realmid The company ID for the QBO company.
-       * @return array info aboout the company
+       * @return array info about the company
        */
       public function companyInfo($realmid) {
 
         $this->init($realmid);
 
-        $this->tokenModel->read($this->jwt->id, $realmid);
+        $this->tokenModel->read($realmid);
             
         if ($this->tokenModel === NULL || $this->tokenModel->refreshtoken === NULL) {
             return false;
@@ -277,7 +277,7 @@ class QuickbooksAuth{
 
             $this->dataService->updateOAuth2Token($accessTokenObj);      
 
-            $this->store_tokens_in_database($this->jwt->id, $accessTokenObj);
+            $this->store_tokens_in_database($accessTokenObj);
 
             return $this->dataService->getCompanyInfo();
         }
@@ -353,7 +353,7 @@ class QuickbooksAuth{
         $now = new DateTime("now", new DateTimeZone('Europe/London'));
 
         if($refreshtokenexpiry < $now) {
-            # Uh ooh, the refresh token has expired
+            # the refresh token has expired
             http_response_code(400);  
             echo json_encode(
                 array("message" => "Refresh token has expired. Please re-authorise the app.")
@@ -389,14 +389,8 @@ class QuickbooksAuth{
                 );
                 exit();
             }
-            $error = $OAuth2LoginHelper->getLastError();
-            if ($error) {
-                echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
-                echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
-                echo "The Response message is: " . $error->getResponseBody() . "\n";
-                exit();
-            }
-            $this->store_tokens_in_database($this->jwt->id, $accessToken);
+
+            $this->store_tokens_in_database($accessToken);
         } else {
             $accessToken= new OAuth2AccessToken($this->config['ClientID'], $this->config['ClientSecret']);
 
@@ -442,17 +436,29 @@ class QuickbooksAuth{
      * @param OAuth2AccessToken QB object that contains access and refresh token info
      * @return bool 'true' if operation succeeded
      */
-    private function store_tokens_in_database(int $userid, OAuth2AccessToken $accessTokenObj){
+    private function store_tokens_in_database(OAuth2AccessToken $accessTokenObj,
+                    int $userid = 0, 
+                    string $email = ''){
 
         $this->tokenModel = new QuickbooksToken();
         $realmid = $accessTokenObj->getRealmID();
-        $this->tokenModel->read($userid, $realmid);
+        $this->tokenModel->read($realmid);
 
         if ($this->tokenModel->accesstoken) {
             $isUpdate = true;
         } else {
             $isUpdate = false;
+
+            if ($userid == 0 || $email == '') {
+                http_response_code(400);  
+                echo json_encode(
+                    array("message" => "Unable to store new token: either email or userid was empty.")
+                );
+                exit();
+            }
+
             $this->tokenModel->userid = $userid;
+            $this->tokenModel->email = $email;
             $this->tokenModel->realmid = $realmid;
         }
 
@@ -498,7 +504,7 @@ class QuickbooksAuth{
      */
     private function GetOAuth2LoginHelper() : OAuth2LoginHelper {
         $OAuth2LoginHelper = $this->dataService->getOAuth2LoginHelper();
-        assert($OAuth2LoginHelper instanceof OAuth2LoginHelper);
+        assert($OAuth2LoginHelper instanceof OAuth2LoginHelper); // intelesense workaround
         return $OAuth2LoginHelper;
     }
 }

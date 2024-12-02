@@ -94,7 +94,7 @@ Config::write('qb.loglocation', 'B:\\logs');
 Config::write('qb.baseUrl', 'Production');
 Config::write('qb.clientid', 'QB_CLIENT_ID'); // env key name
 Config::write('qb.clientsecret', 'QB_CLIENT_SECRET'); // env key name
-Config::write('qb.redirectdomain', 'https://c5b2-91-125-74-184.ngrok-free.app');
+Config::write('qb.redirectdomain', 'https://e6c7-91-125-74-184.ngrok-free.app');
 Config::write('qb.redirecturl', Config::read('qb.redirectdomain') . '/callback');
 
 // QBO id of recurring txn that defines employee salary allocations.

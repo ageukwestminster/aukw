@@ -41,10 +41,10 @@ class QuickbooksToken{
      */
     public $userid;
     /**
-     * The full name of the user
+     * The email address of the QB user that created the link
      * @var string
      */
-    public $fullname;
+    public $email;
     /**
      * QBO realm ID, aka company ID
      * @var string
@@ -89,6 +89,7 @@ class QuickbooksToken{
                     " . $this->table_name . "
                     SET
                     userid=:userid,
+                    email=:email,
                     realmid=:realmid,
                     accesstoken=:accesstoken, 
                     accesstokenexpiry=:accesstokenexpiry,
@@ -102,6 +103,7 @@ class QuickbooksToken{
 
         // bind values
         $stmt->bindParam(":userid", $this->userid, PDO::PARAM_INT);
+        $stmt->bindParam(":email", $this->email);
         $stmt->bindParam(":realmid", $this->realmid);
         $stmt->bindParam(":accesstoken", $this->accesstoken);
         $stmt->bindParam(":accesstokenexpiry", $this->accesstokenexpiry);
@@ -125,20 +127,22 @@ class QuickbooksToken{
     function update(){
         $query = "UPDATE
                     " . $this->table_name . "
-                    SET                  
+                    SET                
+                    userid=:userid,
+                    email=:email,  
                     accesstoken=:accesstoken, 
                     accesstokenexpiry=:accesstokenexpiry,
                     refreshtoken=:refreshtoken,
                     refreshtokenexpiry=:refreshtokenexpiry,
                     `timestamp`=NULL
-                    WHERE
-                        userid=:userid AND realmid=:realmid";
+                    WHERE realmid=:realmid";
         
         // prepare query
         $stmt = $this->conn->prepare($query);
 
         // bind values
         $stmt->bindParam(":userid", $this->userid, PDO::PARAM_INT);
+        $stmt->bindParam(":email", $this->email);
         $stmt->bindParam(":realmid", $this->realmid);
         $stmt->bindParam(":accesstoken", $this->accesstoken);
         $stmt->bindParam(":accesstokenexpiry", $this->accesstokenexpiry);
@@ -160,10 +164,8 @@ class QuickbooksToken{
      */
     function read($realmid){
         $query = "SELECT t.`accesstoken`,t.`accesstokenexpiry`,t.`refreshtoken`,t.`refreshtokenexpiry`
-                        ,t.userid, t.realmid, q.companyName
-                        ,CONCAT(u.firstname, ' ', u.surname) as fullname
+                        ,t.userid, t.realmid, q.companyName, t.email
                     FROM " . $this->table_name . " t JOIN qbrealm q ON t.realmid = q.realmid" .
-                    " JOIN user u ON t.userid = u.id " .
                     " WHERE t.realmid=:realmid";
 
         // prepare query
@@ -179,7 +181,7 @@ class QuickbooksToken{
         // set values to object properties
         if ( !empty($row) ) {
             $this->userid = $row['userid'];
-            $this->fullname = $row['fullname'];
+            $this->email = $row['email'];
             $this->realmid = $row['realmid'];
             $this->companyname = $row['companyName'] ?? '';
             $this->accesstoken = $row['accesstoken'];
@@ -190,28 +192,18 @@ class QuickbooksToken{
     }
 
     /**
-     * Get a list of all the saved QB credentials for the given user
+     * Get a list of all the saved QB credentials in the database
      * 
      * @return QuickbooksToken[] Array of access and refresh tokens
      */
-    function read_all($userid = 0){
+    function read_all(){
         
         $query = "SELECT t.`accesstoken`,t.`accesstokenexpiry`,t.`refreshtoken`,t.`refreshtokenexpiry`
-                        ,t.userid,t.realmid, q.companyName
-                        ,CONCAT(u.firstname, ' ', u.surname) as fullname
-                    FROM " . $this->table_name . " t JOIN qbrealm q ON t.realmid = q.realmid" .
-                    " JOIN user u ON t.userid = u.id ";
-
-        if ($userid != 0) {
-            $query .= " WHERE t.userid=:userid";
-        }
+                        ,t.userid, t.realmid, q.companyName, t.email
+                    FROM " . $this->table_name . " t JOIN qbrealm q ON t.realmid = q.realmid";
         
         // prepare query
         $stmt = $this->conn->prepare($query);
-
-        if ($userid != 0) {
-            $stmt->bindParam(":userid", $userid, PDO::PARAM_INT);
-        }
    
         // execute query
         $stmt->execute();
@@ -225,7 +217,7 @@ class QuickbooksToken{
                 extract($row);
                 $item_arr[] = array(
                     "userid" => $userid,
-                    "fullname" => $fullname,
+                    "email" => $email,
                     "realmid" => $realmid,
                     "companyname" => $companyName ?? '',
                     "accesstoken" => $accesstoken,

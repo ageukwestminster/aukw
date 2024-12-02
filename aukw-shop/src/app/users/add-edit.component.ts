@@ -30,7 +30,6 @@ import { QBConnectionListComponent } from '@app/shared';
     NgClass,
     NgIf,
     ReactiveFormsModule,
-    RouterLink,
     QBConnectionListComponent,
   ],
 })
