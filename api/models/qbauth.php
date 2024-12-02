@@ -457,8 +457,8 @@ class QuickbooksAuth{
                 exit();
             }
 
-            $this->tokenModel->userid = $userid;
-            $this->tokenModel->email = $email;
+            $this->tokenModel->linkcreatoruserid = $userid;
+            $this->tokenModel->linkcreatoremail = $email;
             $this->tokenModel->realmid = $realmid;
         }
 

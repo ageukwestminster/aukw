@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { concatMap} from 'rxjs';
 import { QBAuthUri, QBConnectionDetails, QBRealm, User } from '@app/_models';
 import {
   AlertService,
@@ -46,8 +47,11 @@ export class QBConnectionRowComponent {
 
       if (today > refreshExpiry) return false;
     }
-
     return true;
+  }
+
+  get isLinkCreatedByCurrentUser(): boolean {
+    return this.realm.connection?.linkcreatoruserid == this.user.id;
   }
 
   revokeConnection(e: Event) {
@@ -113,6 +117,45 @@ export class QBConnectionRowComponent {
       }
     });
     return false;
+  }
+
+  revokeAndMakeNewConnection(e: Event) {
+    e.stopPropagation(); // If click propagates it will open the edit member page
+
+    if (
+      !this.realm ||
+      !this.realm.connection ||
+      !this.realm.connection.accesstoken
+    )
+      return;
+
+    const connection = this.realm.connection;
+
+    connection.isRevoking = true;
+    this.connectionService
+      .delete(connection.realmid)
+      .pipe(
+        concatMap(() => {
+          this.alertService.success(
+            'Connection revoked for ' + connection.companyname,
+            {
+              keepAfterRouteChange: true,
+            },
+          );
+          connection.isRevoking = false;
+          this.onConnectionRevoked.emit(connection);
+
+          return this.connectionService.getAuthUri();
+        })
+      ).subscribe((uri: QBAuthUri) => {
+        if (uri && uri.authUri) {
+          // Open the QB Auth uri in a new tab or window
+          this.windowHandle = window.open(uri.authUri);
+        }
+      });
+
+    return false;
+
   }
 
   // Prevents the click event propagating back up to the table row

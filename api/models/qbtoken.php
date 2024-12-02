@@ -39,17 +39,17 @@ class QuickbooksToken{
      * The ID of the user in the aukw database
      * @var int
      */
-    public $userid;
+    public $linkcreatoruserid;
     /**
      * The email address of the QB user that created the link
      * @var string
      */
-    public $email;
+    public $linkcreatoremail;
     /**
      * The full name of the QB user that created the link
      * @var string
      */
-    public $fullname;
+    public $linkcreatorname;
     /**
      * QBO realm ID, aka company ID
      * @var string
@@ -107,8 +107,8 @@ class QuickbooksToken{
         $stmt = $this->conn->prepare($query);
 
         // bind values
-        $stmt->bindParam(":userid", $this->userid, PDO::PARAM_INT);
-        $stmt->bindParam(":email", $this->email);
+        $stmt->bindParam(":userid", $this->linkcreatoruserid, PDO::PARAM_INT);
+        $stmt->bindParam(":email", $this->linkcreatoremail);
         $stmt->bindParam(":realmid", $this->realmid);
         $stmt->bindParam(":accesstoken", $this->accesstoken);
         $stmt->bindParam(":accesstokenexpiry", $this->accesstokenexpiry);
@@ -146,8 +146,8 @@ class QuickbooksToken{
         $stmt = $this->conn->prepare($query);
 
         // bind values
-        $stmt->bindParam(":userid", $this->userid, PDO::PARAM_INT);
-        $stmt->bindParam(":email", $this->email);
+        $stmt->bindParam(":userid", $this->linkcreatoruserid, PDO::PARAM_INT);
+        $stmt->bindParam(":email", $this->linkcreatoremail);
         $stmt->bindParam(":realmid", $this->realmid);
         $stmt->bindParam(":accesstoken", $this->accesstoken);
         $stmt->bindParam(":accesstokenexpiry", $this->accesstokenexpiry);
@@ -187,9 +187,9 @@ class QuickbooksToken{
 
         // set values to object properties
         if ( !empty($row) ) {
-            $this->userid = $row['userid'];
-            $this->email = $row['email'];
-            $this->fullname = $row['fullname'];
+            $this->linkcreatoruserid = $row['userid'];
+            $this->linkcreatoremail = $row['email'];
+            $this->linkcreatorname = $row['fullname'];
             $this->realmid = $row['realmid'];
             $this->companyname = $row['companyName'] ?? '';
             $this->accesstoken = $row['accesstoken'];
@@ -226,9 +226,9 @@ class QuickbooksToken{
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
                 extract($row);
                 $item_arr[] = array(
-                    "userid" => $userid,
-                    "email" => $email,
-                    "fullname" => $fullname,
+                    "linkcreatoruserid" => $userid,
+                    "linkcreatoremail" => $email,
+                    "linkcreatorname" => $fullname,
                     "realmid" => $realmid,
                     "companyname" => $companyName ?? '',
                     "accesstoken" => $accesstoken,
