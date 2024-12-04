@@ -4,9 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { AuthenticationService, QBConnectionService } from '@app/_services';
-
-import { QBAuthUri } from '@app/_models';
+import { AuthenticationService } from '@app/_services';
 
 @Component({
   templateUrl: 'login.component.html',
@@ -26,12 +24,12 @@ export class LoginComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private authenticationService: AuthenticationService,
-    private qbConnService: QBConnectionService,
-  ) {
+  ) {    
     // redirect to home if already logged in
     if (this.authenticationService.userValue) {
       this.router.navigate(['/']);
     }
+
   }
 
   ngOnInit() {
@@ -61,7 +59,7 @@ export class LoginComponent implements OnInit {
     this.authenticationService
       .login(this.f['username'].value, this.f['password'].value)
       .subscribe({
-        next: () => {
+        next: () => {          
           this.router.navigate([this.returnUrl]);
         },
         error: (error) => {

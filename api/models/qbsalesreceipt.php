@@ -412,12 +412,16 @@ class QuickbooksSalesReceipt{
         echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
         echo "The Response message is: " . $error->getResponseBody() . "\n";
         return false;
-    } else {      
-      return array(
-          "id" => $resultingObj->Id,
-          "date" => $this->date,
-          "label" => $docnumber
-      );
+    } else {
+      if ($resultingObj)  {    
+        return array(
+            "id" => $resultingObj->Id,
+            "date" => $this->date,
+            "label" => $docnumber
+        );
+      } else {
+        throw new \Exception("No result body returned from QuickBooks.");
+      }
     }
   }
 

@@ -138,7 +138,7 @@ $router->mount('/qb', function () use ($router) {
     // Returns the uri needed to start the QBO authorisation process
     $router->get('/auth', 'QBAuthCtl@oauth2_begin');    
     // Exchange a refresh token for a new access token
-    $router->get('/(\d+)/refresh', 'QBAuthCtl@oauth2_refresh');
+    $router->get('/(\d+)/refresh/(\d+)', 'QBAuthCtl@oauth2_refresh');
     // Delete QBO authorisation
     $router->delete('/(\d+)/connection', 'QBAuthCtl@oauth2_revoke');
     // Retrieve details of one of the connections to QB (if any)

@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 
 import { environment } from '@environments/environment';
 import { Role, User } from '@app/_models';
+import { AuditLogService } from './auditlog.service';
 
 /**
  * The authentication service is used to login & logout of the Angular app,
@@ -46,6 +47,7 @@ export class AuthenticationService {
   constructor(
     private router: Router,
     private http: HttpClient,
+    private auditLogService: AuditLogService,
   ) {
     this.userSubject = new BehaviorSubject<User>(new User());
     this.user = this.userSubject.asObservable();
@@ -83,6 +85,7 @@ export class AuthenticationService {
           user.isAdmin = user && user.role && user.role === Role.Admin; // Add extra property
           this.userSubject.next(user);
           this.startRefreshTokenTimer();
+          this.auditLogService.log(user, "LOGIN", "User has logged in.");
           return user;
         }),
       );
@@ -95,6 +98,7 @@ export class AuthenticationService {
    * redirects the user to the login page.
    */
   logout() {
+    this.auditLogService.log(this.userSubject.value, "LOGOUT", "User has logged out.");
     this.http
       .delete<any>(`${environment.apiUrl}/auth`, {
         withCredentials: true,

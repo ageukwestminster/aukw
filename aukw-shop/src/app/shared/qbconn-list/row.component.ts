@@ -95,7 +95,7 @@ export class QBConnectionRowComponent {
 
     connection.isRefreshing = true;
     this.connectionService
-      .refresh(connection.realmid)
+      .refresh(connection.realmid, connection.linkcreatoruserid)
       .subscribe(() => {
         this.alertService.success(
           'Connection refreshed for ' + connection.companyname,

@@ -3,8 +3,8 @@ import { CommonModule, formatDate, NgIf } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { environment } from '@environments/environment';
-import { TakingsSummary, User } from '@app/_models';
-import { TakingsService, AlertService } from '@app/_services';
+import { ApiMessage, TakingsSummary, User } from '@app/_models';
+import { TakingsService, AlertService, AuditLogService } from '@app/_services';
 /**
  * @TakingsRow: A component for the view of single daily Takings item
  */
@@ -23,6 +23,7 @@ export class TakingsRowComponent {
   constructor(
     private takingsService: TakingsService,
     private alertService: AlertService,
+    private auditLogService: AuditLogService,
   ) {
     this.onTakingsDeleted = new EventEmitter();
     this.onTakingsAddedToQB = new EventEmitter();
@@ -44,7 +45,8 @@ export class TakingsRowComponent {
     if (!this.takings || !this.takings.id) return;
 
     this.takings.isDeleting = true;
-    this.takingsService.delete(this.takings.id).subscribe(() => {
+    this.takingsService.delete(this.takings.id).subscribe((msg: ApiMessage) => {
+      this.auditLogService.log(this.user, "DELETE", msg.message, "Takings", msg.id);
       this.alertService.success('Takings deleted', {
         keepAfterRouteChange: true,
       });
@@ -53,7 +55,7 @@ export class TakingsRowComponent {
   }
 
   /**
-   * Add a Sales Receipt to QB based on the taking data in the dB
+   * Add a Sales Receipt to QB based on the takings data in the dB
    * @param e The click event when the button is pressed
    * @returns void
    */
@@ -66,7 +68,8 @@ export class TakingsRowComponent {
     this.takingsService
       .addToQuickbooks(this.takings.id) // Adds to QB and sets 'quickbooks' = 1 in dB
       .subscribe({
-        next: () => {
+        next: (msg: ApiMessage) => {
+          this.auditLogService.log(this.user, "INSERT", msg.message, "SalesReceipt", msg.id);
           this.alertService.success(
             'Daily sales added to QB for ' +
               formatDate(this.takings.date, 'dd-MMM', 'en_GB'),

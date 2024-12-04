@@ -5,11 +5,12 @@ import { environment } from '@environments/environment';
 
 import {
   AlertService,
+  AuditLogService,
   AuthenticationService,
   LoadingIndicatorService,
   TakingsService,
 } from '@app/_services';
-import { TakingsFilter, TakingsSummary, User } from '@app/_models';
+import { ApiMessage, TakingsFilter, TakingsSummary, User } from '@app/_models';
 import { TakingsRowComponent } from './row.component';
 import { TakingsFilterComponent } from '../filter/takings-filter.component';
 
@@ -50,6 +51,7 @@ export class TakingsListComponent implements OnInit {
   private takingsService = inject(TakingsService);
   private authenticationService = inject(AuthenticationService);
   private alertService = inject(AlertService);
+  private auditLogService = inject(AuditLogService);
 
   constructor() {
     this.user = this.authenticationService.userValue;
@@ -119,6 +121,11 @@ export class TakingsListComponent implements OnInit {
       .pipe(
         mergeMap((t) => this.takingsService.addToQuickbooks(t.id)),
         toArray(),
+        tap((list: ApiMessage[]) => {
+          list.forEach(msg => {
+            this.auditLogService.log(this.user, "INSERT", msg.message, "SalesReceipt", msg.id);
+          });
+        }),
         this.loadingIndicatorService.createObserving({
           loading: () =>
             `Adding daily sales receipts to Enterprises Quickbooks`,

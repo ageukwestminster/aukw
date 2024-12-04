@@ -51,7 +51,7 @@ export class QBConnectionService {
     );
   }
 
-  refresh(realmid: string) {
-    return this.http.get<ApiMessage>(`${baseUrl}/${realmid}/refresh`);
+  refresh(realmid: string, linkcreatoruserid: number) {
+    return this.http.get<ApiMessage>(`${baseUrl}/${realmid}/refresh/${linkcreatoruserid}`);
   }
 }

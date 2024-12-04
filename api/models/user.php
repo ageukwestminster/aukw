@@ -106,12 +106,29 @@ class User{
 
     /**
      * Query for the details of one user using $username but return the results as a 
-     * MySQLi statement rather than a JSON string or an object
+     * MySQLi statement rather than a JSON string or an object.
+     * 
+     * This is used by the auth.php script as part of the login procedure
      * 
      * @return object Returns a MySQLi statement
      */
-    public function readOneByUsername(){
+    public function readOneByUsernameStmt(){
         return User::prepareAndExecuteSelectStatement('BY_USERNAME');
+    }
+
+    /**
+     * Retrieve from the database details of a User, queried using the 
+     * model property $username
+     * 
+     * @return void
+     * 
+     */
+    public function readOneByUsername(){
+
+        // execute query
+        $stmt = User::readOneByUsernameStmt();
+
+        $this->transferPropertiestoModel($stmt);
     }
 
     /**

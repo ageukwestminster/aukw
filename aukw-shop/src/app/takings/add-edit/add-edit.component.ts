@@ -31,9 +31,10 @@ import {
   AlertService,
   AuthenticationService,
   ShopService,
+  AuditLogService,
 } from '@app/_services';
 
-import { Shop, User, Takings, FormMode } from '@app/_models';
+import { Shop, User, Takings, FormMode, ApiMessage } from '@app/_models';
 
 import { CustomDateParserFormatter, NgbUTCStringAdapter } from '@app/_helpers';
 
@@ -82,6 +83,7 @@ export class TakingsAddEditComponent implements OnInit {
     private shopService: ShopService,
     private location: Location,
     private datePipe: DatePipe,
+    private auditLogService: AuditLogService
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -235,9 +237,7 @@ export class TakingsAddEditComponent implements OnInit {
       return;
     }
 
-    if (this.cashDifference) {
-      this.form.controls['cash_difference'].setValue(this.cashDifference);
-    }
+    this.form.controls['cash_difference'].setValue(this.cashDifference);
 
     this.loading = true;
     if (this.formMode == FormMode.Add) {
@@ -276,7 +276,8 @@ export class TakingsAddEditComponent implements OnInit {
     this.takingsService
       .create(this.form.getRawValue())
       .subscribe({
-        next: () => {
+        next: (msg: ApiMessage) => {
+          this.auditLogService.log(this.user, "INSERT", msg.message, "Takings", msg.id);
           this.alertService.success('Takings added', {
             keepAfterRouteChange: true,
           });
@@ -295,7 +296,8 @@ export class TakingsAddEditComponent implements OnInit {
     this.takingsService
       .update(this.id, this.form.getRawValue())
       .subscribe({
-        next: () => {
+        next: (msg: ApiMessage) => {
+          this.auditLogService.log(this.user, "UPDATE", msg.message, "Takings", msg.id);
           this.alertService.success('Takings updated', {
             keepAfterRouteChange: true,
           });

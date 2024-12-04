@@ -89,7 +89,7 @@ class TakingsCtl{
     if( $model->create()) {
       echo json_encode(
         array(
-          "message" => "New takings with id=$model->id was created.",
+          "message" => "New takings with id=$model->id was created for $model->date.",
           "id" => $model->id
         )
       , JSON_NUMERIC_CHECK);
@@ -198,7 +198,7 @@ class TakingsCtl{
   }
 
   /**
-   * Helper funciton to copy takings property data into Model.
+   * Helper function to copy takings property data into Model.
    * Used by {@link create} and {@link update} methods.
    *
    * @param object $data The supplied data of the new/updated takings object

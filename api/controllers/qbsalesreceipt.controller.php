@@ -134,7 +134,7 @@ class QBSalesReceiptCtl{
     $result = $model->create();
     if ($result) {
         echo json_encode(
-            array("message" => "Sales Receipt '". $result['label']  ."' has been added for " . $result['date'] . ".",
+            array("message" => "Sales Receipt [". $result['label']  ."] has been added for " . $result['date'] . ".",
                 "id" => $result['id'])
           );
     }
@@ -163,7 +163,7 @@ class QBSalesReceiptCtl{
     } else if ($takings->date == null) {
       http_response_code(400);
       echo json_encode(
-        array("message" => "No takings found in MySQL database with that id (" . $takingsid .").")
+        array("message" => "No takings found in aukw database with that id (" . $takingsid .").")
       );
       exit(0);
     } else if ($takings->id == 0) {
@@ -177,7 +177,7 @@ class QBSalesReceiptCtl{
       $takings->quickbooks = 1;
       $takings->patch_quickbooks();
       echo json_encode(
-            array("message" => "Sales Receipt '". $result['label']  ."' has been added for " . $result['date'] . ".",
+            array("message" => "Sales Receipt [". $result['label']  ."] has been added for " . $result['date'] . ".",
                 "id" => $result['id'])
           );
     }
@@ -220,8 +220,8 @@ class QBSalesReceiptCtl{
       if ($result) {
         $takings->quickbooks = 1;
         $takings->patch_quickbooks();
-        $message[] = array("message" => "Sales Receipt '". $result['label']  
-                    ."' has been added for " . $result['date'] 
+        $message[] = array("message" => "Sales Receipt [". $result['label']  
+                    ."] has been added for " . $result['date'] 
                     . ".", "id" => $result['id']);
       }
     }
