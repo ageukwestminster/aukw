@@ -235,6 +235,6 @@ $router->mount('/auditlog', function () use ($router) {
     // new takings entry
     $router->post('/', 'AuditLogCtl@create');
     // return all audit log records
-    $router->get('/', 'AuditLogCtl@read_all');
+    $router->get('/', 'AuditLogCtl@read');
 });
 

@@ -70,16 +70,28 @@ class AuditLog{
      * 
      * @return array An array of Users
      */
-    public function read(){
+    public function read($userid, $startdate, $enddate){
                
         $query = "SELECT
             a.`id`, a.`userid`, u.`username`, CONCAT(u.`firstname`,' ',u.`surname`) as fullname,
             a.eventtype, a.description, a.objecttype, a.objectid, a.timestamp
             FROM
             " . $this->table_name . " a" .
-            " JOIN user u ON a.userid = u.id "; 
+            " JOIN user u ON a.userid = u.id " .
+            "WHERE DATE(a.`timestamp`) >= :start AND DATE(a.`timestamp`) <= :end "; 
+
+        if (isset($userid)) {
+            $query .= "AND u.id=:userid";
+        }
 
         $stmt = $this->conn->prepare( $query );
+
+        if (isset($userid)) {
+            $stmt->bindParam(":userid", $userid, PDO::PARAM_INT);
+        }
+        $stmt->bindParam(":start", $startdate);
+        $stmt->bindParam(":end", $enddate);
+
         $stmt->execute();
         $num = $stmt->rowCount();
 

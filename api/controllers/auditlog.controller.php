@@ -2,6 +2,8 @@
 
 namespace Controllers;
 
+use DateTime;
+
 /**
  * Controller to acomplish Audit Log related tasks
  *
@@ -14,11 +16,37 @@ class AuditLogCtl{
    * 
    * @return void Output is echo'd directly to response 
    */
-  public static function read_all(){  
+  public static function read(){  
 
     $model = new \Models\AuditLog();
 
-    echo json_encode($model->read(), JSON_NUMERIC_CHECK);
+    $startdate='';
+    $enddate='';
+
+    // if parameters are provided use them
+    if(isset($_GET['start']) || isset($_GET['end'])) {
+      list($startdate, $enddate) = \Core\DatesHelper::sanitizeDateValues(
+                                  !isset($_GET['start']) ? '' : $_GET['start'], 
+                                  !isset($_GET['end']) ? '' : $_GET['end']
+                              );
+    } 
+    
+    // default values are today and 3 months ago
+    if ($startdate == '') {    
+      if ($enddate == '') {           
+        $enddate = date('Y-m-d');      
+      }
+      $startdate = (new DateTime($enddate))->modify('-3 month')->format('Y-m-d');
+    } else if ($enddate == '') {           
+      $enddate = (new DateTime($startdate))->modify('+3 month')->format('Y-m-d');
+    } 
+
+    if (isset($_GET['userid']) && !empty($_GET['userid']) && is_numeric($_GET['userid'])) {
+      echo json_encode($model->read((int)$_GET['userid'], $startdate, $enddate), JSON_NUMERIC_CHECK);
+    } else {
+      echo json_encode($model->read(null, $startdate, $enddate), JSON_NUMERIC_CHECK);
+  }
+
   }
 
   /**
