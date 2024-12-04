@@ -41,4 +41,8 @@ export class AuditLogComponent implements OnInit {
   filterIsLoading(value: boolean) {
     this.loading = value;
   }
+
+  auditLogUpdated(auditLog: AuditLog[]) {
+    this.auditLog = auditLog;
+  }
 }

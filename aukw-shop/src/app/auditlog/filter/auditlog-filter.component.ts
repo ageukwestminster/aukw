@@ -20,7 +20,7 @@ import {
   AuditLogFilter,
   AuditLog,
 } from '@app/_models';
-import { TakingsService } from '@app/_services';
+import { AuditLogService } from '@app/_services';
 import { DateRangeAdapter } from '@app/_helpers';
 
 @Component({
@@ -55,7 +55,7 @@ export class AuditLogFilterComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private dateRangeAdapter: DateRangeAdapter,
-    private takingsService: TakingsService,
+    private auditLogService: AuditLogService,
   ) {}
 
   get f() {
@@ -116,8 +116,8 @@ export class AuditLogFilterComponent implements OnInit {
     var str = `start=${startDate!}`;
     str = str.concat('&', 'end=', endDate);
 
-    this.takingsService
-      .getSummary(environment.HARROWROAD_SHOPID, str)
+    this.auditLogService
+      .getFilteredList(str)
       .subscribe((response: any) => {
         this.filteredAuditLog.emit(response);
       });
