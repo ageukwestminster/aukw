@@ -228,3 +228,13 @@ $router->mount('/xlsx', function () use ($router) {
     $router->get('/listws', 'XlsxCtl@parse_worksheets');
 });
 
+/***************/
+/* Audit Log Routes */
+/***************/
+$router->mount('/auditlog', function () use ($router) {
+    // new takings entry
+    $router->post('/', 'AuditLogCtl@create');
+    // return all audit log records
+    $router->get('/', 'AuditLogCtl@read_all');
+});
+

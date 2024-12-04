@@ -27,6 +27,7 @@ require 'core/dateshelper.php';
 require 'core/qboconstants.php';
 
 // Define controllers
+require 'controllers/auditlog.controller.php';
 require 'controllers/qbauth.controller.php';
 require 'controllers/qbbill.controller.php';
 require 'controllers/qbclass.controller.php';
@@ -47,6 +48,7 @@ require 'controllers/user.controller.php';
 require 'controllers/xlsx.controller.php';
 
 // Define models
+require 'models/auditlog.php';
 require 'models/encryptedxlsx.php';
 require 'models/jwt.php';
 require 'models/payrollbase.php'; // This must be included before the files that depend on it.
