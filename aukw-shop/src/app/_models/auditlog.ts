@@ -10,6 +10,7 @@ export class AuditLog {
   description: string;
   objecttype?: string;
   objectid?: number;
+  timestamp: string;
 
   constructor(obj?: any) {
     this.id = (obj && obj.id) || null;
@@ -20,5 +21,6 @@ export class AuditLog {
     this.description = (obj && obj.description) || null;
     this.objecttype = (obj && obj.objecttype) || null;
     this.objectid = (obj && obj.objectid) || null;
+    this.timestamp = (obj && obj.timestamp) || null;
   }
 }

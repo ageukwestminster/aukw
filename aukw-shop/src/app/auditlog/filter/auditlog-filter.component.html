@@ -1,0 +1,93 @@
+<form [formGroup]="form">
+  <div ngbAccordion>
+    <div ngbAccordionItem [collapsed]="false">
+      <h2 ngbAccordionHeader>
+        <button ngbAccordionButton>Filter</button>
+      </h2>
+      <span *ngIf="working" class="spinner-border spinner-border-sm"></span>
+      <div ngbAccordionCollapse>
+        <div ngbAccordionBody>
+          <ng-template>
+            <div class="row">
+              <div class="col-sm-auto pl-2">
+                <select
+                  class="form-control"
+                  #selectList
+                  id="selectList"
+                  (change)="onDateRangeChanged(selectList.value)"
+                  name="selectDateRange"
+                >
+                  <option disabled selected [ngValue]="null">
+                    -- select --
+                  </option>
+                  <option
+                    *ngFor="let item of DateRange | keyvalue: originalOrder"
+                    value="{{ item.value }}"
+                  >
+                    {{ item.value }}
+                  </option>
+                </select>
+              </div>
+              <div class="col-sm-auto pl-2 pt-2">between</div>
+              <div class="col-sm-auto">
+                <div class="input-group col p-0 mb-1">
+                  <input
+                    class="form-control"
+                    placeholder="Start"
+                    name="dp1"
+                    ngbDatepicker
+                    #d1="ngbDatepicker"
+                    formControlName="startDate"
+                    id="inputStartDate"
+                    placement="bottom"
+                  />
+                  <div class="input-group-append">
+                    <button
+                      class="btn btn-outline-secondary"
+                      (click)="d1.toggle()"
+                      type="button"
+                    >
+                      <i class="far fa-calendar-alt"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-auto pl-2 pt-2">and</div>
+              <div class="col-sm-auto">
+                <div class="input-group col p-0 mb-1">
+                  <input
+                    class="form-control"
+                    placeholder="End"
+                    name="dp2"
+                    ngbDatepicker
+                    #d2="ngbDatepicker"
+                    formControlName="endDate"
+                    id="inputEndDate"
+                    placement="bottom"
+                  />
+                  <div class="input-group-append">
+                    <button
+                      class="btn btn-outline-secondary"
+                      (click)="d2.toggle()"
+                      type="button"
+                    >
+                      <i class="far fa-calendar-alt"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-auto p-0">
+                <a class="btn btn-link" (click)="onRefreshPressed()">Refresh</a>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="false">
+    <p>Form Value: {{ form.value | json }}</p>
+    <p>Form Status: {{ form.status }}</p>
+    <p>Filter: {{ filter$ | async | json }}</p>
+  </div>
+</form>

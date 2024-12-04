@@ -1,0 +1,27 @@
+<div class="row">
+  <div class="col-6"><h1>Audit Log</h1></div>
+</div>
+<auditlog-filter
+  (loading)="filterIsLoading($event)"
+  (filter)="filterUpdated($event)"
+></auditlog-filter>
+<table class="table table-striped table-responsive">
+  <thead>
+    <tr>
+      <th class="width-20">Date & Time</th>
+      <th class="width-25">User</th>
+      <th class="width-20">Type</th>
+      <th class="width-30">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr
+      *ngFor="let event of auditLog"
+    >
+    <td>{{event.timestamp}}</td>
+    <td>{{event.fullname}}</td>
+    <td>{{event.eventtype}}</td>
+    <td>{{event.description}}</td>
+  </tr>
+  </tbody>
+</table>

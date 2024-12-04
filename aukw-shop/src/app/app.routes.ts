@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 
+import { AuditLogComponent } from './auditlog';
 import { CallbackComponent } from './callback';
 import { HomeComponent } from './home';
 import { LoginComponent } from './login';
@@ -38,6 +39,11 @@ export const APP_ROUTES: Routes = [
     path: 'payroll',
     loadChildren: payrollRoutes,
     canActivate: [authGuard],
+    data: { roles: [Role.Admin] },
+  },
+  {
+    path: 'auditlog',
+    component: AuditLogComponent,
     data: { roles: [Role.Admin] },
   },
   {

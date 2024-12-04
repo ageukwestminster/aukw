@@ -81,7 +81,15 @@
             >Payroll</a
           >
         </li>
-        <li [ngbNavItem]="3" *ngIf="user.isAdmin">
+        <li [ngbNavItem]="4" *ngIf="user.isAdmin">
+          <a
+            class="nav-item nav-link"
+            routerLink="/auditlog"
+            routerLinkActive="active"
+            >Audit Log</a
+          >
+        </li>
+        <li [ngbNavItem]="5" *ngIf="user.isAdmin">
           <a
             class="nav-item nav-link"
             routerLink="/users"
@@ -89,7 +97,7 @@
             >Users</a
           >
         </li>
-        <li [ngbNavItem]="5" ngbDropdown class="nav-item">
+        <li [ngbNavItem]="6" ngbDropdown class="nav-item">
           <a href (click)="(false)" class="nav-link" ngbDropdownToggle>
             <!-- Find icon names at https://fontawesome.com/icons?d=gallery&p=2  -->
             <span class="fas fa-user"></span> Account

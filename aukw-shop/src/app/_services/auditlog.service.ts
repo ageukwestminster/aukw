@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { environment } from '@environments/environment';
 import { AuditLog, User } from '@app/_models';
+import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuditLogService {
@@ -10,8 +11,14 @@ export class AuditLogService {
 
   constructor(private http: HttpClient) {}
 
-  getAll() {
+  getAll() : Observable<AuditLog[]> {
     return this.http.get<AuditLog[]>(this.auditLogUri);
+  }
+
+  getFilteredList(urlParameters: string) : Observable<AuditLog[]> {
+    return this.http.get<AuditLog[]>(
+      `${this.auditLogUri}/?${urlParameters}`,
+    );
   }
 
   log(user: User, eventtype: string, description: string, objecttype?: string, objectid?: number) {
