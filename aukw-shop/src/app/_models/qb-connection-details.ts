@@ -11,8 +11,8 @@ export class QBConnectionDetails {
   isRevoking: boolean = false;
   isRefreshing: boolean = false;
   linkcreatoruserid: number;
-  linkcreatorname: string  | null;
-  linkcreatoremail: string  | null;
+  linkcreatorname: string | null;
+  linkcreatoremail: string | null;
 
   constructor(obj?: any) {
     this.refreshtokenexpiry = (obj && obj.refreshtokenexpiry) || null;

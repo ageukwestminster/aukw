@@ -122,8 +122,14 @@ export class TakingsListComponent implements OnInit {
         mergeMap((t) => this.takingsService.addToQuickbooks(t.id)),
         toArray(),
         tap((list: ApiMessage[]) => {
-          list.forEach(msg => {
-            this.auditLogService.log(this.user, "INSERT", msg.message, "SalesReceipt", msg.id);
+          list.forEach((msg) => {
+            this.auditLogService.log(
+              this.user,
+              'INSERT',
+              msg.message,
+              'SalesReceipt',
+              msg.id,
+            );
           });
         }),
         this.loadingIndicatorService.createObserving({

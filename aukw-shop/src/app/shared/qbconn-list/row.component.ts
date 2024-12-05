@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { concatMap} from 'rxjs';
+import { concatMap } from 'rxjs';
 import { QBAuthUri, QBConnectionDetails, QBRealm, User } from '@app/_models';
 import {
   AlertService,
@@ -67,18 +67,16 @@ export class QBConnectionRowComponent {
     const connection = this.realm.connection;
 
     connection.isRevoking = true;
-    this.connectionService
-      .delete(connection.realmid)
-      .subscribe(() => {
-        this.alertService.success(
-          'Connection revoked for ' + connection.companyname,
-          {
-            keepAfterRouteChange: true,
-          },
-        );
-        connection.isRevoking = false;
-        this.onConnectionRevoked.emit(connection);
-      });
+    this.connectionService.delete(connection.realmid).subscribe(() => {
+      this.alertService.success(
+        'Connection revoked for ' + connection.companyname,
+        {
+          keepAfterRouteChange: true,
+        },
+      );
+      connection.isRevoking = false;
+      this.onConnectionRevoked.emit(connection);
+    });
   }
 
   refreshConnection(e: Event) {
@@ -146,8 +144,9 @@ export class QBConnectionRowComponent {
           this.onConnectionRevoked.emit(connection);
 
           return this.connectionService.getAuthUri();
-        })
-      ).subscribe((uri: QBAuthUri) => {
+        }),
+      )
+      .subscribe((uri: QBAuthUri) => {
         if (uri && uri.authUri) {
           // Open the QB Auth uri in a new tab or window
           this.windowHandle = window.open(uri.authUri);
@@ -155,7 +154,6 @@ export class QBConnectionRowComponent {
       });
 
     return false;
-
   }
 
   // Prevents the click event propagating back up to the table row

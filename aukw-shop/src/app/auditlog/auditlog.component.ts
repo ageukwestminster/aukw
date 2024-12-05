@@ -6,15 +6,11 @@ import { AuditLogFilterComponent } from './filter/auditlog-filter.component';
 
 @Component({
   standalone: true,
-  imports: [    
-    CommonModule,
-    NgFor,
-    AuditLogFilterComponent,
-  ],
-  templateUrl: 'auditlog.component.html'
+  imports: [CommonModule, NgFor, AuditLogFilterComponent],
+  templateUrl: 'auditlog.component.html',
 })
 export class AuditLogComponent implements OnInit {
-  auditLog!: AuditLog[]; 
+  auditLog!: AuditLog[];
   loading: boolean = false;
   filter!: AuditLogFilter;
 
@@ -27,11 +23,9 @@ export class AuditLogComponent implements OnInit {
   }
 
   refreshList() {
-    this.auditLogService
-      .getAll()
-      .subscribe( (result) => {
-        this.auditLog = result;
-      });
+    this.auditLogService.getAll().subscribe((result) => {
+      this.auditLog = result;
+    });
   }
 
   filterUpdated(filter: AuditLogFilter) {

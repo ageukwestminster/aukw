@@ -46,7 +46,13 @@ export class TakingsRowComponent {
 
     this.takings.isDeleting = true;
     this.takingsService.delete(this.takings.id).subscribe((msg: ApiMessage) => {
-      this.auditLogService.log(this.user, "DELETE", msg.message, "Takings", msg.id);
+      this.auditLogService.log(
+        this.user,
+        'DELETE',
+        msg.message,
+        'Takings',
+        msg.id,
+      );
       this.alertService.success('Takings deleted', {
         keepAfterRouteChange: true,
       });
@@ -69,7 +75,13 @@ export class TakingsRowComponent {
       .addToQuickbooks(this.takings.id) // Adds to QB and sets 'quickbooks' = 1 in dB
       .subscribe({
         next: (msg: ApiMessage) => {
-          this.auditLogService.log(this.user, "INSERT", msg.message, "SalesReceipt", msg.id);
+          this.auditLogService.log(
+            this.user,
+            'INSERT',
+            msg.message,
+            'SalesReceipt',
+            msg.id,
+          );
           this.alertService.success(
             'Daily sales added to QB for ' +
               formatDate(this.takings.date, 'dd-MMM', 'en_GB'),

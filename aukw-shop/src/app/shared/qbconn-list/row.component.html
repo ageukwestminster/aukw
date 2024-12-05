@@ -1,5 +1,5 @@
 <td>{{ realm.name }}</td>
-<td>{{ realm.connection && realm.connection!.linkcreatoremail!}}</td>
+<td>{{ realm.connection && realm.connection!.linkcreatoremail! }}</td>
 <td class="text-center">
   <span class="logged-in" *ngIf="isValidConnection">●</span>
   <span class="logged-out" *ngIf="!isValidConnection">●</span>
@@ -52,19 +52,19 @@
       >
     </button>
     <button
-    (click)="revokeAndMakeNewConnection($event)"
-    class="btn btn-sm btn-danger mt-1"
-    [disabled]="!this.realm!.connection || this.realm!.connection!.isRevoking"
-    *ngIf="isValidConnection && !isLinkCreatedByCurrentUser"
-  >
-    <span
-      *ngIf="this.realm!.connection && this.realm!.connection!.isRevoking"
-      class="spinner-border spinner-border-sm"
-    ></span>
-    <span
-      *ngIf="!this.realm!.connection || !this.realm!.connection!.isRevoking"
-      >Revoke & Make New Connection</span
+      (click)="revokeAndMakeNewConnection($event)"
+      class="btn btn-sm btn-danger mt-1"
+      [disabled]="!this.realm!.connection || this.realm!.connection!.isRevoking"
+      *ngIf="isValidConnection && !isLinkCreatedByCurrentUser"
     >
-  </button>
+      <span
+        *ngIf="this.realm!.connection && this.realm!.connection!.isRevoking"
+        class="spinner-border spinner-border-sm"
+      ></span>
+      <span
+        *ngIf="!this.realm!.connection || !this.realm!.connection!.isRevoking"
+        >Revoke & Make New Connection</span
+      >
+    </button>
   </div>
 </td>

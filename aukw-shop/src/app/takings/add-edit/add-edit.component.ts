@@ -83,7 +83,7 @@ export class TakingsAddEditComponent implements OnInit {
     private shopService: ShopService,
     private location: Location,
     private datePipe: DatePipe,
-    private auditLogService: AuditLogService
+    private auditLogService: AuditLogService,
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -277,7 +277,13 @@ export class TakingsAddEditComponent implements OnInit {
       .create(this.form.getRawValue())
       .subscribe({
         next: (msg: ApiMessage) => {
-          this.auditLogService.log(this.user, "INSERT", msg.message, "Takings", msg.id);
+          this.auditLogService.log(
+            this.user,
+            'INSERT',
+            msg.message,
+            'Takings',
+            msg.id,
+          );
           this.alertService.success('Takings added', {
             keepAfterRouteChange: true,
           });
@@ -297,7 +303,13 @@ export class TakingsAddEditComponent implements OnInit {
       .update(this.id, this.form.getRawValue())
       .subscribe({
         next: (msg: ApiMessage) => {
-          this.auditLogService.log(this.user, "UPDATE", msg.message, "Takings", msg.id);
+          this.auditLogService.log(
+            this.user,
+            'UPDATE',
+            msg.message,
+            'Takings',
+            msg.id,
+          );
           this.alertService.success('Takings updated', {
             keepAfterRouteChange: true,
           });

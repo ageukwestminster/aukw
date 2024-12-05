@@ -98,7 +98,6 @@ export class AuthenticationService {
    * redirects the user to the login page.
    */
   logout() {
-
     // Note about order of execution:
     // Must insert log entry before logging out, oitherwise not authorized
     this.auditLogService
@@ -108,7 +107,7 @@ export class AuthenticationService {
           return this.http.delete<any>(`${environment.apiUrl}/auth`, {
             withCredentials: true,
           });
-        })
+        }),
       )
       .subscribe(() => {
         this.stopRefreshTokenTimer();

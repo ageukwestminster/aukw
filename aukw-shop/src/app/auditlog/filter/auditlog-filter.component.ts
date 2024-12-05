@@ -119,26 +119,27 @@ export class AuditLogFilterComponent implements OnInit {
 
   onUseridChanged(value: string | null) {
     if (value == null || value.startsWith('0')) {
-      this.refreshSummary(this.f['startDate'].value, this.f['endDate'].value)
+      this.refreshSummary(this.f['startDate'].value, this.f['endDate'].value);
     } else {
-      this.refreshSummary(this.f['startDate'].value, this.f['endDate'].value, this.f['userid'].value)
+      this.refreshSummary(
+        this.f['startDate'].value,
+        this.f['endDate'].value,
+        this.f['userid'].value,
+      );
     }
   }
 
   refreshSummary(startDate: string, endDate: string, userid?: string) {
-
     var str = `start=${startDate!}`;
     str = str.concat('&', 'end=', endDate);
 
     if (userid) {
       str = str.concat('&', 'userid=', userid);
-    }  
+    }
 
-    this.auditLogService
-      .getFilteredList(str)
-      .subscribe((response: any) => {
-        this.filteredAuditLog.emit(response);
-      });
+    this.auditLogService.getFilteredList(str).subscribe((response: any) => {
+      this.filteredAuditLog.emit(response);
+    });
   }
 
   onRefreshPressed() {

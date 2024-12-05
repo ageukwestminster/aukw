@@ -6,7 +6,7 @@ import { QBConnectionListComponent } from '@app/shared';
 @Component({
   standalone: true,
   imports: [QBConnectionListComponent],
-  templateUrl: './quickbooksconnection.component.html'
+  templateUrl: './quickbooksconnection.component.html',
 })
 export class QuickbooksconnectionComponent {
   user!: User;

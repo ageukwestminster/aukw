@@ -22,16 +22,10 @@ import {
 import { MustMatch } from '@app/_helpers';
 import { ApiMessage, Shop, User, UserFormMode } from '@app/_models';
 
-
 @Component({
   templateUrl: 'add-edit.component.html',
   standalone: true,
-  imports: [
-    CommonModule,
-    NgClass,
-    NgIf,
-    ReactiveFormsModule,
-  ],
+  imports: [CommonModule, NgClass, NgIf, ReactiveFormsModule],
 })
 export class UserAddEditComponent implements OnInit {
   form!: FormGroup;
@@ -52,8 +46,7 @@ export class UserAddEditComponent implements OnInit {
   private location = inject(Location);
   private auditLogService = inject(AuditLogService);
 
-  constructor(
-  ) {
+  constructor() {
     this.user = this.authenticationService.userValue;
     this.shops$ = this.shopService.getAll();
   }
@@ -162,18 +155,19 @@ export class UserAddEditComponent implements OnInit {
   private createUser() {
     this.userService
       .create(this.form.value)
-      .subscribe((msg : ApiMessage) => {
+      .subscribe((msg: ApiMessage) => {
         this.alertService.success('User added', { keepAfterRouteChange: true });
         this.router.navigate(['../'], { relativeTo: this.route });
         this.auditLogService.log(
-          this.user, 
-          "INSERT",
+          this.user,
+          'INSERT',
           msg.message,
-          "user",
-          msg.id);
+          'user',
+          msg.id,
+        );
       })
       .add(() => {
-        this.loading = false;        
+        this.loading = false;
       });
   }
 

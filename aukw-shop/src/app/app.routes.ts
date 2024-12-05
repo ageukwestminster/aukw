@@ -60,7 +60,7 @@ export const APP_ROUTES: Routes = [
     loadChildren: takingsRoutes,
     canActivate: [authGuard],
   },
-  
+
   {
     path: 'quickbooksconnection',
     component: QuickbooksconnectionComponent,
