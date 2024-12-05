@@ -182,8 +182,13 @@ class User{
         $this->shopid=filter_var($this->shopid, FILTER_SANITIZE_NUMBER_INT);
         $this->role=htmlspecialchars(strip_tags($this->role));
 
+        // Convert supplied values to tinyint for database
         $isadmin = ($this->role=='Admin') ? 1 : 0;
         $suspended = $this->suspended ? 1 : 0;
+
+        // Shopid sometimes comes through as ""
+        // '1' is the shopid for the Harrow Road shop
+        $shopid = (isset($this->shopid) && is_numeric($this->shopid)) ? $this->shopid : 1;
 
         // bind values
         $stmt->bindParam(":username", $this->username);
@@ -191,7 +196,7 @@ class User{
         $stmt->bindParam(":suspended", $suspended, PDO::PARAM_INT);
         $stmt->bindParam(":firstname", $this->firstname);
         $stmt->bindParam(":surname", $this->surname);
-        $stmt->bindParam(":shopid", $this->shopid, PDO::PARAM_INT);
+        $stmt->bindParam(":shopid", $shopid, PDO::PARAM_INT);
         $stmt->bindParam(":email", $this->email);
         $stmt->bindParam(":title", $this->title);
         $stmt->bindParam(":failedloginattempts", $this->failedloginattempts, PDO::PARAM_INT);

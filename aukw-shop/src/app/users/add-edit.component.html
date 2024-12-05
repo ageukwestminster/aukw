@@ -30,7 +30,7 @@
     <div class="col-sm-6 mb-1">
       <div class="input-group mb-1">
         <span class="input-group-text col-4" id="username-addon1"
-          >Username
+          >Username*
         </span>
         <input
           type="text"
@@ -45,104 +45,6 @@
         <div *ngIf="submitted && f['username'].errors" class="invalid-feedback">
           <div *ngIf="f['username'].errors['required']">
             Username is required
-          </div>
-        </div>
-      </div>
-      <div class="input-group mb-1">
-        <span class="input-group-text col-4" id="shop-label">Shop</span>
-        <div class="card p-2 col-8">
-          <select
-            formControlName="shopid"
-            id="shopSelect"
-            name="shopSelect"
-            class="form-control"
-          >
-            <option *ngFor="let shop of shops$ | async" [ngValue]="shop.id">
-              {{ shop.name }}
-            </option>
-          </select>
-        </div>
-      </div>
-      <div class="input-group mb-1">
-        <span class="input-group-text col-4" id="dates-label">Role</span>
-        <div class="card p-2 col-8">
-          <select
-            formControlName="role"
-            id="roleSelect"
-            name="roleSelect"
-            class="form-control"
-            [ngClass]="{ 'is-invalid': submitted && f['role'].errors }"
-          >
-            <option value=""></option>
-            <option value="User">User</option>
-            <option value="Admin" *ngIf="user.isAdmin">Admin</option>
-          </select>
-          <div *ngIf="submitted && f['role'].errors" class="invalid-feedback">
-            <div *ngIf="f['role'].errors['required']">Role is required</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-sm-6 mb-1">
-      <div class="input-group mb-1">
-        <span class="input-group-text col-4" id="firstname-addon1"
-          >First Name
-        </span>
-        <input
-          type="text"
-          class="form-control"
-          id="firstnameInput"
-          [ngClass]="{ 'is-invalid': submitted && f['firstname'].errors }"
-          formControlName="firstname"
-          aria-label="FirstName"
-          aria-describedby="firstname-addon1"
-          placement="bottom"
-          ngbTooltip="The user's first or given name."
-          container="body"
-        />
-        <div
-          *ngIf="submitted && f['firstname'].errors"
-          class="invalid-feedback"
-        >
-          <div *ngIf="f['firstname'].errors['required']">
-            First Name is required
-          </div>
-        </div>
-      </div>
-      <div class="input-group mb-1">
-        <span class="input-group-text col-4" id="surname-addon1">Surname </span>
-        <input
-          type="text"
-          class="form-control"
-          [ngClass]="{ 'is-invalid': submitted && f['surname'].errors }"
-          id="surnameInput"
-          formControlName="surname"
-          aria-label="Surname"
-          aria-describedby="surname-addon1"
-          placement="bottom"
-          ngbTooltip="The family name of the user."
-          container="body"
-        />
-        <div *ngIf="submitted && f['surname'].errors" class="invalid-feedback">
-          <div *ngIf="f['surname'].errors['required']">Surname is required</div>
-        </div>
-      </div>
-      <div class="input-group" *ngIf="user.isAdmin">
-        <span class="input-group-text col-4" id="status-label">Status</span>
-        <div class="card p-3 col-8">
-          <div class="form-check">
-            <input
-              type="checkbox"
-              formControlName="suspended"
-              class="form-check-input"
-              placement="bottom"
-              ngbTooltip="When checked the user will not be able to log in."
-              container="body"
-              id="suspendedUserCheckbox"
-            />
-            <label class="form-check-label" for="suspendedUserCheckbox">
-              Suspended User
-            </label>
           </div>
         </div>
       </div>
@@ -180,6 +82,104 @@
           container="body"
         />
       </div>
+      <!--<div class="input-group mb-1">
+        <span class="input-group-text col-4" id="shop-label">Shop</span>
+        <div class="card p-2 col-8">
+          <select
+            formControlName="shopid"
+            id="shopSelect"
+            name="shopSelect"
+            class="form-control"
+          >
+            <option *ngFor="let shop of shops$ | async" [ngValue]="shop.id">
+              {{ shop.name }}
+            </option>
+          </select>
+        </div>
+      </div>-->
+      <div class="input-group mb-1">
+        <span class="input-group-text col-4" id="dates-label">Role*</span>
+        <div class="card p-2 col-8">
+          <select
+            formControlName="role"
+            id="roleSelect"
+            name="roleSelect"
+            class="form-control"
+            [ngClass]="{ 'is-invalid': submitted && f['role'].errors }"
+          >
+            <option value=""></option>
+            <option value="User">User</option>
+            <option value="Admin" *ngIf="user.isAdmin">Admin</option>
+          </select>
+          <div *ngIf="submitted && f['role'].errors" class="invalid-feedback">
+            <div *ngIf="f['role'].errors['required']">Role is required</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 mb-1">
+      <div class="input-group mb-1">
+        <span class="input-group-text col-4" id="firstname-addon1"
+          >First Name*
+        </span>
+        <input
+          type="text"
+          class="form-control"
+          id="firstnameInput"
+          [ngClass]="{ 'is-invalid': submitted && f['firstname'].errors }"
+          formControlName="firstname"
+          aria-label="FirstName"
+          aria-describedby="firstname-addon1"
+          placement="bottom"
+          ngbTooltip="The user's first or given name."
+          container="body"
+        />
+        <div
+          *ngIf="submitted && f['firstname'].errors"
+          class="invalid-feedback"
+        >
+          <div *ngIf="f['firstname'].errors['required']">
+            First Name is required
+          </div>
+        </div>
+      </div>
+      <div class="input-group mb-1">
+        <span class="input-group-text col-4" id="surname-addon1">Surname*</span>
+        <input
+          type="text"
+          class="form-control"
+          [ngClass]="{ 'is-invalid': submitted && f['surname'].errors }"
+          id="surnameInput"
+          formControlName="surname"
+          aria-label="Surname"
+          aria-describedby="surname-addon1"
+          placement="bottom"
+          ngbTooltip="The family name of the user."
+          container="body"
+        />
+        <div *ngIf="submitted && f['surname'].errors" class="invalid-feedback">
+          <div *ngIf="f['surname'].errors['required']">Surname is required</div>
+        </div>
+      </div>
+      <div class="input-group" *ngIf="user.isAdmin">
+        <span class="input-group-text col-4" id="status-label">Status</span>
+        <div class="card p-3 col-8">
+          <div class="form-check">
+            <input
+              type="checkbox"
+              formControlName="suspended"
+              class="form-check-input"
+              placement="bottom"
+              ngbTooltip="When checked the user will not be able to log in."
+              container="body"
+              id="suspendedUserCheckbox"
+            />
+            <label class="form-check-label" for="suspendedUserCheckbox">
+              Suspended User
+            </label>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <div *ngIf="!isUserAdd">
@@ -188,7 +188,7 @@
   </div>
   <div class="form-row">
     <div class="col-sm-6 mb-1">
-      <span>Password</span>
+      <span>Password*</span>
       <input
         type="password"
         id="passwordInput"
@@ -230,6 +230,9 @@
         </div>
       </div>
     </div>
+  </div>      
+  <div>
+    <small>* Required</small>
   </div>
 
   <div class="row mb-2"></div>

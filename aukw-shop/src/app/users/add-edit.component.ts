@@ -86,7 +86,7 @@ export class UserAddEditComponent implements OnInit {
         suspended: [false],
         email: [null, [Validators.email]],
         title: [null],
-        shopid: ['', Validators.required],
+        shopid: [''],
         username: ['', [Validators.required]],
         role: ['', Validators.required],
         password: [
