@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 import { AuditLogComponent } from './auditlog';
 import { CallbackComponent } from './callback';
+import { QuickbooksconnectionComponent } from './quickbooksconnection';
 import { HomeComponent } from './home';
 import { LoginComponent } from './login';
 import { authGuard } from './_helpers';
@@ -44,6 +45,7 @@ export const APP_ROUTES: Routes = [
   {
     path: 'auditlog',
     component: AuditLogComponent,
+    canActivate: [authGuard],
     data: { roles: [Role.Admin] },
   },
   {
@@ -57,6 +59,13 @@ export const APP_ROUTES: Routes = [
     path: 'takings',
     loadChildren: takingsRoutes,
     canActivate: [authGuard],
+  },
+  
+  {
+    path: 'quickbooksconnection',
+    component: QuickbooksconnectionComponent,
+    canActivate: [authGuard],
+    data: { roles: [Role.Admin] },
   },
 
   // otherwise redirect to home

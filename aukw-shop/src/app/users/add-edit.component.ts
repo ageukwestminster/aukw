@@ -21,7 +21,7 @@ import {
 } from '@app/_services';
 import { MustMatch } from '@app/_helpers';
 import { ApiMessage, Shop, User, UserFormMode } from '@app/_models';
-import { QBConnectionListComponent } from '@app/shared';
+
 
 @Component({
   templateUrl: 'add-edit.component.html',
@@ -31,7 +31,6 @@ import { QBConnectionListComponent } from '@app/shared';
     NgClass,
     NgIf,
     ReactiveFormsModule,
-    QBConnectionListComponent,
   ],
 })
 export class UserAddEditComponent implements OnInit {
