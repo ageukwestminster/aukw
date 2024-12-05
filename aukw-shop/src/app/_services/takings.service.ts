@@ -17,11 +17,14 @@ const realmID = `${environment.qboEnterprisesRealmID}`;
 export class TakingsService {
   constructor(private http: HttpClient) {}
 
-  getByShopID(shopid: number) : Observable<Takings[]> {
+  getByShopID(shopid: number): Observable<Takings[]> {
     return this.http.get<Takings[]>(`${baseUrl}/shop/${shopid}`);
   }
 
-  getSummary(shopid: number, urlParameters: string) : Observable<TakingsSummary[]> {
+  getSummary(
+    shopid: number,
+    urlParameters: string,
+  ): Observable<TakingsSummary[]> {
     return this.http.get<TakingsSummary[]>(
       `${environment.apiUrl}/report/takingssummary/shop/${shopid}?${urlParameters}`,
     );
@@ -37,7 +40,7 @@ export class TakingsService {
     );
   }
 
-  getById(id: number) : Observable<Takings> {
+  getById(id: number): Observable<Takings> {
     return this.http.get<Takings>(`${baseUrl}/${id}`);
   }
 
@@ -45,19 +48,22 @@ export class TakingsService {
     return this.http.get<Takings>(`${baseUrl}/most-recent/${shopid}`);
   }
 
-  create(params: any) : Observable<ApiMessage>{
+  create(params: any): Observable<ApiMessage> {
     return this.http.post<ApiMessage>(baseUrl, params);
   }
 
-  update(id: number, params: any) : Observable<ApiMessage> {
+  update(id: number, params: any): Observable<ApiMessage> {
     return this.http.put<ApiMessage>(`${baseUrl}/${id}`, params);
   }
 
-  delete(id: number) : Observable<ApiMessage> {
+  delete(id: number): Observable<ApiMessage> {
     return this.http.delete<ApiMessage>(`${baseUrl}/${id}`);
   }
 
-  patchQuickbooks(id: number, quickbooksStatus: boolean) : Observable<ApiMessage> {
+  patchQuickbooks(
+    id: number,
+    quickbooksStatus: boolean,
+  ): Observable<ApiMessage> {
     const qb_status = { quickbooks: quickbooksStatus ? 1 : 0 };
     return this.http.patch<ApiMessage>(`${baseUrl}/${id}`, qb_status);
   }

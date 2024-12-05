@@ -36,9 +36,7 @@ export class QBConnectionService {
    * @returns
    */
   getAll() {
-    return this.http.get<QBConnectionDetails[]>(
-      `${baseUrl}/connections`,
-    );
+    return this.http.get<QBConnectionDetails[]>(`${baseUrl}/connections`);
   }
 
   getAuthUri() {
@@ -46,12 +44,12 @@ export class QBConnectionService {
   }
 
   delete(realmid: string) {
-    return this.http.delete<ApiMessage>(
-      `${baseUrl}/${realmid}/connection`,
-    );
+    return this.http.delete<ApiMessage>(`${baseUrl}/${realmid}/connection`);
   }
 
   refresh(realmid: string, linkcreatoruserid: number) {
-    return this.http.get<ApiMessage>(`${baseUrl}/${realmid}/refresh/${linkcreatoruserid}`);
+    return this.http.get<ApiMessage>(
+      `${baseUrl}/${realmid}/refresh/${linkcreatoruserid}`,
+    );
   }
 }
