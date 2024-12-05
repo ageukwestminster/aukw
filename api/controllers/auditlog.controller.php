@@ -12,7 +12,7 @@ use DateTime;
 class AuditLogCtl{
 
   /**
-   * Return details of all Audit Log entries
+   * Return details of all Audit Log entries, with filtering via parameters
    * 
    * @return void Output is echo'd directly to response 
    */

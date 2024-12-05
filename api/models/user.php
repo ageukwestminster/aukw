@@ -174,9 +174,9 @@ class User{
         // sanitize
         $this->username=htmlspecialchars(strip_tags($this->username));
         $this->firstname=htmlspecialchars(strip_tags($this->firstname));
-        $this->surname=htmlspecialchars(strip_tags($this->surname));
-        $this->email=htmlspecialchars(strip_tags($this->email));
-        $this->title=htmlspecialchars(strip_tags($this->title));
+        $this->surname=htmlspecialchars(strip_tags($this->surname ?? ''));
+        $this->email=htmlspecialchars(strip_tags($this->email ?? ''));
+        $this->title=htmlspecialchars(strip_tags($this->title ?? ''));
         $this->role=htmlspecialchars(strip_tags($this->role));
         $this->failedloginattempts=filter_var($this->failedloginattempts, FILTER_SANITIZE_NUMBER_INT);
         $this->shopid=filter_var($this->shopid, FILTER_SANITIZE_NUMBER_INT);

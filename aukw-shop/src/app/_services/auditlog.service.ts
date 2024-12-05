@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuditLogService {
-  readonly auditLogUri = `${environment.apiUrl}/auditlog`;
+  private readonly auditLogUri = `${environment.apiUrl}/auditlog`;
 
   constructor(private http: HttpClient) {}
 
@@ -22,6 +22,8 @@ export class AuditLogService {
   }
 
   log(user: User, eventtype: string, description: string, objecttype?: string, objectid?: number) {
+
+    if (!user || (user && !user.id)) return;
 
     let logentry = new AuditLog();
     logentry.userid = user.id;

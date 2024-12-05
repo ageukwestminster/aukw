@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule, NgClass, NgIf } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
@@ -17,9 +17,10 @@ import {
   AlertService,
   AuthenticationService,
   ShopService,
+  AuditLogService,
 } from '@app/_services';
 import { MustMatch } from '@app/_helpers';
-import { Shop, User, UserFormMode } from '@app/_models';
+import { ApiMessage, Shop, User, UserFormMode } from '@app/_models';
 import { QBConnectionListComponent } from '@app/shared';
 
 @Component({
@@ -42,15 +43,17 @@ export class UserAddEditComponent implements OnInit {
   submitted = false;
   user!: User;
 
+  private formBuilder = inject(FormBuilder);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private userService = inject(UserService);
+  private alertService = inject(AlertService);
+  private authenticationService = inject(AuthenticationService);
+  private shopService = inject(ShopService);
+  private location = inject(Location);
+  private auditLogService = inject(AuditLogService);
+
   constructor(
-    private formBuilder: FormBuilder,
-    private route: ActivatedRoute,
-    private router: Router,
-    private userService: UserService,
-    private alertService: AlertService,
-    private authenticationService: AuthenticationService,
-    private shopService: ShopService,
-    private location: Location,
   ) {
     this.user = this.authenticationService.userValue;
     this.shops$ = this.shopService.getAll();
@@ -160,11 +163,19 @@ export class UserAddEditComponent implements OnInit {
   private createUser() {
     this.userService
       .create(this.form.value)
-      .subscribe(() => {
+      .subscribe((msg : ApiMessage) => {
         this.alertService.success('User added', { keepAfterRouteChange: true });
         this.router.navigate(['../'], { relativeTo: this.route });
+        this.auditLogService.log(
+          this.user, 
+          "INSERT",
+          msg.message,
+          "user",
+          msg.id);
       })
-      .add(() => (this.loading = false));
+      .add(() => {
+        this.loading = false;        
+      });
   }
 
   private updateUser() {

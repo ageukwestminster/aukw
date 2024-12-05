@@ -80,6 +80,31 @@
                 <a class="btn btn-link" (click)="onRefreshPressed()">Refresh</a>
               </div>
             </div>
+            <div class="row">
+              <div class="col-sm-2">
+                <div class="input-group">
+                  <span class="input-group-text col-6" id="status-label"
+                    >User</span
+                  >
+                  <select
+                    formControlName="userid"
+                    #useridSelect
+                    id="useridSelect"
+                    name="useridSelect"
+                    class="form-control"
+                    (change)="onUseridChanged(useridSelect.value)"
+                  >
+                    <option selected [ngValue]="null">Any</option>
+                    <option
+                      *ngFor="let user of users$ | async"
+                      [ngValue]="user.id"
+                    >
+                      {{ user.username }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
           </ng-template>
         </div>
       </div>

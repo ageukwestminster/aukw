@@ -85,7 +85,7 @@ export class AuthenticationService {
           user.isAdmin = user && user.role && user.role === Role.Admin; // Add extra property
           this.userSubject.next(user);
           this.startRefreshTokenTimer();
-          this.auditLogService.log(user, "LOGIN", "User has logged in.");
+          this.auditLogService.log(user, "LOGIN", "User has logged in");
           return user;
         }),
       );
@@ -98,7 +98,7 @@ export class AuthenticationService {
    * redirects the user to the login page.
    */
   logout() {
-    this.auditLogService.log(this.userSubject.value, "LOGOUT", "User has logged out.");
+    this.auditLogService.log(this.userSubject.value, "LOGOUT", "User has logged out");
     this.http
       .delete<any>(`${environment.apiUrl}/auth`, {
         withCredentials: true,

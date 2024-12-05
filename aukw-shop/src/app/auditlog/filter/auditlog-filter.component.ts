@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
 import { CommonModule, KeyValue, NgFor, NgIf } from '@angular/common';
 import {
   FormBuilder,
@@ -11,7 +11,6 @@ import {
   NgbDatepickerModule,
   NgbDateStruct,
 } from '@ng-bootstrap/ng-bootstrap';
-import { environment } from '@environments/environment';
 import { Observable, BehaviorSubject } from 'rxjs';
 
 import {
@@ -19,8 +18,9 @@ import {
   DateRangeEnum,
   AuditLogFilter,
   AuditLog,
+  User,
 } from '@app/_models';
-import { AuditLogService } from '@app/_services';
+import { AuditLogService, UserService } from '@app/_services';
 import { DateRangeAdapter } from '@app/_helpers';
 
 @Component({
@@ -51,12 +51,16 @@ export class AuditLogFilterComponent implements OnInit {
   filter$: Observable<AuditLogFilter> = this.filterSubject.asObservable();
   working: boolean = false;
   panelOpen: boolean = false;
+  users$: Observable<User[]>;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private dateRangeAdapter: DateRangeAdapter,
-    private auditLogService: AuditLogService,
-  ) {}
+  private formBuilder = inject(FormBuilder);
+  private dateRangeAdapter = inject(DateRangeAdapter);
+  private auditLogService = inject(AuditLogService);
+  private userService = inject(UserService);
+
+  constructor() {
+    this.users$ = this.userService.getAll();
+  }
 
   get f() {
     return this.form.controls;
@@ -67,6 +71,7 @@ export class AuditLogFilterComponent implements OnInit {
       dateRange: [DateRangeEnum.THIS_YEAR],
       startDate: [null],
       endDate: [null],
+      userid: [null],
     });
 
     this.onDateRangeChanged(DateRangeEnum.THIS_YEAR);
@@ -112,9 +117,22 @@ export class AuditLogFilterComponent implements OnInit {
     this.refreshSummary(dtRng.startDate, dtRng.endDate);
   }
 
-  refreshSummary(startDate: string, endDate: string) {
+  onUseridChanged(value: string | null) {
+    if (value == null || value.startsWith('0')) {
+      this.refreshSummary(this.f['startDate'].value, this.f['endDate'].value)
+    } else {
+      this.refreshSummary(this.f['startDate'].value, this.f['endDate'].value, this.f['userid'].value)
+    }
+  }
+
+  refreshSummary(startDate: string, endDate: string, userid?: string) {
+
     var str = `start=${startDate!}`;
     str = str.concat('&', 'end=', endDate);
+
+    if (userid) {
+      str = str.concat('&', 'userid=', userid);
+    }  
 
     this.auditLogService
       .getFilteredList(str)

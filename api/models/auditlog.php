@@ -84,6 +84,8 @@ class AuditLog{
             $query .= "AND u.id=:userid";
         }
 
+        $query .= " ORDER BY timestamp DESC";
+
         $stmt = $this->conn->prepare( $query );
 
         if (isset($userid)) {
