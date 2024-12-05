@@ -1,11 +1,11 @@
 /**
  * For a given employee, identified by payrollNumber, store whether their salary amounts are recorded in
- * Quickbooks. Four different flags are used to cover all the dimensions of their pay.
+ * QuickBooks. Four different flags are used to cover all the dimensions of their pay.
  */
 export class QBTransactionFlags {
-  /** 'True' if the amount of Employer NI for this employee has been recorded in Quickbooks. */
+  /** 'True' if the amount of Employer NI for this employee has been recorded in QuickBooks. */
   employerNI: boolean;
-  /** 'True' if the Employer pension amount for this employee has been recorded in Quickbooks. */
+  /** 'True' if the Employer pension amount for this employee has been recorded in QuickBooks. */
   pensionBill: boolean;
   /** 'True' if the employee's salary and deductions have been booked in QBO.  */
   employeeJournal: boolean;

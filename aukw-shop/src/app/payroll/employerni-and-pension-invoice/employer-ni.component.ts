@@ -30,7 +30,7 @@ export class EmployerNiComponent extends BasePayrollTransactionComponent<LineIte
   }
 
   /**
-   * Create a single new journal entry in the Charity Quickbooks file that records the Employer NI amounts and
+   * Create a single new journal entry in the Charity QuickBooks file that records the Employer NI amounts and
    * account and class allocations for each employee.
    */
   createTransaction() {
@@ -45,9 +45,9 @@ export class EmployerNiComponent extends BasePayrollTransactionComponent<LineIte
         .createEmployerNIJournal(filteredTransactions, this.payrollDate)
         .pipe(
           this.loadingIndicatorService.createObserving({
-            loading: () => 'Adding employer NI journal to Quickbooks',
+            loading: () => 'Adding employer NI journal to QuickBooks',
             success: (result) =>
-              `Successfully created journal with id=${result.id} in Quickbooks.`,
+              `Successfully created journal with id=${result.id} in QuickBooks.`,
             error: (err) => `${err}`,
           }),
           shareReplay(1),
@@ -57,7 +57,7 @@ export class EmployerNiComponent extends BasePayrollTransactionComponent<LineIte
             this.auditLogService.log(
               this.authenticationService.userValue,
               "INSERT",
-              `Added employer NI journal with id=${result.id} to Quickbooks`,
+              `Added employer NI journal with id=${result.id} to QuickBooks`,
               "General Journal",
               result.id
             );
@@ -74,7 +74,7 @@ export class EmployerNiComponent extends BasePayrollTransactionComponent<LineIte
         });
     } else {
       this.alertService.info(
-        'There are no entries to add: they are all in Quickbooks already.',
+        'There are no entries to add: they are all in QuickBooks already.',
       );
     }
   }

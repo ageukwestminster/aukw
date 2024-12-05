@@ -31,7 +31,7 @@ export class EmployeeAllocationsComponent implements OnInit {
       .getAllocations()
       .pipe(
         this.loadingIndicatorService.createObserving({
-          loading: () => 'Querying Quickbooks for project allocations.',
+          loading: () => 'Querying QuickBooks for project allocations.',
           success: () => 'Allocations retrieved.',
           error: (err) => `${err}`,
         }),

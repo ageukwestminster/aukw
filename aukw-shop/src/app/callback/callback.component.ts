@@ -54,7 +54,7 @@ export class CallbackComponent implements OnInit {
         }
       },
       error: (error) => {
-        this.alertService.error('Quickbooks Callback failed: ' + error, {
+        this.alertService.error('QuickBooks Callback failed: ' + error, {
           autoClose: false,
         });
       },

@@ -44,7 +44,7 @@ export class ShopJournalComponent extends BasePayrollTransactionComponent<IrisPa
             returnArray.push(
               new IrisPayslip({
                 payrollNumber: payslip.payrollNumber,
-                QuickBooksId: employeeName.QuickBooksId,
+                quickbooksId: employeeName.quickbooksId,
                 employeeName: employeeName.name,
                 totalPay: payslip.totalPay,
                 employerNI: payslip.employerNI,

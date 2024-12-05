@@ -4,7 +4,7 @@ import { PayrollIdentifier } from '@app/_interfaces/payroll-identifier';
 export class PayrollJournalEntry implements PayrollIdentifier {
   /** Iris payroll number for employee */
   payrollNumber: number;
-  /** Quickbooks employee id */
+  /** QuickBooks employee id */
   quickbooksId: number;
   /** Gross monthly salary, split into allocated amounts */
   totalPay: LineItemDetail[];

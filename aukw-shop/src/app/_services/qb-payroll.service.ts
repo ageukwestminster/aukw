@@ -22,7 +22,7 @@ import {
 const baseUrl = `${environment.apiUrl}/qb`;
 
 /**
- * This class performs a number of payroll-related tasks on Quickbooks
+ * This class performs a number of payroll-related tasks on QuickBooks
  */
 @Injectable({ providedIn: 'root' })
 export class QBPayrollService {
@@ -61,12 +61,12 @@ export class QBPayrollService {
   }
 
   /**
-   * Query Quickbooks online for all payroll-related transactions for a given
+   * Query QuickBooks online for all payroll-related transactions for a given
    * month and year. The payroll transactions are identified by having a DocNumber
    * of the format 'Payroll-YYYY-MM....'.
    * The transactions are then converted by the API into IrisPayslip objects for
    * each employee.
-   * @param realmID The Quickbooks ID of the company file.
+   * @param realmID The QuickBooks ID of the company file.
    * @param payrollDate The transaction date of the journal entry.
    * @returns An array of payslips, one for each employee, or an empty array.
    */
@@ -82,7 +82,7 @@ export class QBPayrollService {
    * employee salary costs must be allocated to what account/class pairs.
    * There will be one or more objects for each employee. The sum of the percentages
    * for each employee must be 100.0.
-   * The allocations are stored in the Charity Quickbooks file as a recurring transaction.
+   * The allocations are stored in the Charity QuickBooks file as a recurring transaction.
    * @returns An array of percentage allocations, one or more for each employee, or an empty array.
    */
   getAllocations(): Observable<EmployeeAllocation[]> {
@@ -94,7 +94,7 @@ export class QBPayrollService {
   }
 
   /**
-   * Create a new journal entry in the Charity Quickbooks file that records the Employer NI amounts and
+   * Create a new journal entry in the Charity QuickBooks file that records the Employer NI amounts and
    * account and class allocations.
    * @param params An array of LineItemDetails that specify the employee NI amount and account/class pairs.
    * @param payrollDate The transaction date of the journal entry.
@@ -111,7 +111,7 @@ export class QBPayrollService {
   }
 
   /**
-   * Create a new general journal entry in the Charity Quickbooks file that records the salary and deductions
+   * Create a new general journal entry in the Charity QuickBooks file that records the salary and deductions
    * for a single employee.
    * @param params An array of PayrollJournalEntry that specify the employee salary and deductions and account/class pairs.
    * @param payrollDate The transaction date of the journal entry.
@@ -125,7 +125,7 @@ export class QBPayrollService {
   }
 
   /**
-   * Create a new pension invoice in the Charity Quickbooks file that records the Employer pension amounts
+   * Create a new pension invoice in the Charity QuickBooks file that records the Employer pension amounts
    * and account and class allocations.
    * @param params An array that specify the employee pension amount and account/class pairs.
    * @param payrollDate The transaction date of the journal entry.
@@ -139,7 +139,7 @@ export class QBPayrollService {
   }
 
   /**
-   * Create a new general journal entry in the shop Quickbooks file that records the cost of employing
+   * Create a new general journal entry in the shop QuickBooks file that records the cost of employing
    * the shop employees.
    * @param params An array that specifies the employee costs
    * @param payrollDate The transaction date of the journal entry.
@@ -153,7 +153,7 @@ export class QBPayrollService {
   }
 
   /**
-   * Set the 'in Charity Quickbooks' flags for a given array of payslips. There are 3 flags:
+   * Set the 'in Charity QuickBooks' flags for a given array of payslips. There are 3 flags:
    *  i) Is the employer NI amount entered in QB?
    *  ii) Are the employee salary and deductions entered in QB?
    *  iii) Is the employer pension amount entered in QB?
@@ -202,7 +202,7 @@ export class QBPayrollService {
   }
 
   /**
-   * Set the 'in Enterprises Quickbooks' flag for a given array of payslips. The flags is
+   * Set the 'in Enterprises QuickBooks' flag for a given array of payslips. The flags is
    * set or unset by reference to the employee salary, employer NI and employer pension amounts.
    * The function takes the given payslips, sets or unsets the boolean flags for each payslip
    * and then returns the amended array of payslips.

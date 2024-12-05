@@ -23,7 +23,7 @@ import { QBTransactionFlags } from './qb-payslip-flags';
 export class IrisPayslip {
   /** Iris payroll number for employee */
   payrollNumber: number;
-  /** Quickbooks employee id */
+  /** QuickBooks employee id */
   quickbooksId: number;
   /** Display name of employee */
   employeeName: string;

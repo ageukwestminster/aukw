@@ -41,7 +41,7 @@ export class AllocatedCostsListComponent implements OnChanges {
 
   /**
    * Check if the values contianed in the given LineItemDetail have been flagged as having already been
-   * entered in Quickbooks.
+   * entered in QuickBooks.
    * @param line The details of the entry
    * @returns 'True' if already in QBO.
    */

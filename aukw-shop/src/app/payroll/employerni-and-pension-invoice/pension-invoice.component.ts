@@ -51,7 +51,7 @@ export class PensionInvoiceComponent extends BasePayrollTransactionComponent<Lin
   }
 
   /**
-   * Create a single new invoice in the Charity Quickbooks file that records the pension amounts and
+   * Create a single new invoice in the Charity QuickBooks file that records the pension amounts and
    * account and class allocations for each employee.
    */
   createTransaction() {
@@ -78,9 +78,9 @@ export class PensionInvoiceComponent extends BasePayrollTransactionComponent<Lin
         )
         .pipe(
           this.loadingIndicatorService.createObserving({
-            loading: () => `Adding pension invoice to Quickbooks`,
+            loading: () => `Adding pension invoice to QuickBooks`,
             success: (result) =>
-              `Successfully created pension invoice with id=${result.id} in Quickbooks.`,
+              `Successfully created pension invoice with id=${result.id} in QuickBooks.`,
             error: (err) => `${err}`,
           }),
           shareReplay(1),
@@ -90,7 +90,7 @@ export class PensionInvoiceComponent extends BasePayrollTransactionComponent<Lin
             this.auditLogService.log(
               this.authenticationService.userValue,
               "INSERT",
-              `Added pension invoice journal with id=${result.id} to Quickbooks`,
+              `Added pension invoice journal with id=${result.id} to QuickBooks`,
               "General Journal",
               result.id
             );
@@ -107,7 +107,7 @@ export class PensionInvoiceComponent extends BasePayrollTransactionComponent<Lin
         });
     } else {
       this.alertService.info(
-        'There are no entries to add: they are all in Quickbooks already.',
+        'There are no entries to add: they are all in QuickBooks already.',
       );
     }
   }

@@ -87,7 +87,7 @@ export class TakingsRowComponent {
               formatDate(this.takings.date, 'dd-MMM', 'en_GB'),
             { keepAfterRouteChange: true },
           );
-          this.takings.quickbooks = true; // Quickbooks is now updated
+          this.takings.quickbooks = true; // QuickBooks is now updated
           this.takings.isUpdating = false;
           this.onTakingsAddedToQB.emit(this.takings); // refresh screen
         },
@@ -95,7 +95,7 @@ export class TakingsRowComponent {
           this.alertService.error(
             'Daily sales for ' +
               formatDate(this.takings.date, 'dd-MMM-yy', 'en_GB') +
-              ' not added to Quickbooks. Error message: "' +
+              ' not added to QuickBooks. Error message: "' +
               error.message +
               '"',
             { autoClose: false },

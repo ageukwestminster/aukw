@@ -134,9 +134,9 @@ export class TakingsListComponent implements OnInit {
         }),
         this.loadingIndicatorService.createObserving({
           loading: () =>
-            `Adding daily sales receipts to Enterprises Quickbooks`,
+            `Adding daily sales receipts to Enterprises QuickBooks`,
           success: (result) =>
-            `Successfully added ${result.length} sales receipts to Quickbooks.`,
+            `Successfully added ${result.length} sales receipts to QuickBooks.`,
           error: (err) => `${err}`,
         }),
         shareReplay(1),

@@ -34,7 +34,7 @@ export class EmployeeJournalsComponent extends BasePayrollTransactionComponent<P
   }
 
   /**
-   * Create a set of new journals in the Charity Quickbooks file that records the salary,
+   * Create a set of new journals in the Charity QuickBooks file that records the salary,
    * deductions and net pay amounts for each employee.
    */
   createTransaction() {
@@ -56,15 +56,15 @@ export class EmployeeJournalsComponent extends BasePayrollTransactionComponent<P
             this.auditLogService.log(
               this.authenticationService.userValue,
               "INSERT",
-              `Added employee payslip journal with id=${result.id} to Quickbooks`,
+              `Added employee payslip journal with id=${result.id} to QuickBooks`,
               "General Journal",
               result.id
             );
           }),
           toArray(),
           this.loadingIndicatorService.createObserving({
-            loading: () => `Adding employee journals to Charity Quickbooks`,
-            success: (result) => `Successfully created ${result.length} journals in Quickbooks.`,
+            loading: () => `Adding employee journals to Charity QuickBooks`,
+            success: (result) => `Successfully created ${result.length} journals in QuickBooks.`,
             error: (err) => `${err}`,
           }),
           shareReplay(1),
@@ -80,7 +80,7 @@ export class EmployeeJournalsComponent extends BasePayrollTransactionComponent<P
         });
     } else {
       this.alertService.info(
-        'There are no entries to add: they are all in Quickbooks already.',
+        'There are no entries to add: they are all in QuickBooks already.',
       );
     }
   }

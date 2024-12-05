@@ -87,7 +87,7 @@ export class UploadPayslipsComponent implements OnInit {
 
         if (!allocation) {
           throw new Error(
-            'The recurring transaction in Quickbooks that ' +
+            'The recurring transaction in QuickBooks that ' +
               `defines the class allocations does not have an entry for '${payslip.employeeName}'.` +
               ` Please add them to the salary allocations recurring transaction and then try again.`,
           );
@@ -119,7 +119,7 @@ export class UploadPayslipsComponent implements OnInit {
   }
 
   /**
-   * Set the 'in Quickbooks' flags for the array of payslips that is held in the
+   * Set the 'in QuickBooks' flags for the array of payslips that is held in the
    * instance variable 'payslips'. There are 4 flags:
    *  i) Is the employer NI amount entered in QB?
    *  ii) Are the employee salary and deductions entered in QB?
@@ -140,8 +140,8 @@ export class UploadPayslipsComponent implements OnInit {
         }),
         this.loadingIndicatorService.createObserving({
           loading: () =>
-            ' Querying Quickbooks to see if transactions already entered.',
-          success: () => `Successfully loaded Quickbooks transactions.`,
+            ' Querying QuickBooks to see if transactions already entered.',
+          success: () => `Successfully loaded QuickBooks transactions.`,
           error: (err) => `${err}`,
         }),
         shareReplay(1),

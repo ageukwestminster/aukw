@@ -3,7 +3,7 @@
  */
 export class EmployeeName {
   /**
-   * The id of the Employee in Quickbooks. This will vary by realm.
+   * The id of the Employee in QuickBooks. This will vary by realm.
    */
   quickbooksId: number;
   /**

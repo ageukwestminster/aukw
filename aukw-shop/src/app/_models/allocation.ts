@@ -6,7 +6,7 @@
 export class EmployeeAllocation {
   /** Iris payroll number for employee */
   payrollNumber: number;
-  /** Quickbooks employee id */
+  /** QuickBooks employee id */
   quickbooksId: number;
   /** 'True' if the employee works in the shop */
   isShopEmployee: boolean = false;

@@ -23,7 +23,7 @@ export function errorInterceptor(
       if (
         [401, 403].includes(err.status) &&
         authenticationService.userValue &&
-        !/\/qb\//.test(request.url) // do not logout for 401 errors from Quickbooks
+        !/\/qb\//.test(request.url) // do not logout for 401 errors from QuickBooks
       ) {
         // auto logout if 401 or 403 response returned from api
         authenticationService.logout();

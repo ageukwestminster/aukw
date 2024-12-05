@@ -4,7 +4,7 @@
  */
 export class QBFlags {
   /**
-   * Quickbooks employee id
+   * QuickBooks employee id
    */
   id: number;
   /**
