@@ -88,8 +88,10 @@ Config::write('qb.tokenendpointuri', 'https://oauth.platform.intuit.com/oauth2/v
 Config::write('qb.authscope', 'com.intuit.quickbooks.accounting openid profile email');
 Config::write('qb.responsetype', 'code');
 Config::write('qb.authstate', 'TEKP567ipruY9m'); // used to verify QBO callback
-Config::write('qb.enablelog', false);
-Config::write('qb.loglocation', 'B:\\logs');
+Config::write('qb.enablelog', true);
+Config::write('qb.loglocation', 'B:\\logs'); 
+// Note: most logging goes into developer's %temp% directory
+// Only OAuth request and response end up in qb.loglocation
 
 Config::write('qb.baseUrl', 'Production');
 Config::write('qb.clientid', 'QB_CLIENT_ID'); // env key name
