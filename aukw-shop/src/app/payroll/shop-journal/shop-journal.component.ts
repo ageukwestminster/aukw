@@ -44,7 +44,7 @@ export class ShopJournalComponent extends BasePayrollTransactionComponent<IrisPa
             returnArray.push(
               new IrisPayslip({
                 payrollNumber: payslip.payrollNumber,
-                quickbooksId: employeeName.quickbooksId,
+                QuickBooksId: employeeName.QuickBooksId,
                 employeeName: employeeName.name,
                 totalPay: payslip.totalPay,
                 employerNI: payslip.employerNI,
@@ -67,7 +67,7 @@ export class ShopJournalComponent extends BasePayrollTransactionComponent<IrisPa
   }
 
   /**
-   * Create a single new journal in the Enterprises Quickbooks file that records the salary, employer
+   * Create a single new journal in the Enterprises QuickBooks file that records the salary, employer
    * NI and pension amounts for each shop employee.
    */
   createTransaction() {
@@ -81,12 +81,23 @@ export class ShopJournalComponent extends BasePayrollTransactionComponent<IrisPa
         .createShopJournal(this.lines, this.payrollDate)
         .pipe(
           this.loadingIndicatorService.createObserving({
-            loading: () => `Adding journal to Enterprises Quickbooks`,
+            loading: () => `Adding journal to Enterprises QuickBooks`,
             success: (result) =>
-              `Successfully created journal with id=${result.id} in Quickbooks.`,
+              `Successfully created journal with id=${result.id} in QuickBooks.`,
             error: (err) => `${err}`,
           }),
           shareReplay(1),
+          
+          // Add entry to audit log
+          tap((result) => {
+            this.auditLogService.log(
+              this.authenticationService.userValue,
+              "INSERT",
+              `Added shop employees journal (with id=${result.id}) to Enterprises QuickBooks`,
+              "General Journal",
+              result.id
+            );
+          }),
         )
         .subscribe({
           error: (e) => {
@@ -99,7 +110,7 @@ export class ShopJournalComponent extends BasePayrollTransactionComponent<IrisPa
         });
     } else {
       this.alertService.info(
-        'There are no entries to add: they are all in Quickbooks already.',
+        'There are no entries to add: they are all in QuickBooks already.',
       );
     }
   }

@@ -36,6 +36,10 @@ export class QBPayrollService {
   payslips$ = this.payslipsSubject.asObservable();
   payrollDate$ = this.payrollDateSubject.asObservable();
 
+  /**
+   * Set a new value for the 2 BehaviorSubjects 
+   * @param payslips 
+   */
   sendPayslips(payslips: IrisPayslip[]) {
     this.payslipsSubject.next(payslips);
     this.payrollDateSubject.next(payslips[0].payrollDate);

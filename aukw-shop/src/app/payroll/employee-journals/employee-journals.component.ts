@@ -1,14 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import {
   IrisPayslip,
   PayrollJournalEntry,
   PayrollProcessState,
 } from '@app/_models';
-import { from, mergeMap, shareReplay, toArray } from 'rxjs';
+import { from, mergeMap, shareReplay, tap, toArray } from 'rxjs';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { BasePayrollTransactionComponent } from '../parent.component';
-import { PayrollIdentifier } from '@app/_interfaces/payroll-identifier';
+import { AuditLogService, AuthenticationService } from '@app/_services';
 
 @Component({
   selector: 'employee-journals',
@@ -18,6 +18,7 @@ import { PayrollIdentifier } from '@app/_interfaces/payroll-identifier';
   styleUrls: ['./employee-journals.component.css', '../shared.css'],
 })
 export class EmployeeJournalsComponent extends BasePayrollTransactionComponent<PayrollJournalEntry> {
+
   override recalculateTransactions() {
     if (!this.payslips.length) return;
 
@@ -51,11 +52,19 @@ export class EmployeeJournalsComponent extends BasePayrollTransactionComponent<P
               this.payrollDate,
             ),
           ),
+          tap((result) => {
+            this.auditLogService.log(
+              this.authenticationService.userValue,
+              "INSERT",
+              `Added employee payslip journal with id=${result.id} to Quickbooks`,
+              "General Journal",
+              result.id
+            );
+          }),
           toArray(),
           this.loadingIndicatorService.createObserving({
             loading: () => `Adding employee journals to Charity Quickbooks`,
-            success: (result) =>
-              `Successfully created ${result.length} journals in Quickbooks.`,
+            success: (result) => `Successfully created ${result.length} journals in Quickbooks.`,
             error: (err) => `${err}`,
           }),
           shareReplay(1),

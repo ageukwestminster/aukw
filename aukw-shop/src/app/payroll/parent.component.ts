@@ -1,7 +1,9 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { EmployeeAllocation, IrisPayslip } from '@app/_models';
+import { EmployeeAllocation, IrisPayslip, User } from '@app/_models';
 import {
   AlertService,
+  AuditLogService, 
+  AuthenticationService,
   LoadingIndicatorService,
   QBPayrollService,
   PayrollService,
@@ -31,6 +33,8 @@ export abstract class BasePayrollTransactionComponent<
   protected alertService = inject(AlertService);
   private destroyRef = inject(DestroyRef);
   protected stateService = inject(PayrollProcessStateService);
+  protected auditLogService = inject(AuditLogService);
+  protected authenticationService = inject(AuthenticationService);
 
   ngOnInit() {
     const destroyed = new Subject();

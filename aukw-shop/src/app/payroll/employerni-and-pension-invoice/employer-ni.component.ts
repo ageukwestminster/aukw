@@ -51,6 +51,17 @@ export class EmployerNiComponent extends BasePayrollTransactionComponent<LineIte
             error: (err) => `${err}`,
           }),
           shareReplay(1),
+
+          // Add entry to audit log
+          tap((result) => {
+            this.auditLogService.log(
+              this.authenticationService.userValue,
+              "INSERT",
+              `Added employer NI journal with id=${result.id} to Quickbooks`,
+              "General Journal",
+              result.id
+            );
+          }),
         )
         .subscribe({
           error: (e) => {
