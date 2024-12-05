@@ -2,7 +2,7 @@
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 
 import { environment } from '@environments/environment';
 import { Role, User } from '@app/_models';
@@ -98,19 +98,23 @@ export class AuthenticationService {
    * redirects the user to the login page.
    */
   logout() {
-    this.auditLogService.log(
-      this.userSubject.value,
-      'LOGOUT',
-      'User has logged out',
-    );
-    this.http
-      .delete<any>(`${environment.apiUrl}/auth`, {
-        withCredentials: true,
-      })
-      .subscribe();
-    this.stopRefreshTokenTimer();
-    this.userSubject.next(new User());
-    this.router.navigate(['/login']);
+
+    // Note about order of execution:
+    // Must insert log entry before logging out, oitherwise not authorized
+    this.auditLogService
+      .logAsync(this.userSubject.value, 'LOGOUT', 'User has logged out')
+      .pipe(
+        switchMap(() => {
+          return this.http.delete<any>(`${environment.apiUrl}/auth`, {
+            withCredentials: true,
+          });
+        })
+      )
+      .subscribe(() => {
+        this.stopRefreshTokenTimer();
+        this.userSubject.next(new User());
+        this.router.navigate(['/login']);
+      });
   }
 
   /**

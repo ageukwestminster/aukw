@@ -2,8 +2,8 @@
 import { HttpClient } from '@angular/common/http';
 
 import { environment } from '@environments/environment';
-import { AuditLog, User } from '@app/_models';
-import { Observable } from 'rxjs';
+import { ApiMessage, AuditLog, User } from '@app/_models';
+import { Observable, of } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuditLogService {
@@ -11,18 +11,21 @@ export class AuditLogService {
 
   constructor(private http: HttpClient) {}
 
-  getAll() : Observable<AuditLog[]> {
+  getAll(): Observable<AuditLog[]> {
     return this.http.get<AuditLog[]>(this.auditLogUri);
   }
 
-  getFilteredList(urlParameters: string) : Observable<AuditLog[]> {
-    return this.http.get<AuditLog[]>(
-      `${this.auditLogUri}/?${urlParameters}`,
-    );
+  getFilteredList(urlParameters: string): Observable<AuditLog[]> {
+    return this.http.get<AuditLog[]>(`${this.auditLogUri}/?${urlParameters}`);
   }
 
-  log(user: User, eventtype: string, description: string, objecttype?: string, objectid?: number) {
-
+  log(
+    user: User,
+    eventtype: string,
+    description: string,
+    objecttype?: string,
+    objectid?: number,
+  ) {
     if (!user || (user && !user.id)) return;
 
     let logentry = new AuditLog();
@@ -32,9 +35,26 @@ export class AuditLogService {
     if (objecttype) logentry.objecttype = objecttype;
     if (objectid) logentry.objectid = objectid;
 
-    this.http
-      .post(this.auditLogUri, logentry)
-      .subscribe();
+    this.http.post(this.auditLogUri, logentry).subscribe();
   }
 
+  logAsync(
+    user: User,
+    eventtype: string,
+    description: string,
+    objecttype?: string,
+    objectid?: number,
+  ): Observable<ApiMessage> {
+    if (!user || (user && !user.id))
+      return of(new ApiMessage({ message: 'No user supplied' }));
+
+    let logentry = new AuditLog();
+    logentry.userid = user.id;
+    logentry.eventtype = eventtype;
+    logentry.description = description;
+    if (objecttype) logentry.objecttype = objecttype;
+    if (objectid) logentry.objectid = objectid;
+
+    return this.http.post<ApiMessage>(this.auditLogUri, logentry);
+  }
 }
