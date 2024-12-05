@@ -18,7 +18,6 @@ import { AuditLogService, AuthenticationService } from '@app/_services';
   styleUrls: ['./employee-journals.component.css', '../shared.css'],
 })
 export class EmployeeJournalsComponent extends BasePayrollTransactionComponent<PayrollJournalEntry> {
-
   override recalculateTransactions() {
     if (!this.payslips.length) return;
 
@@ -55,16 +54,17 @@ export class EmployeeJournalsComponent extends BasePayrollTransactionComponent<P
           tap((result) => {
             this.auditLogService.log(
               this.authenticationService.userValue,
-              "INSERT",
+              'INSERT',
               `Added employee payslip journal with id=${result.id} to QuickBooks`,
-              "General Journal",
-              result.id
+              'General Journal',
+              result.id,
             );
           }),
           toArray(),
           this.loadingIndicatorService.createObserving({
             loading: () => `Adding employee journals to Charity QuickBooks`,
-            success: (result) => `Successfully created ${result.length} journals in QuickBooks.`,
+            success: (result) =>
+              `Successfully created ${result.length} journals in QuickBooks.`,
             error: (err) => `${err}`,
           }),
           shareReplay(1),

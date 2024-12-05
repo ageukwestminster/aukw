@@ -56,10 +56,10 @@ export class EmployerNiComponent extends BasePayrollTransactionComponent<LineIte
           tap((result) => {
             this.auditLogService.log(
               this.authenticationService.userValue,
-              "INSERT",
+              'INSERT',
               `Added employer NI journal with id=${result.id} to QuickBooks`,
-              "General Journal",
-              result.id
+              'General Journal',
+              result.id,
             );
           }),
         )

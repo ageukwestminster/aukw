@@ -2,7 +2,7 @@ import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { EmployeeAllocation, IrisPayslip, User } from '@app/_models';
 import {
   AlertService,
-  AuditLogService, 
+  AuditLogService,
   AuthenticationService,
   LoadingIndicatorService,
   QBPayrollService,

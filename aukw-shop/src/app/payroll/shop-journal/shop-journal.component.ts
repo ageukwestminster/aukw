@@ -87,15 +87,15 @@ export class ShopJournalComponent extends BasePayrollTransactionComponent<IrisPa
             error: (err) => `${err}`,
           }),
           shareReplay(1),
-          
+
           // Add entry to audit log
           tap((result) => {
             this.auditLogService.log(
               this.authenticationService.userValue,
-              "INSERT",
+              'INSERT',
               `Added shop employees journal (with id=${result.id}) to Enterprises QuickBooks`,
-              "General Journal",
-              result.id
+              'General Journal',
+              result.id,
             );
           }),
         )

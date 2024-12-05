@@ -84,15 +84,15 @@ export class PensionInvoiceComponent extends BasePayrollTransactionComponent<Lin
             error: (err) => `${err}`,
           }),
           shareReplay(1),
-          
+
           // Add entry to audit log
           tap((result) => {
             this.auditLogService.log(
               this.authenticationService.userValue,
-              "INSERT",
+              'INSERT',
               `Added pension invoice journal with id=${result.id} to QuickBooks`,
-              "General Journal",
-              result.id
+              'General Journal',
+              result.id,
             );
           }),
         )
