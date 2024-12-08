@@ -43,7 +43,10 @@ class QuickbooksAuth{
 
     /**
      * Initializes a new instance of the QuickbooksAuth class. Populates the $config property
-     * with required constant values and iduser
+     * with required constant values and also with the id of the current user.
+     * 
+     * Some config values are stored as environment variables (either in http.conf or .htaccess).
+     * 
      * @return void Output is echo'd directly to response
      */
     public function __construct(){
@@ -60,7 +63,7 @@ class QuickbooksAuth{
           'scope' => \Core\Config::read('qb.authscope'),
           'redirectURI' => \Core\Config::read('qb.redirecturl'),
           'response_type' => \Core\Config::read('qb.responsetype'),
-          'state' => \Core\Config::read('qb.authstate'),
+          'state' => getenv(\Core\Config::read('qb.authstate')),
           'iduser' => $this->jwt->id,
           'enablelog' => \Core\Config::read('qb.enablelog'),
           'loglocation' => \Core\Config::read('qb.loglocation')
