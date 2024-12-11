@@ -59,7 +59,7 @@ class Headers
      * Return 'true' if the path is either of these two routes:
      * POST 'takings/' or PUT  'takings/(\d+)'
      * 
-     * @return bool 'true' if the path is for un-privilidged user data entry
+     * @return bool 'true' if the path is for unprivileged user data entry
      */
     public static function path_is_takings_dataentry($path = '') : bool
     {
@@ -71,6 +71,22 @@ class Headers
 
         return ($method === 'POST' && preg_match('/^takings/', $path)) ||
             ($method === 'PUT' && preg_match('/^takings\/(\d+)/', $path));
+    }
+
+        /**
+     * Return 'true' if the path is POST 'auditlog/'
+     * 
+     * @return bool 'true' if the path is for unprivileged user data entry
+     */
+    public static function path_is_auditlog_dataentry($path = '') : bool
+    {
+        if (empty($path)) {
+            $path = Headers::stripped_path();
+        }
+
+        $method = $_SERVER['REQUEST_METHOD'];
+
+        return ($method === 'POST' && preg_match('/^auditlog/', $path));
     }
 
     /** 

@@ -10,7 +10,9 @@
  * 2) If it is an 'auth' request then set 'Allow-Credentials' header
  * 
  * 3) Commands that affect data on the server (PUT/POST/DELETE etc.) require admin access,
- * with one exception: normal users can add new takings or update existing takings.
+ * with two exceptions: 
+ *     i) Normal users can add new takings or update existing takings.
+ *     ii) All users can create audit log entries 
  * 
  * Main routes are specified in the file {@link files/api-routes.html routes.php}
  * 
@@ -83,9 +85,12 @@ $router->before('POST|PUT|DELETE|PATCH', '/.*', function() {
         // Allow user to maintain own data
         if  (!$jwt->isAdmin && !preg_match('/user\/\d+/', $path)){
 
-            // One exception: normal users can create and update takings data
-            // Normal users can't delete takings data
-            if (!Headers::path_is_takings_dataentry($path)) {
+            // Two exceptions: 
+            //  1) normal users can create and update takings data
+            //          (Normal users can't delete takings data)
+            //  2) writing to audit log
+            if (!Headers::path_is_takings_dataentry($path)
+                && !Headers::path_is_auditlog_dataentry($path)) {
                 http_response_code(401);  
                 echo json_encode(
                     array("message" => "Must be an admin.")
