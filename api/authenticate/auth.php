@@ -34,17 +34,12 @@ $num = $stmt->rowCount();
 
 // check if more than 0 records found
 if($num>0){
- 
-    // products array
-    $takings_arr=array();
-    $takings_arr["records"]=array();
 
     // take just the first row
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
     // extract row
-    // this will make $row['name'] to
-    // just $name only
+    // this will convert $row['name'] to $name
     extract($row);
 
     if ($suspended || $failedloginattempts > 4) {
