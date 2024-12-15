@@ -1,4 +1,4 @@
- <?php
+<?php
  /**
  * Check if the user credentials provided via POST match
  * any of the credentials saved in the database.
@@ -15,12 +15,15 @@ header("Access-Control-Allow-Credentials: true");
 $db = \Core\Database::getInstance()->conn;
 $user = new \Models\User($db);
 $usertoken = new \Models\UserToken($db);
-$usernm = '';
-$pass = '';
+
+// This is the maximum number of consecutive failed login attempts 
+// before the user is suspended
 $numberPasswordAttempts = \Core\Config::read('password_attempts');
 
-// get posted data
+// Transfer data from POST body to $usernm and $pass variables
 $data = json_decode(file_get_contents("php://input"));
+$usernm = '';
+$pass = '';
 // set property values
 if (isset($data)) {
     $usernm = isset($data->username) ? $data->username : '';
@@ -32,7 +35,8 @@ $user->username = strtolower($usernm);
 $stmt = $user->readOneByUsernameStmt();
 $num = $stmt->rowCount();
 
-// check if more than 0 records found
+// check if more than 0 records found,
+// i.e. does there exist a user with that username?
 if($num>0){
 
     // take just the first row
