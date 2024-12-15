@@ -129,7 +129,7 @@ class Headers
         header("Access-Control-Allow-Credentials: true");
         
         header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS");
-        header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Content-Type, Access-Control-Allow-Headers, Authorization");
+        header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Headers, Authorization");
         header("Access-Control-Max-Age: 1728000");
         header("Content-Type: application/json; charset=UTF-8");
     }
@@ -143,7 +143,7 @@ class Headers
     {
         header("Access-Control-Allow-Origin: *");
         header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS");
-        header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Content-Type, Access-Control-Allow-Headers, Authorization");
+        header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Headers, Authorization");
         header("Access-Control-Max-Age: 1728000");
         header("Content-Type: application/json; charset=UTF-8");
     }
