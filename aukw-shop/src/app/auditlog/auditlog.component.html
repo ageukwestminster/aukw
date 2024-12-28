@@ -12,8 +12,8 @@
       <th>Date & Time</th>
       <th>User</th>
       <th>Type</th>
-      <th>Object Type</th>
-      <th>Object ID</th>
+      <th class="d-none d-sm-table-cell">Object Type</th>
+      <th class="d-none d-sm-table-cell">Object ID</th>
       <th>Description</th>
 
       <!--<th class="width-20">Date & Time</th>
@@ -29,8 +29,8 @@
       <td>{{ event.timestamp }}</td>
       <td>{{ event.fullname }}</td>
       <td>{{ event.eventtype }}</td>
-      <td>{{ event.objecttype }}</td>
-      <td>{{ event.objectid }}</td>
+      <td class="d-none d-sm-table-cell">{{ event.objecttype }}</td>
+      <td class="d-none d-sm-table-cell">{{ event.objectid }}</td>
       <td>{{ event.description }}</td>
     </tr>
   </tbody>
