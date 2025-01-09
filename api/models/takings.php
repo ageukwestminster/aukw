@@ -232,7 +232,8 @@ class Takings{
     }
 
     /**
-     * [Description for read_most_recent]
+     * Return the most recent Takings record, sorted by 'date' descending.
+     * Used by ReportCtl::takingsSummary()
      *
      * @param int $shopid
      * 
@@ -267,6 +268,8 @@ class Takings{
 
         if($row){
             return Takings::pass_row_data($row);
+        } else {
+            throw new \Exception('No takings found.');
         }
     }    
 

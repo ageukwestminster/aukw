@@ -1,0 +1,20 @@
+This is the README file for the PHP api
+
+ The entry point for the api is index.php. It loads third party scripts from '/vendor/' and
+ then requires all the php code files that make up the api. Finally it starts the 
+ router so that when the user visits api endpoints they are directed to the correct place.
+ 
+ The structure of the app is:
+ 1) The scripts in /core store constants, allow access to the database and provide helper functions
+ 2) Controller classes that provide CRUD operations on the various models.
+ 3) Model classes that retrieve/store data and contian business logic.
+ 4) Routes.php and pre_routes.php which govern app routings. Routing is provided by the vendor package @bramus/router
+ 5) Third party code resides in /vendor. The current packages as listed in composer.json are  
+       i) @bramus/router
+      ii) @lcobucci/jwt for JSON web token support
+     iii) @lcobucci/clock required for JWT packages
+      iv) @quickbooks/v3-php-sdk This is an API to the QuickBooks app provided by the owner of the application, Intuit
+       v) @pear/OLE to extract information from password-protected MS Excel spreadsheets
+      vi) @pear/pear required for OLE package
+     vii) @phpoffice/phpspreadsheet to extract information from MS Excel spreadsheets
+      
