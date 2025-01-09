@@ -214,11 +214,24 @@ class ReportCtl{
                               );
     } 
     
-    // default values are today and 3 months ago
+    // default values are:
+    // enddate: the most recent trading day, or today if none found
+    // startdate: 3 months ago before end date
     if ($startdate == '') {    
       if ($enddate == '') {           
-        $enddate = date('Y-m-d');      
+
+        // Check for the most recent shop takings in the database
+        //$most_recent_takings=array();
+        $most_recent_takings=$model->read_most_recent($shopid);
+        if ($most_recent_takings && $most_recent_takings['date']) {
+          $enddate = $most_recent_takings['date'];
+        }
+        else {
+          $enddate = date('Y-m-d');      
+        }
+
       }
+      
       $startdate = (new DateTime($enddate))->modify('-3 month')->format('Y-m-d');
     } else if ($enddate == '') {           
       $enddate = (new DateTime($startdate))->modify('+3 month')->format('Y-m-d');
@@ -241,6 +254,8 @@ class ReportCtl{
     //$model = new \Models\Takings();
 
     //echo json_encode($model->salesList($shopid, $numdatapoints), JSON_NUMERIC_CHECK);
+
+    throw new \Exception('Not implemented');
   }
   
 }
