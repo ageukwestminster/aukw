@@ -6,7 +6,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import Highcharts from 'highcharts/es-modules/masters/highstock.src.js'; // From https://github.com/highcharts/highcharts/issues/14183
-import { MovingAverageSalesChartData } from '@app/_models';
+import { MovingAverageSalesChartData } from '@app/_models'; // defined in _models/chart_data.ts
 
 /* from https://www.highcharts.com/docs/advanced-chart-features/highcharts-typescript-declarations */
 import 'highcharts/es-modules/masters/modules/accessibility.src.js';
@@ -23,12 +23,13 @@ export class MovingAverageChartComponent implements OnInit, OnChanges {
   @Input() movingAvgChartData?: MovingAverageSalesChartData;
   public options: Highcharts.Options = {
     title: {
-      text: 'Harrow Road Shop Sales',
+      text: 'Charity Shop Daily Takings',
     },
     subtitle: {
       text: 'Daily sales, rolling avg. over 1 month and 3 months',
     },
 
+    // rangeSelector is a property of stockChart only
     rangeSelector: {
       selected: 2,
       buttons: [
@@ -142,7 +143,7 @@ export class MovingAverageChartComponent implements OnInit, OnChanges {
           this.options.series[1].data = this.movingAvgChartData.avgQuarter;
         }
 
-        Highcharts.stockChart('moving-average', this.options);
+        Highcharts.stockChart('moving-average', this.options); // using HighCharts Stock 
       }
     }
   }

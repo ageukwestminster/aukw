@@ -19,7 +19,7 @@ export class SalesChartComponent implements OnInit, OnChanges {
   @Input() salesChartData?: SalesChartData;
   public options: Highcharts.Options = {
     title: {
-      text: 'Harrow Road Daily Net Sales For Last 10 Trading Days',
+      text: 'Charity Shop Daily Net Sales For Last 10 Trading Days',
     },
     subtitle: {
       text: 'Compared To Avg of Last 30 & 365 days',
