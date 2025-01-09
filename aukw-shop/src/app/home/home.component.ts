@@ -64,8 +64,8 @@ export class HomeComponent implements OnInit {
         concatMap((response) => {
           this.summary = response;
           const dtRng = this.dateRangeAdapter.enumToDateRange(
-            DateRangeEnum.THIS_YEAR,
-          );
+            DateRangeEnum.LAST_SIX_MONTHS,
+          );          
           return this.reportService.getSalesHistogram(
             dtRng.startDate,
             dtRng.endDate,

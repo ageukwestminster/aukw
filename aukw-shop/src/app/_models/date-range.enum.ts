@@ -10,6 +10,8 @@ export enum DateRangeEnum {
   LAST_QUARTER = 'Last Quarter',
   LAST_TRADING_YEAR = 'Last Trading Year',
   LAST_YEAR = 'Last Year',
+  LAST_SIX_MONTHS = 'Last Six Months',
+  LAST_TWELVE_MONTHS = 'Last Twelve Months',
   NEXT_WEEK = 'Next Week',
   NEXT_MONTH = 'Next Month',
   NEXT_QUARTER = 'Next Quarter',
