@@ -39,7 +39,7 @@ export class DateRangeAdapter {
 
     var t = new Date();
     var year = t.getFullYear();
-    var month = t.getMonth(); // The number of th emonth: January is 0, February is 1,... December is 11
+    var month = t.getMonth(); // The number of the month: January is 0, February is 1,... December is 11
     var dayOfMonth = t.getDate();
     var dayOfWeek = t.getDay();
     var today = new Date(year, month, dayOfMonth, this.NOON); // Use this.NOON so that BST -> Z time zone conversion won't affect date

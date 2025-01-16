@@ -31,7 +31,39 @@ export class SummaryService {
     return this.http.get<DepartmentSalesChartData>(deptChartUrl);
   }
 
-  getMonthlySalesChartData(shopid: number) {
+  /**
+   * Get the monthly salees data for a shop, optionally starting from a particular date
+   * @param shopid The id of the shop. Almost always equal to '1' for Harrow Road
+   * @param yearOfStartDate The year of the start date of the numbers. e.g. 2020. If not supplied the data will
+   *  start from April 2021. The year must be in 4 digit numerical format.
+   * @param monthOfStartDate The month of the start date of the numbers. e.g. 7 for July. If not supplied then
+   *  the data will start from January of the yearOfStartDate
+   * @param dayOfStartDate The day of the start date of the numbers. e.g. 15 fot the 15tyh of the month. If not
+   *  supplied then the stat wil lstart from the 1st of the month 
+   * @returns Array of MonthlySalesChartData objects
+   */
+  getMonthlySalesChartData(shopid: number, yearOfStartDate?: number, monthOfStartDate?: number, dayOfStartDate?: number) {
+    if (yearOfStartDate === undefined) {
+      return this.http.get<MonthlySalesChartData[]>(
+        monthlySalesChartUrl + `/${shopid}`,
+      );
+    } else if (monthOfStartDate === undefined){
+      return this.http.get<MonthlySalesChartData[]>(
+        monthlySalesChartUrl + `/${shopid}/${yearOfStartDate}/${monthOfStartDate}`,
+      );
+    } else if (dayOfStartDate === undefined) {
+      let month:string = (monthOfStartDate).toLocaleString(undefined, {minimumIntegerDigits: 2});
+      return this.http.get<MonthlySalesChartData[]>(
+        monthlySalesChartUrl + `/${shopid}/${yearOfStartDate}/${month}`,
+      );
+    } else {
+      let month:string = (monthOfStartDate).toLocaleString(undefined, {minimumIntegerDigits: 2});
+      let day:string = (dayOfStartDate).toLocaleString(undefined, {minimumIntegerDigits: 2});
+      return this.http.get<MonthlySalesChartData[]>(
+        monthlySalesChartUrl + `/${shopid}/${yearOfStartDate}/${month}/${day}`,
+      );
+    }
+
     return this.http.get<MonthlySalesChartData[]>(
       monthlySalesChartUrl + `/${shopid}`,
     );

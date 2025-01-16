@@ -28,10 +28,10 @@ export class MonthlySalesChartComponent implements OnInit {
       type: 'column',
     },
     title: {
-      text: 'Monthly Sales Since COVID',
+      text: 'Monthly Sales',
     },
     subtitle: {
-      text: 'Apr 2021 - Present',
+      text: 'Last 36 Months',
     },
     xAxis: {
       categories: [],
@@ -61,10 +61,10 @@ export class MonthlySalesChartComponent implements OnInit {
       type: 'column',
     },
     title: {
-      text: 'Average Daily Sales Since COVID',
+      text: 'Average Daily Sales',
     },
     subtitle: {
-      text: 'Apr 2021 - Present',
+      text: 'Last 36 Months',
     },
     xAxis: {
       categories: [],
@@ -107,10 +107,14 @@ export class MonthlySalesChartComponent implements OnInit {
   constructor(private summaryService: SummaryService) {}
 
   ngOnInit(): void {
-    // First 5 lines convert Observable<MonthlySalesChartData[]> to Observable<MonthlySalesChartData>
-    this.summaryService
-      .getMonthlySalesChartData(environment.HARROWROAD_SHOPID)
+    var t = new Date();
+    var year = t.getFullYear();
+    var month = t.getMonth(); // The number of the month: January is 0, February is 1,... December is 11
+
+    this.summaryService      
+      .getMonthlySalesChartData(environment.HARROWROAD_SHOPID, year-3, ++month)
       .pipe(
+        // These 5 lines convert Observable<MonthlySalesChartData[]> to Observable<MonthlySalesChartData>
         switchMap((dataArray: MonthlySalesChartData[]) => {
           const obs = dataArray.map((x) => {
             return of(x);
