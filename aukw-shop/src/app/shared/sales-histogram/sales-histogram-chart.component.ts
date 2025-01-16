@@ -132,25 +132,19 @@ export class SalesHistogramChartComponent implements OnInit, OnChanges {
         this.histogramChartData &&
         this.histogramChartData.data
       ) {
-        if (
-          this.options.series[1] &&
-          this.options.series[1].type === 'scatter'
-        ) {
-          this.options.series[1].data = this.histogramChartData.data;
-        }
 
+        // '<any>' statement added because type checking fails
+        (<any>this.options.series[1]).data = this.histogramChartData.data;
+        
         if (this.histogramChartData.last) {
+          
           const lastSalesDate = new Date(this.histogramChartData.last[1]);
           const lastSalesAmount = this.histogramChartData.last[2];
 
-          if (
-            this.options.series[2] &&
-            this.options.series[2].type === 'scatter'
-          ) {
-            this.options.series[2].data = [
-              [lastSalesAmount, this.YAXISPOSITION],
-            ];
-          }
+          // '<any>' statement added because type checking fails
+          (<any>this.options.series[2]).data = [
+            [lastSalesAmount, this.YAXISPOSITION],
+          ];
 
           // Set a custom Series name
           this.options.series[2]['name'] = this.isToday(lastSalesDate)
@@ -162,12 +156,12 @@ export class SalesHistogramChartComponent implements OnInit, OnChanges {
           // The numbers in the tooltip are rounded to 2 places
           // The duplicated if statement tests are to stop typescript errors
           if (
-            lastSalesAmount < this.histogramChartData.average &&
-            this.options.series[2] &&
-            this.options.series[2].type === 'scatter'
+            lastSalesAmount < this.histogramChartData.average
           ) {
-            this.options.series[2]['color'] = 'red';
-            this.options.series[2].tooltip!.pointFormat =
+            // '<any>' statement added because type checking fails
+            let series2 = <any>this.options.series[2];
+            series2['color'] = 'red';
+            series2.tooltip!.pointFormat =
               'Sales for ' +
               lastSalesDate.toDateString() +
               ' below average by £' +
@@ -175,11 +169,9 @@ export class SalesHistogramChartComponent implements OnInit, OnChanges {
                 (this.histogramChartData.average - lastSalesAmount) * 100,
               ) /
                 100;
-          } else if (
-            this.options.series[2] &&
-            this.options.series[2].type === 'scatter'
-          ) {
-            this.options.series[2].tooltip!.pointFormat =
+
+          } else {
+            (<any>this.options.series[2]).tooltip!.pointFormat =
               'Sales for ' +
               lastSalesDate.toDateString() +
               ' above average by £' +
