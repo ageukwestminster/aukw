@@ -32,7 +32,7 @@ export class SummaryService {
   }
 
   /**
-   * Get the monthly salees data for a shop, optionally starting from a particular date
+   * Get the monthly sales data for a shop, optionally starting from a particular date
    * @param shopid The id of the shop. Almost always equal to '1' for Harrow Road
    * @param yearOfStartDate The year of the start date of the numbers. e.g. 2020. If not supplied the data will
    *  start from April 2021. The year must be in 4 digit numerical format.
