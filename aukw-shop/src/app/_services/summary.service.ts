@@ -63,9 +63,5 @@ export class SummaryService {
         monthlySalesChartUrl + `/${shopid}/${yearOfStartDate}/${month}/${day}`,
       );
     }
-
-    return this.http.get<MonthlySalesChartData[]>(
-      monthlySalesChartUrl + `/${shopid}`,
-    );
   }
 }
