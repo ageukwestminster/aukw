@@ -39,7 +39,7 @@ export class SummaryService {
    * @param monthOfStartDate The month of the start date of the numbers. e.g. 7 for July. If not supplied then
    *  the data will start from January of the yearOfStartDate
    * @param dayOfStartDate The day of the start date of the numbers. e.g. 15 fot the 15tyh of the month. If not
-   *  supplied then the stat wil lstart from the 1st of the month 
+   *  supplied then the data will start from the 1st of the month 
    * @returns Array of MonthlySalesChartData objects
    */
   getMonthlySalesChartData(shopid: number, yearOfStartDate?: number, monthOfStartDate?: number, dayOfStartDate?: number) {
