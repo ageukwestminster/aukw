@@ -158,10 +158,10 @@
                 </td>
                 <td class="text-center">{{ item.is_cleared }}</td>
                 <td class="d-none d-lg-table-cell text-end">
-                  {{ increaseAmount(item.amount) | number: "1.2-2" }}
+                  {{ formatPositiveNumber(item.amount) | number: "1.2-2" }}
                 </td>
                 <td class="d-none d-lg-table-cell text-end">
-                  {{ decreaseAmount(item.amount) | number: "1.2-2" }}
+                  {{ formatNegativeNumber(item.amount) | number: "1.2-2" }}
                 </td>
                 <td class="d-table-cell d-lg-none">
                   {{ item.amount | number: "1.2-2" }}

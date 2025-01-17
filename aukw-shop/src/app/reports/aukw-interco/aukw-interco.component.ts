@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule, NgIf, NgClass } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -7,6 +7,7 @@ import {
 } from '@ng-bootstrap/ng-bootstrap';
 import { RouterLink } from '@angular/router';
 import { AlertService, QBReportService } from '@app/_services';
+import { DateRangeEnum } from '@app/_models';
 import { AbstractChartReportComponent } from '../chart-report.component';
 import { QBAccountListEntry } from '@app/_models/qb-account-list-entry';
 
@@ -24,11 +25,25 @@ import { QBAccountListEntry } from '@app/_models/qb-account-list-entry';
 })
 export class AukwIntercoComponent extends AbstractChartReportComponent<
   QBAccountListEntry[]
-> {
+> implements OnInit {
   enterprises: boolean = true;
 
   private alertService = inject(AlertService);
   private reportService = inject(QBReportService);
+
+  /**
+   * Override the default constructor ont he base class because
+   * I want to use a non-default date range, namely 'Last 6 Months'.
+   */
+  override ngOnInit() {
+    this.form = this.formBuilder.group({
+      dateRange: [DateRangeEnum.LAST_SIX_MONTHS],
+      startDate: [null],
+      endDate: [null],
+    });
+
+    this.onDateRangeChanged(DateRangeEnum.LAST_SIX_MONTHS);
+}
 
   checkboxClick() {
     this.enterprises = !this.enterprises;
@@ -49,14 +64,14 @@ export class AukwIntercoComponent extends AbstractChartReportComponent<
       });
   }
 
-  increaseAmount(amount: number | string): string {
+  formatPositiveNumber(amount: number | string): string {
     if (typeof amount === 'number' && amount > 0) {
       return String(amount);
     } else {
       return '';
     }
   }
-  decreaseAmount(amount: number | string): string {
+  formatNegativeNumber(amount: number | string): string {
     if (typeof amount === 'number' && amount <= 0) {
       return String(-amount);
     } else {
