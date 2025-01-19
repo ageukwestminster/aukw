@@ -25,8 +25,6 @@ class TakingsSummary{
         $query = "CALL sales_table(:shopid,:date)";
 
         $stmt = $this->conn->prepare( $query );
-
-        // bind id of product to be updated
         $stmt->bindParam(":shopid", $shopid, PDO::PARAM_INT);
         $stmt->bindParam(":date", $current_date, PDO::PARAM_STR);
 
@@ -89,8 +87,6 @@ class TakingsSummary{
         $query = "CALL sales_chart(:shopid,:date,:number)";
 
         $stmt = $this->conn->prepare( $query );
-
-        // bind id of product to be updated
         $stmt->bindParam(":shopid", $shopid, PDO::PARAM_INT);
         $stmt->bindParam(":date", $current_date, PDO::PARAM_STR);
         $stmt->bindParam(":number", $number_of_days, PDO::PARAM_INT);
@@ -127,6 +123,45 @@ class TakingsSummary{
         }
 
         return $chart_data;
+    }
+
+    public function avgWeeklySales($shopid){
+
+        // MySQL stored procedure
+        $query = "CALL avg_weekly_income(:shopid)";
+
+        $stmt = $this->conn->prepare( $query );
+        $stmt->bindParam(":shopid", $shopid, PDO::PARAM_INT);
+
+
+        // execute query
+        $stmt->execute();
+        $num = $stmt->rowCount();
+
+        $quaterly_data=array();
+
+        // check if more than 0 record found
+        if($num>0){
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                extract($row);
+            
+                $avg_weekly_sales=array(
+                    "shopid" => $shopid,                    
+                    "year" => $year,
+                    "quarter" => $quarter,
+                    "quarter_start" => $quarter_start,
+                    "trading_year" => $trading_year,
+                    "trading_quarter" => $trading_quarter,
+                    "weeks_in_quarter" => $count,
+                    "avg_weekly_income" => $avg_weekly_income,
+                );
+        
+                    // create nonindexed array
+                    array_push ($quaterly_data, $avg_weekly_sales);
+            }
+        }
+
+        return $quaterly_data;
     }
 
     public function departmentChart($shopid,$current_date){

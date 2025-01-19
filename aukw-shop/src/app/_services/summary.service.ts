@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '@environments/environment';
 import { Summary } from '@app/_models';
 import {
+  AvgWeeklySalesData,
   DepartmentSalesChartData,
   MonthlySalesChartData,
   SalesChartData,
@@ -14,6 +15,7 @@ const salesTabletUrl = baseUrl + `/summarytable`;
 const salesChartUrl = baseUrl + `/sales-chart`;
 const deptChartUrl = baseUrl + `/dept-chart`;
 const monthlySalesChartUrl = baseUrl + `/monthly-sales`;
+const averageWeeklySalesUrl = baseUrl + `/avg-weekly-sales`;
 
 @Injectable({ providedIn: 'root' })
 export class SummaryService {
@@ -25,6 +27,15 @@ export class SummaryService {
 
   getSalesChartData() {
     return this.http.get<SalesChartData>(salesChartUrl);
+  }
+
+    /**
+   * Get the average weekly sales, organised by quarter for a shop
+   * @param shopid The id of the shop. Almost always equal to '1' for Harrow Road
+   * @returns Array of AvgWeeklySalesData objects
+   */
+  getAverageWeeklySalesData(shopid: number) {
+    return this.http.get<AvgWeeklySalesData[]>(averageWeeklySalesUrl+ `/${shopid}`);
   }
 
   getDepartmentBreakdownChartData() {

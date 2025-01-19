@@ -74,6 +74,28 @@ export class MonthlySalesChartData {
   }
 }
 
+export class AvgWeeklySalesData {
+  shopid: number;
+  year: number;
+  quarter: number;
+  quarter_start: string;
+  trading_year: number;
+  trading_quarter: number;
+  weeks_in_quarter: number;
+  avg_weekly_income: number;
+
+  constructor(obj?: any) {
+    this.shopid = (obj && obj.shopid) || null;
+    this.year = (obj && obj.year) || null;  
+    this.quarter = (obj && obj.quarter) || null;
+    this.quarter_start = (obj && obj.quarter_start) || null;
+    this.trading_year = (obj && obj.trading_year) || null;
+    this.trading_quarter = (obj && obj.trading_quarter) || null;
+    this.weeks_in_quarter = (obj && obj.weeks_in_quarter) || null;
+    this.avg_weekly_income = (obj && obj.avg_weekly_income) || null;
+  }
+}
+
 /**Stores data to build a histogram of net daily sales data */
 export class HistogramChartData {
   /**First day of period */

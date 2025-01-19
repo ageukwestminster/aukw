@@ -1,7 +1,14 @@
-<p>Please supply the Gross to Net file from the Iris website</p>
-<div class="col-md-4">
-  <excel-upload-and-parse (onPayslipsProduced)="xlsxWasUploaded($event)">
-  </excel-upload-and-parse>
+<div class="row">
+  <div class="col-md-6 mt-2">
+    <p>Please supply the Gross to Net file from Iris</p>
+    <div>
+      <excel-upload-and-parse (onPayslipsProduced)="xlsxWasUploaded($event)">
+      </excel-upload-and-parse>
+    </div>
+  </div>
+  <div class="col">
+    Hello
+  </div>
 </div>
 
 <payslip-list [payslips]="payslips"></payslip-list>
