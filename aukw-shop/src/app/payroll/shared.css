@@ -34,3 +34,7 @@ tr {
 .width-22 {
   width: 21%;
 }
+
+.total-line {
+  font-weight: bold;
+}

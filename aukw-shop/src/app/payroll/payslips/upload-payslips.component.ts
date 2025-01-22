@@ -1,4 +1,5 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { NgIf, DatePipe, DecimalPipe } from '@angular/common';
 import {
   EmployeeAllocation,
   IrisPayslip,
@@ -18,12 +19,16 @@ import { ActivatedRoute, Router } from '@angular/router';
 @Component({
   templateUrl: 'upload-payslips.component.html',
   standalone: true,
-  imports: [PayslipListComponent, ExcelParserComponent],
+  imports: [PayslipListComponent, ExcelParserComponent, NgIf, DatePipe, DecimalPipe],
+  styleUrls: ['../shared.css'],
 })
 export class UploadPayslipsComponent implements OnInit {
   allocations: EmployeeAllocation[] = [];
   payslips: IrisPayslip[] = [];
   payrollDate: string = '';
+
+  /** A single IrisPayslip object that stores the aggregate values of all the payslips */ 
+  total: IrisPayslip = new IrisPayslip();
 
   private alertService = inject(AlertService);
   private qbPayrollService = inject(QBPayrollService);
@@ -80,26 +85,44 @@ export class UploadPayslipsComponent implements OnInit {
     }
 
     try {
+
+      var payslipsWithMissingAllocations: IrisPayslip[] = [];
+
       payslips.forEach((payslip) => {
+        // loop through all payslips and sum the values
+        // to form a new "total" payslip and put in class level variable
+        this.total = this.total.add(payslip);
+
+        // Is there an allocation object for the employee?
         const allocation = this.allocations.find(
           (item) => item.payrollNumber == payslip.payrollNumber,
-        );
-
+        );      
         if (!allocation) {
-          throw new Error(
-            'The recurring transaction in QuickBooks that ' +
-              `defines the class allocations does not have an entry for '${payslip.employeeName}'.` +
-              ` Please add them to the salary allocations recurring transaction and then try again.`,
-          );
-        }
-
-        // Set flag for shop employees using the allocations array
-        if (allocation.isShopEmployee) {
-          payslip.isShopEmployee = true;
+          payslipsWithMissingAllocations.push(payslip);
         } else {
-          payslip.isShopEmployee = false;
+          // Set flag for shop employees using the allocations array
+          if (allocation.isShopEmployee) {
+            payslip.isShopEmployee = true;
+          } else {
+            payslip.isShopEmployee = false;
+          }
         }
       });
+
+      if (payslipsWithMissingAllocations.length) {
+        var names: string ='';
+        payslipsWithMissingAllocations.forEach((payslip) => {
+            names += `\u2022 ${payslip.employeeName}</br>`;
+        });
+
+        throw new Error(
+          'The recurring transaction in QuickBooks that ' +
+            `defines project allocations is missing:</br>${names}` +
+            `Please add them to the salary allocations recurring transaction and then try again.</br>` +
+            `Each new employee must be created in the QuickBooks `,
+        );        
+      }
+
     } catch (error) {
       //Code from https://kentcdodds.com/blog/get-a-catch-block-error-message-with-typescript
       let message: string;
