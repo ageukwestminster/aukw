@@ -31,10 +31,6 @@ export function errorInterceptor(
 
       const error = err.error?.message || err.statusText;
 
-      if (err.status === 422) {
-        alertService.error(error);
-      }
-
       console.error(err);
       return throwError(() => error);
     }),
