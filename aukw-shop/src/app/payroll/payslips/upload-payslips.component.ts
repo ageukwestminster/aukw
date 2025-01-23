@@ -119,7 +119,8 @@ export class UploadPayslipsComponent implements OnInit {
           'The recurring transaction in QuickBooks that ' +
             `defines project allocations is missing:</br>${names}` +
             `Please add them to the salary allocations recurring transaction and then try again.</br>` +
-            `Each new employee must be created in the QuickBooks `,
+            `Each new employee must be created in QuickBooks Payroll with a valid Employee ID.</br>` +
+            `Shop employees must be created in both company files.`,
         );        
       }
 
