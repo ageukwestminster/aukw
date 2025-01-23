@@ -1,32 +1,3 @@
-<!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
-<a id="readme-top"></a>
-<!--
-*** Thanks for checking out the Best-README-Template. If you have a suggestion
-*** that would make this better, please fork the repo and create a pull request
-*** or simply open an issue with the tag "enhancement".
-*** Don't forget to give the project a star!
-*** Thanks again! Now go create something AMAZING! :D
--->
-
-
-
-<!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![project_license][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
-
-
-
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
@@ -55,7 +26,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+[![Product Name Screen Shot][product-screenshot]](https://aukw.org.uk)
 
 Here's a blank template to get started. To avoid retyping too much info, do a search and replace with your text editor for the following: `ageukwestminster`, `aukw`, `twitter_handle`, `linkedin_username`, `ageukwestminster.org.uk`, `email`, `project_title`, `project_description`, `project_license`
 
@@ -211,3 +182,5 @@ Project Link: [https://github.com/ageukwestminster/aukw](https://github.com/ageu
 [QuickBooks-url]: https://quickbooks.intuit.com/
 [FontAwesome-logo]: https://img.shields.io/badge/Fontawesome-538DD7?&logo=fontawesome&logoColor=white
 [FontAwesome-url]: https://fontawesome.com/
+[MariaDB-logo]: https://img.shields.io/badge/MariaDB-003545?logo=mariadb&logoColor=white
+[MariaDB-url]: https://mariadb.org/
