@@ -388,7 +388,7 @@ class QuickbooksAuth{
             catch (\Exception $e) {
                 http_response_code(401);  
                 echo json_encode(
-                    array("message" => "Unable to log in to QuickBooks. Log out of this site and log in again using 'Sign in With Intuit'.")
+                    array("message" => "Unable to log in to QuickBooks. Ask the QuickBooks administrator to re-authorise the app.")
                 );
                 exit();
             }
