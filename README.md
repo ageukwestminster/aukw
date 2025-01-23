@@ -36,10 +36,9 @@ Here's a blank template to get started. To avoid retyping too much info, do a se
 
 
 <!-- GETTING STARTED -->
-## Getting Started
+## Creating A Development Environment
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+To get a local copy up and running follow these steps.
 
 ### Prerequisites
 
