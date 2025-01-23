@@ -445,6 +445,10 @@ class QuickbooksSalesReceipt{
   private function salesreceipt_line(&$line_array, $description, $amount, $item, $class, $quantity, $account, $taxcoderef) {
     if (abs($amount) <= 0.005) return;
 
+    if ($quantity == 0) {
+      throw new \Exception("Error creating Sales Receipt. The value for 'quantity' is zero or missing. Line description:'" . $description . "'");
+    }
+
     array_push($line_array, array(
       "Description" => $description,
       "Amount" => $amount,

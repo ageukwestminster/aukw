@@ -9,6 +9,7 @@ import {
 } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
+  AbstractControlOptions,
   FormBuilder,
   FormGroup,
   FormsModule,
@@ -36,7 +37,7 @@ import {
 
 import { Shop, User, Takings, FormMode, ApiMessage } from '@app/_models';
 
-import { CustomDateParserFormatter, NgbUTCStringAdapter } from '@app/_helpers';
+import { CustomDateParserFormatter, NgbUTCStringAdapter, MustProvideNumberOfItems } from '@app/_helpers';
 
 @Component({
   templateUrl: 'add-edit.component.html',
@@ -105,32 +106,47 @@ export class TakingsAddEditComponent implements OnInit {
       this.formMode = FormMode.View;
     }
 
-    this.form = this.formBuilder.group({
-      date: [null],
-      shopid: [{ value: environment.HARROWROAD_SHOPID, disabled: true }],
-      clothing_num: [''],
-      brica_num: [''],
-      books_num: [''],
-      linens_num: [''],
-      donations_num: [''],
-      other_num: [''],
-      rag_num: [''],
-      clothing: [''],
-      brica: [''],
-      books: [''],
-      linens: [''],
-      donations: [''],
-      other: [''],
-      rag: [''],
-      customers_num_total: ['', Validators.required],
-      cash_to_bank: ['', Validators.required],
-      credit_cards: [''],
-      operating_expenses: [''],
-      volunteer_expenses: [''],
-      cash_difference: [''],
-      comments: [''],
-      quickbooks: [{ value: 0, disabled: true }],
-    });
+
+    const formOptions: AbstractControlOptions = {
+          validators: [
+            MustProvideNumberOfItems('clothing'),
+            MustProvideNumberOfItems('brica'),
+            MustProvideNumberOfItems('books'),
+            MustProvideNumberOfItems('linens'),
+            MustProvideNumberOfItems('donations'),
+            MustProvideNumberOfItems('other')
+          ],
+      };
+
+    this.form = this.formBuilder.group(
+      {
+        date: [null],
+        shopid: [{ value: environment.HARROWROAD_SHOPID, disabled: true }],
+        clothing_num: [''],
+        brica_num: [''],
+        books_num: [''],
+        linens_num: [''],
+        donations_num: [''],
+        other_num: [''],
+        rag_num: [''],
+        clothing: [''],
+        brica: [''],
+        books: [''],
+        linens: [''],
+        donations: [''],
+        other: [''],
+        rag: [''],
+        customers_num_total: ['', Validators.required],
+        cash_to_bank: ['', Validators.required],
+        credit_cards: [''],
+        operating_expenses: [''],
+        volunteer_expenses: [''],
+        cash_difference: [''],
+        comments: [''],
+        quickbooks: [{ value: 0, disabled: true }],
+      },
+      formOptions,
+    );
 
     this.subscription.add(
       this.form.valueChanges.subscribe((value: Takings) => {

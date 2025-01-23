@@ -110,7 +110,19 @@
               type="number"
               class="form-control"
               formControlName="clothing_num"
+              [ngClass]="{
+                'is-invalid': submitted && f['clothing_num'].errors,
+              }"
             />
+            <div
+              *ngIf="submitted && f['clothing_num'].errors"
+              class="invalid-feedback"
+              id="clothingNumberError"
+              >
+              <div *ngIf="f['clothing_num'].errors['mustProvideNumberOfItems']">
+                Number of clothing items is missing.
+              </div>
+            </div>
           </div>
           <div class="col">
             <label for="clothingAmount" class="form-label"> Amount </label>
@@ -141,7 +153,19 @@
               type="number"
               class="form-control"
               formControlName="brica_num"
+              [ngClass]="{
+                'is-invalid': submitted && f['brica_num'].errors,
+              }"
             />
+            <div
+              *ngIf="submitted && f['brica_num'].errors"
+              class="invalid-feedback"
+              id="bricaNumberError"
+              >
+              <div *ngIf="f['brica_num'].errors['mustProvideNumberOfItems']">
+                Number of bric-a-brac items is missing.
+              </div>
+            </div>
           </div>
           <div class="col">
             <label for="bricaAmount" class="form-label"> Amount </label>
@@ -154,6 +178,7 @@
               formControlName="brica"
               pattern="^\d*(\.\d{0,2})?$"
             />
+            
           </div>
         </div>
       </div>
@@ -172,7 +197,19 @@
               type="number"
               class="form-control"
               formControlName="books_num"
+              [ngClass]="{
+                'is-invalid': submitted && f['books_num'].errors,
+              }"
             />
+            <div
+              *ngIf="submitted && f['books_num'].errors"
+              class="invalid-feedback"
+              id="booksNumberError"
+              >
+              <div *ngIf="f['books_num'].errors['mustProvideNumberOfItems']">
+                Number of books is missing.
+              </div>
+            </div>
           </div>
           <div class="col">
             <label for="booksAmount" class="form-label"> Amount </label>
@@ -203,7 +240,19 @@
               type="number"
               class="form-control"
               formControlName="linens_num"
+              [ngClass]="{
+                'is-invalid': submitted && f['linens_num'].errors,
+              }"
             />
+            <div
+              *ngIf="submitted && f['linens_num'].errors"
+              class="invalid-feedback"
+              id="linensNumberError"
+              >
+              <div *ngIf="f['linens_num'].errors['mustProvideNumberOfItems']">
+                Number of linen items is missing.
+              </div>
+            </div>
           </div>
           <div class="col">
             <label for="linensAmount" class="form-label"> Amount </label>
@@ -234,7 +283,19 @@
               type="number"
               class="form-control"
               formControlName="donations_num"
+              [ngClass]="{
+                'is-invalid': submitted && f['donations_num'].errors,
+              }"
             />
+            <div
+              *ngIf="submitted && f['donations_num'].errors"
+              class="invalid-feedback"
+              id="donationsNumberError"
+            >
+              <div *ngIf="f['donations_num'].errors['mustProvideNumberOfItems']">
+                Number of donations is missing.
+              </div>
+            </div>
           </div>
           <div class="col">
             <label for="donationsAmount" class="form-label"> Amount </label>
@@ -265,7 +326,19 @@
               type="number"
               class="form-control"
               formControlName="other_num"
+              [ngClass]="{
+                'is-invalid': submitted && f['other_num'].errors,
+              }"
             />
+            <div
+              *ngIf="submitted && f['other_num'].errors"
+              class="invalid-feedback"
+              id="otherNumberError"
+            >
+              <div *ngIf="f['other_num'].errors['mustProvideNumberOfItems']">
+                Number of 'other' items is missing.
+              </div>
+            </div>
           </div>
           <div class="col">
             <label for="otherAmount" class="form-label"> Amount </label>
@@ -470,5 +543,6 @@
     <p>Form Value: {{ form.value | json }}</p>
     <p>Form Status: {{ form.status | json }}</p>
     <p>Submitted: {{ submitted }}</p>
+    <p>Donations Errors: {{ f['donations_num'].errors | json }}</p>
   </div>
 </form>
