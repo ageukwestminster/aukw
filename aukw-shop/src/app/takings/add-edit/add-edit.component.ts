@@ -306,7 +306,7 @@ export class TakingsAddEditComponent implements OnInit {
           this.router.navigate(['../'], { relativeTo: this.route });
         },
         error: (error) => {
-          this.alertService.error('Takings not added', {
+          this.alertService.error('Takings not added. '+error, {
             autoClose: false,
           });
         },
@@ -333,7 +333,7 @@ export class TakingsAddEditComponent implements OnInit {
           this.location.back();
         },
         error: (error) => {
-          this.alertService.error('Takings not updated', {
+          this.alertService.error('Takings not updated. '+error, {
             autoClose: false,
           });
         },

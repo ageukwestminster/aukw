@@ -96,7 +96,7 @@ export class TakingsRowComponent {
             'Daily sales for ' +
               formatDate(this.takings.date, 'dd-MMM-yy', 'en_GB') +
               ' not added to QuickBooks. Error message: "' +
-              error.message +
+              error +
               '"',
             { autoClose: false },
           );

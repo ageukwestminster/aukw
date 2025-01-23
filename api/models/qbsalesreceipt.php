@@ -356,6 +356,8 @@ class QuickbooksSalesReceipt{
 
     $class = $this->shopid==1?$this->harrow_road_class:$this->church_street_class;
 
+    try{
+
     //&$line_array, $description, $amount, $item, $class, $quantity, $account, $taxcoderef)
     // This code will only add the respective line if amount != 0
     $this->salesreceipt_line($salesreceipt['Line'], "Daily sales of second-hand and donated clothing", 
@@ -395,6 +397,17 @@ class QuickbooksSalesReceipt{
     $this->salesreceipt_line($salesreceipt['Line'], "Cash that has gone to the parent charity without being deposited into the Enterprises bank account", 
       $this->cashToCharity, $this->charitycash_item, $class,
       1, $this->cash_to_charity_account, $this->no_vat_taxcode); //$quantity = 1
+    }
+    catch (\Exception $e){
+      http_response_code(422);  
+      echo json_encode(
+        array(
+          "message" => "Unable to enter daily sales receipt in Quickbooks. Error ocurred in preparation of SalesReceipt lines.",
+          "extra" => $e->getMessage()
+          )
+          , JSON_NUMERIC_CHECK);
+      exit(1);
+    }
 
     $theResourceObj = SalesReceipt::create($salesreceipt);
     
@@ -446,7 +459,7 @@ class QuickbooksSalesReceipt{
     if (abs($amount) <= 0.005) return;
 
     if ($quantity == 0) {
-      throw new \Exception("Error creating Sales Receipt. The value for 'quantity' is zero or missing. Line description:'" . $description . "'");
+      throw new \Exception("The value for 'quantity' is zero or missing. Line description:'" . $description . "'");
     }
 
     array_push($line_array, array(
