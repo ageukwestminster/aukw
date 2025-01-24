@@ -15,7 +15,20 @@ use DateTime;
 use DateTimeZone;
 
 /**
- * Wrapper class that provides methods for QBO OAuth2.
+ * This is a wrapper class that provides methods to manage the QBO OAuth2 process.
+ * 
+ * QBO OAuth2 connections are not user-specific: there is only a single connection betweeen a
+ * QBO app and a QBO company. The connection must be made by the primary admin of the company.
+ * 
+ * When the app performs actions in the QBO company file it is as if the primary 
+ * admin performed the action.
+ * 
+ * The OAuth2 process to create a new QBO connection is as follows:
+ * - The aukw app calls the 'begin' method in this class to obtain a company-specific url that the user must 
+ *   visit and go through QBO login and authorisation.
+ * - The user is then redirected to a callback url from where the 'callback' method is called. 
+ *   The callback function has an authorisation code as a parameter that can be excahnged for an 
+*    access/refresh token pair. This pair is saved in the database and any aukw app user can use them.
  * @category Model
  */
 class QuickbooksAuth{
@@ -88,10 +101,11 @@ class QuickbooksAuth{
     }
 
     /** 
-     * Start the OAuth2 process to create a link between QuickBooks and this app
+     * Start the OAuth2 process to create a link between QuickBooks and this app. This is called 
+     * when the user wishes to make a new QBO Connection.
      * @return array The Uri to follow to make the link plus instructions on what to do
      */
-    public function begin() {
+    public function begin(): array {
 
         $authUri=array();        
 
@@ -110,10 +124,13 @@ class QuickbooksAuth{
     }
 
     /** 
-     * Called from Quickbooks API servers as part of the OAuth2 process 
-     * @param string $code
-     * @param string $realmId
-     * @param string $state
+     * This is part of the OAuth2 process of creating a new QBO Connection. After the user 
+     * successfully logs into QuickBooks and authorizes the app they will be redirected to
+     * a webpage at the front end which will call this function. It then validates the 
+     * authorization code and creates a new access/refresh token pair and stores them in the database.
+     * @param string $code The authorization code from QBO OAuth2 servers
+     * @param string $realmId The company ID
+     * @param string $state A string of random letters that is uysed to validate the authorization code
      * @return bool 'true' if success
     */
     public function callback($code, $realmId, $state){
@@ -207,10 +224,9 @@ class QuickbooksAuth{
       /**
        * Refresh the QB access token from the refresh token
        * @param string $realmid The company ID 
-       * 
-       * @return true if success
+       * @return bool 'true' if token successfully refreshed
        */
-    public function refresh($realmid, $userid) {
+    public function refresh($realmid, $userid):bool {
 
         if($this->jwt->id != $userid) {
             http_response_code(401);  
@@ -238,8 +254,10 @@ class QuickbooksAuth{
                 $accessTokenObj->setRealmID($realmid);
             }
 
+            // Assign the new Access token to the DataService
             $this->dataService->updateOAuth2Token($accessTokenObj);      
 
+            // Store rew access/refresh pair in our database
             $this->store_tokens_in_database($accessTokenObj);
         }
         catch (\Exception $e) {
@@ -254,6 +272,7 @@ class QuickbooksAuth{
         return true;
     }
 
+    
      /**
        * Get information about the company
        * @param string $realmid The company ID for the QBO company.
@@ -299,7 +318,7 @@ class QuickbooksAuth{
     /**
      * Break the link between this app and Quickbooks
      * @param string $realmid The company ID for the QBO company.
-     * @return true if success
+     * @return bool 'true' if token successfully revoked with no errors
      */
     public function revoke($realmid) {
 
