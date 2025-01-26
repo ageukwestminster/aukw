@@ -116,6 +116,12 @@ mysql -u ${ROOT_USER} --password=${ROOT_PWORD} -D ${DB_LOCAL} < ${OUTPUT_DIR}${D
 # '-f' option overwrites any existing file
 gzip -f ${OUTPUT_DIR}${DB_LOCAL}.sql
 
+# Replace DEFINER with correct user name, sometimes the username was cut-off at the underscore
+# '-i' mean replace in-place
+# '-e' means use regex
+# \b means start of word (word boundary)
+sed -i -e "s/\bDEFINER[^ ]*/DEFINER='${DB_USER}'@'%'/" ${OUTPUT_DIR}${ROUTINES}.sql
+
 echo "Adding back routines and triggers"
 mysql -u ${ROOT_USER} --password=${ROOT_PWORD} -D ${DB_LOCAL} < ${OUTPUT_DIR}${ROUTINES}.sql
 
