@@ -50,7 +50,7 @@ class QBAuthCtl{
   }
 
   /**
-   * Break the link between this app and Quickbooks.
+   * Break the link between this app and a Quickbooks Company.
    * @param string $realmid The id of the QBO company.
    * @return void Output is echo'd directly to response.
    */
@@ -59,12 +59,15 @@ class QBAuthCtl{
 
     if ($model->revoke($realmid)) {
       echo json_encode(
-      array("message" => "Your Quickbooks tokens have been revoked.")
-      );
+      array(
+        "message" => "Your QuickBooks token has been revoked.",
+        "id" => $realmid
+        ));
     } else {
       http_response_code(400);
       echo json_encode(
-      array("message" => "Unable to revoke Quickbooks tokens.")
+      array("message" => "Unable to revoke Quickbooks token.",
+      "id" => $realmid)
     );
   }
 
@@ -72,7 +75,7 @@ class QBAuthCtl{
 
 
   /**
-   * Refresh the QB access token from the refresh token.
+   * Refresh the QB access token from the refresh token, for the given QB Company.
    * @param string $realmid The id of the QBO company.
    * @param string $userid The database id of the user whose token is being refreshed.
    * @return void Output is echo'd directly to response.
@@ -83,12 +86,14 @@ class QBAuthCtl{
 
     if ($model->refresh($realmid, $userid)) {
     echo json_encode(
-      array("message" => "Quickbooks Tokens refreshed.")
+      array("message" => "Quickbooks Tokens refreshed.",
+      "id" => $realmid)
       );
     } else {
     http_response_code(400);
     echo json_encode(
-      array("message" => "Unable to refresh Quickbooks Tokens.")
+      array("message" => "Unable to refresh Quickbooks Tokens.",
+      "id" => $realmid)
       );
     }
   }
