@@ -1,6 +1,6 @@
 -- MariaDB dump 10.19  Distrib 10.11.6-MariaDB, for debian-linux-gnu (x86_64)
 --
--- Host: localhost    Database: dailytakings
+-- Host: localhost    Database: aukworgu_dailytakings
 -- ------------------------------------------------------
 -- Server version	10.11.6-MariaDB-0+deb12u1-log
 
@@ -15,10 +15,10 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Dumping routines for database 'dailytakings'
+-- Dumping routines for database 'aukworgu_dailytakings'
 --
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `avg_weekly_income` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -27,7 +27,7 @@
 /*!50003 SET character_set_results = utf8mb4 */ ;
 /*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
 DELIMITER ;;
-CREATE DEFINER=`shop`@`%` PROCEDURE `avg_weekly_income`(IN `_SHOPID` INT)
+CREATE DEFINER=`aukworgu_shop`@`localhost` PROCEDURE `avg_weekly_income`(IN `_SHOPID` INT)
 BEGIN
 DROP TABLE IF EXISTS weekly_sales;
 CREATE TEMPORARY TABLE weekly_sales (
@@ -64,7 +64,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
 /*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 DELIMITER ;;
-CREATE DEFINER=`shop`@`localhost` PROCEDURE `cumm_sales_by_day`(
+CREATE DEFINER=`aukworgu`@`localhost` PROCEDURE `cumm_sales_by_day`(
 	_SHOPID INT,
 	_TODAY DATE
 )
@@ -160,7 +160,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
 /*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 DELIMITER ;;
-CREATE DEFINER=`shop`@`localhost` PROCEDURE `cumm_sales_by_dayofweek`(
+CREATE DEFINER=`aukworgu`@`localhost` PROCEDURE `cumm_sales_by_dayofweek`(
 	_SHOPID INT,
 	_TODAY DATE
 )
@@ -237,7 +237,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
 /*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 DELIMITER ;;
-CREATE DEFINER=`shop`@`localhost` PROCEDURE `cumm_sales_by_dept`(	
+CREATE DEFINER=`aukworgu`@`localhost` PROCEDURE `cumm_sales_by_dept`(	
 	_SHOPID INT,
 	_TODAY DATE
 )
@@ -340,7 +340,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
 /*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 DELIMITER ;;
-CREATE DEFINER=`shop`@`localhost` PROCEDURE `cumm_sales_by_month`(
+CREATE DEFINER=`aukworgu`@`localhost` PROCEDURE `cumm_sales_by_month`(
 	_SHOPID INT,
 	_STARTDATE VARCHAR(20),
     _TARGET DECIMAL (8,2)
@@ -421,7 +421,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
 /*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 DELIMITER ;;
-CREATE DEFINER=`shop`@`localhost` PROCEDURE `cumm_sales_by_week`(
+CREATE DEFINER=`aukworgu`@`localhost` PROCEDURE `cumm_sales_by_week`(
 	_SHOPID INT,
 	_STARTDATE VARCHAR(20),
     _TARGET DECIMAL (8,2)
@@ -501,7 +501,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
 /*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 DELIMITER ;;
-CREATE DEFINER=`shop`@`localhost` PROCEDURE `rag_sales_over_time`(
+CREATE DEFINER=`aukworgu`@`localhost` PROCEDURE `rag_sales_over_time`(
 	_SHOPID INT,
 	_ENDDATE VARCHAR(20),
     _TERM VARCHAR(1)
@@ -582,7 +582,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
 /*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 DELIMITER ;;
-CREATE DEFINER=`shop`@`localhost` PROCEDURE `sales_chart`(IN `_SHOPID` INT, IN `_TODAY` DATE, IN `_NUMBER` INT UNSIGNED)
+CREATE DEFINER=`aukworgu`@`localhost` PROCEDURE `sales_chart`(IN `_SHOPID` INT, IN `_TODAY` DATE, IN `_NUMBER` INT UNSIGNED)
 BEGIN
 DECLARE Today DATE;
 DECLARE FirstDay DATE;
@@ -653,7 +653,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
 /*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 DELIMITER ;;
-CREATE DEFINER=`shop`@`localhost` PROCEDURE `sales_table`(IN `_SHOPID` INT, IN `_TODAY` DATE)
+CREATE DEFINER=`aukworgu`@`localhost` PROCEDURE `sales_table`(IN `_SHOPID` INT, IN `_TODAY` DATE)
 BEGIN
 DECLARE Today DATE;
 DECLARE Yesterday DATE;
@@ -940,4 +940,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-01-24  3:02:54
+-- Dump completed on 2025-01-26 18:05:27

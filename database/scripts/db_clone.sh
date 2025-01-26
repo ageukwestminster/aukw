@@ -2,6 +2,8 @@
 #
 # db_mirror.sh
 #
+# !! This will completely destroy and replace the development database !!
+#
 # This script assumes you have root access to the local mysql server
 #
 # 1. Download a backup copy of the dailytakings database from the AllHost server
@@ -10,7 +12,7 @@
 # 4. Re-add the routines that were stored in step 2.
 # 5. Echo to user if all went ok
 #
-# Relies on PHP script login.php
+# Relies on PHP script /root/aukw/login.php
 #
 # Must provide database password on line 26 before using
 #
@@ -19,8 +21,9 @@
 CURL="/usr/bin/curl -s"
 COOKIE="/root/aukw/cookies.txt"
 SITE_URI="https://cov-cp9.ahcloud.co.uk:2083"
+LOGIN_SCRIPT="/root/aukw/login.php"
 DB_REMOTE=aukworgu_dailytakings
-DB_LOCAL=dailytakings
+DB_LOCAL=aukworgu_dailytakings
 OUTPUT_DIR=/var/spool/aukw_backup/
 ROUTINES=routines
 
@@ -28,7 +31,7 @@ MYSQL=/usr/bin/mysql
 ROOT_USER=root
 ROOT_PWORD=nsc
 
-DB_USER=shop
+DB_USER=aukworgu_shop
 DB_PWORD=<<<PLEASE_PROIVIDE>>>
 TMP_FILE=$(mktemp /tmp/AUKW.XXXXXXXXX)
 SKIP=NO
@@ -57,7 +60,7 @@ done
 
 echo "Skip downloading from AllHost = ${SKIP}, Apply routines.sql to new DB = ${APPLY}"
 
-TOKEN=$(php /root/aukw/login.php)
+TOKEN=$(php ${LOGIN_SCRIPT})
 
 if [[ $SKIP = "NO" ]]
 then
@@ -80,7 +83,7 @@ fi
 
 # Save Routines
 # Shared hosting provider does not include routines in MySQL backup.
-mysqldump -u ${ROOT_USER} --password=${ROOT_PWORD} -n -d -t --routines --triggers ${DB_LOCAL} > ${OUTPUT_DIR}${ROUTINES}.sql
+mysqldump -u ${DB_USER} --password=${DB_PWORD} -n -d -t --routines --triggers ${DB_LOCAL} > ${OUTPUT_DIR}${ROUTINES}.sql
 
 if [ ! -f ${OUTPUT_DIR}${ROUTINES}.sql  ]
 then
@@ -106,12 +109,6 @@ echo "Unzipping downloaded file"
 echo "Removing first line to avoid 'sandbox' bug"
 # Further information at https://mariadb.org/mariadb-dump-file-compatibility-change/
 gunzip -c ${OUTPUT_DIR}${DB_LOCAL}.sql.gz | tail -n +2 > ${OUTPUT_DIR}${DB_LOCAL}.sql
-
-# Replace old user name with new user name
-echo "Doing find and replace"
-sed 's/DEFINER=`aukworgu`/DEFINER=`shop`/g' ${OUTPUT_DIR}${DB_LOCAL}.sql > ${OUTPUT_DIR}${DB_LOCAL}.sql.new
-mv ${OUTPUT_DIR}${DB_LOCAL}.sql.new ${OUTPUT_DIR}${DB_LOCAL}.sql
-
 
 echo "Populating local database"
 mysql -u ${ROOT_USER} --password=${ROOT_PWORD} -D ${DB_LOCAL} < ${OUTPUT_DIR}${DB_LOCAL}.sql

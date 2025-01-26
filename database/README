@@ -1,0 +1,7 @@
+These are the SQL files needs to re-create the database structure.
+
+Some of th etable files have data but most don't.
+
+There are tables, one view and some routines.
+
+The scripts folder holds a script that can be used to mirror the produciton database to development. It onlty works when the development environment is completely set up.
