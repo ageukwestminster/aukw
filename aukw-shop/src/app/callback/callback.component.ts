@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { environment } from '@environments/environment';
-import { AlertService, AuthenticationService } from '@app/_services';
+import { AlertService, AuditLogService, AuthenticationService } from '@app/_services';
 
 @Component({
   template: '',
@@ -12,12 +12,16 @@ export class CallbackComponent implements OnInit {
     private router: Router,
     private alertService: AlertService,
     private authenticationService: AuthenticationService,
+    private auditLogService: AuditLogService,
   ) {}
 
   public ngOnInit(): void {
-    console.log('Callback route: ' + this.router.url);
-    const code = this.route.snapshot.queryParamMap.get('code');
+    
+    // QB authorisation code, can be exchanged for access/refresh tokens
+    const code = this.route.snapshot.queryParamMap.get('code'); 
+    // The company id
     var realmId = this.route.snapshot.queryParamMap.get('realmId');
+    // A 'state' variable that is checked to make sure tampering has not ocurred.
     const state = this.route.snapshot.queryParamMap.get('state');
 
     if (!realmId) {
@@ -46,8 +50,13 @@ export class CallbackComponent implements OnInit {
     // use the auth service and the supplied token to log in
     this.authenticationService.callback(code!, realmId!, state!).subscribe({
       next: () => {
-        console.log('Logged in.');
+        
         if (this.authenticationService.userValue) {
+          this.auditLogService.log(
+            this.authenticationService.userValue,
+            'INSERT',
+            'Created link between QuickBooks and the app'
+          );
           this.router.navigate(['/']);
         } else {
           console.log('Unknown error.');

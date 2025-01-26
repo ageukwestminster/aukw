@@ -1,9 +1,10 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { concatMap } from 'rxjs';
-import { QBAuthUri, QBConnectionDetails, QBRealm, User } from '@app/_models';
+import { ApiMessage, QBAuthUri, QBConnectionDetails, QBRealm, User } from '@app/_models';
 import {
   AlertService,
+  AuditLogService,
   AuthenticationService,
   QBConnectionService,
 } from '@app/_services';
@@ -19,7 +20,7 @@ import {
 })
 export class QBConnectionRowComponent {
   user!: User;
-  windowHandle: any = null;
+  windowHandle: any = null; // used to open the QB authorisation uri
   @Input() realm!: QBRealm;
   @Output() onConnectionRevoked: EventEmitter<QBConnectionDetails>;
 
@@ -27,6 +28,7 @@ export class QBConnectionRowComponent {
     private connectionService: QBConnectionService,
     private alertService: AlertService,
     private authenticationService: AuthenticationService,
+    private auditLogService: AuditLogService,
   ) {
     this.user = this.authenticationService.userValue;
     this.onConnectionRevoked = new EventEmitter();
@@ -50,12 +52,16 @@ export class QBConnectionRowComponent {
     return true;
   }
 
+  /**
+   * Check if the QBConnection was created by the current user.
+   * If it is then additional functionality (DELETE) is exposed.
+   */
   get isLinkCreatedByCurrentUser(): boolean {
     return this.realm.connection?.linkcreatoruserid == this.user.id;
   }
 
   revokeConnection(e: Event) {
-    e.stopPropagation(); // If click propagates it will open the edit member page
+    e.stopPropagation();
 
     if (
       !this.realm ||
@@ -68,6 +74,11 @@ export class QBConnectionRowComponent {
 
     connection.isRevoking = true;
     this.connectionService.delete(connection.realmid).subscribe(() => {
+      this.auditLogService.log(
+        this.user,
+        'DELETE',
+        'Revoke QB connection for ' + this.realm.name
+      );
       this.alertService.success(
         'Connection revoked for ' + connection.companyname,
         {
@@ -80,7 +91,7 @@ export class QBConnectionRowComponent {
   }
 
   refreshConnection(e: Event) {
-    e.stopPropagation(); // If click propagates it will open the edit member page
+    e.stopPropagation();
 
     if (
       !this.realm ||
@@ -95,6 +106,11 @@ export class QBConnectionRowComponent {
     this.connectionService
       .refresh(connection.realmid, connection.linkcreatoruserid)
       .subscribe(() => {
+        this.auditLogService.log(
+          this.user,
+          'UPDATE',
+          'Refresh QB connection for ' + this.realm.name
+        );
         this.alertService.success(
           'Connection refreshed for ' + connection.companyname,
           {
@@ -134,6 +150,11 @@ export class QBConnectionRowComponent {
       .delete(connection.realmid)
       .pipe(
         concatMap(() => {
+          this.auditLogService.log(
+            this.user,
+            'DELETE',
+            'Revoke QB connection for ' + this.realm.name
+          );
           this.alertService.success(
             'Connection revoked for ' + connection.companyname,
             {
