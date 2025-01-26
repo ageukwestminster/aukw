@@ -306,7 +306,7 @@ class QuickbooksAuth{
         catch (\Exception $e) {
             http_response_code(400);  
             echo json_encode(
-              array("message" => "Unable to refresh Quickbooks tokens. ",
+              array("message" => "Unable to refresh Quickbooks token. ",
               "details" => $e->getMessage())
             );
             exit(0);
@@ -339,7 +339,17 @@ class QuickbooksAuth{
         if ($this->tokenModel->accesstoken) {
             $this->remove_tokens_from_database($realmid);
             $OAuth2LoginHelper = $this->GetOAuth2LoginHelper();
+            try {
             return $OAuth2LoginHelper->revokeToken($this->tokenModel->accesstoken);
+            }
+            catch (\Exception $e) {
+                http_response_code(400);  
+                echo json_encode(
+                  array("message" => "Unable to revoke Quickbooks token. ",
+                  "details" => $e->getMessage())
+                );
+                exit(0);
+            }
         } else {
             return true;
         }    
