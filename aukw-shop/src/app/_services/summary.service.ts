@@ -29,13 +29,15 @@ export class SummaryService {
     return this.http.get<SalesChartData>(salesChartUrl);
   }
 
-    /**
+  /**
    * Get the average weekly sales, organised by quarter for a shop
    * @param shopid The id of the shop. Almost always equal to '1' for Harrow Road
    * @returns Array of AvgWeeklySalesData objects
    */
   getAverageWeeklySalesData(shopid: number) {
-    return this.http.get<AvgWeeklySalesData[]>(averageWeeklySalesUrl+ `/${shopid}`);
+    return this.http.get<AvgWeeklySalesData[]>(
+      averageWeeklySalesUrl + `/${shopid}`,
+    );
   }
 
   getDepartmentBreakdownChartData() {
@@ -50,26 +52,38 @@ export class SummaryService {
    * @param monthOfStartDate The month of the start date of the numbers. e.g. 7 for July. If not supplied then
    *  the data will start from January of the yearOfStartDate
    * @param dayOfStartDate The day of the start date of the numbers. e.g. 15 fot the 15tyh of the month. If not
-   *  supplied then the data will start from the 1st of the month 
+   *  supplied then the data will start from the 1st of the month
    * @returns Array of MonthlySalesChartData objects
    */
-  getMonthlySalesChartData(shopid: number, yearOfStartDate?: number, monthOfStartDate?: number, dayOfStartDate?: number) {
+  getMonthlySalesChartData(
+    shopid: number,
+    yearOfStartDate?: number,
+    monthOfStartDate?: number,
+    dayOfStartDate?: number,
+  ) {
     if (yearOfStartDate === undefined) {
       return this.http.get<MonthlySalesChartData[]>(
         monthlySalesChartUrl + `/${shopid}`,
       );
-    } else if (monthOfStartDate === undefined){
+    } else if (monthOfStartDate === undefined) {
       return this.http.get<MonthlySalesChartData[]>(
-        monthlySalesChartUrl + `/${shopid}/${yearOfStartDate}/${monthOfStartDate}`,
+        monthlySalesChartUrl +
+          `/${shopid}/${yearOfStartDate}/${monthOfStartDate}`,
       );
     } else if (dayOfStartDate === undefined) {
-      let month:string = (monthOfStartDate).toLocaleString(undefined, {minimumIntegerDigits: 2});
+      let month: string = monthOfStartDate.toLocaleString(undefined, {
+        minimumIntegerDigits: 2,
+      });
       return this.http.get<MonthlySalesChartData[]>(
         monthlySalesChartUrl + `/${shopid}/${yearOfStartDate}/${month}`,
       );
     } else {
-      let month:string = (monthOfStartDate).toLocaleString(undefined, {minimumIntegerDigits: 2});
-      let day:string = (dayOfStartDate).toLocaleString(undefined, {minimumIntegerDigits: 2});
+      let month: string = monthOfStartDate.toLocaleString(undefined, {
+        minimumIntegerDigits: 2,
+      });
+      let day: string = dayOfStartDate.toLocaleString(undefined, {
+        minimumIntegerDigits: 2,
+      });
       return this.http.get<MonthlySalesChartData[]>(
         monthlySalesChartUrl + `/${shopid}/${yearOfStartDate}/${month}/${day}`,
       );

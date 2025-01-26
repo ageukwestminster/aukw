@@ -1,19 +1,24 @@
-import { AbstractControl, FormGroup,  ValidationErrors, ValidatorFn } from '@angular/forms';
+import {
+  AbstractControl,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+} from '@angular/forms';
 
 /**
  * Custom validator for the add/edit Takings UI. If there is a non-zero
  * value for a department's sales then there must be a non-zero number of
- * items too. 
+ * items too.
  *
  * @param controlName Name of first control to check
- * @returns 
+ * @returns
  */
 export function MustProvideNumberOfItems(controlName: string): ValidatorFn {
-  return (group: AbstractControl) : ValidationErrors | null => {
+  return (group: AbstractControl): ValidationErrors | null => {
     const form = <FormGroup>group;
 
     const valueControl = form.controls[controlName];
-    const numberOfItemsControl = form.controls[controlName+'_num'];
+    const numberOfItemsControl = form.controls[controlName + '_num'];
 
     if (valueControl.value && !numberOfItemsControl.value) {
       numberOfItemsControl.setErrors({ mustProvideNumberOfItems: true });
@@ -24,4 +29,3 @@ export function MustProvideNumberOfItems(controlName: string): ValidatorFn {
     return null;
   };
 }
-

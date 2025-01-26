@@ -23,9 +23,10 @@ import { QBAccountListEntry } from '@app/_models/qb-account-list-entry';
     ReactiveFormsModule,
   ],
 })
-export class AukwIntercoComponent extends AbstractChartReportComponent<
-  QBAccountListEntry[]
-> implements OnInit {
+export class AukwIntercoComponent
+  extends AbstractChartReportComponent<QBAccountListEntry[]>
+  implements OnInit
+{
   enterprises: boolean = true;
 
   private alertService = inject(AlertService);
@@ -43,7 +44,7 @@ export class AukwIntercoComponent extends AbstractChartReportComponent<
     });
 
     this.onDateRangeChanged(DateRangeEnum.LAST_SIX_MONTHS);
-}
+  }
 
   checkboxClick() {
     this.enterprises = !this.enterprises;

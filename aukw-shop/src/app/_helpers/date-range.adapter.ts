@@ -7,7 +7,6 @@ import { DateRange, DateRangeEnum } from '@app/_models';
  */
 @Injectable({ providedIn: 'root' })
 export class DateRangeAdapter {
-
   readonly NOON: number = 12;
 
   constructor() {}
@@ -17,15 +16,15 @@ export class DateRangeAdapter {
   }
 
   /**
-   * Given a choice from the DateRange Enum, return the appropiate DAteRange Object. 
+   * Given a choice from the DateRange Enum, return the appropiate DAteRange Object.
    * For example, if today is 9th January 2025 and the Enum 'THIS QUARTER' is selected
    * then it will return an object where endDate is the string 2025-03-31 and the startDate
    * is the striong '2025-01-01'.
-   * 
+   *
    * Dates are returned in ISO string format.
-   * 
+   *
    * The trading year is assumed to run from 1-October to 30-September
-   * 
+   *
    * @param value The value of the Enum to convert into a DateRange object
    * @returns DateRange object containing the start and end date of the range
    */
@@ -35,7 +34,6 @@ export class DateRangeAdapter {
      *
      *  This whole method might fail in asian time zones due to using NOON
      * */
-    
 
     var t = new Date();
     var year = t.getFullYear();
@@ -67,7 +65,12 @@ export class DateRangeAdapter {
         var lastDayOfMonth = new Date(year, month + 1, 0, this.NOON);
         return this.instantiateObj(firstDayOfMonth, lastDayOfMonth);
       case DateRangeEnum.THIS_QUARTER:
-        var firstDayOfThisQuarter = new Date(year, quarterStartMonth, 1, this.NOON);
+        var firstDayOfThisQuarter = new Date(
+          year,
+          quarterStartMonth,
+          1,
+          this.NOON,
+        );
         var lastDayOfThisQuarter = new Date(
           year,
           quarterStartMonth + 3,
@@ -109,7 +112,12 @@ export class DateRangeAdapter {
           1,
           this.NOON,
         );
-        var lastDayOfLastQuarter = new Date(year, quarterStartMonth, 0, this.NOON);
+        var lastDayOfLastQuarter = new Date(
+          year,
+          quarterStartMonth,
+          0,
+          this.NOON,
+        );
         return this.instantiateObj(firstDayOfLastQuarter, lastDayOfLastQuarter);
       case DateRangeEnum.LAST_TRADING_YEAR:
         var firstDayOfTradingYear: Date;
@@ -128,12 +136,15 @@ export class DateRangeAdapter {
         return this.instantiateObj(firstDayOfLastYear, lastDayOfLastYear);
       case DateRangeEnum.LAST_SIX_MONTHS:
         var sixMonthsAgo = new Date(
-          month>6?year:year-1, month>6?month-6:12-6+month, dayOfMonth, this.NOON
+          month > 6 ? year : year - 1,
+          month > 6 ? month - 6 : 12 - 6 + month,
+          dayOfMonth,
+          this.NOON,
         );
         return this.instantiateObj(sixMonthsAgo, today);
       case DateRangeEnum.LAST_TWELVE_MONTHS:
-          var twelveMonthsAgo = new Date(year-1, month, dayOfMonth, this.NOON);
-          return this.instantiateObj(twelveMonthsAgo, today);
+        var twelveMonthsAgo = new Date(year - 1, month, dayOfMonth, this.NOON);
+        return this.instantiateObj(twelveMonthsAgo, today);
       case DateRangeEnum.NEXT_WEEK:
         var firstDayOfNextWeek = new Date(
           new Date(lastDayOfWeek).setDate(lastDayOfWeek.getDate() + 1),

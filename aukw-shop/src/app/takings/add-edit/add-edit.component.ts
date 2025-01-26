@@ -37,7 +37,11 @@ import {
 
 import { Shop, User, Takings, FormMode, ApiMessage } from '@app/_models';
 
-import { CustomDateParserFormatter, NgbUTCStringAdapter, MustProvideNumberOfItems } from '@app/_helpers';
+import {
+  CustomDateParserFormatter,
+  NgbUTCStringAdapter,
+  MustProvideNumberOfItems,
+} from '@app/_helpers';
 
 @Component({
   templateUrl: 'add-edit.component.html',
@@ -106,17 +110,16 @@ export class TakingsAddEditComponent implements OnInit {
       this.formMode = FormMode.View;
     }
 
-
     const formOptions: AbstractControlOptions = {
-          validators: [
-            MustProvideNumberOfItems('clothing'),
-            MustProvideNumberOfItems('brica'),
-            MustProvideNumberOfItems('books'),
-            MustProvideNumberOfItems('linens'),
-            MustProvideNumberOfItems('donations'),
-            MustProvideNumberOfItems('other')
-          ],
-      };
+      validators: [
+        MustProvideNumberOfItems('clothing'),
+        MustProvideNumberOfItems('brica'),
+        MustProvideNumberOfItems('books'),
+        MustProvideNumberOfItems('linens'),
+        MustProvideNumberOfItems('donations'),
+        MustProvideNumberOfItems('other'),
+      ],
+    };
 
     this.form = this.formBuilder.group(
       {
@@ -306,7 +309,7 @@ export class TakingsAddEditComponent implements OnInit {
           this.router.navigate(['../'], { relativeTo: this.route });
         },
         error: (error) => {
-          this.alertService.error('Takings not added. '+error, {
+          this.alertService.error('Takings not added. ' + error, {
             autoClose: false,
           });
         },
@@ -333,7 +336,7 @@ export class TakingsAddEditComponent implements OnInit {
           this.location.back();
         },
         error: (error) => {
-          this.alertService.error('Takings not updated. '+error, {
+          this.alertService.error('Takings not updated. ' + error, {
             autoClose: false,
           });
         },

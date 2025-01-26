@@ -16,7 +16,9 @@ import { AbstractChartReportComponent } from '../chart-report.component';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
 })
-export class WeeklySalesComponent extends AbstractChartReportComponent<AvgWeeklySalesData[]> {
+export class WeeklySalesComponent extends AbstractChartReportComponent<
+  AvgWeeklySalesData[]
+> {
   private summaryService = inject(SummaryService);
 
   override refreshSummary() {
@@ -34,5 +36,4 @@ export class WeeklySalesComponent extends AbstractChartReportComponent<AvgWeekly
       )
       .subscribe();
   }
-
 }

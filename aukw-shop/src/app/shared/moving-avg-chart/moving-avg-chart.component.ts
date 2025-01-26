@@ -133,15 +133,13 @@ export class MovingAverageChartComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['movingAvgChartData']) {
-
       // Only create the chart if there is data...
       if (this.options.series && this.movingAvgChartData) {
-
         // '<any>' statement added because type checking fails
         (<any>this.options.series[0]).data = this.movingAvgChartData.avg20;
         (<any>this.options.series[1]).data = this.movingAvgChartData.avgQuarter;
 
-        Highcharts.stockChart('moving-average', this.options); // using HighCharts Stock 
+        Highcharts.stockChart('moving-average', this.options); // using HighCharts Stock
       }
     }
   }

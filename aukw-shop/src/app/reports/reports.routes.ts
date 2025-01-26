@@ -4,7 +4,7 @@ import { ReportsComponent } from './reports.component';
 import { SalesListComponent } from './sales-list';
 import { SalesHistogramComponent } from './sales-histogram';
 import { AukwIntercoComponent } from './aukw-interco';
-import { WeeklySalesComponent  } from './weekly-sales';
+import { WeeklySalesComponent } from './weekly-sales';
 
 export const REPORTS_ROUTES: Routes = [
   { path: '', component: ReportsComponent },

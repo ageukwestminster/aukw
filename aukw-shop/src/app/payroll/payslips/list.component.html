@@ -31,7 +31,11 @@
       </th>
       <th class="width-6 d-none d-sm-table-cell">
         <!-- Tooltip must be on element inside header, not header itself-->
-        <div ngbTooltip="Employee pension contribution including salary sacrifice">E'ee Pen</div>
+        <div
+          ngbTooltip="Employee pension contribution including salary sacrifice"
+        >
+          E'ee Pen
+        </div>
       </th>
       <th class="width-6 d-none d-sm-table-cell">
         <!-- Tooltip must be on element inside header, not header itself-->
@@ -54,8 +58,8 @@
         {{ p.payrollNumber }}
       </td>
       <td class="text-start">{{ p.employeeName }}</td>
-      <td>{{ p.totalPay| number: "1.2-2" }}</td>
-      <td>{{ p.totalPay-p.salarySacrifice | number: "1.2-2" }}</td>
+      <td>{{ p.totalPay | number: "1.2-2" }}</td>
+      <td>{{ p.totalPay - p.salarySacrifice | number: "1.2-2" }}</td>
       <td class="d-none d-sm-table-cell">
         {{ p.netPay | number: "1.2-2" }}
       </td>
@@ -69,7 +73,7 @@
         {{ p.employerNI | number: "1.2-2" }}
       </td>
       <td class="d-none d-sm-table-cell">
-        {{ p.salarySacrifice+p.employeePension | number: "1.2-2" }}
+        {{ p.salarySacrifice + p.employeePension | number: "1.2-2" }}
       </td>
       <td class="d-none d-sm-table-cell">
         {{ +p.employerPension | number: "1.2-2" }}
@@ -107,9 +111,7 @@
             <span class="in-qbo">
               <i
                 class="fas fa-check"
-                *ngIf="
-                  p.employerPension && p.qbFlags && p.qbFlags.pensionBill
-                "
+                *ngIf="p.employerPension && p.qbFlags && p.qbFlags.pensionBill"
                 ngbTooltip="L&G pension bill done."
               ></i>
             </span>
@@ -172,9 +174,11 @@
     </tr>
     <tr *ngIf="total && total.totalPay" class="total-line">
       <td></td>
-      <td  class="text-start">Total for {{ this.payslips.length }} employees:</td>
+      <td class="text-start">
+        Total for {{ this.payslips.length }} employees:
+      </td>
       <td>{{ total.totalPay | number: "1.2-2" }}</td>
-      <td>{{ total.totalPay-total.salarySacrifice | number: "1.2-2" }}</td>
+      <td>{{ total.totalPay - total.salarySacrifice | number: "1.2-2" }}</td>
       <td class="d-none d-sm-table-cell">
         {{ total.netPay | number: "1.2-2" }}
       </td>
@@ -188,7 +192,7 @@
         {{ total.employerNI | number: "1.2-2" }}
       </td>
       <td class="d-none d-sm-table-cell">
-        {{ total.salarySacrifice +total.employeePension | number: "1.2-2" }}
+        {{ total.salarySacrifice + total.employeePension | number: "1.2-2" }}
       </td>
       <td class="d-none d-sm-table-cell">
         {{ total.employerPension | number: "1.2-2" }}

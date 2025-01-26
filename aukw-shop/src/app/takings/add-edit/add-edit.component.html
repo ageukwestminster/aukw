@@ -118,7 +118,7 @@
               *ngIf="submitted && f['clothing_num'].errors"
               class="invalid-feedback"
               id="clothingNumberError"
-              >
+            >
               <div *ngIf="f['clothing_num'].errors['mustProvideNumberOfItems']">
                 Number of clothing items is missing.
               </div>
@@ -161,7 +161,7 @@
               *ngIf="submitted && f['brica_num'].errors"
               class="invalid-feedback"
               id="bricaNumberError"
-              >
+            >
               <div *ngIf="f['brica_num'].errors['mustProvideNumberOfItems']">
                 Number of bric-a-brac items is missing.
               </div>
@@ -178,7 +178,6 @@
               formControlName="brica"
               pattern="^\d*(\.\d{0,2})?$"
             />
-            
           </div>
         </div>
       </div>
@@ -205,7 +204,7 @@
               *ngIf="submitted && f['books_num'].errors"
               class="invalid-feedback"
               id="booksNumberError"
-              >
+            >
               <div *ngIf="f['books_num'].errors['mustProvideNumberOfItems']">
                 Number of books is missing.
               </div>
@@ -248,7 +247,7 @@
               *ngIf="submitted && f['linens_num'].errors"
               class="invalid-feedback"
               id="linensNumberError"
-              >
+            >
               <div *ngIf="f['linens_num'].errors['mustProvideNumberOfItems']">
                 Number of linen items is missing.
               </div>
@@ -292,7 +291,9 @@
               class="invalid-feedback"
               id="donationsNumberError"
             >
-              <div *ngIf="f['donations_num'].errors['mustProvideNumberOfItems']">
+              <div
+                *ngIf="f['donations_num'].errors['mustProvideNumberOfItems']"
+              >
                 Number of donations is missing.
               </div>
             </div>
@@ -543,6 +544,6 @@
     <p>Form Value: {{ form.value | json }}</p>
     <p>Form Status: {{ form.status | json }}</p>
     <p>Submitted: {{ submitted }}</p>
-    <p>Donations Errors: {{ f['donations_num'].errors | json }}</p>
+    <p>Donations Errors: {{ f["donations_num"].errors | json }}</p>
   </div>
 </form>

@@ -111,8 +111,12 @@ export class MonthlySalesChartComponent implements OnInit {
     var year = t.getFullYear();
     var month = t.getMonth(); // The number of the month: January is 0, February is 1,... December is 11
 
-    this.summaryService      
-      .getMonthlySalesChartData(environment.HARROWROAD_SHOPID, year-3, ++month)
+    this.summaryService
+      .getMonthlySalesChartData(
+        environment.HARROWROAD_SHOPID,
+        year - 3,
+        ++month,
+      )
       .pipe(
         // These 5 lines convert Observable<MonthlySalesChartData[]> to Observable<MonthlySalesChartData>
         switchMap((dataArray: MonthlySalesChartData[]) => {

@@ -132,12 +132,10 @@ export class SalesHistogramChartComponent implements OnInit, OnChanges {
         this.histogramChartData &&
         this.histogramChartData.data
       ) {
-
         // '<any>' statement added because type checking fails
         (<any>this.options.series[1]).data = this.histogramChartData.data;
-        
+
         if (this.histogramChartData.last) {
-          
           const lastSalesDate = new Date(this.histogramChartData.last[1]);
           const lastSalesAmount = this.histogramChartData.last[2];
 
@@ -155,9 +153,7 @@ export class SalesHistogramChartComponent implements OnInit, OnChanges {
           // data colour to red and update the tooltip.
           // The numbers in the tooltip are rounded to 2 places
           // The duplicated if statement tests are to stop typescript errors
-          if (
-            lastSalesAmount < this.histogramChartData.average
-          ) {
+          if (lastSalesAmount < this.histogramChartData.average) {
             // '<any>' statement added because type checking fails
             let series2 = <any>this.options.series[2];
             series2['color'] = 'red';
@@ -169,7 +165,6 @@ export class SalesHistogramChartComponent implements OnInit, OnChanges {
                 (this.histogramChartData.average - lastSalesAmount) * 100,
               ) /
                 100;
-
           } else {
             (<any>this.options.series[2]).tooltip!.pointFormat =
               'Sales for ' +

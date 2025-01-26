@@ -17,7 +17,10 @@
 
       <div class="row class">
         <div class="col-sm">
-          <p class="p-2" *ngIf="data">Average weekly sales is sometimes required by the Charity Retail Association in their QMA surveys.</p>
+          <p class="p-2" *ngIf="data">
+            Average weekly sales is sometimes required by the Charity Retail
+            Association in their QMA surveys.
+          </p>
           <table
             class="table table-striped table-hover table-responsive w-auto"
           >
@@ -29,16 +32,16 @@
               </tr>
             </thead>
             <tbody>
-              <tr
-                *ngFor="let item of data; index as i"
-              >
+              <tr *ngFor="let item of data; index as i">
                 <th>
                   <span class="text-dark" *ngIf="data">{{
-                    data[i].year+'-Q'+data[i].quarter
+                    data[i].year + "-Q" + data[i].quarter
                   }}</span>
                 </th>
                 <td class="text-center">{{ data[i].weeks_in_quarter }}</td>
-                <td class="text-center">{{ data[i].avg_weekly_income| number: "1.2-2" }}</td>
+                <td class="text-center">
+                  {{ data[i].avg_weekly_income | number: "1.2-2" }}
+                </td>
               </tr>
               <tr *ngIf="!data">
                 <td colspan="4" class="text-center">

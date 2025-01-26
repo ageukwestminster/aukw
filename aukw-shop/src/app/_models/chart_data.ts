@@ -86,7 +86,7 @@ export class AvgWeeklySalesData {
 
   constructor(obj?: any) {
     this.shopid = (obj && obj.shopid) || null;
-    this.year = (obj && obj.year) || null;  
+    this.year = (obj && obj.year) || null;
     this.quarter = (obj && obj.quarter) || null;
     this.quarter_start = (obj && obj.quarter_start) || null;
     this.trading_year = (obj && obj.trading_year) || null;

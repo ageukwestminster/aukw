@@ -7,7 +7,7 @@ import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
   selector: 'payslip-list',
   templateUrl: 'list.component.html',
   standalone: true,
-  imports: [ NgbTooltip, NgFor, NgIf, DecimalPipe],
+  imports: [NgbTooltip, NgFor, NgIf, DecimalPipe],
   styleUrls: ['../shared.css'],
 })
 export class PayslipListComponent {

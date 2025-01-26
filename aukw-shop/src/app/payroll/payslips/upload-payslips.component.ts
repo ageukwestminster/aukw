@@ -19,7 +19,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 @Component({
   templateUrl: 'upload-payslips.component.html',
   standalone: true,
-  imports: [PayslipListComponent, ExcelParserComponent, NgIf, DatePipe, DecimalPipe],
+  imports: [
+    PayslipListComponent,
+    ExcelParserComponent,
+    NgIf,
+    DatePipe,
+    DecimalPipe,
+  ],
   styleUrls: ['../shared.css'],
 })
 export class UploadPayslipsComponent implements OnInit {
@@ -27,7 +33,7 @@ export class UploadPayslipsComponent implements OnInit {
   payslips: IrisPayslip[] = [];
   payrollDate: string = '';
 
-  /** A single IrisPayslip object that stores the aggregate values of all the payslips */ 
+  /** A single IrisPayslip object that stores the aggregate values of all the payslips */
   total: IrisPayslip = new IrisPayslip();
 
   private alertService = inject(AlertService);
@@ -85,7 +91,6 @@ export class UploadPayslipsComponent implements OnInit {
     }
 
     try {
-
       var payslipsWithMissingAllocations: IrisPayslip[] = [];
 
       payslips.forEach((payslip) => {
@@ -96,7 +101,7 @@ export class UploadPayslipsComponent implements OnInit {
         // Is there an allocation object for the employee?
         const allocation = this.allocations.find(
           (item) => item.payrollNumber == payslip.payrollNumber,
-        );      
+        );
         if (!allocation) {
           payslipsWithMissingAllocations.push(payslip);
         } else {
@@ -110,9 +115,9 @@ export class UploadPayslipsComponent implements OnInit {
       });
 
       if (payslipsWithMissingAllocations.length) {
-        var names: string ='';
+        var names: string = '';
         payslipsWithMissingAllocations.forEach((payslip) => {
-            names += `\u2022 ${payslip.employeeName}</br>`;
+          names += `\u2022 ${payslip.employeeName}</br>`;
         });
 
         throw new Error(
@@ -121,9 +126,8 @@ export class UploadPayslipsComponent implements OnInit {
             `Please add them to the salary allocations recurring transaction and then try again.</br>` +
             `Each new employee must be created in QuickBooks Payroll with a valid Employee ID.</br>` +
             `Shop employees must be created in both company files.`,
-        );        
+        );
       }
-
     } catch (error) {
       //Code from https://kentcdodds.com/blog/get-a-catch-block-error-message-with-typescript
       let message: string;

@@ -1,7 +1,13 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { concatMap } from 'rxjs';
-import { ApiMessage, QBAuthUri, QBConnectionDetails, QBRealm, User } from '@app/_models';
+import {
+  ApiMessage,
+  QBAuthUri,
+  QBConnectionDetails,
+  QBRealm,
+  User,
+} from '@app/_models';
 import {
   AlertService,
   AuditLogService,
@@ -77,7 +83,7 @@ export class QBConnectionRowComponent {
       this.auditLogService.log(
         this.user,
         'DELETE',
-        'Revoke QB connection for ' + this.realm.name
+        'Revoke QB connection for ' + this.realm.name,
       );
       this.alertService.success(
         'Connection revoked for ' + connection.companyname,
@@ -109,7 +115,7 @@ export class QBConnectionRowComponent {
         this.auditLogService.log(
           this.user,
           'UPDATE',
-          'Refresh QB connection for ' + this.realm.name
+          'Refresh QB connection for ' + this.realm.name,
         );
         this.alertService.success(
           'Connection refreshed for ' + connection.companyname,
@@ -153,7 +159,7 @@ export class QBConnectionRowComponent {
           this.auditLogService.log(
             this.user,
             'DELETE',
-            'Revoke QB connection for ' + this.realm.name
+            'Revoke QB connection for ' + this.realm.name,
           );
           this.alertService.success(
             'Connection revoked for ' + connection.companyname,

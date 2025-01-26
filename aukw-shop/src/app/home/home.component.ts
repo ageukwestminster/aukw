@@ -65,7 +65,7 @@ export class HomeComponent implements OnInit {
           this.summary = response;
           const dtRng = this.dateRangeAdapter.enumToDateRange(
             DateRangeEnum.LAST_SIX_MONTHS,
-          );          
+          );
           return this.reportService.getSalesHistogram(
             dtRng.startDate,
             dtRng.endDate,
