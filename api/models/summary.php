@@ -164,6 +164,56 @@ class TakingsSummary{
         return $quaterly_data;
     }
 
+    public function avgDailyTransactionSize($shopid){
+
+        // MySQL stored procedure
+        $query = "SELECT  shopid, YEAR(`date`) as `year`, QUARTER(`date`) as `quarter`
+                        , DATE(CONCAT_WS('-', YEAR(`date`), MONTH(MIN(`date`)), 1)) as quarter_start
+                        , if(QUARTER(`date`)=4,YEAR(`date`)+1,YEAR(`date`)) as trading_year
+                        , (MOD(QUARTER(`date`), 4)+1) as trading_quarter
+                        , count(*) as trading_days_in_quarter
+                        , ROUND(AVG(customers_num_total),1) as avg_daily_transactions
+                        , ROUND(SUM(clothing+brica+books+linens+donations+other)/sum(customers_num_total),2) as sales_per_txn
+                        FROM takings
+                        WHERE shopid = :shopid AND date > '2017-07-01'
+                        GROUP BY shopid,`year`,`quarter`
+                        ORDER BY `year` DESC, `quarter` DESC";
+
+        $stmt = $this->conn->prepare( $query );
+        $stmt->bindParam(":shopid", $shopid, PDO::PARAM_INT);
+
+        // execute query
+        $stmt->execute();
+        $num = $stmt->rowCount();
+
+        $quaterly_data=array();
+
+        // check if more than 0 record found
+        if($num>0){
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                extract($row);
+            
+                $avg_weekly_sales=array(
+                    "shopid" => $shopid,                    
+                    "year" => $year,
+                    "quarter" => $quarter,
+                    "quarter_start" => $quarter_start,
+                    "trading_year" => $trading_year,
+                    "trading_quarter" => $trading_quarter,
+                    "trading_days_in_quarter" => $trading_days_in_quarter,
+                    "avg_daily_transactions" => $avg_daily_transactions,
+                    "sales_per_txn" => $sales_per_txn,
+                );
+        
+                    // create nonindexed array
+                    array_push ($quaterly_data, $avg_weekly_sales);
+            }
+        }
+
+        return $quaterly_data;
+    }
+
+
     public function departmentChart($shopid,$current_date){
 
         // MySQL stored procedure

@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '@environments/environment';
 import { Summary } from '@app/_models';
 import {
+  AvgDailyTransactionData,
   AvgWeeklySalesData,
   DepartmentSalesChartData,
   MonthlySalesChartData,
@@ -16,6 +17,7 @@ const salesChartUrl = baseUrl + `/sales-chart`;
 const deptChartUrl = baseUrl + `/dept-chart`;
 const monthlySalesChartUrl = baseUrl + `/monthly-sales`;
 const averageWeeklySalesUrl = baseUrl + `/avg-weekly-sales`;
+const averageDailySalesUrl = baseUrl + `/avg-daily-transaction-size`;
 
 @Injectable({ providedIn: 'root' })
 export class SummaryService {
@@ -39,6 +41,17 @@ export class SummaryService {
       averageWeeklySalesUrl + `/${shopid}`,
     );
   }
+
+  /**
+   * Get the average daily transaciton number and size, organised by quarter for a shop
+   * @param shopid The id of the shop. Almost always equal to '1' for Harrow Road
+   * @returns Array of AvgDailyTransactionData objects
+   */
+    getAvgDailyTransactionData(shopid: number) {
+      return this.http.get<AvgDailyTransactionData[]>(
+        averageDailySalesUrl + `/${shopid}`,
+      );
+    }
 
   getDepartmentBreakdownChartData() {
     return this.http.get<DepartmentSalesChartData>(deptChartUrl);

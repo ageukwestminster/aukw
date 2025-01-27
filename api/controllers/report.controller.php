@@ -84,6 +84,20 @@ class ReportCtl{
   }
 
   /**
+   * Retrieve a data set for the report which shows average daily sales per transaction, by quarter.
+   *
+   * @param mixed $shopid Must be supplied.
+   * @return void Output is echoed directly to response.
+   * 
+   */
+  public static function avgDailyTransactionSize($shopid){  
+
+    $model = new \Models\TakingsSummary();
+
+    echo json_encode($model->avgDailyTransactionSize($shopid), JSON_NUMERIC_CHECK);
+  }
+
+  /**
    * Retrieve a data set for the table of daily/weekly/monthly sales that appears on the 
    * app home page.
    *
