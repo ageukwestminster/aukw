@@ -262,12 +262,20 @@ class QuickbooksReport{
         if ($reportService == false) {
             return;
         }
+
+        $customerSales = $reportService
+            ->setStartDate($this->startdate)
+            ->setEndDate($this->enddate)
+            ->setSummarizeColumnBy($this->summarizeColumn)
+            ->setItem($this->item)
+            ->executeReport(ReportName::ITEMSALES);
   
-        $reportService->setStartDate($this->startdate);
+        /*$reportService->setStartDate($this->startdate);
         $reportService->setEndDate($this->enddate);
         $reportService->setItem($this->item);
 
         $customerSales = $reportService->executeReport(ReportName::ITEMSALES);
+        */
 
         $error = $dataService->getLastError();
         if ($error) {

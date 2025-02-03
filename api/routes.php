@@ -71,8 +71,6 @@ $router->mount('/takings', function () use ($router) {
 $router->mount('/report', function () use ($router) {
     $router->get('/histogram', 'ReportCtl@dailySalesHistogram');
     $router->get('/moving-avg', 'ReportCtl@dailySalesMovingAverage');
-    $router->get('/profitandloss', 'QBReportCtl@profit_and_loss');
-    $router->get('/salesbyitem', 'QBReportCtl@sales_by_item');
     $router->get('/summarytable', 'ReportCtl@performanceSummary');
     $router->get('/sales-chart', 'ReportCtl@salesChart');
     $router->get('/dept-chart', 'ReportCtl@departmentChart');
@@ -186,6 +184,8 @@ $router->mount('/qb', function () use ($router) {
 
     // QB Report
     $router->get('/(\d+)/report/generalledger', 'QBReportCtl@general_ledger');
+    $router->get('/(\d+)/report/profitandloss', 'QBReportCtl@profit_and_loss');
+    $router->get('/(\d+)/report/salesbyitem', 'QBReportCtl@sales_by_item');
 });
 
 /***************/

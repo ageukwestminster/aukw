@@ -20,18 +20,10 @@ class QBReportCtl{
    * @return void Output is echoed directly to response
    * 
    */
-  public static function profit_and_loss(){  
-
-    if(!isset($_GET['realmid']) ) {
-      http_response_code(400);   
-      echo json_encode(
-        array("message" => "Please supply a value for the 'realmid' parameter.")
-      );
-      exit(1);
-    } 
+  public static function profit_and_loss(string $realmid){  
 
     $model = new \Models\QuickbooksReport();
-    $model->realmid = $_GET['realmid'];
+    $model->realmid = $realmid;
 
     if(isset($_GET['start']) || isset($_GET['end'])) {
       $start='';
@@ -119,18 +111,10 @@ class QBReportCtl{
    * @return void Output is echoed directly to response
    * 
    */
-  public static function sales_by_item(){  
-
-    if(!isset($_GET['realmid']) ) {
-      http_response_code(400);   
-      echo json_encode(
-        array("message" => "Please supply a value for the 'realmid' parameter.")
-      );
-      exit(1);
-    } 
+  public static function sales_by_item(string $realmid){  
 
     $model = new \Models\QuickbooksReport();
-    $model->realmid = $_GET['realmid'];
+    $model->realmid = $realmid;
 
     if(isset($_GET['start']) || isset($_GET['end'])) {
       $start='';
@@ -145,11 +129,13 @@ class QBReportCtl{
     }
 
     if (isset($_GET['summarizeColumn']) && !empty($_GET['summarizeColumn'])) {
-        $model->summarizeColumn = $_GET['summarizeColumn'];
+        // must be 'Quarter', not 'quarter' or 'Month' not 'month'
+        $model->summarizeColumn = ucwords(strtolower($_GET['summarizeColumn']));
     } else {
         $model->summarizeColumn = '';
     }
 
+    // item is a number
     if (isset($_GET['item']) && !empty($_GET['item'])) {
       $model->item = $_GET['item'];
     } else {
