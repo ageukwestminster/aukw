@@ -35,7 +35,7 @@ class QBPayrollJournalCtl{
 
     // The Ref No. that appears on QBO ui. 
     // Format is "Payroll_YYYY_MM-`${employee_number}`" 
-    $docNumber = QBO::payrollDocNumber($payrollDate).'-'.$data->quickbooksId;
+    $docNumber = QBO::payrollDocNumber($payrollDate).'-'.$data->payrollNumber;
 
     try {
       $model = QuickbooksPayrollJournal::getInstance()
