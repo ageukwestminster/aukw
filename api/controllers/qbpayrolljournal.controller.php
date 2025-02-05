@@ -34,7 +34,7 @@ class QBPayrollJournalCtl{
     $data = json_decode(file_get_contents("php://input"));
 
     // The Ref No. that appears on QBO ui. 
-    // Format is "Payroll_YYYY_MM-`${employee_number}`" 
+    // Format is "Payroll_YYYY_MM-`${payroll_number}`" 
     $docNumber = QBO::payrollDocNumber($payrollDate).'-'.$data->payrollNumber;
 
     try {
