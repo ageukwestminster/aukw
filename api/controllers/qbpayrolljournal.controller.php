@@ -33,12 +33,14 @@ class QBPayrollJournalCtl{
     
     $data = json_decode(file_get_contents("php://input"));
 
-    // The Ref No. that appears on QBO ui. 
-    // Format is "Payroll_YYYY_MM-SURNAME-PAYROLLNUMBER"
-    $surname = array_pop(explode(' ', $$data->employeeName??' Unknown'));
-    $docNumber = QBO::payrollDocNumber($payrollDate).'-'.$surname.'-'.$data->payrollNumber;
-
     try {
+      
+      // The Ref No. that appears on QBO ui. 
+      // Format is "Payroll_YYYY_MM-SURNAME" and shortened to 21 characters
+      $pieces = explode(' ', $data->employeeName??' Unknown');
+      $familyName = array_pop($pieces);
+      $docNumber = QBO::payrollDocNumber($payrollDate,'-'.$familyName);
+
       $model = QuickbooksPayrollJournal::getInstance()
         ->setDocNumber($docNumber)
         ->setTxnDate($payrollDate)
@@ -52,34 +54,34 @@ class QBPayrollJournalCtl{
         ->setStudentLoan(empty($data->studentLoan)?0:$data->studentLoan)
         ->setNetSalary($data->netPay)
         ->setRealmID($realmid);
-      
-    } catch (\Exception $e) {
-    http_response_code(400);  
-    echo json_encode(
-      array(
-        "message" => "Unable to enter payroll journal in Quickbooks. ",
-        "extra" => $e->getMessage()
-         )
-        , JSON_NUMERIC_CHECK);
-    exit(1);
-  }
 
-    if (!$model->validate()) {
+      if (!$model->validate()) {
+        http_response_code(400);  
+        echo json_encode(
+          array(
+            "message" => "Unable to enter payroll journal in Quickbooks. Transaction is not in balance for '" .
+            $data->employeeName . "'.")
+            , JSON_NUMERIC_CHECK);
+        exit(1);      
+      }
+
+      $result = $model->create_employee_journal();
+      if ($result) {
+          echo json_encode(
+              array("message" => "Payroll journal for '". $data->employeeName  ."' has been added for " . $result['date'] . ".",
+                  "id" => $result['id'])
+            );
+      }
+
+    } catch (\Exception $e) {
       http_response_code(400);  
       echo json_encode(
         array(
-          "message" => "Unable to enter payroll journal in Quickbooks. Transaction is not in balance for '" .
-          $data->employeeName . "'.")
+          "message" => "Unable to create payroll journal in Quickbooks. ",
+          "extra" => $e->getMessage()
+          )
           , JSON_NUMERIC_CHECK);
-      exit(1);      
-    }
-
-    $result = $model->create_employee_journal();
-    if ($result) {
-        echo json_encode(
-            array("message" => "Payroll journal for '". $data->employeeName  ."' has been added for " . $result['date'] . ".",
-                "id" => $result['id'])
-          );
+      exit(1);
     }
   }
 
@@ -263,9 +265,6 @@ class QBPayrollJournalCtl{
               $returnObj[] = (object) [
                   'quickbooksId' => $employee->value,
                   'name' => $employee->name ?? '',
-                  'familyName' => 
-                    array_key_exists($employee->value, $employees)?
-                        $employees[$employee->value]['familyName']:'Unknown',
                   'payrollNumber' => 
                     array_key_exists($employee->value, $employees)?
                         $employees[$employee->value]['payrollNumber']:null,

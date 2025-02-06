@@ -11,6 +11,9 @@ use DateTime;
  */
 class QuickbooksConstants {  
 
+  /** The maximum length of DocNumber, as enforced by QBO */
+  const QBO_DOCNUMBER_MAX_LENGTH = 21;
+
   // Charity Constants
   const CHARITY_REALMID = "123145825016867";
 
@@ -53,13 +56,19 @@ class QuickbooksConstants {
   const HARROW_ROAD_CLASS = "400000000000618070";
 
   /**
-   * Helper function to regularise the DocNumber for payroll transactions
+   * Helper function to regularise the DocNumber for payroll transactions. The 
+   * return value is limited to a maximum of 21 characters
    * @param string $payrollDate A string representation of the date of the 
    * payroll in 'YYYY-mm-dd' format.
-   * @return string 
+   * @param string $suffix A string to place at the end of the calculated DocNumber (Optional)
+   * @return string A string, limited in length to 21 characters
    */
-  public static function payrollDocNumber(string $payrollDate) : string {
+  public static function payrollDocNumber(
+    string $payrollDate, string $suffix = ''
+    ) : string {
+
     $d = DateTime::createFromFormat('Y-m-d', $payrollDate);
-    return 'Payroll_' . $d->format('Y_m');
+    return substr('Payroll_' . $d->format('Y_m').$suffix
+                  , 0, QuickbooksConstants::QBO_DOCNUMBER_MAX_LENGTH);
   }
 }
