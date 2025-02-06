@@ -10,14 +10,16 @@
     </div>
   </div>
   <div class="card-body">
-    <form [formGroup]="form">
       <div *ngIf="!data" class="spinner-border spinner-border-sm"></div>
-
-      <!--<sales-chart [salesChartData]="data"></sales-chart>-->
-
       <div class="row class">
         <div class="col-sm">
           <p class="p-2" *ngIf="data">
+            This report shows the average weekly sales, computed quarter-by-quarter.             
+          </p>
+          <p class="px-2" *ngIf="data">
+            The 'Count' column shows the number of trading weeks in each quarter.
+          </p>
+          <p class="px-2" *ngIf="data">
             Average weekly sales is sometimes required by the Charity Retail
             Association in their QMA surveys.
           </p>
@@ -54,6 +56,5 @@
           </table>
         </div>
       </div>
-    </form>
   </div>
 </div>

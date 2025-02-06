@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -16,12 +16,15 @@ import { AbstractChartReportComponent } from '../chart-report.component';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
 })
-export class WeeklySalesComponent extends AbstractChartReportComponent<
-  AvgWeeklySalesData[]
-> {
+export class WeeklySalesComponent implements OnInit {
   private summaryService = inject(SummaryService);
+  data:AvgWeeklySalesData[] = [];
 
-  override refreshSummary() {
+  ngOnInit(){
+    this.refreshSummary();  
+  }
+
+  refreshSummary() {
     this.summaryService
       .getAverageWeeklySalesData(environment.HARROWROAD_SHOPID)
       .pipe(
