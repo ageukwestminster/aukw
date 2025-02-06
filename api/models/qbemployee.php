@@ -143,7 +143,6 @@ class QuickbooksEmployee{
             "quickbooksId" => $item->Id,
             "name" => $item->DisplayName,
             "payrollNumber" => $item->EmployeeNumber,
-            "familyName" => $item->FamilyName??'Unknown'
           );
           if ($item->EmployeeNumber) {
             if ($associateByName) {

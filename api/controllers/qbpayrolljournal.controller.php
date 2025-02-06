@@ -34,8 +34,9 @@ class QBPayrollJournalCtl{
     $data = json_decode(file_get_contents("php://input"));
 
     // The Ref No. that appears on QBO ui. 
-    // Format is "Payroll_YYYY_MM-`${payroll_number}`" 
-    $docNumber = QBO::payrollDocNumber($payrollDate).'-'.$data->payrollNumber;
+    // Format is "Payroll_YYYY_MM-SURNAME-PAYROLLNUMBER"
+    $surname = array_pop(explode(' ', $$data->employeeName??' Unknown'));
+    $docNumber = QBO::payrollDocNumber($payrollDate).'-'.$surname.'-'.$data->payrollNumber;
 
     try {
       $model = QuickbooksPayrollJournal::getInstance()
@@ -262,9 +263,12 @@ class QBPayrollJournalCtl{
               $returnObj[] = (object) [
                   'quickbooksId' => $employee->value,
                   'name' => $employee->name ?? '',
+                  'familyName' => 
+                    array_key_exists($employee->value, $employees)?
+                        $employees[$employee->value]['familyName']:'Unknown',
                   'payrollNumber' => 
-                      array_key_exists($employee->value, $employees)?
-                          $employees[$employee->value]['payrollNumber']:null,
+                    array_key_exists($employee->value, $employees)?
+                        $employees[$employee->value]['payrollNumber']:null,
                   'percentage' => $amount, 
                   'account' => property_exists($account,'value')?$account->value:$account,
                   'accountName' => $account->name ?? '',
