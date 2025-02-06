@@ -21,6 +21,11 @@ export abstract class BasePayrollTransactionComponent<
   T extends PayrollIdentifier,
 > implements OnInit
 {
+  /**
+   * An array of objects that will be used to create a tranaction
+   * or transactions on QBO.
+   * The objects extend the PayrollIdentifier interface.
+   */
   lines: T[] = [];
 
   allocations: EmployeeAllocation[] = [];
@@ -60,10 +65,22 @@ export abstract class BasePayrollTransactionComponent<
       });
   }
 
+  /**
+   * Convert the array of IrisPayslips stored in payslips[] and the array of
+   * project allocations stored in allocations[] to an array of objects in lines[].
+   * Later, the line[] object will be used to create QBO transactions.
+   * 
+   * This method is called in ngOnInit and nothing is returned (void).
+   */
   recalculateTransactions() {}
 
+  /**
+   * Filter out lines for which there is already a QBO entry
+   * @param prop This is a function that accepts an IrisPayslip as a parameter and returns a boolean result.
+   * @returns An array of transactions
+   */
   filteredTransactions(prop: (p: IrisPayslip) => boolean) {
-    // Filter out lines for which there is already a QBO entry
+
     return this.lines.filter((item) => {
       let ps = this.payslips.filter(
         (p) =>

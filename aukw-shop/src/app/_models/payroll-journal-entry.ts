@@ -22,7 +22,8 @@ export class PayrollJournalEntry implements PayrollIdentifier {
   employeePension: number;
   /** Net monthly salary, the amount paid to the employee. */
   netPay: number;
-  /** Display name of employee */
+  /** Display name of employee. This is required and used in the 
+   * creation of the DocNumber of the payroll journal. */
   employeeName: string;
 
   constructor(obj?: any) {
