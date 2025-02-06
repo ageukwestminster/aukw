@@ -83,7 +83,7 @@ class QBPayrollJournalCtl{
   }
 
   /**
-   * Enter the journal txn for employer NI.
+   * Enter the journal transaction for employer NI.
    * 
    * The function expects a HTTP parameter called payrolldate.
    * 
@@ -204,15 +204,38 @@ class QBPayrollJournalCtl{
    */
   public static function read_employee_allocations(string $realmid):void{  
 
-    $employees = QuickbooksEmployee::getInstance()
-      ->setRealmID($realmid)
-      ->readAll();
+    // Variable scope in PHP is by function, not block. You can assign a variable inside a
+    // try block, and access it outside, so long as they're in the same function.
 
-    $model = \Models\QuickbooksRecurringTransaction::getInstance()
-      ->setRealmID($realmid)
-      ->setId(\Core\Config::read('qb.allocationsid'));
+    try {
+      $employees = QuickbooksEmployee::getInstance()
+        ->setRealmID($realmid)
+        ->readAll();
+    } catch (\Exception $e) {
+      http_response_code(400);   
+      echo json_encode(
+          array("message" => "Unable to retrieve mist of employees from QuickBooks.",
+          "details" => "QBO ID realm = " . $realmid)
+      );
+      exit(1);
+    }
+    
+    try {
+      $model = \Models\QuickbooksRecurringTransaction::getInstance()
+        ->setRealmID($realmid)
+        ->setId(\Core\Config::read('qb.allocationsid'));
 
-    $response = $model->readone();
+      $response = $model->readone();
+    
+    } catch (\Exception $e) {
+      http_response_code(400);   
+      echo json_encode(
+          array("message" => "Recurring transaction that is used to obtain employee allocations not found.",
+          "details" => "QBO ID of recurring transaciton = " . $model->getId(),
+          "quickbooks" => $e->getMessage())
+      );
+      exit(1);
+    }
 
     if (isset($response) && isset($response->JournalEntry) 
               && isset($response->JournalEntry->Line)) {
