@@ -84,9 +84,7 @@ class QuickbooksEmployee{
       $item = $dataService->FindbyId('Employee', $this->id);
       $error = $dataService->getLastError();
       if ($error) {
-          echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
-          echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
-          echo "The Response message is: " . $error->getResponseBody() . "\n";
+        throw new \Exception("The Response message is: " . $error->getResponseBody() . "\n");
       }
       else {
         if (property_exists($item, 'Employee')) {
@@ -119,9 +117,9 @@ class QuickbooksEmployee{
   }
 
   /**
-   * Return details of all QBO Employees
+   * Return details of all QBO Employees. However who do not have an EmployeeID asigned to them are excluded from this list.
    * @param bool $associateByName If 'true' return an associative array, sorted by Display Name
-   * @return array An array of QBO Employees
+   * @return array An array of QBO Employees who have a valid EmployeeID associated with them
    * 
    */
   private function readAllImpl(bool $associateByName = false):array{
@@ -135,10 +133,7 @@ class QuickbooksEmployee{
     $items = $dataService->FindAll('Employee');
     $error = $dataService->getLastError();
     if ($error) {
-        echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
-        echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
-        echo "The Response message is: " . $error->getResponseBody() . "\n";
-        return [];
+      throw new \Exception("The Response message is: " . $error->getResponseBody() . "\n");
     }
     else {
 
@@ -147,7 +142,8 @@ class QuickbooksEmployee{
           $employee = array(
             "quickbooksId" => $item->Id,
             "name" => $item->DisplayName,
-            "payrollNumber" => $item->EmployeeNumber
+            "payrollNumber" => $item->EmployeeNumber,
+            "familyName" => $item->FamilyName??'Unknown'
           );
           if ($item->EmployeeNumber) {
             if ($associateByName) {

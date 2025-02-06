@@ -27,16 +27,29 @@ class QBEmployeeCtl{
   }
 
   /**
-   * Return details of all QBO Employees
+   * Return details of all QBO Employees. However who do not have an 
+   * EmployeeID asigned to them are excluded from this list.
    * @param string $realmid The company ID for the QBO company.
    * @return void Output is echo'd directly to response 
    */
   public static function read_all(string $realmid){  
 
-    $model = QuickbooksEmployee::getInstance()
-      ->setRealmID($realmid); 
+    try {
+      $model = QuickbooksEmployee::getInstance()
+        ->setRealmID($realmid); 
 
-    echo json_encode(array_values($model->readAll()), JSON_NUMERIC_CHECK);
+      echo json_encode(array_values($model->readAll()), JSON_NUMERIC_CHECK);
+
+    } catch (\Exception $e) {
+
+      http_response_code(400);   
+      echo json_encode(
+        array("message" => "Unable to obtain list of employees from QuickBooks.",
+        "details" => "QBO ID realm = " . $realmid,
+        "quickbooks" => $e->getMessage())
+      );
+
+    }
   }
 
 }

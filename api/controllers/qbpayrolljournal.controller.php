@@ -214,7 +214,7 @@ class QBPayrollJournalCtl{
     } catch (\Exception $e) {
       http_response_code(400);   
       echo json_encode(
-          array("message" => "Unable to retrieve mist of employees from QuickBooks.",
+          array("message" => "Unable to retrieve list of employees from QuickBooks.",
           "details" => "QBO ID realm = " . $realmid)
       );
       exit(1);
