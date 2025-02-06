@@ -8,7 +8,6 @@ import {
 import { from, mergeMap, shareReplay, tap, toArray } from 'rxjs';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { BasePayrollTransactionComponent } from '../parent.component';
-import { AuditLogService, AuthenticationService } from '@app/_services';
 
 @Component({
   selector: 'employee-journals',
@@ -18,6 +17,7 @@ import { AuditLogService, AuthenticationService } from '@app/_services';
   styleUrls: ['./employee-journals.component.css', '../shared.css'],
 })
 export class EmployeeJournalsComponent extends BasePayrollTransactionComponent<PayrollJournalEntry> {
+
   override recalculateTransactions() {
     if (!this.payslips.length) return;
 
