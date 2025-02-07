@@ -71,7 +71,8 @@ class QBReportCtl{
     }
 
     if (isset($_GET['summarizeColumn']) && !empty($_GET['summarizeColumn'])) {
-        $model->summarizeColumn = $_GET['summarizeColumn'];
+        // must be 'Quarter', not 'quarter' or 'Month' not 'month'
+        $model->summarizeColumn = ucwords(strtolower($_GET['summarizeColumn']));
     } else {
         $model->summarizeColumn = '';
     }
@@ -129,10 +130,10 @@ class QBReportCtl{
     }
 
     if (isset($_GET['summarizeColumn']) && !empty($_GET['summarizeColumn'])) {
-        // must be 'Quarter', not 'quarter' or 'Month' not 'month'
-        $model->summarizeColumn = ucwords(strtolower($_GET['summarizeColumn']));
+      // must be 'Quarter', not 'quarter' or 'Month' not 'month'
+      $model->summarizeColumn = ucwords(strtolower($_GET['summarizeColumn']));
     } else {
-        $model->summarizeColumn = '';
+      $model->summarizeColumn = '';
     }
 
     // item is a number
@@ -143,6 +144,39 @@ class QBReportCtl{
     }
 
     echo json_encode($model->itemSales(), JSON_NUMERIC_CHECK);
+  }
+
+  public static function quarterly_market_report(string $realmid){
+
+    $model = new \Models\QuickbooksReport();
+    $model->realmid = $realmid;
+
+    if (isset($_GET['summarizeColumn']) && !empty($_GET['summarizeColumn'])) {
+      // must be 'Quarter', not 'quarter' or 'Month' not 'month'
+      $model->summarizeColumn = ucwords(strtolower($_GET['summarizeColumn']));
+    } else {
+      $model->summarizeColumn = '';
+    }
+
+    if(isset($_GET['start']) || isset($_GET['end'])) {
+      $start='';
+      $end='';
+      list($start, $end) = \Core\DatesHelper::sanitizeDateValues(
+                                  !isset($_GET['start']) ? '' : $_GET['start'], 
+                                  !isset($_GET['end']) ? '' : $_GET['end']
+                              );
+  
+      $model->startdate = $start;
+      $model->enddate = $end;
+    }
+
+    list($start, $end) = \Core\DatesHelper::previousPeriod($start, $end );
+    $model->startdate = $start;
+
+    $profitAndLossReport = $model->profitAndLoss();
+    $adaptedReport = $model->adaptProfitAndLossToQMA($profitAndLossReport);
+
+    echo json_encode($adaptedReport, JSON_NUMERIC_CHECK);
   }
 
 }

@@ -29,13 +29,13 @@ class DatesHelper
      * by the {@link validateDate} function. 
      * 
      *
-     * @param string $startdate
-     * @param string $enddate
+     * @param string $startdate The beginning date of the accounting period
+     * @param string $enddate The end date of the accounting period
      * 
-     * @return array [ start_date, end_date ]
+     * @return array Cleansed and validated dates in the array format: [ start_date, end_date ]
      * 
      */
-    public static function sanitizeDateValues($startdate, $enddate)
+    public static function sanitizeDateValues($startdate, $enddate) : array
     {
         $end = date('Y-m-d');
 
@@ -112,5 +112,22 @@ class DatesHelper
         $now = new DateTime();
         $now->setTimezone(new DateTimeZone('Europe/London'));
         return $now->format('Y-m-d H:i:s');    // MySQL datetime format
+    }
+
+    /**
+     * Given a start date and an end date of an accounting period, calculate the dates of the preious year's equivalent period.
+     * 
+     * @param string $startdate The beginning date of the accounting period
+     * @param string $enddate The end date of the accounting period
+     * @return array Cleansed and validated dates in the array format: [ start_date, end_date ]
+     */
+    public static function previousPeriod($startdate, $enddate) : array
+    {
+        $cleanvalues = DatesHelper::sanitizeDateValues($startdate, $enddate);
+
+        return array(
+            (new DateTime($cleanvalues[0]))->modify('-1 year')->format('Y-m-d'),
+            (new DateTime($cleanvalues[1]))->modify('-1 year')->format('Y-m-d')
+        );
     }
 }

@@ -4,6 +4,7 @@ namespace Models;
 
 use QuickBooksOnline\API\ReportService\ReportService;
 use QuickBooksOnline\API\ReportService\ReportName;
+use QuickBooksOnline\API\Exception\SdkException;
 
 use DateTime;
 
@@ -110,9 +111,7 @@ class QuickbooksReport{
 
         $error = $dataService->getLastError();
         if ($error) {
-            echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
-            echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
-            echo "The Response message is: " . $error->getResponseBody() . "\n";
+            throw new SdkException("The Response message is: " . $error->getResponseBody());
         }
         else {
             return $profitAndLossReport;
@@ -164,10 +163,7 @@ class QuickbooksReport{
 
         $error = $dataService->getLastError();
         if ($error) {
-            echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
-            echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
-            echo "The Response message is: " . $error->getResponseBody() . "\n";
-            return [];
+            throw new SdkException("The Response message is: " . $error->getResponseBody());
         }
         else {                        
             $report_arr=array();            
@@ -269,20 +265,10 @@ class QuickbooksReport{
             ->setSummarizeColumnBy($this->summarizeColumn)
             ->setItem($this->item)
             ->executeReport(ReportName::ITEMSALES);
-  
-        /*$reportService->setStartDate($this->startdate);
-        $reportService->setEndDate($this->enddate);
-        $reportService->setItem($this->item);
-
-        $customerSales = $reportService->executeReport(ReportName::ITEMSALES);
-        */
 
         $error = $dataService->getLastError();
         if ($error) {
-            echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
-            echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
-            echo "The Response message is: " . $error->getResponseBody() . "\n";
-            return;
+            throw new SdkException("The Response message is: " . $error->getResponseBody());
         }        
 
         $returnObj = array();
@@ -369,10 +355,136 @@ class QuickbooksReport{
             return array(
                 "message" => "QB returned null value",
             );
-        }
-            
+        }                    
         
+    }
 
+    /**
+     * Convert the raw QuickBooks Profit and Loss report into a format that can we used
+     * to report the QMA information.
+     */
+    public function adaptProfitAndLossToQMA($profitAndLossReport) {
+
+        $report=array();            
+
+        /** @disregard Intelephense error on next line */
+        if ($profitAndLossReport && property_exists($profitAndLossReport, 'Columns')
+                 && property_exists($profitAndLossReport->Columns, 'Column')) {
+
+            /** @disregard Intelephense error on next line */
+            $columns = $profitAndLossReport->Columns->Column;
+
+            $numberOfColumns = count($columns);
+            $prevColNum = 1; // ignore first column ('Account')
+            $currColNum = $numberOfColumns-2;
+            $indices = array($prevColNum, $currColNum);
+
+            $report['period'] = array();
+            array_push($report['period'], $columns[$prevColNum]->ColTitle);
+            array_push($report['period'], $columns[$currColNum]->ColTitle);
+
+            /** @disregard Intelephense error on next line */
+            $dataArray = $profitAndLossReport->Rows->Row; // This is an array of data objects
+
+            foreach ($dataArray as $rowItem) {
+
+                $summaryItem = $rowItem->Summary;
+                $sectionName = strtolower($rowItem->group);
+                $report[$sectionName] = array();
+                $report[$sectionName]['total'] = array();
+
+                $columnValues = $summaryItem->ColData;
+                array_push($report[$sectionName]['total'], $columnValues[$prevColNum]->value);
+                array_push($report[$sectionName]['total'], $columnValues[$currColNum]->value);
+
+                // Interrogate components of individual sections
+                switch ($sectionName) {
+                    case 'income':                  
+                        $rows = $rowItem->Rows->Row;
+                        $report[$sectionName]['rows'] = array();
+
+                        foreach ($rows as $row) {
+                            $rowValue = QuickbooksReport::extractNameAndValue($row, $indices);
+                            array_push($report[$sectionName]['rows'], $rowValue);
+                            
+                            if ($rowValue['name'] == 'Ragging') {
+                                $report['ragging'] = array();
+                                $report['ragging']['total'] = $rowValue['value'];
+                            }
+                        }
+                        break;
+
+                    case 'expenses':
+                        $rows = $rowItem->Rows->Row;
+                        $report[$sectionName]['rows'] = array();
+
+                        foreach ($rows as $row) {
+                            $rowValue = QuickbooksReport::extractNameAndValue($row, $indices);
+                            array_push($report[$sectionName]['rows'], $rowValue);                        
+                        }
+                        break;
+
+                    case 'otherincome':
+                        $rows = $rowItem->Rows->Row;
+                        $report[$sectionName]['rows'] = array();
+                        foreach ($rows as $row) {
+                            $rowValue = QuickbooksReport::extractNameAndValue($row, $indices);
+                            array_push($report[$sectionName]['rows'], $rowValue); 
+                            
+                            if (str_starts_with($rowValue['name'], 'Donation')) {
+                                $report['donations'] = array();
+                                $report['donations']['total'] = $rowValue['value'];
+                            }
+                        }
+                        break;
+                }
+            }
+
+            return $report;
+
+        } else {
+            http_response_code(422);  
+            return array(
+                "message" => "QB result set is missing Columns array.",
+            );
+        }
+        
+                 
+
+    }
+
+    /**
+     * Extract the name and values from a specified row item.
+     * The returned object is an array with 'name' and 'value' keys.
+     * The value is itself an array.
+     * @return array { 'name': string, 'value': array }
+     */
+    private function extractNameAndValue($row, $indexes) : array {
+
+        // Handle case where row has multiple sections
+        if ($row && property_exists($row, 'Rows')) {
+            $row = $row->Summary;
+        }
+
+        $rowValues = $row->ColData;
+        $name = $rowValues[0]->value;
+
+        $returnArray = array();      
+
+        // remove 'Total ' from start of string
+        if (str_starts_with($name, 'Total')){
+            $returnArray['name'] = substr($name, 6);
+        } else {
+            $returnArray['name'] = $name;
+        }
+        
+        $returnArray['value'] = array();
+
+        foreach($indexes as $i) {
+            array_push($returnArray['value'], empty($rowValues[$i]->value)?0:$rowValues[$i]->value);
+        }
+
+        return $returnArray;
     }
     
 }
