@@ -9,6 +9,8 @@ export const environment = {
   loginUrl: 'http://localhost:4200/',
   qboEnterprisesRealmID: '9130350604308576', // Age UK Enterprises
   qboCharityRealmID: '123145825016867', // Age UK Westminster
+  qboEnterprisesIntercompanyAccount: 80, // Enterporises interco account number
+  qboCharityIntercompanyAccount: 65, // Charity inter account number
 };
 
 /*
