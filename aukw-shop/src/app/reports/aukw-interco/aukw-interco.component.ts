@@ -33,7 +33,7 @@ export class AukwIntercoComponent
   private reportService = inject(QBReportService);
 
   /**
-   * Override the default constructor ont he base class because
+   * Override the default constructor on the base class because
    * I want to use a non-default date range, namely 'Last 6 Months'.
    */
   override ngOnInit() {
@@ -46,6 +46,10 @@ export class AukwIntercoComponent
     this.onDateRangeChanged(DateRangeEnum.LAST_SIX_MONTHS);
   }
 
+  /**
+   * This checkbox determines if the report is run on the 
+   * Enterprises company or the Charity company.
+   */
   checkboxClick() {
     this.enterprises = !this.enterprises;
     this.onDateRangeChanged(this.f['dateRange'].value);
@@ -59,6 +63,7 @@ export class AukwIntercoComponent
         next: (response) => (this.data = response),
         error: (error: any) => {
           this.loading = false;
+          this.data = [];
           this.alertService.error(error, { autoClose: false });
         },
         complete: () => (this.loading = false),
