@@ -362,6 +362,13 @@ class QuickbooksReport{
     /**
      * Convert the raw QuickBooks Profit and Loss report into a format that can we used
      * to report the QMA information.
+     * 
+     * We wish to report numbers for the latest time period and the time period one
+     * year before that. Because of a limitation in the QBO api, we receive data for
+     * all intervenign periods between the two relevant periods. We must ignore these 
+     * periods.
+     * 
+     * @param array $profitAndLossReport A report array received from QuickBooks
      */
     public function adaptProfitAndLossToQMA($profitAndLossReport) {
 
@@ -374,14 +381,15 @@ class QuickbooksReport{
             /** @disregard Intelephense error on next line */
             $columns = $profitAndLossReport->Columns->Column;
 
-            $numberOfColumns = count($columns);
-            $prevColNum = 1; // ignore first column ('Account')
-            $currColNum = $numberOfColumns-2;
-            $indices = array($prevColNum, $currColNum);
+            // Find the column numbers for the two periods that we wish to report back to user
+            $numberOfColumns = count($columns); // Total number of columns
+            $twelveMonthsAgoPeriodColumnNumber = 1; // ignore the first column ( which is 'Account')
+            $latestPeriodColumnNumber = $numberOfColumns-2; // The latest period data is in the second last column
+            $indices = array($twelveMonthsAgoPeriodColumnNumber, $latestPeriodColumnNumber); 
 
             $report['period'] = array();
-            array_push($report['period'], $columns[$prevColNum]->ColTitle);
-            array_push($report['period'], $columns[$currColNum]->ColTitle);
+            array_push($report['period'], $columns[$twelveMonthsAgoPeriodColumnNumber]->ColTitle);
+            array_push($report['period'], $columns[$latestPeriodColumnNumber]->ColTitle);
 
             /** @disregard Intelephense error on next line */
             $dataArray = $profitAndLossReport->Rows->Row; // This is an array of data objects
@@ -394,8 +402,10 @@ class QuickbooksReport{
                 $report[$sectionName]['total'] = array();
 
                 $columnValues = $summaryItem->ColData;
-                array_push($report[$sectionName]['total'], $columnValues[$prevColNum]->value);
-                array_push($report[$sectionName]['total'], $columnValues[$currColNum]->value);
+                array_push($report[$sectionName]['total'], 
+                    $columnValues[$twelveMonthsAgoPeriodColumnNumber]->value);
+                array_push($report[$sectionName]['total'], 
+                    $columnValues[$latestPeriodColumnNumber]->value);
 
                 // Interrogate components of individual sections
                 switch ($sectionName) {
@@ -404,12 +414,16 @@ class QuickbooksReport{
                         $report[$sectionName]['rows'] = array();
 
                         foreach ($rows as $row) {
-                            $rowValue = QuickbooksReport::extractNameAndValue($row, $indices);
-                            array_push($report[$sectionName]['rows'], $rowValue);
-                            
-                            if ($rowValue['name'] == 'Ragging') {
-                                $report['ragging'] = array();
-                                $report['ragging']['total'] = $rowValue['value'];
+                            $rowValue = QuickbooksReport::extractNameAndValue($row, 
+                                $twelveMonthsAgoPeriodColumnNumber, 
+                                $latestPeriodColumnNumber);
+                            if ($rowValue) {
+                                array_push($report[$sectionName]['rows'], $rowValue);
+                                
+                                if ($rowValue['name'] == 'Ragging') {
+                                    $report['ragging'] = array();
+                                    $report['ragging']['total'] = $rowValue['value'];
+                                }
                             }
                         }
                         break;
@@ -419,8 +433,11 @@ class QuickbooksReport{
                         $report[$sectionName]['rows'] = array();
 
                         foreach ($rows as $row) {
-                            $rowValue = QuickbooksReport::extractNameAndValue($row, $indices);
-                            array_push($report[$sectionName]['rows'], $rowValue);                        
+                            $rowValue = QuickbooksReport::extractNameAndValue($row, 
+                                $twelveMonthsAgoPeriodColumnNumber, 
+                                $latestPeriodColumnNumber);
+                            if ($rowValue)
+                                array_push($report[$sectionName]['rows'], $rowValue);                        
                         }
                         break;
 
@@ -428,13 +445,28 @@ class QuickbooksReport{
                         $rows = $rowItem->Rows->Row;
                         $report[$sectionName]['rows'] = array();
                         foreach ($rows as $row) {
-                            $rowValue = QuickbooksReport::extractNameAndValue($row, $indices);
-                            array_push($report[$sectionName]['rows'], $rowValue); 
+                            $rowValue = QuickbooksReport::extractNameAndValue($row, 
+                                $twelveMonthsAgoPeriodColumnNumber, 
+                                $latestPeriodColumnNumber);
+                            if ($rowValue) {
+                                array_push($report[$sectionName]['rows'], $rowValue); 
                             
-                            if (str_starts_with($rowValue['name'], 'Donation')) {
-                                $report['donations'] = array();
-                                $report['donations']['total'] = $rowValue['value'];
+                                if (str_starts_with($rowValue['name'], 'Donation')) {
+                                    $report['donations'] = array();
+                                    $report['donations']['total'] = $rowValue['value'];
+                                }
                             }
+                        }
+                        break;
+                    case 'otherexpenses':
+                        $rows = $rowItem->Rows->Row;
+                        $report[$sectionName]['rows'] = array();
+                        foreach ($rows as $row) {
+                            $rowValue = QuickbooksReport::extractNameAndValue($row, 
+                                $twelveMonthsAgoPeriodColumnNumber, 
+                                $latestPeriodColumnNumber);
+                            if ($rowValue)
+                                array_push($report[$sectionName]['rows'], $rowValue); 
                         }
                         break;
                 }
@@ -457,9 +489,16 @@ class QuickbooksReport{
      * Extract the name and values from a specified row item.
      * The returned object is an array with 'name' and 'value' keys.
      * The value is itself an array.
-     * @return array { 'name': string, 'value': array }
+     * @param mixed $row
+     * @param int $twelveMonthsAgoPeriodColumnNumber
+     * @param int $latestPeriodColumnNumber
+     * @return array|false { 'name': string, 'value': array }
      */
-    private function extractNameAndValue($row, $indexes) : array {
+    private function extractNameAndValue($row, 
+        int $twelveMonthsAgoPeriodColumnNumber, 
+        int $latestPeriodColumnNumber) : array|false {
+
+        $nonZeroValue = false;
 
         // Handle case where row has multiple sections
         if ($row && property_exists($row, 'Rows')) {
@@ -480,11 +519,24 @@ class QuickbooksReport{
         
         $returnArray['value'] = array();
 
-        foreach($indexes as $i) {
-            array_push($returnArray['value'], empty($rowValues[$i]->value)?0:$rowValues[$i]->value);
+        $twelveMthsAgoValue = empty($rowValues[$twelveMonthsAgoPeriodColumnNumber]->value)?
+                                0:
+                                $rowValues[$twelveMonthsAgoPeriodColumnNumber]->value;
+        array_push($returnArray['value'], $twelveMthsAgoValue);
+        if ($twelveMthsAgoValue != 0) {
+            $nonZeroValue = true;  
         }
 
-        return $returnArray;
+        $twelveMthsAgoValue = empty($rowValues[$latestPeriodColumnNumber]->value)?
+                                    0:
+                                    $rowValues[$latestPeriodColumnNumber]->value;
+        array_push($returnArray['value'], $twelveMthsAgoValue);
+        if ($twelveMthsAgoValue != 0) {
+            $nonZeroValue = true;  
+        }
+
+        // Only return the values if one of the values is nonZero
+        return $nonZeroValue?$returnArray:false;
     }
     
 }
