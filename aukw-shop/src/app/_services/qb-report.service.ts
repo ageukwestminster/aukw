@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { environment } from '@environments/environment';
 import { Observable } from 'rxjs';
-import { QBAccountListEntry } from '@app/_models/qb-account-list-entry';
+import { QBAccountListEntry, ProfitAndLossData } from '@app/_models';
 
 const baseUrl = `${environment.apiUrl}/qb`;
 
@@ -53,9 +53,9 @@ export class QBReportService {
       start: string,
       end: string,
       summarizeColumn: string,
-    ): Observable<any> {
+    ): Observable<ProfitAndLossData> {
       let realmId = environment.qboEnterprisesRealmID;
-      return this.http.get<QBAccountListEntry[]>(
+      return this.http.get<ProfitAndLossData>(
         `${baseUrl}/${realmId}/report/qma` +
           `?start=${start}&end=${end}&summarizeColumn=${summarizeColumn}`,
       );
