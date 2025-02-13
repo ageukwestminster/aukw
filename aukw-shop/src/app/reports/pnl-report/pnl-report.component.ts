@@ -3,9 +3,9 @@ import { CommonModule, NgIf, NgClass } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
   NgbAccordionModule,
+  NgbCollapseModule,
   NgbDatepickerModule,
 } from '@ng-bootstrap/ng-bootstrap';
-import { RouterLink } from '@angular/router';
 import { QBReportService } from '@app/_services';
 import { AbstractChartReportComponent } from '../chart-report.component';
 import { DateRangeEnum, ProfitAndLossData } from '@app/_models';
@@ -17,7 +17,7 @@ import { DateRangeEnum, ProfitAndLossData } from '@app/_models';
     NgbAccordionModule,
     NgbDatepickerModule,
     NgIf,
-    RouterLink,
+    NgbCollapseModule,
     ReactiveFormsModule,
   ],
   templateUrl: './pnl-report.component.html',
@@ -29,6 +29,9 @@ export class PnlReportComponent
 {
   private reportService = inject(QBReportService);
   
+  isExpensesCollapsed = false;
+  isOtherIncomeCollapsed = false;
+
 
   override ngOnInit() {
     this.form = this.formBuilder.group({

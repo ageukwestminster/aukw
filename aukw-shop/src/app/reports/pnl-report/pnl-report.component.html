@@ -110,53 +110,53 @@
               </tr>
               <tr *ngFor="let item of data.income.rows">
                 <td>{{ item.name }}</td>
-                <td class="text-end">{{ Math.round(item.value[0]) | number: "1.2-2" }}</td>
-                <td class="text-end">{{ Math.round(item.value[1]) | number: "1.2-2" }}</td>
+                <td class="text-end">{{ Math.round(item.value[0]) | number: "1.0-0" }}</td>
+                <td class="text-end">{{ Math.round(item.value[1]) | number: "1.0-0" }}</td>
                 <td class="text-end">
-                  {{ Math.round(item.value[1] - item.value[0]) | number: "1.2-2" }}
+                  {{ Math.round(item.value[1] - item.value[0]) | number: "1.0-0" }}
                 </td>
               </tr>
               <tr>
                 <th>Total Income</th>
                 <td class="text-end border-tb">
-                  {{ Math.round(data.income.rows[0].value[0]) | number: "1.2-2" }}
+                  {{ Math.round(data.income.rows[0].value[0]) | number: "1.0-0" }}
                 </td>
                 <td class="text-end border-tb">
-                  {{ Math.round(data.income.rows[0].value[1]) | number: "1.2-2" }}
+                  {{ Math.round(data.income.rows[0].value[1]) | number: "1.0-0" }}
                 </td>
                 <td class="text-end border-tb">
                   {{
                     Math.round(data.income.rows[0].value[1] - data.income.rows[0].value[0])
-                      | number: "1.2-2"
+                      | number: "1.0-0"
                   }}
                 </td>
               </tr>
               <tr>
                 <td>Cost of Goods Sold</td>
                 <td class="text-end">
-                  {{ data.cogs.total[0] | number: "1.2-2" }}
+                  {{ data.cogs.total[0] | number: "1.0-0" }}
                 </td>
                 <td class="text-end">
-                  {{ data.cogs.total[1] | number: "1.2-2" }}
+                  {{ data.cogs.total[1] | number: "1.0-0" }}
                 </td>
                 <td class="text-end">
                   {{
-                    data.cogs.total[1] - data.cogs.total[0] | number: "1.2-2"
+                    data.cogs.total[1] - data.cogs.total[0] | number: "1.0-0"
                   }}
                 </td>
               </tr>
               <tr>
                 <th>Gross Profit</th>
                 <td class="text-end border-tb2">
-                  {{ data.grossprofit.total[0] | number: "1.2-2" }}
+                  {{ data.grossprofit.total[0] | number: "1.0-0" }}
                 </td>
                 <td class="text-end border-tb2">
-                  {{ data.grossprofit.total[1] | number: "1.2-2" }}
+                  {{ data.grossprofit.total[1] | number: "1.0-0" }}
                 </td>
                 <td class="text-end border-tb2">
                   {{
                     data.grossprofit.total[1] - data.grossprofit.total[0]
-                      | number: "1.2-2"
+                      | number: "1.0-0"
                   }}
                 </td>
               </tr>
@@ -164,98 +164,115 @@
                 <td>
                   Expenses
                 </td>
-                <td>    <span 
-                  class="badge badge-primary ml-1"
-                  type="button" 
-                  data-toggle="collapse" 
-                  data-target="#collapseRow" 
-                  aria-expanded="false" 
-                  aria-controls="collapseRow"
-                >+</span></td>
+                <td>    </td>
                 <td></td>
                 <td></td>
               </tr>
-              <tr *ngFor="let item of data.expenses.rows">
-                <td>{{ item.name }}</td>
-                <td class="text-end">{{ item.value[0] | number: "1.2-2" }}</td>
-                <td class="text-end">{{ item.value[1] | number: "1.2-2" }}</td>
-                <td class="text-end">
-                  {{ item.value[1] - item.value[0] | number: "1.2-2" }}
-                </td>
-              </tr>
+              <ng-container *ngFor="let item of data.expenses.rows" >
+                <tr [ngbCollapse]="!isExpensesCollapsed">
+                  <td>&nbsp;&nbsp;{{ item.name }}</td>
+                  <td class="text-end">{{ item.value[0] | number: "1.0-0" }}</td>
+                  <td class="text-end">{{ item.value[1] | number: "1.0-0" }}</td>
+                  <td class="text-end">
+                    {{ item.value[1] - item.value[0] | number: "1.0-0" }}
+                  </td>
+                </tr>
+              </ng-container>
               <tr>
-                <th></th>
-                <td class="text-end">
-                  {{ data.expenses.total[0] | number: "1.2-2" }}
+                <th>
+                  <span 
+                  type="button"
+                  class="ml-1"
+                  (click)="isExpensesCollapsed = !isExpensesCollapsed"
+                  [attr.aria-expanded]="!isExpensesCollapsed"
+                  aria-controls="collapseExample"
+                >+</span>
+                Total Expenses
+              </th>
+                <td class="text-end border-tb">
+                  {{ data.expenses.total[0] | number: "1.0-0" }}
                 </td>
-                <td class="text-end">
-                  {{ data.expenses.total[1] | number: "1.2-2" }}
+                <td class="text-end border-tb">
+                  {{ data.expenses.total[1] | number: "1.0-0" }}
                 </td>
-                <td class="text-end">
+                <td class="text-end border-tb">
                   {{
                     data.expenses.total[1] - data.expenses.total[0]
-                      | number: "1.2-2"
+                      | number: "1.0-0"
                   }}
                 </td>
               </tr>
               <tr>
                 <th>Net operating Income</th>
                 <td class="text-end">
-                  {{ data.netoperatingincome.total[0] | number: "1.2-2" }}
+                  {{ data.netoperatingincome.total[0] | number: "1.0-0" }}
                 </td>
                 <td class="text-end">
-                  {{ data.netoperatingincome.total[1] | number: "1.2-2" }}
+                  {{ data.netoperatingincome.total[1] | number: "1.0-0" }}
                 </td>
                 <td class="text-end">
                   {{
                     data.netoperatingincome.total[1] -
-                      data.netoperatingincome.total[0] | number: "1.2-2"
+                      data.netoperatingincome.total[0] | number: "1.0-0"
                   }}
                 </td>
               </tr>
-              <tr *ngFor="let item of data.otherincome.rows">
-                <td>{{ item.name }}</td>
-                <td class="text-end">{{ Math.round(item.value[0]) | number: "1.2-2" }}</td>
-                <td class="text-end">{{ Math.round(item.value[1]) | number: "1.2-2" }}</td>
-                <td class="text-end">
-                  {{ Math.round(item.value[1] - item.value[0]) | number: "1.2-2" }}
-                </td>
-              </tr>
-              <tr *ngFor="let item of data.otherexpenses.rows">
-                <td>{{ item.name }}</td>
-                <td class="text-end">{{ Math.round(-item.value[0]) | number: "1.2-2" }}</td>
-                <td class="text-end">{{ Math.round(-item.value[1]) | number: "1.2-2" }}</td>
-                <td class="text-end">
-                  {{ Math.round(item.value[0] - item.value[1]) | number: "1.2-2" }}
-                </td>
-              </tr>
+              <ng-container *ngFor="let item of data.otherincome.rows" >
+                <tr [ngbCollapse]="!isOtherIncomeCollapsed">
+                  <td>&nbsp;&nbsp;{{ item.name }}</td>
+                  <td class="text-end">{{ Math.round(item.value[0]) | number: "1.0-0" }}</td>
+                  <td class="text-end">{{ Math.round(item.value[1]) | number: "1.0-0" }}</td>
+                  <td class="text-end">
+                    {{ Math.round(item.value[1] - item.value[0]) | number: "1.0-0" }}
+                  </td>
+                </tr>
+              </ng-container>
+              <ng-container *ngFor="let item of data.otherexpenses.rows" >
+                <tr [ngbCollapse]="!isOtherIncomeCollapsed">
+                  <td>&nbsp;&nbsp;{{ item.name }}</td>
+                  <td class="text-end">{{ Math.round(-item.value[0]) | number: "1.0-0" }}</td>
+                  <td class="text-end">{{ Math.round(-item.value[1]) | number: "1.0-0" }}</td>
+                  <td class="text-end">
+                    {{ Math.round(item.value[0] - item.value[1]) | number: "1.0-0" }}
+                  </td>
+                </tr>
+              </ng-container>
               <tr>
-                <th>Net Other Income</th>
-                <td class="text-end">
-                  {{ data.netotherincome.total[0] | number: "1.2-2" }}
+                <th>
+                  <span 
+                    type="button"
+                    class="ml-1"
+                    (click)="isOtherIncomeCollapsed = !isOtherIncomeCollapsed"
+                    [attr.aria-expanded]="!isOtherIncomeCollapsed"
+                    aria-controls="collapseExample"
+                  >+</span>
+                  Net Other Income
+                </th>
+                <td class="text-end border-tb">
+                  {{ data.netotherincome.total[0] | number: "1.0-0" }}
                 </td>
-                <td class="text-end">
-                  {{ data.netotherincome.total[1] | number: "1.2-2" }}
+                <td class="text-end border-tb">
+                  {{ data.netotherincome.total[1] | number: "1.0-0" }}
                 </td>
-                <td class="text-end">
+                <td class="text-end border-tb">
                   {{
                     data.netotherincome.total[1] - data.netotherincome.total[0]
-                      | number: "1.2-2"
+                      | number: "1.0-0"
                   }}
                 </td>
               </tr>
               <tr>
                 <th>Net Income</th>
                 <td class="text-end border-bb">
-                  {{ data.netincome.total[0] | number: "1.2-2" }}
+                  {{ data.netincome.total[0] | number: "1.0-0" }}
                 </td>
                 <td class="text-end border-bb">
-                  {{ data.netincome.total[1] | number: "1.2-2" }}
+                  {{ data.netincome.total[1] | number: "1.0-0" }}
                 </td>
                 <td class="text-end border-bb">
                   {{
                     data.netincome.total[1] - data.netincome.total[0]
-                      | number: "1.2-2"
+                      | number: "1.0-0"
                   }}
                 </td>
               </tr>
