@@ -29,9 +29,16 @@ export class PnlReportComponent
 {
   private reportService = inject(QBReportService);
   
+  /**
+   * When 'true' collapse the expenses lines. 
+   * Logic from: {@link https://ng-bootstrap.github.io/#/components/collapse/examples}
+   */
   isExpensesCollapsed = false;
+    /**
+   * When 'true' collapse the other income and other expenses lines. 
+   * Logic from: {@link https://ng-bootstrap.github.io/#/components/collapse/examples}
+   */
   isOtherIncomeCollapsed = false;
-
 
   override ngOnInit() {
     this.form = this.formBuilder.group({
