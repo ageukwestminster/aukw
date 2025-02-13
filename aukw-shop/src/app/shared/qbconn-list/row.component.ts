@@ -79,20 +79,25 @@ export class QBConnectionRowComponent {
     const connection = this.realm.connection;
 
     connection.isRevoking = true;
-    this.connectionService.delete(connection.realmid).subscribe(() => {
-      this.auditLogService.log(
-        this.user,
-        'DELETE',
-        'Revoke QB connection for ' + this.realm.name,
-      );
+    this.connectionService.delete(connection.realmid).subscribe({
+      next: () =>  {
       this.alertService.success(
         'Connection revoked for ' + connection.companyname,
         {
           keepAfterRouteChange: true,
         },
       );
-      connection.isRevoking = false;
-      this.onConnectionRevoked.emit(connection);
+      },
+      error: (error: any) => {},
+      complete: () => {
+        this.auditLogService.log(
+          this.user,
+          'DELETE',
+          'Revoke QB connection for ' + this.realm.name,
+        );
+        connection.isRevoking = false;
+        this.onConnectionRevoked.emit(connection);
+      }
     });
   }
 

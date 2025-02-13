@@ -7,7 +7,7 @@ import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
 import { DateRangeAdapter } from '@app/_helpers';
 import { DateRange, DateRangeEnum } from '@app/_models';
-import { ExportToCsvService } from '@app/_services';
+import { ExportToCsvService, AlertService } from '@app/_services';
 
 @Component({
   template: '',
@@ -24,6 +24,10 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
   protected dateRangeAdapter = inject(DateRangeAdapter);
   protected formBuilder = inject(FormBuilder);
   protected router = inject(Router);
+  protected alertService = inject(AlertService);
+
+  /** Expose the Math object to templates */
+  Math = Math;
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({

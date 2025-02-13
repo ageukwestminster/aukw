@@ -1,0 +1,11 @@
+.border-tb {
+  border: 1px solid #000; border-width: 2px 0 0 0;
+}
+
+.border-tb2 {
+  border: 2px solid #000; border-width: 2px 0 0 0;
+}
+
+.border-bb {
+  border: 3px double #000; border-width: 0 0 3px 0;
+}

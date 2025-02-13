@@ -29,7 +29,6 @@ export class AukwIntercoComponent
 {
   enterprises: boolean = true;
 
-  private alertService = inject(AlertService);
   private reportService = inject(QBReportService);
 
   /**
