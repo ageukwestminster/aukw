@@ -1,15 +1,21 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule, NgIf, NgClass } from '@angular/common';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule, DatePipe, NgIf } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 import {
   NgbAccordionModule,
   NgbDatepickerModule,
+  NgbDateAdapter,
+  NgbDateParserFormatter,
 } from '@ng-bootstrap/ng-bootstrap';
 import { RouterLink } from '@angular/router';
-import { AlertService, QBReportService } from '@app/_services';
+import { QBReportService } from '@app/_services';
 import { DateRangeEnum } from '@app/_models';
 import { AbstractChartReportComponent } from '../chart-report.component';
 import { QBAccountListEntry } from '@app/_models/qb-account-list-entry';
+import {
+  CustomDateParserFormatter,
+  NgbUTCStringAdapter,
+} from '@app/_helpers';
 
 @Component({
   templateUrl: './aukw-interco.component.html',
@@ -21,6 +27,11 @@ import { QBAccountListEntry } from '@app/_models/qb-account-list-entry';
     NgIf,
     RouterLink,
     ReactiveFormsModule,
+  ],
+  providers: [
+    { provide: NgbDateAdapter, useClass: NgbUTCStringAdapter },
+    { provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter },
+    DatePipe,
   ],
 })
 export class AukwIntercoComponent

@@ -1,4 +1,5 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { KeyValue } from '@angular/common';
 import { Router } from '@angular/router';
@@ -7,12 +8,12 @@ import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
 import { DateRangeAdapter } from '@app/_helpers';
 import { DateRange, DateRangeEnum } from '@app/_models';
-import { ExportToCsvService, AlertService } from '@app/_services';
+import { DateFormatHelper, ExportToCsvService, AlertService } from '@app/_services';
 
 @Component({
   template: '',
   standalone: true,
-  imports: [],
+  imports: [ ],
 })
 export abstract class AbstractChartReportComponent<T = any> implements OnInit {
   protected form!: FormGroup;
@@ -25,6 +26,7 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
   protected formBuilder = inject(FormBuilder);
   protected router = inject(Router);
   protected alertService = inject(AlertService);
+  protected dateFormatHelper = inject(DateFormatHelper);
 
   /** Expose the Math object to templates */
   Math = Math;
@@ -61,7 +63,7 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
   onDateRangeChanged(value: string | null) {
     let dtRng: DateRange;
     if (value == null || value == 'null') {
-      dtRng = this.dateRangeAdapter.enumToDateRange(DateRangeEnum.NEXT_YEAR);
+      dtRng = this.dateRangeAdapter.enumToDateRange(DateRangeEnum.THIS_YEAR);
       dtRng.startDate = '2000-01-01';
       this.f['startDate'].disable();
       this.f['endDate'].disable();
@@ -85,24 +87,14 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
 
   onRefreshPressed() {
     if (this.f['startDate'].value && this.f['endDate'].value) {
-      const start = this.ngbDateToString(this.f['startDate'].value);
-      const end = this.ngbDateToString(this.f['endDate'].value);
+      const start = this.dateFormatHelper.formatedDate(this.f['startDate'].value);
+      const end = this.dateFormatHelper.formatedDate(this.f['endDate'].value);
       this.f['dateRange'].setValue(DateRangeEnum.CUSTOM);
       this.refreshSummary(start!, end!);
     }
   }
 
   refreshSummary(startDate: string, endDate: string) {}
-
-  private ngbDateToString(date: NgbDateStruct | null): string | null {
-    return date
-      ? date.year.toString() +
-          '-' +
-          String('00' + date.month).slice(-2) +
-          '-' +
-          String('00' + date.day).slice(-2)
-      : null;
-  }
 
   /**
    * Export the data array to a CSV file

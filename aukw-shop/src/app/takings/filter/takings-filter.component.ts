@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { CommonModule, KeyValue, NgFor, NgIf } from '@angular/common';
+import { CommonModule, DatePipe, KeyValue, NgFor, NgIf } from '@angular/common';
 import {
   FormBuilder,
   FormGroup,
@@ -8,6 +8,8 @@ import {
 } from '@angular/forms';
 import {
   NgbAccordionModule,
+  NgbDateAdapter,
+  NgbDateParserFormatter,
   NgbDatepickerModule,
   NgbDateStruct,
 } from '@ng-bootstrap/ng-bootstrap';
@@ -20,8 +22,12 @@ import {
   TakingsFilter,
   TakingsSummary,
 } from '@app/_models';
-import { TakingsService } from '@app/_services';
-import { DateRangeAdapter } from '@app/_helpers';
+import { DateFormatHelper, TakingsService } from '@app/_services';
+import { 
+  CustomDateParserFormatter,
+  DateRangeAdapter,
+  NgbUTCStringAdapter,
+} from '@app/_helpers';
 
 @Component({
   selector: 'takings-filter',
@@ -35,6 +41,10 @@ import { DateRangeAdapter } from '@app/_helpers';
     NgbAccordionModule,
     FormsModule,
     ReactiveFormsModule,
+  ],
+  providers: [
+    { provide: NgbDateAdapter, useClass: NgbUTCStringAdapter },
+    { provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter },
   ],
 })
 export class TakingsFilterComponent implements OnInit {
@@ -56,6 +66,7 @@ export class TakingsFilterComponent implements OnInit {
     private formBuilder: FormBuilder,
     private dateRangeAdapter: DateRangeAdapter,
     private takingsService: TakingsService,
+    private dateFormatHelper: DateFormatHelper,
   ) {}
 
   get f() {
@@ -125,20 +136,11 @@ export class TakingsFilterComponent implements OnInit {
 
   onRefreshPressed() {
     if (this.f['startDate'].value && this.f['endDate'].value) {
-      const start = this.ngbDateToString(this.f['startDate'].value);
-      const end = this.ngbDateToString(this.f['endDate'].value);
+      const start = this.dateFormatHelper.formatedDate(this.f['startDate'].value);
+      const end = this.dateFormatHelper.formatedDate(this.f['endDate'].value);
       this.f['dateRange'].setValue(DateRangeEnum.CUSTOM);
       this.refreshSummary(start!, end!);
     }
   }
 
-  private ngbDateToString(date: NgbDateStruct | null): string | null {
-    return date
-      ? date.year.toString() +
-          '-' +
-          String('00' + date.month).slice(-2) +
-          '-' +
-          String('00' + date.day).slice(-2)
-      : null;
-  }
 }

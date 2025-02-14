@@ -9,7 +9,8 @@ import {
 import {
   NgbAccordionModule,
   NgbDatepickerModule,
-  NgbDateStruct,
+  NgbDateAdapter,
+  NgbDateParserFormatter,
 } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, BehaviorSubject } from 'rxjs';
 
@@ -20,8 +21,12 @@ import {
   AuditLog,
   User,
 } from '@app/_models';
-import { AuditLogService, UserService } from '@app/_services';
-import { DateRangeAdapter } from '@app/_helpers';
+import { AuditLogService, DateFormatHelper, UserService } from '@app/_services';
+import {
+  CustomDateParserFormatter,
+  DateRangeAdapter,
+  NgbUTCStringAdapter,
+} from '@app/_helpers';
 
 @Component({
   selector: 'auditlog-filter',
@@ -35,6 +40,10 @@ import { DateRangeAdapter } from '@app/_helpers';
     NgbAccordionModule,
     FormsModule,
     ReactiveFormsModule,
+  ],
+  providers: [
+    { provide: NgbDateAdapter, useClass: NgbUTCStringAdapter },
+    { provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter },
   ],
 })
 export class AuditLogFilterComponent implements OnInit {
@@ -57,6 +66,7 @@ export class AuditLogFilterComponent implements OnInit {
   private dateRangeAdapter = inject(DateRangeAdapter);
   private auditLogService = inject(AuditLogService);
   private userService = inject(UserService);
+  private dateFormatHelper = inject(DateFormatHelper);
 
   constructor() {
     this.users$ = this.userService.getAll();
@@ -144,20 +154,10 @@ export class AuditLogFilterComponent implements OnInit {
 
   onRefreshPressed() {
     if (this.f['startDate'].value && this.f['endDate'].value) {
-      const start = this.ngbDateToString(this.f['startDate'].value);
-      const end = this.ngbDateToString(this.f['endDate'].value);
+      const start = this.dateFormatHelper.formatedDate(this.f['startDate'].value);
+      const end = this.dateFormatHelper.formatedDate(this.f['endDate'].value);
       this.f['dateRange'].setValue(DateRangeEnum.CUSTOM);
       this.refreshSummary(start!, end!);
     }
-  }
-
-  private ngbDateToString(date: NgbDateStruct | null): string | null {
-    return date
-      ? date.year.toString() +
-          '-' +
-          String('00' + date.month).slice(-2) +
-          '-' +
-          String('00' + date.day).slice(-2)
-      : null;
   }
 }

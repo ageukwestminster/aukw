@@ -2,6 +2,7 @@
 export * from './auditlog.service';
 export * from './authentication.service';
 export * from './console.service';
+export * from './date-formatter.service';
 export * from './department.service';
 export * from './export-to-csv.service';
 export * from './file.service';
