@@ -388,8 +388,8 @@ class QuickbooksReport{
             $indices = array($twelveMonthsAgoPeriodColumnNumber, $latestPeriodColumnNumber); 
 
             $report['period'] = array();
-            array_push($report['period'], $columns[$twelveMonthsAgoPeriodColumnNumber]->ColTitle);
             array_push($report['period'], $columns[$latestPeriodColumnNumber]->ColTitle);
+            array_push($report['period'], $columns[$twelveMonthsAgoPeriodColumnNumber]->ColTitle);
 
             /** @disregard Intelephense error on next line */
             $dataArray = $profitAndLossReport->Rows->Row; // This is an array of data objects
@@ -403,9 +403,9 @@ class QuickbooksReport{
 
                 $columnValues = $summaryItem->ColData;
                 array_push($report[$sectionName]['total'], 
-                    $columnValues[$twelveMonthsAgoPeriodColumnNumber]->value);
-                array_push($report[$sectionName]['total'], 
                     $columnValues[$latestPeriodColumnNumber]->value);
+                array_push($report[$sectionName]['total'], 
+                    $columnValues[$twelveMonthsAgoPeriodColumnNumber]->value);
 
                 // Interrogate components of individual sections
                 switch ($sectionName) {
@@ -519,17 +519,17 @@ class QuickbooksReport{
         
         $returnArray['value'] = array();
 
+        $latestPeriodValue = empty($rowValues[$latestPeriodColumnNumber]->value)?
+                0:
+                $rowValues[$latestPeriodColumnNumber]->value;
+        array_push($returnArray['value'], $latestPeriodValue);
+        if ($latestPeriodValue != 0) {
+        $nonZeroValue = true;  
+        }
+
         $twelveMthsAgoValue = empty($rowValues[$twelveMonthsAgoPeriodColumnNumber]->value)?
                                 0:
                                 $rowValues[$twelveMonthsAgoPeriodColumnNumber]->value;
-        array_push($returnArray['value'], $twelveMthsAgoValue);
-        if ($twelveMthsAgoValue != 0) {
-            $nonZeroValue = true;  
-        }
-
-        $twelveMthsAgoValue = empty($rowValues[$latestPeriodColumnNumber]->value)?
-                                    0:
-                                    $rowValues[$latestPeriodColumnNumber]->value;
         array_push($returnArray['value'], $twelveMthsAgoValue);
         if ($twelveMthsAgoValue != 0) {
             $nonZeroValue = true;  
