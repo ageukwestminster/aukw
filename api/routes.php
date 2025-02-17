@@ -184,6 +184,7 @@ $router->mount('/qb', function () use ($router) {
 
     // QB Report
     $router->get('/(\d+)/report/generalledger', 'QBReportCtl@general_ledger');
+    $router->get('/(\d+)/report/profitandlossraw', 'QBReportCtl@profit_and_loss_raw');
     $router->get('/(\d+)/report/profitandloss', 'QBReportCtl@profit_and_loss');
     $router->get('/(\d+)/report/salesbyitem', 'QBReportCtl@sales_by_item');
     $router->get('/(\d+)/report/qma', 'QBReportCtl@quarterly_market_report');

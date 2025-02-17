@@ -115,7 +115,7 @@ class DatesHelper
     }
 
     /**
-     * Given a start date and an end date of an accounting period, calculate the dates of the preious year's equivalent period.
+     * Given a start date and an end date of an accounting period, calculate the dates of the previous year's equivalent period.
      * 
      * @param string $startdate The beginning date of the accounting period
      * @param string $enddate The end date of the accounting period

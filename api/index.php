@@ -56,6 +56,7 @@ require 'models/payrollcsv.php'; // Depends on payrollbase.php
 require 'models/payrollxlsx.php'; // Depends on payrollbase.php
 require 'models/payslip.php';
 require 'models/qbauth.php';
+require 'models/qbdatemacroenum.php';
 require 'models/qbbill.php'; // This must be included before the files that depend on it.
 require 'models/qbclass.php';
 require 'models/qbemployee.php';

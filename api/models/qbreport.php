@@ -9,11 +9,22 @@ use QuickBooksOnline\API\Exception\SdkException;
 use DateTime;
 
 /**
- * QBO Wrapper class that allows us to run seelcted QBO reports.
+ * QBO Wrapper class that allows us to run selected QBO reports.
+ * 
+ * A QBO Report is a complex object of the form:
+ * 
+ * {
+ *   "Header": {...},      // Basic attributes of the report such as Start & end dates
+ *   "Columns": {...},     // Names and types of columns
+ *   "Rows": {...},        // One or more Row objects containing the report values
+ * }
  * 
  * @category Model
  */
 class QuickbooksReport{
+
+    private $dataService;
+    private $reportService;
 
     /**
      * The start date of the report period.
@@ -28,7 +39,13 @@ class QuickbooksReport{
      */
     public string $enddate;
     /**
-     * Summarize P&L report by this column
+     * Predefined date range
+     *
+     * @var string
+     */
+    public string $dateMacro;
+    /**
+     * Group the P&L amounts by this column
      *
      * @var string
      */
@@ -79,9 +96,10 @@ class QuickbooksReport{
     public function profitAndLoss(){
 
         $auth = new QuickbooksAuth();
-        $dataService = $auth->prepare($this->realmid);
-        if ($dataService == false) {
-          return;
+
+        $this->dataService = $auth->prepare($this->realmid);
+        if ($this->dataService == false) {
+            return;
         }
         try{
             $serviceContext = $auth->getServiceContext($this->realmid);
@@ -89,7 +107,7 @@ class QuickbooksReport{
         catch (\Exception $e) {
             http_response_code(400);  
             echo json_encode(
-              array("message" => "Unable to proceed with QB report.",
+                array("message" => "Unable to proceed with QB report.",
                 "details" => $e->getMessage())
             );
             exit(0);            
@@ -97,19 +115,21 @@ class QuickbooksReport{
         if ($serviceContext == false) {
             return;
         }
-        $reportService = new ReportService($serviceContext);
-        if ($reportService == false) {
+        $this->reportService = new ReportService($serviceContext);
+        if ($this->reportService == false) {
             return;
         }
   
-        $profitAndLossReport = $reportService
-            ->setStartDate($this->startdate)
-            ->setEndDate($this->enddate)
-            ->setSummarizeColumnBy($this->summarizeColumn)
+        $profitAndLossReport = $this->reportService
+            ->setStartDate($this->startdate??'')
+            ->setEndDate($this->enddate??'')
+            ->setSummarizeColumnBy($this->summarizeColumn??'')
+            ->setDateMacro($this->dateMacro??'')
             ->setColumns($this->columns)
+            //->setSortBy($this->sortBy) // Not valid for PNL report. Use PNLDetail if needed.
             ->executeReport(ReportName::PROFITANDLOSS);
 
-        $error = $dataService->getLastError();
+        $error = $this->dataService->getLastError();
         if ($error) {
             throw new SdkException("The Response message is: " . $error->getResponseBody());
         }
@@ -365,110 +385,46 @@ class QuickbooksReport{
      * 
      * We wish to report numbers for the latest time period and the time period one
      * year before that. Because of a limitation in the QBO api, we receive data for
-     * all intervenign periods between the two relevant periods. We must ignore these 
+     * all intervening periods between the two relevant periods. We must ignore these 
      * periods.
      * 
      * @param array $profitAndLossReport A report array received from QuickBooks
      */
-    public function adaptProfitAndLossToQMA($profitAndLossReport) {
+    public function summarisePNLFromQBO($pnlReport, $start, $end) {
 
         $report=array();            
+        $report['start'] = $start;
+        $report['end'] = $end;
+        $report['data'] = array();
 
         /** @disregard Intelephense error on next line */
-        if ($profitAndLossReport && property_exists($profitAndLossReport, 'Columns')
-                 && property_exists($profitAndLossReport->Columns, 'Column')) {
+        if ($pnlReport && property_exists($pnlReport, 'Rows')
+                 && property_exists($pnlReport->Rows, 'Row')) {
 
             /** @disregard Intelephense error on next line */
-            $columns = $profitAndLossReport->Columns->Column;
-
-            // Find the column numbers for the two periods that we wish to report back to user
-            $numberOfColumns = count($columns); // Total number of columns
-            $twelveMonthsAgoPeriodColumnNumber = 1; // ignore the first column ( which is 'Account')
-            $latestPeriodColumnNumber = $numberOfColumns-2; // The latest period data is in the second last column
-            $indices = array($twelveMonthsAgoPeriodColumnNumber, $latestPeriodColumnNumber); 
-
-            $report['period'] = array();
-            array_push($report['period'], $columns[$latestPeriodColumnNumber]->ColTitle);
-            array_push($report['period'], $columns[$twelveMonthsAgoPeriodColumnNumber]->ColTitle);
-
-            /** @disregard Intelephense error on next line */
-            $dataArray = $profitAndLossReport->Rows->Row; // This is an array of data objects
+            $dataArray = $pnlReport->Rows->Row;
 
             foreach ($dataArray as $rowItem) {
 
                 $summaryItem = $rowItem->Summary;
                 $sectionName = strtolower($rowItem->group);
-                $report[$sectionName] = array();
-                $report[$sectionName]['total'] = array();
+                $report['data'][$sectionName] = array();
+                $report['data'][$sectionName]['total'] = array();
 
                 $columnValues = $summaryItem->ColData;
-                array_push($report[$sectionName]['total'], 
-                    $columnValues[$latestPeriodColumnNumber]->value);
-                array_push($report[$sectionName]['total'], 
-                    $columnValues[$twelveMonthsAgoPeriodColumnNumber]->value);
+                $report['data'][$sectionName]['total']= $columnValues[1]->value;
 
-                // Interrogate components of individual sections
-                switch ($sectionName) {
-                    case 'income':                  
-                        $rows = $rowItem->Rows->Row;
-                        $report[$sectionName]['rows'] = array();
+                if (property_exists($rowItem, 'Rows') 
+                            && property_exists($rowItem->Rows, 'Row')) {
+                    $rows = $rowItem->Rows->Row;
+                    $report['data'][$sectionName]['rows'] = array();
 
-                        foreach ($rows as $row) {
-                            $rowValue = QuickbooksReport::extractNameAndValue($row, 
-                                $twelveMonthsAgoPeriodColumnNumber, 
-                                $latestPeriodColumnNumber);
-                            if ($rowValue) {
-                                array_push($report[$sectionName]['rows'], $rowValue);
-                                
-                                if ($rowValue['name'] == 'Ragging') {
-                                    $report['ragging'] = array();
-                                    $report['ragging']['total'] = $rowValue['value'];
-                                }
-                            }
+                    foreach ($rows as $row) {
+                        $rowValue = QuickbooksReport::extractNameAndValue($row);
+                        if ($rowValue) {
+                            array_push($report['data'][$sectionName]['rows'], $rowValue);                                
                         }
-                        break;
-
-                    case 'expenses':
-                        $rows = $rowItem->Rows->Row;
-                        $report[$sectionName]['rows'] = array();
-
-                        foreach ($rows as $row) {
-                            $rowValue = QuickbooksReport::extractNameAndValue($row, 
-                                $twelveMonthsAgoPeriodColumnNumber, 
-                                $latestPeriodColumnNumber);
-                            if ($rowValue)
-                                array_push($report[$sectionName]['rows'], $rowValue);                        
-                        }
-                        break;
-
-                    case 'otherincome':
-                        $rows = $rowItem->Rows->Row;
-                        $report[$sectionName]['rows'] = array();
-                        foreach ($rows as $row) {
-                            $rowValue = QuickbooksReport::extractNameAndValue($row, 
-                                $twelveMonthsAgoPeriodColumnNumber, 
-                                $latestPeriodColumnNumber);
-                            if ($rowValue) {
-                                array_push($report[$sectionName]['rows'], $rowValue); 
-                            
-                                if (str_starts_with($rowValue['name'], 'Donation')) {
-                                    $report['donations'] = array();
-                                    $report['donations']['total'] = $rowValue['value'];
-                                }
-                            }
-                        }
-                        break;
-                    case 'otherexpenses':
-                        $rows = $rowItem->Rows->Row;
-                        $report[$sectionName]['rows'] = array();
-                        foreach ($rows as $row) {
-                            $rowValue = QuickbooksReport::extractNameAndValue($row, 
-                                $twelveMonthsAgoPeriodColumnNumber, 
-                                $latestPeriodColumnNumber);
-                            if ($rowValue)
-                                array_push($report[$sectionName]['rows'], $rowValue); 
-                        }
-                        break;
+                    }
                 }
             }
 
@@ -477,8 +433,9 @@ class QuickbooksReport{
         } else {
             http_response_code(422);  
             return array(
-                "message" => "QB result set is missing Columns array.",
+                "message" => "QB report is missing Rows->Row array.",
             );
+            exit(1);
         }
         
                  
@@ -490,53 +447,53 @@ class QuickbooksReport{
      * The returned object is an array with 'name' and 'value' keys.
      * The value is itself an array.
      * @param mixed $row
-     * @param int $twelveMonthsAgoPeriodColumnNumber
-     * @param int $latestPeriodColumnNumber
      * @return array|false { 'name': string, 'value': array }
      */
-    private function extractNameAndValue($row, 
-        int $twelveMonthsAgoPeriodColumnNumber, 
-        int $latestPeriodColumnNumber) : array|false {
+    private function extractNameAndValue($row) : array|false {
 
-        $nonZeroValue = false;
+        $header = false;
 
         // Handle case where row has multiple sections
         if ($row && property_exists($row, 'Rows')) {
-            $row = $row->Summary;
+            $header = $row->Header;
+            $row = $row->Summary;            
         }
 
         $rowValues = $row->ColData;
         $name = $rowValues[0]->value;
-
-        $returnArray = array();      
-
+        if ($header) {
+            $id = $header->ColData[0]->id;
+        } else {
+            $id = $rowValues[0]->id;        
+        }
         // remove 'Total ' from start of string
         if (str_starts_with($name, 'Total')){
-            $returnArray['name'] = substr($name, 6);
-        } else {
-            $returnArray['name'] = $name;
-        }
-        
-        $returnArray['value'] = array();
-
-        $latestPeriodValue = empty($rowValues[$latestPeriodColumnNumber]->value)?
-                0:
-                $rowValues[$latestPeriodColumnNumber]->value;
-        array_push($returnArray['value'], $latestPeriodValue);
-        if ($latestPeriodValue != 0) {
-        $nonZeroValue = true;  
+            $name = substr($name, 6);
         }
 
-        $twelveMthsAgoValue = empty($rowValues[$twelveMonthsAgoPeriodColumnNumber]->value)?
-                                0:
-                                $rowValues[$twelveMonthsAgoPeriodColumnNumber]->value;
-        array_push($returnArray['value'], $twelveMthsAgoValue);
-        if ($twelveMthsAgoValue != 0) {
-            $nonZeroValue = true;  
-        }
+        $returnArray = array();
+        $returnArray['id'] = $id;   
+        $returnArray['name'] = $name;           
+        $returnArray['value'] = $rowValues[1]->value;
 
-        // Only return the values if one of the values is nonZero
-        return $nonZeroValue?$returnArray:false;
+        return $returnArray;
     }
     
+    public function mergecurrentAndPreviousPNLReports($current, $previous) {
+        $section = array('income', 'cogs', 'grossprofit', 'expenses'
+            , 'netoperatingincome', 'otherincome', 'otherexpenses'
+            , 'netotherincome', 'netincome');
+
+        $currentRows = $current['data'];
+        $previousRows = $previous['data'];
+
+        foreach ($section as $sectionName) {
+
+            // Merge each section
+
+            if (property_exists($currentRows, $sectionName)) {
+                
+            }
+        }
+    }
 }
