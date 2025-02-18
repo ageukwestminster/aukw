@@ -99,13 +99,11 @@ class QBReportCtl{
   
       $model->startdate = $start;
       $model->enddate = $end;
-
-      if (isset($_GET['summarizeColumn']) && !empty($_GET['summarizeColumn'])) {
-        // must be 'Quarter', not 'quarter' or 'Month' not 'month'
-        $model->summarizeColumn = ucwords(strtolower($_GET['summarizeColumn']));
-      } else {
-        $model->summarizeColumn = '';
-      }
+    }
+    else {
+      http_response_code(400);  
+      echo json_encode(array("message" => "Unable to generate p&l report, date_macro and start/end dates are missing."));
+      exit(1);
     }
   }
 
