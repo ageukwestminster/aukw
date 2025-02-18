@@ -27,6 +27,7 @@ import {
   DateRangeAdapter,
   NgbUTCStringAdapter,
 } from '@app/_helpers';
+import { DateRangeChooserComponent } from '@app/shared'
 
 @Component({
   selector: 'auditlog-filter',
@@ -40,6 +41,7 @@ import {
     NgbAccordionModule,
     FormsModule,
     ReactiveFormsModule,
+    DateRangeChooserComponent,
   ],
   providers: [
     { provide: NgbDateAdapter, useClass: NgbUTCStringAdapter },
@@ -61,12 +63,11 @@ export class AuditLogFilterComponent implements OnInit {
   working: boolean = false;
   panelOpen: boolean = false;
   users$: Observable<User[]>;
+  startAndEndDates!: DateRange;
 
   private formBuilder = inject(FormBuilder);
-  private dateRangeAdapter = inject(DateRangeAdapter);
   private auditLogService = inject(AuditLogService);
   private userService = inject(UserService);
-  private dateFormatHelper = inject(DateFormatHelper);
 
   constructor() {
     this.users$ = this.userService.getAll();
@@ -78,62 +79,23 @@ export class AuditLogFilterComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({
-      dateRange: [DateRangeEnum.THIS_YEAR],
-      startDate: [null],
-      endDate: [null],
       userid: [null],
     });
 
-    this.onDateRangeChanged(DateRangeEnum.THIS_YEAR);
   }
 
-  // Required so that the template can access the Enum
-  // From https://stackoverflow.com/a/59289208
-  public get DateRange() {
-    return DateRangeEnum;
-  }
-
-  /* Used to stop the keyvalues pipe re-arranging the order of the Enum */
-  /* From https://stackoverflow.com/a/52794221/6941165 */
-  originalOrder = (
-    a: KeyValue<string, DateRangeEnum>,
-    b: KeyValue<string, DateRangeEnum>,
-  ): number => {
-    return 0;
-  };
-
-  onDateRangeChanged(value: string | null) {
-    let dtRng: DateRange;
-    if (value == null || value == 'null') {
-      dtRng = this.dateRangeAdapter.enumToDateRange(DateRangeEnum.NEXT_YEAR);
-      dtRng.startDate = '2000-01-01';
-      this.f['startDate'].disable();
-      this.f['endDate'].disable();
-    } else if (value == DateRangeEnum.CUSTOM) {
-      this.f['startDate'].enable();
-      this.f['endDate'].enable();
-      dtRng = new DateRange({
-        startDate: this.f['startDate'].value,
-        endDate: this.f['endDate'].value,
-      });
-    } else {
-      this.f['startDate'].enable();
-      this.f['endDate'].enable();
-      dtRng = this.dateRangeAdapter.enumToDateRange(value! as DateRangeEnum);
-      this.f['startDate'].setValue(dtRng.startDate);
-      this.f['endDate'].setValue(dtRng.endDate);
-    }
-
-    this.refreshSummary(dtRng.startDate, dtRng.endDate);
+  onDateRangeChanged(dateRange: DateRange) {
+    this.startAndEndDates = dateRange;
+    this.refreshSummary(dateRange.startDate, dateRange.endDate);
   }
 
   onUseridChanged(value: string | null) {
     if (value == null || value.startsWith('0')) {
-      this.refreshSummary(this.f['startDate'].value, this.f['endDate'].value);
+      this.refreshSummary(this.startAndEndDates.startDate, this.startAndEndDates.endDate);
     } else {
       this.refreshSummary(
-        this.f['startDate'].value,
-        this.f['endDate'].value,
+        this.startAndEndDates.startDate, 
+        this.startAndEndDates.endDate,
         this.f['userid'].value,
       );
     }
@@ -152,12 +114,4 @@ export class AuditLogFilterComponent implements OnInit {
     });
   }
 
-  onRefreshPressed() {
-    if (this.f['startDate'].value && this.f['endDate'].value) {
-      const start = this.dateFormatHelper.formatedDate(this.f['startDate'].value);
-      const end = this.dateFormatHelper.formatedDate(this.f['endDate'].value);
-      this.f['dateRange'].setValue(DateRangeEnum.CUSTOM);
-      this.refreshSummary(start!, end!);
-    }
-  }
 }

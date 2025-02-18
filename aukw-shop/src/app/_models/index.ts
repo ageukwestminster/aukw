@@ -17,6 +17,7 @@ export * from './qb-connection-details';
 export * from './qb-flags';
 export * from './qb-payslip-flags';
 export * from './qb-realm';
+export * from './qma-report';
 export * from './payroll-journal-entry';
 export * from './payroll-process-state.enum';
 export * from './profit-and-loss-data';

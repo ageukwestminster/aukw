@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { environment } from '@environments/environment';
 import { Observable } from 'rxjs';
-import { QBAccountListEntry, ProfitAndLossData } from '@app/_models';
+import { QBAccountListEntry, ProfitAndLossData, QMAReport } from '@app/_models';
 
 const baseUrl = `${environment.apiUrl}/qb`;
 
@@ -53,11 +53,38 @@ export class QBReportService {
       start: string,
       end: string,
       summarizeColumn: string,
-    ): Observable<ProfitAndLossData> {
+    ): Observable<QMAReport> {
       let realmId = environment.qboEnterprisesRealmID;
-      return this.http.get<ProfitAndLossData>(
+      return this.http.get<QMAReport>(
         `${baseUrl}/${realmId}/report/qma` +
           `?start=${start}&end=${end}&summarizeColumn=${summarizeColumn}`,
+      );
+    }
+
+  /**
+   * Get a profit and loss report for the given dates
+   * Association quarterly QMA request
+   * @param string start The start date for the report
+   * @param string end The end date for the report, must be a date after start
+   * @returns object
+   */
+    getPandLReport(
+      start: string,
+      end: string,
+    ): Observable<ProfitAndLossData> {
+
+      if (!start) {
+        throw new Error('Start date is missing');
+      }
+      
+      if (!end) {
+        throw new Error('End date is missing');
+      }
+
+      let realmId = environment.qboEnterprisesRealmID;
+      return this.http.get<ProfitAndLossData>(
+        `${baseUrl}/${realmId}/report/profitandloss` +
+          `?start=${start}&end=${end}`,
       );
     }
 }

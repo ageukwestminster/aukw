@@ -1,0 +1,73 @@
+<form [formGroup]="form">
+  <div class="row mb-4">
+    <div class="col-sm">
+      <div class="input-group">
+        <span class="input-group-text col-4" id="period-label">Date</span>
+        <select
+          class="form-control"
+          id="selectList"
+          #selectList
+          (change)="onDateRangeChanged(selectList.value)"
+          formControlName="dateRange"
+        >
+          <option value="null">Any</option>
+          <option
+            *ngFor="let dtRng of DateRange | keyvalue: originalOrder"
+            value="{{ dtRng.value }}"
+          >
+            {{ dtRng.value }}
+          </option>
+        </select>
+      </div>
+    </div>
+    <div class="col-sm-auto p-0">From</div>
+    <div class="col-sm-auto">
+      <div class="input-group col p-0 mb-1">
+        <!-- If using MySql dates don't forget to import NgbUTCStringAdapter-->
+        <input
+          class="form-control"
+          placeholder="Start"
+          name="dp1"
+          ngbDatepicker
+          #d1="ngbDatepicker"
+          formControlName="startDate"
+          id="inputStartDate"
+          placement="bottom"
+        />
+        <div class="input-group-append">
+          <button
+            class="btn btn-outline-secondary"
+            (click)="d1.toggle()"
+            type="button"
+          >
+            <i class="far fa-calendar-alt"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-auto p-0">To</div>
+    <div class="col-sm-auto">
+      <div class="input-group col p-0 mb-1">
+        <input
+          class="form-control"
+          placeholder="End"
+          name="dp2"
+          ngbDatepicker
+          #d2="ngbDatepicker"
+          formControlName="endDate"
+          id="inputEndDate"
+          placement="bottom"
+        />
+        <div class="input-group-append">
+          <button
+            class="btn btn-outline-secondary"
+            (click)="d2.toggle()"
+            type="button"
+          >
+            <i class="far fa-calendar-alt"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

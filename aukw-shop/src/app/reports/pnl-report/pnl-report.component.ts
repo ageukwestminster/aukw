@@ -10,11 +10,9 @@ import {
 } from '@ng-bootstrap/ng-bootstrap';
 import { QBReportService } from '@app/_services';
 import { AbstractChartReportComponent } from '../chart-report.component';
-import { DateRangeEnum, ProfitAndLossData } from '@app/_models';
-import {
-  CustomDateParserFormatter,
-  NgbUTCStringAdapter,
-} from '@app/_helpers';
+import { DateRange, DateRangeEnum, ProfitAndLossData } from '@app/_models';
+import { CustomDateParserFormatter, NgbUTCStringAdapter } from '@app/_helpers';
+import { DateRangeChooserComponent } from '@app/shared';
 
 @Component({
   standalone: true,
@@ -25,27 +23,30 @@ import {
     NgIf,
     NgbCollapseModule,
     ReactiveFormsModule,
+    DateRangeChooserComponent,
   ],
   templateUrl: './pnl-report.component.html',
   styleUrl: './pnl-report.component.css',
   providers: [
     { provide: NgbDateAdapter, useClass: NgbUTCStringAdapter },
-    { provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter }
+    { provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter },
   ],
 })
-export class PnlReportComponent 
+export class PnlReportComponent
   extends AbstractChartReportComponent<ProfitAndLossData>
   implements OnInit
 {
   private reportService = inject(QBReportService);
 
+  DateRangeEnum = DateRangeEnum;
+
   /**
-   * When 'true' collapse the expenses lines. 
+   * When 'true' collapse the expenses lines.
    * Logic from: {@link https://ng-bootstrap.github.io/#/components/collapse/examples}
    */
-  isExpensesCollapsed = false;
-    /**
-   * When 'true' collapse the other income and other expenses lines. 
+  isExpensesExpanded = false;
+  /**
+   * When 'true' collapse the other income and other expenses lines.
    * Logic from: {@link https://ng-bootstrap.github.io/#/components/collapse/examples}
    */
   isOtherIncomeCollapsed = false;
@@ -60,33 +61,39 @@ export class PnlReportComponent
     this.onDateRangeChanged(DateRangeEnum.LAST_QUARTER);
   }
 
+  dateRangeChanged(dateRange: DateRange) {
+    this.refreshSummary(dateRange.startDate, dateRange.endDate);
+  }
+
   override refreshSummary(startDate: string, endDate: string) {
     this.loading = true;
 
-    let period:string;
+    let period: string;
 
     switch (this.form.controls['dateRange'].value as DateRangeEnum) {
       case DateRangeEnum.LAST_YEAR:
       case DateRangeEnum.LAST_TRADING_YEAR:
       case DateRangeEnum.LAST_TWELVE_MONTHS:
-        period = 'Year'
+        period = 'Year';
         break;
       case DateRangeEnum.LAST_MONTH:
       case DateRangeEnum.NEXT_MONTH:
       case DateRangeEnum.THIS_MONTH:
-        period = 'Month'
+        period = 'Month';
         break;
       case DateRangeEnum.LAST_QUARTER:
       case DateRangeEnum.THIS_QUARTER:
       case DateRangeEnum.NEXT_QUARTER:
-      case DateRangeEnum.CUSTOM:      
+      case DateRangeEnum.CUSTOM:
       default:
-        period = 'Quarter'
+        period = 'Quarter';
         break;
     }
 
-    this.reportService.getQMAReport(startDate, endDate, period).subscribe({
-      next: (response) => (this.data = response),
+    this.reportService.getPandLReport(startDate, endDate).subscribe({
+      next: (response) => {
+        this.data = response;
+      },
       error: (error: any) => {
         this.loading = false;
         this.data = new ProfitAndLossData();
@@ -95,5 +102,4 @@ export class PnlReportComponent
       complete: () => (this.loading = false),
     });
   }
-  
 }

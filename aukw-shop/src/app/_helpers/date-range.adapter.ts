@@ -15,6 +15,12 @@ export class DateRangeAdapter {
     return this.instantiateObj(start, end);
   }
 
+  customDateRangeFromString(start: string, end: string): DateRange {
+    var dtStart = new Date(start);
+    var dtEnd = new Date(end);
+    return this.instantiateObj(dtStart, dtEnd);
+  }
+
   /**
    * Given a choice from the DateRange Enum, return the appropiate DAteRange Object.
    * For example, if today is 9th January 2025 and the Enum 'THIS QUARTER' is selected
