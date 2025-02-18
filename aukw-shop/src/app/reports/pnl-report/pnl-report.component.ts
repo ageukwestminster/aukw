@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule, NgIf } from '@angular/common';
+import { CommonModule, DatePipe, NgIf } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import {
   NgbAccordionModule,
@@ -18,6 +18,7 @@ import { DateRangeChooserComponent } from '@app/shared';
   standalone: true,
   imports: [
     CommonModule,
+    DatePipe,
     NgbAccordionModule,
     NgbDatepickerModule,
     NgIf,
@@ -41,15 +42,18 @@ export class PnlReportComponent
   DateRangeEnum = DateRangeEnum;
 
   /**
-   * When 'true' collapse the expenses lines.
+   * When 'true' expand the expenses lines.
    * Logic from: {@link https://ng-bootstrap.github.io/#/components/collapse/examples}
    */
   isExpensesExpanded = false;
   /**
    * When 'true' collapse the other income and other expenses lines.
-   * Logic from: {@link https://ng-bootstrap.github.io/#/components/collapse/examples}
    */
   isOtherIncomeCollapsed = false;
+  /**
+   * When 'true' collapse the income lines.
+   */
+  isIncomeCollapsed = false;
 
   override ngOnInit() {
     this.form = this.formBuilder.group({
@@ -68,29 +72,7 @@ export class PnlReportComponent
   override refreshSummary(startDate: string, endDate: string) {
     this.loading = true;
 
-    let period: string;
-
-    switch (this.form.controls['dateRange'].value as DateRangeEnum) {
-      case DateRangeEnum.LAST_YEAR:
-      case DateRangeEnum.LAST_TRADING_YEAR:
-      case DateRangeEnum.LAST_TWELVE_MONTHS:
-        period = 'Year';
-        break;
-      case DateRangeEnum.LAST_MONTH:
-      case DateRangeEnum.NEXT_MONTH:
-      case DateRangeEnum.THIS_MONTH:
-        period = 'Month';
-        break;
-      case DateRangeEnum.LAST_QUARTER:
-      case DateRangeEnum.THIS_QUARTER:
-      case DateRangeEnum.NEXT_QUARTER:
-      case DateRangeEnum.CUSTOM:
-      default:
-        period = 'Quarter';
-        break;
-    }
-
-    this.reportService.getPandLReport(startDate, endDate).subscribe({
+    this.reportService.getPandLReport(startDate, endDate, this.enterprises).subscribe({
       next: (response) => {
         this.data = response;
       },

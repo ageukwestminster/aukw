@@ -18,6 +18,7 @@ import { DateFormatHelper, ExportToCsvService, AlertService } from '@app/_servic
 export abstract class AbstractChartReportComponent<T = any> implements OnInit {
   protected form!: FormGroup;
   protected loading: boolean = false;
+  protected enterprises: boolean = true; // When 'true' use Enterprises company, Charity otherwise
 
   @Input() data!: T;
 
@@ -102,4 +103,13 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
   exportToCSV(): void {
     this.exportToCsvService.exportToCSV(this.data);
   }
+
+    /**
+   * This checkbox determines if the report is run on the 
+   * Enterprises company or the Charity company.
+   */
+    checkboxClick() {
+      this.enterprises = !this.enterprises;
+      this.onDateRangeChanged(this.f['dateRange'].value);
+    }
 }

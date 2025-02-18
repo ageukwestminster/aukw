@@ -38,7 +38,6 @@ export class AukwIntercoComponent
   extends AbstractChartReportComponent<QBAccountListEntry[]>
   implements OnInit
 {
-  enterprises: boolean = true;
 
   private reportService = inject(QBReportService);
 
@@ -54,15 +53,6 @@ export class AukwIntercoComponent
     });
 
     this.onDateRangeChanged(DateRangeEnum.LAST_SIX_MONTHS);
-  }
-
-  /**
-   * This checkbox determines if the report is run on the 
-   * Enterprises company or the Charity company.
-   */
-  checkboxClick() {
-    this.enterprises = !this.enterprises;
-    this.onDateRangeChanged(this.f['dateRange'].value);
   }
 
   override refreshSummary(startDate: string, endDate: string) {

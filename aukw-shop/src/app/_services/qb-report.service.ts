@@ -71,6 +71,7 @@ export class QBReportService {
     getPandLReport(
       start: string,
       end: string,
+      enterprises: boolean = true,
     ): Observable<ProfitAndLossData> {
 
       if (!start) {
@@ -82,6 +83,9 @@ export class QBReportService {
       }
 
       let realmId = environment.qboEnterprisesRealmID;
+      if (!enterprises) {
+        realmId = environment.qboCharityRealmID;
+      }
       return this.http.get<ProfitAndLossData>(
         `${baseUrl}/${realmId}/report/profitandloss` +
           `?start=${start}&end=${end}`,
