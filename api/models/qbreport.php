@@ -413,8 +413,10 @@ class QuickbooksReport{
                 $columnValues = $summaryItem->ColData;
                 $report['data'][$sectionName]['name']=$columnValues[0]->value;
 
-                $value = $columnValues[1]->value===''?0:$columnValues[1]->value;
-                $report['data'][$sectionName]['value']=$value;
+                if (count($columnValues) > 1) {
+                    $value = $columnValues[1]->value===''?0:$columnValues[1]->value;                    
+                }
+                $report['data'][$sectionName]['value']=$value??0;
 
                 if (property_exists($rowItem, 'Rows') 
                             && property_exists($rowItem->Rows, 'Row')) {
