@@ -61,8 +61,8 @@ class QBReportCtl{
       $previousPeriodPNL = QBReportCtl::profit_and_loss_impl($model);  
       $summarisePreviousPeriod = $model->summarisePNLFromQBO($previousPeriodPNL, $start, $end);
       
-      
-
+      //echo json_encode($summariseCurrentPeriod, JSON_NUMERIC_CHECK);
+      //$model->mergecurrentAndPreviousPNLReports($summariseCurrentPeriod, $summarisePreviousPeriod);
       echo json_encode($model->mergecurrentAndPreviousPNLReports($summariseCurrentPeriod, $summarisePreviousPeriod), JSON_NUMERIC_CHECK);
     } else {
       http_response_code(400);  

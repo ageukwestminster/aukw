@@ -409,10 +409,10 @@ class QuickbooksReport{
                 $summaryItem = $rowItem->Summary;
                 $sectionName = strtolower($rowItem->group);
                 $report['data'][$sectionName] = array();
-                $report['data'][$sectionName]['total'] = array();
 
                 $columnValues = $summaryItem->ColData;
-                $report['data'][$sectionName]['total']= $columnValues[1]->value;
+                $report['data'][$sectionName]['name']= $columnValues[0]->value;
+                $report['data'][$sectionName]['value']= $columnValues[1]->value;
 
                 if (property_exists($rowItem, 'Rows') 
                             && property_exists($rowItem->Rows, 'Row')) {
@@ -422,7 +422,7 @@ class QuickbooksReport{
                     foreach ($rows as $row) {
                         $rowValue = QuickbooksReport::extractNameAndValue($row);
                         if ($rowValue) {
-                            array_push($report['data'][$sectionName]['rows'], $rowValue);                                
+                            $report['data'][$sectionName]['rows'][$rowValue['id']] = $rowValue;
                         }
                     }
                 }
@@ -480,20 +480,117 @@ class QuickbooksReport{
     }
     
     public function mergecurrentAndPreviousPNLReports($current, $previous) {
+
+        $return = array();
+        $return['title'] = 'Profit & Loss';
+        $return['range'] = array();
+        $return['range']['currentPeriodStart'] = $current['start'];
+        $return['range']['currentPeriodEnd'] = $current['end'];
+        $return['range']['previousPeriodStart'] = $previous['start'];
+        $return['range']['previousPeriodEnd'] = $previous['end'];
+
+        $currentPeriodData = $current['data'];
+        $previousPeriodData = $previous['data'];
+
+        // These are all the possible sections of a QBO P&L report
         $section = array('income', 'cogs', 'grossprofit', 'expenses'
-            , 'netoperatingincome', 'otherincome', 'otherexpenses'
-            , 'netotherincome', 'netincome');
+        , 'netoperatingincome', 'otherincome', 'otherexpenses'
+        , 'netotherincome', 'netincome');
 
-        $currentRows = $current['data'];
-        $previousRows = $previous['data'];
-
+        // Loop through each section, merging them one by one
         foreach ($section as $sectionName) {
 
-            // Merge each section
+            $sectionItem = new SectionItem;
 
-            if (property_exists($currentRows, $sectionName)) {
+            // Check if the section exists in the current period data
+            if (key_exists($sectionName, $currentPeriodData)) {
                 
+                $currentPeriodSection = $currentPeriodData[$sectionName];
+                $sectionItem->displayName = $currentPeriodSection['name'];
+                $sectionItem->currentValue = $currentPeriodSection['value'];
+
+                // Check if the section exists in the previous period data
+                if (key_exists($sectionName, $previousPeriodData)) {
+                    $previousPeriodSection = $previousPeriodData[$sectionName];
+                    $sectionItem->previousValue = $previousPeriodSection['value'];
+                } else {
+                    $previousPeriodSection = null;
+                }                
+            } else if (key_exists($sectionName, $previousPeriodData)) {
+                $previousPeriodSection = $previousPeriodData[$sectionName];
+                $currentPeriodSection = null;
+                $sectionItem->displayName = $previousPeriodSection['name'];
+                $sectionItem->previousValue = $previousPeriodSection['value'];
+                
+            } else {
+                // no valid sections found for either ccurrent or previous
+                // will skip the rest of the foreach loop and return to the top 
+                continue;
             }
+
+            // Check if there is a valid 'rows' array on either or both current & previous
+            // If found then merge the arrays ... ignoring duplicate keys
+            if (key_exists('rows', $currentPeriodSection) 
+                            && count($currentPeriodSection['rows'])) {
+                if (key_exists('rows', $previousPeriodSection) 
+                                && count($previousPeriodSection['rows'])) {
+
+                    // The '+' on th enext line is the same as array_combine()
+                    // This is called the "array union operator"
+                    $combined_array = $currentPeriodSection['rows']+$previousPeriodSection['rows'];
+
+                } else {
+
+                    $combined_array = $currentPeriodSection['rows'];
+
+                }
+            }
+            else if (key_exists('rows', $previousPeriodSection) 
+                                    && count($previousPeriodSection['rows'])) {
+
+                $combined_array = $previousPeriodSection['rows'];
+
+            } else {
+                $combined_array = [];
+            }
+            
+            
+            // loop through the keys of the 'rows' arrayas and merge them
+            foreach(array_keys($combined_array) as $keyName) {
+                $rowItem = new RowItem;
+                if (key_exists($keyName, $currentPeriodSection['rows'])) {
+                    $rowItem->displayName = $currentPeriodSection['rows'][$keyName]['name'];
+                    $rowItem->currentValue = $currentPeriodSection['rows'][$keyName]['value'];
+                } else {
+                    $rowItem->currentValue = 0;
+                }
+                if (key_exists($keyName, $previousPeriodSection['rows'])) {
+                    $rowItem->displayName = $previousPeriodSection['rows'][$keyName]['name'];
+                    $rowItem->previousValue = $previousPeriodSection['rows'][$keyName]['value'];
+                } else {
+                    $rowItem->previousValue = 0;
+                }
+
+                // Add the rowItem to the array if either value is non-sero
+                if($rowItem->currentValue || $rowItem->previousValue) {
+                    array_push($sectionItem->rows, $rowItem);
+                }
+            }
+
+            $return[$sectionName] = $sectionItem;
+            
         }
+
+        return $return;
     }
+
+}
+
+class RowItem{ 
+    public string $displayName ='';
+    public float $currentValue = 0;
+    public float $previousValue = 0;
+}
+class SectionItem extends RowItem{ 
+    public array $rows = [];
 }
