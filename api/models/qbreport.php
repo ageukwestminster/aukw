@@ -411,8 +411,10 @@ class QuickbooksReport{
                 $report['data'][$sectionName] = array();
 
                 $columnValues = $summaryItem->ColData;
-                $report['data'][$sectionName]['name']= $columnValues[0]->value;
-                $report['data'][$sectionName]['value']= $columnValues[1]->value;
+                $report['data'][$sectionName]['name']=$columnValues[0]->value;
+
+                $value = $columnValues[1]->value===''?0:$columnValues[1]->value;
+                $report['data'][$sectionName]['value']=$value;
 
                 if (property_exists($rowItem, 'Rows') 
                             && property_exists($rowItem->Rows, 'Row')) {
@@ -474,7 +476,7 @@ class QuickbooksReport{
         $returnArray = array();
         $returnArray['id'] = $id;   
         $returnArray['name'] = $name;           
-        $returnArray['value'] = $rowValues[1]->value;
+        $returnArray['value'] = $rowValues[1]->value===''?0:$rowValues[1]->value;
 
         return $returnArray;
     }
@@ -530,41 +532,45 @@ class QuickbooksReport{
 
             // Check if there is a valid 'rows' array on either or both current & previous
             // If found then merge the arrays ... ignoring duplicate keys
-            if (key_exists('rows', $currentPeriodSection) 
+            if ($currentPeriodSection && key_exists('rows', $currentPeriodSection) 
                             && count($currentPeriodSection['rows'])) {
-                if (key_exists('rows', $previousPeriodSection) 
+                $currentSectionHasRows = true;
+                if ($previousPeriodSection && key_exists('rows', $previousPeriodSection) 
                                 && count($previousPeriodSection['rows'])) {
 
-                    // The '+' on th enext line is the same as array_combine()
+                    // The '+' on the next line is the same as array_combine()
                     // This is called the "array union operator"
                     $combined_array = $currentPeriodSection['rows']+$previousPeriodSection['rows'];
-
+                    $previousSectionHasRows = true;
                 } else {
 
                     $combined_array = $currentPeriodSection['rows'];
-
+                    $previousSectionHasRows = false;
                 }
             }
-            else if (key_exists('rows', $previousPeriodSection) 
+            else if ($previousPeriodSection && key_exists('rows', $previousPeriodSection) 
                                     && count($previousPeriodSection['rows'])) {
 
                 $combined_array = $previousPeriodSection['rows'];
-
+                $currentSectionHasRows = false;
+                $previousSectionHasRows = true;
             } else {
                 $combined_array = [];
+                $currentSectionHasRows = false;
+                $previousSectionHasRows = false;
             }
             
             
             // loop through the keys of the 'rows' arrayas and merge them
             foreach(array_keys($combined_array) as $keyName) {
                 $rowItem = new RowItem;
-                if (key_exists($keyName, $currentPeriodSection['rows'])) {
+                if ($currentSectionHasRows && key_exists($keyName, $currentPeriodSection['rows'])) {
                     $rowItem->displayName = $currentPeriodSection['rows'][$keyName]['name'];
                     $rowItem->currentValue = $currentPeriodSection['rows'][$keyName]['value'];
                 } else {
                     $rowItem->currentValue = 0;
                 }
-                if (key_exists($keyName, $previousPeriodSection['rows'])) {
+                if ($previousSectionHasRows && key_exists($keyName, $previousPeriodSection['rows'])) {
                     $rowItem->displayName = $previousPeriodSection['rows'][$keyName]['name'];
                     $rowItem->previousValue = $previousPeriodSection['rows'][$keyName]['value'];
                 } else {
