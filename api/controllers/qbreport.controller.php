@@ -4,6 +4,7 @@ namespace Controllers;
 
 use DateTime;
 use \Models\QbDateMacro;
+use \Models\RowItem;
 
 /**
  * Controller to accomplish QBO report related tasks.
@@ -11,7 +12,7 @@ use \Models\QbDateMacro;
  * The QBO API can only run reports that are in a pre-defined set. The available
  * reports are found in \\QuickBooksOnline\API\ReportService\ReportName.php
  *
- * @category  Controller
+ * @category Controller
 */
 class QBReportCtl{
 
@@ -63,7 +64,6 @@ class QBReportCtl{
       $currentPeriodPNL = QBReportCtl::profit_and_loss_raw_impl($realmid);
       /* simplfy the P&L report received from QBO */
       $summariseCurrentPeriod = $model->summarisePNLFromQBO($currentPeriodPNL);
-
       
       $start = $summariseCurrentPeriod['start'];
       $end = $summariseCurrentPeriod['end'];
@@ -267,7 +267,60 @@ class QBReportCtl{
 
       $pnlReport['title'] = "QMA Report";
 
-      
+      // Find ragging & in-store customer sales
+      if ($pnlReport['income'] && property_exists($pnlReport['income'], 'rows')) {
+        foreach ($pnlReport['income']->rows as $rowItem) {
+          if ($rowItem->displayName == 'Ragging') {
+            $pnlReport['ragging'] = $rowItem;
+          } else if ($rowItem->displayName == 'Daily Sales Income' || 
+              $rowItem->displayName == 'Sales-20% VAT' ||
+              $rowItem->displayName == 'Sales-Zero Rated'
+          ) {
+            if (array_key_exists('instorecustomersales', $pnlReport)) {
+              $pnlReport['instorecustomersales']->Add($rowItem);
+            } else {
+              $pnlReport['instorecustomersales'] = $rowItem;
+            }
+          }
+        }
+      }
+
+      // Find donations
+      if ($pnlReport['otherincome'] && property_exists($pnlReport['otherincome'], 'rows')) {
+        foreach ($pnlReport['otherincome']->rows as $rowItem) {
+          if ($rowItem->displayName == 'Donations to Parent') {
+            $pnlReport['donations'] = $rowItem;
+          }
+        }
+      }
+
+      // Fill in any blanks
+      if (!array_key_exists('ragging', $pnlReport)) {
+        $rowItem = new RowItem;
+        $rowItem->displayName = 'Ragging';
+        $pnlReport['ragging'] = $rowItem;
+      }
+      if (!array_key_exists('instorecustomersales', $pnlReport)) {
+        $rowItem = new RowItem;
+        $rowItem->displayName = 'Daily Sales Income';
+        $pnlReport['instorecustomersales'] = $rowItem;
+      }
+      if (!array_key_exists('donations', $pnlReport)) {
+        $rowItem = new RowItem;
+        $rowItem->displayName = 'Donations to Parent';
+        $pnlReport['donations'] = $rowItem;
+      }
+
+      // Deduce miscellaneous income
+      $rowItem = new RowItem;
+      $rowItem->displayName = 'Miscellaneous Income';
+      $rowItem->currentValue = round($pnlReport['income']->currentValue 
+          -$pnlReport['instorecustomersales']->currentValue 
+          -$pnlReport['ragging']->currentValue,2) ;
+      $rowItem->previousValue = round($pnlReport['income']->previousValue 
+          -$pnlReport['instorecustomersales']->previousValue 
+          -$pnlReport['ragging']->previousValue,2) ;
+      $pnlReport['miscellaneousincome'] = $rowItem;
 
       echo json_encode($pnlReport, JSON_NUMERIC_CHECK);
 

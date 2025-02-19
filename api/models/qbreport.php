@@ -6,8 +6,6 @@ use QuickBooksOnline\API\ReportService\ReportService;
 use QuickBooksOnline\API\ReportService\ReportName;
 use QuickBooksOnline\API\Exception\SdkException;
 
-use DateTime;
-
 /**
  * QBO Wrapper class that allows us to run selected QBO reports.
  * 
@@ -18,6 +16,7 @@ use DateTime;
  *   "Columns": {...},     // Names and types of columns
  *   "Rows": {...},        // One or more Row objects containing the report values
  * }
+ * The exact format is given in Report.xsd in the quickbooks api source code.
  * 
  * @category Model
  */
@@ -613,6 +612,13 @@ class RowItem{
     public string $displayName ='';
     public float $currentValue = 0;
     public float $previousValue = 0;
+
+    public function Add(RowItem $rowItem) {
+        $this->currentValue += $rowItem->currentValue;
+        $this->currentValue = round($this->currentValue,2);
+        $this->previousValue += $rowItem->previousValue;
+        $this->previousValue = round($this->previousValue,2);
+    }
 }
 class SectionItem extends RowItem{ 
     public array $rows = [];
