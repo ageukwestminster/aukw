@@ -86,20 +86,28 @@ class QuickbooksReport{
      * @var bool
      */
     public bool $sortAscending = true;
-
-        /**
-     * Generate a Profit & Loss report
+    /**
+     * 'True' if should show data from the period 12 months before the current period
      *
-     * @return array
+     * @var bool
+     */
+    public bool $showPreviousPeriod = true;    
+
+    /**
+     * Generate a QBO Profit & Loss summary report.
+     * 
+     * Note: sortBy, sortAscending, showPreviousPeriod have no effect on this report.
+     *
+     * @return mixed A report in QBO format with 'Header','Columns' etc. properties
      * 
      */
-    public function profitAndLoss(){
+    public function profitAndLoss() : mixed{
 
         $auth = new QuickbooksAuth();
 
         $this->dataService = $auth->prepare($this->realmid);
         if ($this->dataService == false) {
-            return;
+            return false;
         }
         try{
             $serviceContext = $auth->getServiceContext($this->realmid);
@@ -113,11 +121,11 @@ class QuickbooksReport{
             exit(0);            
         }
         if ($serviceContext == false) {
-            return;
+            return false;
         }
         $this->reportService = new ReportService($serviceContext);
         if ($this->reportService == false) {
-            return;
+            return false;
         }
   
         $profitAndLossReport = $this->reportService
@@ -380,22 +388,29 @@ class QuickbooksReport{
     }
 
     /**
-     * Convert the raw QuickBooks Profit and Loss report into a format that can we used
-     * to report the QMA information.
-     * 
-     * We wish to report numbers for the latest time period and the time period one
-     * year before that. Because of a limitation in the QBO api, we receive data for
-     * all intervening periods between the two relevant periods. We must ignore these 
-     * periods.
-     * 
-     * @param array $profitAndLossReport A report array received from QuickBooks
+     * Convert the raw QuickBooks Profit and Loss report into a simplier format.
+     * @param array $profitAndLossReport A report object in raw form, received from QuickBooks
+     * @return mixed
      */
-    public function summarisePNLFromQBO($pnlReport, $start, $end) {
+    public function summarisePNLFromQBO($pnlReport) : mixed{
 
-        $report=array();            
-        $report['start'] = $start;
-        $report['end'] = $end;
+        $report=array();
         $report['data'] = array();
+        
+        /** @disregard Intelephense error on next line */
+        if ($pnlReport && property_exists($pnlReport, 'Header')
+                && property_exists($pnlReport->Header, 'StartPeriod')) {
+            /** @disregard Intelephense error on next line */
+            $report['start'] = $pnlReport->Header->StartPeriod;
+            /** @disregard Intelephense error on next line */
+            $report['end']  = $pnlReport->Header->EndPeriod;
+        } else {
+            http_response_code(422);  
+            return array(
+                "message" => "QBO P&L report is missing Header or StartPeriod.",
+            );
+            exit(1);
+        }
 
         /** @disregard Intelephense error on next line */
         if ($pnlReport && property_exists($pnlReport, 'Rows')
@@ -437,7 +452,7 @@ class QuickbooksReport{
         } else {
             http_response_code(422);  
             return array(
-                "message" => "QB report is missing Rows->Row array.",
+                "message" => "QBO P&L report is missing Rows->Row array.",
             );
             exit(1);
         }
