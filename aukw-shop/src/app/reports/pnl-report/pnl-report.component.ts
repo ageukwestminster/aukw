@@ -39,8 +39,6 @@ export class PnlReportComponent
 {
   private reportService = inject(QBReportService);
 
-  DateRangeEnum = DateRangeEnum;
-
   /**
    * When 'true' expand the expenses lines.
    * Logic from: {@link https://ng-bootstrap.github.io/#/components/collapse/examples}
@@ -72,16 +70,18 @@ export class PnlReportComponent
   override refreshSummary(startDate: string, endDate: string) {
     this.loading = true;
 
-    this.reportService.getPandLReport(startDate, endDate, this.enterprises).subscribe({
-      next: (response) => {
-        this.data = response;
-      },
-      error: (error: any) => {
-        this.loading = false;
-        this.data = new ProfitAndLossData();
-        this.alertService.error(error, { autoClose: false });
-      },
-      complete: () => (this.loading = false),
-    });
+    this.reportService
+      .getPandLReport(startDate, endDate, this.enterprises)
+      .subscribe({
+        next: (response) => {
+          this.data = response;
+        },
+        error: (error: any) => {
+          this.loading = false;
+          this.data = new ProfitAndLossData();
+          this.alertService.error(error, { autoClose: false });
+        },
+        complete: () => (this.loading = false),
+      });
   }
 }

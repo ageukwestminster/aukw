@@ -16,8 +16,8 @@
       <div class="row class">
         <div class="col-sm">
           <p class="p-2" *ngIf="data">
-            Average daily transaction sizes is sometimes required by the Charity Retail
-            Association in their QMA surveys.
+            Average daily transaction sizes is sometimes required by the Charity
+            Retail Association in their QMA surveys.
           </p>
           <table
             class="table table-striped table-hover table-responsive w-auto"
@@ -37,7 +37,9 @@
                     data[i].year + "-Q" + data[i].quarter
                   }}</span>
                 </th>
-                <td class="text-center">{{ data[i].trading_days_in_quarter }}</td>
+                <td class="text-center">
+                  {{ data[i].trading_days_in_quarter }}
+                </td>
                 <td class="text-center">
                   {{ data[i].avg_daily_transactions | number: "1.2-2" }}
                 </td>

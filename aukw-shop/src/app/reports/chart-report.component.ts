@@ -8,12 +8,16 @@ import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
 import { DateRangeAdapter } from '@app/_helpers';
 import { DateRange, DateRangeEnum } from '@app/_models';
-import { DateFormatHelper, ExportToCsvService, AlertService } from '@app/_services';
+import {
+  DateFormatHelper,
+  ExportToCsvService,
+  AlertService,
+} from '@app/_services';
 
 @Component({
   template: '',
   standalone: true,
-  imports: [ ],
+  imports: [],
 })
 export abstract class AbstractChartReportComponent<T = any> implements OnInit {
   protected form!: FormGroup;
@@ -31,6 +35,8 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
 
   /** Expose the Math object to templates */
   Math = Math;
+  /** Expose the DateRangeEnum enum to templates */
+  DateRangeEnum = DateRangeEnum;
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({
@@ -88,7 +94,9 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
 
   onRefreshPressed() {
     if (this.f['startDate'].value && this.f['endDate'].value) {
-      const start = this.dateFormatHelper.formatedDate(this.f['startDate'].value);
+      const start = this.dateFormatHelper.formatedDate(
+        this.f['startDate'].value,
+      );
       const end = this.dateFormatHelper.formatedDate(this.f['endDate'].value);
       this.f['dateRange'].setValue(DateRangeEnum.CUSTOM);
       this.refreshSummary(start!, end!);
@@ -104,12 +112,12 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
     this.exportToCsvService.exportToCSV(this.data);
   }
 
-    /**
-   * This checkbox determines if the report is run on the 
+  /**
+   * This checkbox determines if the report is run on the
    * Enterprises company or the Charity company.
    */
-    checkboxClick() {
-      this.enterprises = !this.enterprises;
-      this.onDateRangeChanged(this.f['dateRange'].value);
-    }
+  checkboxClick() {
+    this.enterprises = !this.enterprises;
+    this.onDateRangeChanged(this.f['dateRange'].value);
+  }
 }

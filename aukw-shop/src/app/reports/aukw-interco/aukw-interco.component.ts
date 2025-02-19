@@ -12,10 +12,7 @@ import { QBReportService } from '@app/_services';
 import { DateRangeEnum } from '@app/_models';
 import { AbstractChartReportComponent } from '../chart-report.component';
 import { QBAccountListEntry } from '@app/_models/qb-account-list-entry';
-import {
-  CustomDateParserFormatter,
-  NgbUTCStringAdapter,
-} from '@app/_helpers';
+import { CustomDateParserFormatter, NgbUTCStringAdapter } from '@app/_helpers';
 
 @Component({
   templateUrl: './aukw-interco.component.html',
@@ -38,7 +35,6 @@ export class AukwIntercoComponent
   extends AbstractChartReportComponent<QBAccountListEntry[]>
   implements OnInit
 {
-
   private reportService = inject(QBReportService);
 
   /**

@@ -18,10 +18,10 @@ import { AbstractChartReportComponent } from '../chart-report.component';
 })
 export class WeeklySalesComponent implements OnInit {
   private summaryService = inject(SummaryService);
-  data:AvgWeeklySalesData[] = [];
+  data: AvgWeeklySalesData[] = [];
 
-  ngOnInit(){
-    this.refreshSummary();  
+  ngOnInit() {
+    this.refreshSummary();
   }
 
   refreshSummary() {

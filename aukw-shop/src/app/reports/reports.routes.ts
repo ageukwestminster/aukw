@@ -13,7 +13,10 @@ export const REPORTS_ROUTES: Routes = [
   { path: '', component: ReportsComponent },
   { path: 'sales-list', component: SalesListComponent },
   { path: 'sales-histogram', component: SalesHistogramComponent },
-  { path: 'daily-transaction-averages', component: DailyTransactionSizeComponent },
+  {
+    path: 'daily-transaction-averages',
+    component: DailyTransactionSizeComponent,
+  },
   { path: 'aukw-interco', component: AukwIntercoComponent },
   { path: 'pnl-report', component: PnlReportComponent },
 
