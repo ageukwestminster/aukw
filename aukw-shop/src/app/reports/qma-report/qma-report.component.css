@@ -1,0 +1,17 @@
+/* A 1 pixel wide single border at the top of a cell */
+.border-tb {
+  border: 1px solid #000;
+  border-width: 2px 0 0 0;
+}
+
+/* A 2 pixel wide single border at the top of a cell */
+.border-tb2 {
+  border: 2px solid #000;
+  border-width: 2px 0 0 0;
+}
+
+/* A 3 pixel wide double border at the bottom of a cell */
+.border-bb {
+  border: 3px double #000;
+  border-width: 0 0 3px 0;
+}

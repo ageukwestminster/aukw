@@ -7,7 +7,8 @@ import {
 } from '@ng-bootstrap/ng-bootstrap';
 import { QBReportService } from '@app/_services';
 import { AbstractChartReportComponent } from '../chart-report.component';
-import { DateRangeEnum, ProfitAndLossData } from '@app/_models';
+import { DateRange, DateRangeEnum, QMAReport } from '@app/_models';
+import { DateRangeChooserComponent } from '@app/shared';
 
 @Component({
   standalone: true,
@@ -17,12 +18,13 @@ import { DateRangeEnum, ProfitAndLossData } from '@app/_models';
     NgbDatepickerModule,
     NgIf,
     ReactiveFormsModule,
+    DateRangeChooserComponent,
   ],
   templateUrl: './qma-report.component.html',
   styleUrl: './qma-report.component.css',
 })
 export class QmaReportComponent
-  extends AbstractChartReportComponent<ProfitAndLossData>
+  extends AbstractChartReportComponent<QMAReport>
   implements OnInit
 {
   private reportService = inject(QBReportService);
@@ -37,13 +39,17 @@ export class QmaReportComponent
     this.onDateRangeChanged(DateRangeEnum.LAST_QUARTER);
   }
 
+  dateRangeChanged(dateRange: DateRange) {
+    this.refreshSummary(dateRange.startDate, dateRange.endDate);
+  }
+
   override refreshSummary(startDate: string, endDate: string) {
     this.loading = true;
     this.reportService.getQMAReport(startDate, endDate, 'quarter').subscribe({
       next: (response) => (this.data = response),
       error: (error: any) => {
         this.loading = false;
-        this.data = new ProfitAndLossData();
+        this.data = new QMAReport();
         this.alertService.error(error, { autoClose: false });
       },
       complete: () => (this.loading = false),
