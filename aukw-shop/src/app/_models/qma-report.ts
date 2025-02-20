@@ -1,6 +1,6 @@
 import { ProfitAndLossData, PnlReportLineItem } from "./profit-and-loss-data";
 
-export class QMAReport extends ProfitAndLossData{
+export class InStoreSalesData extends ProfitAndLossData{
   ragging: PnlReportLineItem;
   donations: PnlReportLineItem;
   instorecustomersales: PnlReportLineItem;

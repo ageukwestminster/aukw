@@ -8,7 +8,7 @@ import {
 } from '@ng-bootstrap/ng-bootstrap';
 import { QBReportService } from '@app/_services';
 import { AbstractChartReportComponent } from '../chart-report.component';
-import { DateRange, DateRangeEnum, QMAReport } from '@app/_models';
+import { DateRange, DateRangeEnum, InStoreSalesData } from '@app/_models';
 import { DateRangeChooserComponent } from '@app/shared';
 
 @Component({
@@ -26,7 +26,7 @@ import { DateRangeChooserComponent } from '@app/shared';
   styleUrl: './qma-report.component.css',
 })
 export class QmaReportComponent
-  extends AbstractChartReportComponent<QMAReport>
+  extends AbstractChartReportComponent<InStoreSalesData>
   implements OnInit
 {
   private reportService = inject(QBReportService);
@@ -51,7 +51,7 @@ export class QmaReportComponent
       next: (response) => (this.data = response),
       error: (error: any) => {
         this.loading = false;
-        this.data = new QMAReport();
+        this.data = new InStoreSalesData();
         this.alertService.error(error, { autoClose: false });
       },
       complete: () => (this.loading = false),
