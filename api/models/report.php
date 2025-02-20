@@ -20,13 +20,13 @@ class Report{
      */ 
     private $conn;
     /**
-     * The start date of the report period.
+     * The start date of the report period, in ISO 8601 format.
      *
      * @var string
      */
     public string $startdate;
     /**
-     * The end date of the report period.
+     * The end date of the report period, in ISO 8601 format.
      *
      * @var string
      */
@@ -175,5 +175,61 @@ class Report{
         }       
 
         return $sales_arr;
+    }
+
+    /**
+     * 
+     */
+    public function salesByDepartment() : array{
+
+        $query = "SELECT SUM(clothing) as clothing, SUM(brica) as brica, SUM(books) as books
+	                    , SUM(linens) as linens, SUM(other) as other
+                        , SUM(clothing+brica+books+linens+other) as total
+                    FROM takings t
+                    WHERE t.date >= :start AND t.date <= :end" .
+                    ($this->shopID ? ' AND t.shopID = :shopID ' : ' ');
+        
+        // prepare query statement
+        $stmt = $this->conn->prepare( $query );
+
+        // bind id of product to be updated
+        $stmt->bindParam(":start", $this->startdate);
+        $stmt->bindParam(":end", $this->enddate);
+        if ($this->shopID) {
+            $shopID = filter_var($this->shopID, FILTER_SANITIZE_NUMBER_INT);
+            $stmt->bindParam (":shopID", $shopID, PDO::PARAM_INT);
+        }
+
+        // execute query
+        $stmt->execute();
+
+        $num = $stmt->rowCount();
+
+        $sales_arr=array();
+        $sales_arr["start"] = $this->startdate;
+        $sales_arr["end"] = $this->enddate;
+        $sales_arr["shopid"] =$this->shopID?$this->shopID:'';
+        $dept_list=array();
+
+        if($num>0){
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                extract($row);
+                
+                $dept_list=array(
+                    "clothing" => $clothing,
+                    "brica" => $brica,
+                    "books" => $books,
+                    "linens" => $linens,
+                    "other" => $other,
+                    "total" => $total,
+                );
+
+
+            }
+
+
+        }       
+
+        return array_merge($sales_arr, $dept_list);
     }
 }

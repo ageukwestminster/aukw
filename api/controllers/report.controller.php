@@ -3,6 +3,7 @@
 namespace Controllers;
 
 use DateTime;
+use \Models\QbDateMacro;
 
 /**
  * Controller to accomplish Report related tasks. 
@@ -200,6 +201,23 @@ class ReportCtl{
     echo json_encode($model->salesByQuarter($shopid, $date), JSON_NUMERIC_CHECK);
   }
 
+    /**
+   * A report of sales broken down by department (clothing, brica, books, linens)
+   *
+   * @param mixed $shopid The id of the shop. Must be supplied.
+   * 
+   * @return void Output is echoed directly to response.
+   * 
+   */
+  public static function salesByDepartment(int $shopid){  
+
+    $model = new \Models\Report();
+    $model->shopID = $shopid;
+    ReportCtl::GetHttpDateParemeters($model);
+
+    echo json_encode($model->salesByDepartment(), JSON_NUMERIC_CHECK);
+  }
+
   /**
    * Show summarised takings data for a given shop, between start and end dates.
    * 
@@ -284,6 +302,33 @@ class ReportCtl{
     //echo json_encode($model->salesList($shopid, $numdatapoints), JSON_NUMERIC_CHECK);
 
     throw new \Exception('Not implemented');
+  }
+
+    /**
+   * A helper function to get Date parameters from the request. It looks for 
+   * 'date_macro' first and then 'start' & 'end'. The values obtained are
+   * set via the properties of the $model object.
+   * @param Report $model A QBReport object
+   * @return void Nothing is output or returned
+   */
+  private static function GetHttpDateParemeters(\Models\Report $model) : void {
+
+    if(isset($_GET['start']) || isset($_GET['end'])) {
+      $start='';
+      $end='';
+      list($start, $end) = \Core\DatesHelper::sanitizeDateValues(
+                                  !isset($_GET['start']) ? '' : $_GET['start'], 
+                                  !isset($_GET['end']) ? '' : $_GET['end']
+                              );
+  
+      $model->startdate = $start;
+      $model->enddate = $end;
+    }
+    else {
+      http_response_code(400);  
+      echo json_encode(array("message" => "Unable to generate report, start/end dates are missing."));
+      exit(1);
+    }
   }
   
 }
