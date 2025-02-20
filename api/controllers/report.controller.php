@@ -91,11 +91,27 @@ class ReportCtl{
    * @return void Output is echoed directly to response.
    * 
    */
-  public static function avgDailyTransactionSize($shopid){  
+  public static function avgDailyTransactionSizeByQuarter($shopid){  
 
     $model = new \Models\TakingsSummary();
 
-    echo json_encode($model->avgDailyTransactionSize($shopid), JSON_NUMERIC_CHECK);
+    echo json_encode($model->avgDailyTransactionSizeByQuarter($shopid), JSON_NUMERIC_CHECK);
+  }
+
+    /**
+   * Retrieve a data set for the report which shows average daily sales per transaction.
+   *
+   * @param mixed $shopid Must be supplied.
+   * @return void Output is echoed directly to response.
+   * 
+   */
+  public static function avgDailyTransactionSize($shopid){  
+
+    $model = new \Models\Report();
+    $model->shopID = $shopid;
+    ReportCtl::GetHttpDateParameters($model);
+
+    echo json_encode($model->avgDailyTransactionSize(), JSON_NUMERIC_CHECK);
   }
 
   /**
@@ -213,7 +229,7 @@ class ReportCtl{
 
     $model = new \Models\Report();
     $model->shopID = $shopid;
-    ReportCtl::GetHttpDateParemeters($model);
+    ReportCtl::GetHttpDateParameters($model);
 
     echo json_encode($model->salesByDepartment(), JSON_NUMERIC_CHECK);
   }
@@ -311,7 +327,7 @@ class ReportCtl{
    * @param Report $model A QBReport object
    * @return void Nothing is output or returned
    */
-  private static function GetHttpDateParemeters(\Models\Report $model) : void {
+  private static function GetHttpDateParameters(\Models\Report $model) : void {
 
     if(isset($_GET['start']) || isset($_GET['end'])) {
       $start='';

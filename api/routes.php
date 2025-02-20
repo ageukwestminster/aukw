@@ -76,6 +76,7 @@ $router->mount('/report', function () use ($router) {
     $router->get('/dept-chart', 'ReportCtl@departmentChart');
     $router->get('/avg-weekly-sales/(\d+)', 'ReportCtl@avgWeeklySales');
     $router->get('/avg-daily-transaction-size/(\d+)', 'ReportCtl@avgDailyTransactionSize');
+    $router->get('/avg-daily-txn-by-quarter/(\d+)', 'ReportCtl@avgDailyTransactionSizeByQuarter');
     $router->get('/sales-by-department/(\d+)', 'ReportCtl@salesByDepartment');
 
     // Dynamic route with (successive) optional subpatterns: /monthly-sales/shopid(/year(/month(/day)))
@@ -83,11 +84,11 @@ $router->mount('/report', function () use ($router) {
     $router->get('/quarterly-sales/(\d+)(/\d{4})?', 'ReportCtl@salesByQuarter');
 
     // Show takings data for the last 90 days for a given shop
-    // (A simplification of the next api method)
+    // (A simplification of the following api method)
     $router->get('/takingssummary/shop/(\d+)', 'ReportCtl@takingsSummary');
-
     // Show takings data for the last 'datapoints' days for a given shop
     $router->get('/saleslist/shop/(\d+)/datapoints/(\d+)', 'ReporCtl@salesList');
+    
 });
 
 /***************/
