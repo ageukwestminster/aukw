@@ -34,7 +34,7 @@ class TakingsSummary{
 
         $summary_arr=array();
 
-        // check if more than 0 record found
+        // check if more than 0 records found
         if($num>0){
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
                 extract($row);
@@ -106,7 +106,7 @@ class TakingsSummary{
         $chart_data['avg365'] = array();
         $chart_data['avgAll'] = array();
 
-        // check if more than 0 record found
+        // check if more than 0 records found
         if($num>0){
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
                 extract($row);
@@ -140,7 +140,7 @@ class TakingsSummary{
 
         $quaterly_data=array();
 
-        // check if more than 0 record found
+        // check if more than 0 records found
         if($num>0){
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
                 extract($row);
@@ -164,7 +164,7 @@ class TakingsSummary{
         return $quaterly_data;
     }
 
-    public function avgDailyTransactionSize($shopid){
+    public function avgDailyTransactionSizeByQuarter($shopid){
 
         // MySQL stored procedure
         $query = "SELECT  shopid, YEAR(`date`) as `year`, QUARTER(`date`) as `quarter`
@@ -188,7 +188,7 @@ class TakingsSummary{
 
         $quaterly_data=array();
 
-        // check if more than 0 record found
+        // check if more than 0 records found
         if($num>0){
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
                 extract($row);
@@ -235,7 +235,7 @@ class TakingsSummary{
             'YTD' => [],
         ];
 
-        // check if more than 0 record found
+        // check if more than 0 records found
         if($num>0){
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
                 extract($row);
@@ -295,7 +295,7 @@ class TakingsSummary{
 
         $monthly_sales=array();
 
-        // check if more than 0 record found
+        // check if more than 0 records found
         if($num>0){
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
                 extract($row);
@@ -352,7 +352,7 @@ class TakingsSummary{
 
         $quarterly_sales=array();
 
-        // check if more than 0 record found
+        // check if more than 0 records found
         if($num>0){
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
                 extract($row);

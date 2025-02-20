@@ -103,7 +103,7 @@ class Takings{
 
         $item_arr=array();
 
-        // check if more than 0 record found
+        // check if more than 0 records found
         if($num>0){
             // retrieve our table contents
             // fetch() is faster than fetchAll()
@@ -169,7 +169,7 @@ class Takings{
 
         $item_arr=array();
 
-        // check if more than 0 record found
+        // check if more than 0 records found
         if($num>0){
             // retrieve our table contents
             // fetch() is faster than fetchAll()
@@ -217,7 +217,7 @@ class Takings{
 
         $item_arr=array();
 
-        // check if more than 0 record found
+        // check if more than 0 records found
         if($num>0){
             // retrieve our table contents
             // fetch() is faster than fetchAll()

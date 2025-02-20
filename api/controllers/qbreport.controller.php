@@ -69,7 +69,7 @@ class QBReportCtl{
       $end = $summariseCurrentPeriod['end'];
 
       // Do Previous year's values ... this means perform the P&L report again, this time
-      // for a period that is 12 months before the existing period
+      // for a period that is 12 months before the current period
       $model->startdate = (new DateTime($start))->modify('-1 year')->format('Y-m-d');
       $model->enddate = (new DateTime($end))->modify('-1 year')->format('Y-m-d');
       $previousPeriodPNL = $model->profitAndLoss();  
