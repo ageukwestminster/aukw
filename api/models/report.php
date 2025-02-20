@@ -178,60 +178,72 @@ class Report{
         return $sales_arr;
     }
 
-    /**
-     * 
-     */
+  /**
+   * Show results of a query for sales by department for the date range supplied.
+   * Donations and rag are excluded.
+   * @return array The required data
+   */
     public function salesByDepartment() : array{
+        try {
+            $query = "SELECT SUM(clothing) as clothing, SUM(brica) as brica, SUM(books) as books
+                            , SUM(linens) as linens, SUM(other) as other
+                            , SUM(clothing+brica+books+linens+other) as total
+                        FROM takings t
+                        WHERE t.date >= :start AND t.date <= :end" .
+                        ($this->shopID ? ' AND t.shopID = :shopID ' : ' ');
+            
+            // prepare query statement
+            $stmt = $this->conn->prepare( $query );
 
-        $query = "SELECT SUM(clothing) as clothing, SUM(brica) as brica, SUM(books) as books
-	                    , SUM(linens) as linens, SUM(other) as other
-                        , SUM(clothing+brica+books+linens+other) as total
-                    FROM takings t
-                    WHERE t.date >= :start AND t.date <= :end" .
-                    ($this->shopID ? ' AND t.shopID = :shopID ' : ' ');
-        
-        // prepare query statement
-        $stmt = $this->conn->prepare( $query );
-
-        // bind id of product to be updated
-        $stmt->bindParam(":start", $this->startdate);
-        $stmt->bindParam(":end", $this->enddate);
-        if ($this->shopID) {
-            $shopID = filter_var($this->shopID, FILTER_SANITIZE_NUMBER_INT);
-            $stmt->bindParam (":shopID", $shopID, PDO::PARAM_INT);
-        }
-
-        // execute query
-        $stmt->execute();
-
-        $num = $stmt->rowCount();
-
-        $sales_arr=array();
-        $sales_arr["start"] = $this->startdate;
-        $sales_arr["end"] = $this->enddate;
-        $sales_arr["shopid"] =$this->shopID?$this->shopID:'';
-        $dept_list=array();
-
-        if($num>0){
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-                extract($row);
-                
-                $dept_list=array(
-                    "clothing" => $clothing,
-                    "brica" => $brica,
-                    "books" => $books,
-                    "linens" => $linens,
-                    "other" => $other,
-                    "total" => $total,
-                );
-
-
+            // bind id of product to be updated
+            $stmt->bindParam(":start", $this->startdate);
+            $stmt->bindParam(":end", $this->enddate);
+            if ($this->shopID) {
+                $shopID = filter_var($this->shopID, FILTER_SANITIZE_NUMBER_INT);
+                $stmt->bindParam (":shopID", $shopID, PDO::PARAM_INT);
             }
 
+            // execute query
+            $stmt->execute();
 
-        }       
+            $num = $stmt->rowCount();
 
-        return array_merge($sales_arr, $dept_list);
+            $sales_arr=array();
+            $sales_arr["start"] = $this->startdate;
+            $sales_arr["end"] = $this->enddate;
+            $sales_arr["shopid"] =$this->shopID?$this->shopID:'';
+            $dept_list=array();
+
+            if($num>0){
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                    extract($row);
+                    
+                    $dept_list=array(
+                        "clothing" => $clothing,
+                        "brica" => $brica,
+                        "books" => $books,
+                        "linens" => $linens,
+                        "other" => $other,
+                        "total" => $total,
+                    );
+
+
+                }
+
+
+            }       
+
+            return array_merge($sales_arr, $dept_list);
+        } catch (\Exception $e) {
+            http_response_code(400);  
+            echo json_encode(
+              array(
+                "message" => "Unable to generate sales by department report.",
+                "extra" => $e->getMessage()
+              )
+            );
+            exit(1);
+        }
     }
 
   /**
@@ -240,61 +252,79 @@ class Report{
    * @return array The required data
    */
     public function avgDailyTransactionSize() : array{        
-        
-        $return = array();
-        $return['title'] = 'Average Transaction Size';
-        $return['range'] = array();
-        $return['range']['currentPeriodStart'] = $this->startdate;
-        $return['range']['currentPeriodEnd'] = $this->enddate;
+        try {
+            $return = array();
+            $return['title'] = 'Average Transaction Number & Size';
+            $return['shopid'] = $this->shopID??null;
+            $return['range'] = array();
+            $return['range']['currentPeriodStart'] = $this->startdate;
+            $return['range']['currentPeriodEnd'] = $this->enddate;
 
-        $currentPeriod = $this->getAvgDailyTransactionSize($this->startdate, $this->enddate);
+            $currentPeriod = $this->getAvgDailyTransactionSize($this->startdate, $this->enddate);
 
-        // Do Previous year's values ... this means perform the query again, this time
-        // for a period that is 12 months before the current period
-        $prevStartDate = (new DateTime($this->startdate))->modify('-1 year')->format('Y-m-d');
-        $prevEndDate = (new DateTime($this->enddate))->modify('-1 year')->format('Y-m-d');
-        $return['range']['previousPeriodStart'] = $prevStartDate;
-        $return['range']['previousPeriodEnd'] = $prevEndDate;
-        $previousPeriod = $this->getAvgDailyTransactionSize($prevStartDate, $prevEndDate);
+            // Do Previous year's values ... this means perform the query again, this time
+            // for a period that is 12 months before the current period
+            $prevStartDate = (new DateTime($this->startdate))->modify('-1 year')->format('Y-m-d');
+            $prevEndDate = (new DateTime($this->enddate))->modify('-1 year')->format('Y-m-d');
+            $return['range']['previousPeriodStart'] = $prevStartDate;
+            $return['range']['previousPeriodEnd'] = $prevEndDate;
+            $previousPeriod = $this->getAvgDailyTransactionSize($prevStartDate, $prevEndDate);
 
-        $return['data'] = array();
-        $rowItem = new RowItem;
+            $return['data'] = array();
+            $rowItem = new RowItem;
 
-        $rowItem = new RowItem;
-        $rowItem->displayName = "Average number of transactions per day";
-        $rowItem->currentValue = $currentPeriod['avg_daily_transactions'];
-        $rowItem->previousValue = $previousPeriod['avg_daily_transactions'];
-        $return['data']['avg_daily_transactions'] = $rowItem;
+            $rowItem = new RowItem;
+            $rowItem->displayName = "Average number of transactions per day";
+            $rowItem->currentValue = $currentPeriod['avg_daily_transactions'];
+            $rowItem->previousValue = $previousPeriod['avg_daily_transactions'];
+            $return['data']['avg_daily_transactions'] = $rowItem;
 
-        $rowItem = new RowItem;
-        $rowItem->displayName = "Average value per transaction";
-        $rowItem->currentValue = $currentPeriod['sales_per_txn'];
-        $rowItem->previousValue = $previousPeriod['sales_per_txn'];
-        $return['data']['sales_per_txn'] = $rowItem;
+            $rowItem = new RowItem;
+            $rowItem->displayName = "Average value per transaction";
+            $rowItem->currentValue = $currentPeriod['sales_per_txn'];
+            $rowItem->previousValue = $previousPeriod['sales_per_txn'];
+            $return['data']['sales_per_txn'] = $rowItem;
 
-        $rowItem = new RowItem;
-        $rowItem->displayName = "Number of trading days in the period";
-        $rowItem->currentValue = $currentPeriod['trading_days_in_period'];
-        $rowItem->previousValue = $previousPeriod['trading_days_in_period'];
-        $return['data']['trading_days_in_period'] = $rowItem;
+            $rowItem = new RowItem;
+            $rowItem->displayName = "Number of trading days in the period";
+            $rowItem->currentValue = $currentPeriod['trading_days_in_period'];
+            $rowItem->previousValue = $previousPeriod['trading_days_in_period'];
+            $return['data']['trading_days_in_period'] = $rowItem;
 
-        $rowItem = new RowItem;
-        $rowItem->displayName = "Computed total of Sales";
-        $rowItem->currentValue = round($currentPeriod['trading_days_in_period']*
-            $currentPeriod['sales_per_txn']*$currentPeriod['avg_daily_transactions'],2);
-        $rowItem->previousValue = round($previousPeriod['trading_days_in_period']*
-            $previousPeriod['sales_per_txn']*$previousPeriod['avg_daily_transactions'],2);
-        $return['data']['computed_total'] = $rowItem;
+            $rowItem = new RowItem;
+            $rowItem->displayName = "Computed total of Sales";
+            $rowItem->currentValue = round($currentPeriod['trading_days_in_period']*
+                $currentPeriod['sales_per_txn']*$currentPeriod['avg_daily_transactions'],2);
+            $rowItem->previousValue = round($previousPeriod['trading_days_in_period']*
+                $previousPeriod['sales_per_txn']*$previousPeriod['avg_daily_transactions'],2);
+            $return['data']['computed_total'] = $rowItem;
 
-        $rowItem = new RowItem;
-        $rowItem->displayName = "Actual total of Sales";
-        $rowItem->currentValue = $currentPeriod['total'];
-        $rowItem->previousValue = $previousPeriod['total'];
-        $return['data']['actual_total'] = $rowItem;
+            $rowItem = new RowItem;
+            $rowItem->displayName = "Actual total of Sales";
+            $rowItem->currentValue = $currentPeriod['total'];
+            $rowItem->previousValue = $previousPeriod['total'];
+            $return['data']['actual_total'] = $rowItem;
 
-        return $return;
+            return $return;
+        } catch (\Exception $e) {
+            http_response_code(400);  
+            echo json_encode(
+              array(
+                "message" => "Unable to generate average daily transaction size report.",
+                "extra" => $e->getMessage()
+              )
+            );
+            exit(1);
+        }
     }
 
+    /**
+     * Private function to perform the actual MariaDB query for average transaction size 
+     * and average value per transaction for the date range supplied.
+     * @param string $startdate The beginning date of the accounting period
+     * @param string $enddate The end date of the accounting period
+     * @return array 
+     */
     private function getAvgDailyTransactionSize($start, $end) {
         // MySQL stored procedure
         $query = "SELECT  count(*) as trading_days_in_period
