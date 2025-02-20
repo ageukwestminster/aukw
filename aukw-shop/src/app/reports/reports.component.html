@@ -29,7 +29,26 @@
         </div>
       </div>
     </div>
-    <div ngbAccordionItem *ngIf="user.isAdmin">
+    <div ngbAccordionItem *ngIf="user.isAdmin" [collapsed]="false">
+      <h2 ngbAccordionHeader>
+        <button ngbAccordionButton>QuickBooks</button>
+      </h2>
+      <div ngbAccordionCollapse>
+        <div ngbAccordionBody>
+          <ng-template>
+            <ul>
+              <li>
+                <a routerLink="pnl-report">Profit & Loss Report</a>
+              </li>
+              <li>
+                <a routerLink="aukw-interco">AUKW Interco Account</a>
+              </li>
+            </ul>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+    <div ngbAccordionItem *ngIf="user.isAdmin" [collapsed]="false">
       <h2 ngbAccordionHeader>
         <button ngbAccordionButton>Charity Retail Association QMA</button>
       </h2>
@@ -38,7 +57,7 @@
           <ng-template>
             <ul>
               <li>
-                <a routerLink="qma-report">Last Quarter P&L</a>
+                <a routerLink="qma-report">In-store Sales</a>
               </li>
               <li>
                 <a routerLink="weekly-sales">Average Weekly Sales</a>
@@ -71,25 +90,6 @@
                 <a routerLink="/users/suspended/true"
                   >List of suspended users</a
                 >
-              </li>
-            </ul>
-          </ng-template>
-        </div>
-      </div>
-    </div>
-    <div ngbAccordionItem *ngIf="user.isAdmin" [collapsed]="false">
-      <h2 ngbAccordionHeader>
-        <button ngbAccordionButton>QuickBooks</button>
-      </h2>
-      <div ngbAccordionCollapse>
-        <div ngbAccordionBody>
-          <ng-template>
-            <ul>
-              <li>
-                <a routerLink="aukw-interco">AUKW Interco Account</a>
-              </li>
-              <li>
-                <a routerLink="pnl-report">Last Quarter P&L</a>
               </li>
             </ul>
           </ng-template>
