@@ -7,10 +7,10 @@
     <div class="d-flex justify-content-between">
       <button
         type="button"
-        routerLink="/reports/weekly-sales"
+        routerLink="/reports/daily-transaction-averages"
         class="btn btn-success m-2"
       >
-        Next Report &gt;
+        Next QMA Report &gt;
       </button>
       <button
         type="button"
@@ -106,9 +106,7 @@
         "
       >
         Possible Error: Clothing+Brica+Books+Linens+Misc = £
-        {{
-          data.clothing + data.brica + data.books + data.linens + data.other
-        }}
+        {{ data.clothing + data.brica + data.books + data.linens + data.other }}
         but total = £{{ data.total }}
       </p>
     </div>

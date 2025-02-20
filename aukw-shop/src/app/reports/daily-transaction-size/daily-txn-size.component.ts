@@ -1,39 +1,85 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { concatMap } from 'rxjs/operators';
+import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { tap } from 'rxjs/operators';
 
 import { environment } from '@environments/environment';
 
-import { AvgDailyTransactionData } from '@app/_models';
+import {
+  AvgDailyTransactionData,
+  AvgDailyTransactionDataByQuarter,
+  DateRange,
+  DateRangeEnum,
+} from '@app/_models';
 import { ReportService } from '@app/_services';
 import { AbstractChartReportComponent } from '../chart-report.component';
+import { DateRangeChooserComponent } from '@app/shared';
 
 @Component({
   templateUrl: './daily-txn-size.component.html',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [
+    CommonModule,
+    DateRangeChooserComponent,
+    NgbAccordionModule,
+    NgFor,
+    NgIf,
+    ReactiveFormsModule,
+    RouterLink,
+  ],
 })
-export class DailyTransactionSizeComponent extends AbstractChartReportComponent<
-  AvgDailyTransactionData[]
-> {
+export class DailyTransactionSizeComponent extends AbstractChartReportComponent<AvgDailyTransactionData> {
+  chartData: AvgDailyTransactionDataByQuarter[] = [];
+
   private reportService = inject(ReportService);
 
-  override refreshSummary() {
+  readonly INITIALDATERANGE: DateRangeEnum = DateRangeEnum.LAST_QUARTER;
+
+  override ngOnInit() {
+    let dtRng = this.dateRangeAdapter.enumToDateRange(this.INITIALDATERANGE);
+
+    this.form = this.formBuilder.group({
+      dateRange: [this.INITIALDATERANGE],
+      startDate: [dtRng.startDate],
+      endDate: [dtRng.endDate],
+    });
+
+    this.onDateRangeChanged(this.INITIALDATERANGE);
+  }
+
+  dateRangeChanged(dateRange: DateRange) {
+    this.refreshSummary(dateRange.startDate, dateRange.endDate);
+  }
+
+  override refreshSummary(startDate: string, endDate: string) {
+    this.loading = true;
     this.reportService
-      .getAvgDailyTransactionData(environment.HARROWROAD_SHOPID)
+      .getAvgDailyTransactions(
+        startDate,
+        endDate,
+        environment.HARROWROAD_SHOPID,
+      )
       .pipe(
-        tap({
-          next: (result) => {
-            this.data = result;
-          },
-          error: (error) => {
-            console.log(error);
-          },
+        concatMap((response) => {
+          this.data = response;
+          return this.reportService.getAvgDailyTransactionsByQuarter(
+            environment.HARROWROAD_SHOPID,
+          );
         }),
       )
-      .subscribe();
+      .subscribe({
+        next: (response) => (this.chartData = response),
+        error: (error: any) => {
+          this.loading = false;
+          this.data = new AvgDailyTransactionData();
+          this.chartData = [];
+          this.alertService.error(error, { autoClose: false });
+        },
+        complete: () => (this.loading = false),
+      });
   }
 }

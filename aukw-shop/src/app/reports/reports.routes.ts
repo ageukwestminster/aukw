@@ -25,6 +25,6 @@ export const REPORTS_ROUTES: Routes = [
   { path: 'qma-report', component: QmaReportComponent },
   { path: 'weekly-sales', component: WeeklySalesComponent },
   { path: 'sales-by-department', component: SalesByDepartmentComponent },
-  { path: 'daily-transaction-averages', component: WeeklySalesComponent },
+  { path: 'daily-transaction-averages', component: DailyTransactionSizeComponent },
   { path: 'ragging-report', component: WeeklySalesComponent },
 ];

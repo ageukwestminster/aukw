@@ -3,6 +3,7 @@ export * from './allocation';
 export * from './apimessage';
 export * from './auditlog';
 export * from './auditlog-filter';
+export * from './avg-daily-txn-data';
 export * from './chart_data';
 export * from './date-range';
 export * from './date-range.enum';

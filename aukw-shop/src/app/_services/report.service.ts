@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '@environments/environment';
 import { 
   AvgDailyTransactionData,
+  AvgDailyTransactionDataByQuarter,
   AvgWeeklySalesData,
   DepartmentSalesChartData,
   MonthlySalesChartData,
@@ -20,7 +21,8 @@ const salesChartUrl = baseUrl + `/sales-chart`;
 const deptChartUrl = baseUrl + `/dept-chart`;
 const monthlySalesChartUrl = baseUrl + `/monthly-sales`;
 const averageWeeklySalesUrl = baseUrl + `/avg-weekly-sales`;
-const averageDailySalesUrl = baseUrl + `/avg-daily-transaction-size`;
+const averageDailyTxnSizeUrl = baseUrl + `/avg-daily-transaction-size`;
+const averageDailyTxnSizeByQUrl = baseUrl + `/avg-daily-txn-by-quarter`;
 const salesByDeptUrl = baseUrl + `/sales-by-department`;
 
 /**
@@ -89,15 +91,29 @@ export class ReportService {
   }
 
   /**
-   * Get the average daily transaciton number and size, organised by quarter for a shop
+   * Get the average daily transaction number and size, organised by quarter for a shop
    * @param shopid The id of the shop. Almost always equal to '1' for Harrow Road
    * @returns Array of AvgDailyTransactionData objects
    */
-    getAvgDailyTransactionData(shopid: number) {
-      return this.http.get<AvgDailyTransactionData[]>(
-        averageDailySalesUrl + `/${shopid}`,
-      );
-    }
+  getAvgDailyTransactionsByQuarter(shopid: number) {
+    return this.http.get<AvgDailyTransactionDataByQuarter[]>(
+      averageDailyTxnSizeByQUrl + `/${shopid}`,
+    );
+  }
+
+    
+  /**
+   * Get the average daily transaction number and size, for a particular date period and shop.
+   * @param start The start date of the report period in ISO 8601 format.
+   * @param end The end date of the report period in ISO 8601 format.
+   * @param shopid The id of the shop. Almost always equal to '1' for Harrow Road
+   * @returns 
+   */
+  getAvgDailyTransactions(start: string, end: string, shopid: number = 1) {
+    return this.http.get<AvgDailyTransactionData>(
+      averageDailyTxnSizeUrl + `/${shopid}?start=${start}&end=${end}`,
+    );
+  }
 
   getDepartmentBreakdownChartData() {
     return this.http.get<DepartmentSalesChartData>(deptChartUrl);

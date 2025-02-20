@@ -6,6 +6,7 @@ import {
   NgbAccordionModule,
   NgbDatepickerModule,
 } from '@ng-bootstrap/ng-bootstrap';
+import { environment } from '@environments/environment';
 import { ReportService } from '@app/_services';
 import { AbstractChartReportComponent } from '../chart-report.component';
 import { DateRange, DateRangeEnum, SalesByDepartment } from '@app/_models';
@@ -47,14 +48,16 @@ export class SalesByDepartmentComponent
 
   override refreshSummary(startDate: string, endDate: string) {
     this.loading = true;
-    this.reportService.getSalesByDepartment(startDate, endDate).subscribe({
-      next: (response) => (this.data = response),
-      error: (error: any) => {
-        this.loading = false;
-        this.data = new SalesByDepartment();
-        this.alertService.error(error, { autoClose: false });
-      },
-      complete: () => (this.loading = false),
-    });
+    this.reportService
+      .getSalesByDepartment(startDate, endDate, environment.HARROWROAD_SHOPID)
+      .subscribe({
+        next: (response) => (this.data = response),
+        error: (error: any) => {
+          this.loading = false;
+          this.data = new SalesByDepartment();
+          this.alertService.error(error, { autoClose: false });
+        },
+        complete: () => (this.loading = false),
+      });
   }
 }
