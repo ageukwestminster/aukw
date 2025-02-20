@@ -2,7 +2,7 @@ import { Shop } from '@app/_models';
 
 /**
  * Define the properties of a 'takings'. This is the set of numbers and
- * other proerties that define the infgormation required to be stored
+ * other proerties that define the information required to be stored
  * every day to capture the sales performance of the shop.
  */
 export class Takings {
