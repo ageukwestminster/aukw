@@ -17,7 +17,6 @@ export * from './qb-realm.service';
 export * from './qb-report.service';
 export * from './report.service';
 export * from './shop.service';
-export * from './summary.service';
 export * from './takings.service';
 export * from './toast.service';
 export * from './user.service';

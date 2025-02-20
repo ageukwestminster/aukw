@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import Highcharts from 'highcharts/es-modules/masters/highcharts.src.js'; // From https://github.com/highcharts/highcharts/issues/14183
-import { SummaryService } from '@app/_services';
+import { ReportService } from '@app/_services';
 import { DepartmentSalesChartData } from '@app/_models';
 
 @Component({
@@ -53,10 +53,10 @@ export class DepartmentChartComponent implements OnInit {
     ],
   };
 
-  constructor(private summaryService: SummaryService) {}
+  constructor(private reportService: ReportService) {}
 
   ngOnInit(): void {
-    this.summaryService
+    this.reportService
       .getDepartmentBreakdownChartData()
       .subscribe((x: DepartmentSalesChartData) => {
         this.options.series[0]['data'].push({

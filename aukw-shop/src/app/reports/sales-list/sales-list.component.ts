@@ -6,7 +6,7 @@ import { RouterLink } from '@angular/router';
 import { tap } from 'rxjs/operators';
 
 import { SalesChartData } from '@app/_models';
-import { SummaryService } from '@app/_services';
+import { ReportService } from '@app/_services';
 import { AbstractChartReportComponent } from '../chart-report.component';
 import { SalesChartComponent } from '@app/shared';
 
@@ -16,10 +16,10 @@ import { SalesChartComponent } from '@app/shared';
   imports: [CommonModule, ReactiveFormsModule, RouterLink, SalesChartComponent],
 })
 export class SalesListComponent extends AbstractChartReportComponent<SalesChartData> {
-  private summaryService = inject(SummaryService);
+  private reportService = inject(ReportService);
 
   override refreshSummary() {
-    this.summaryService
+    this.reportService
       .getSalesChartData()
       .pipe(
         tap({

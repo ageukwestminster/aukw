@@ -8,7 +8,7 @@ import { tap } from 'rxjs/operators';
 import { environment } from '@environments/environment';
 
 import { AvgWeeklySalesData } from '@app/_models';
-import { SummaryService } from '@app/_services';
+import { ReportService } from '@app/_services';
 import { AbstractChartReportComponent } from '../chart-report.component';
 
 @Component({
@@ -17,7 +17,7 @@ import { AbstractChartReportComponent } from '../chart-report.component';
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
 })
 export class WeeklySalesComponent implements OnInit {
-  private summaryService = inject(SummaryService);
+  private reportService = inject(ReportService);
   data: AvgWeeklySalesData[] = [];
 
   ngOnInit() {
@@ -25,7 +25,7 @@ export class WeeklySalesComponent implements OnInit {
   }
 
   refreshSummary() {
-    this.summaryService
+    this.reportService
       .getAverageWeeklySalesData(environment.HARROWROAD_SHOPID)
       .pipe(
         tap({

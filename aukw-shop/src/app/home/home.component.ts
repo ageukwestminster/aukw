@@ -12,7 +12,6 @@ import {
 import {
   AuthenticationService,
   ReportService,
-  SummaryService,
 } from '@app/_services';
 import { DateRangeAdapter } from '@app/_helpers';
 import { concatMap } from 'rxjs/operators';
@@ -50,7 +49,6 @@ export class HomeComponent implements OnInit {
   constructor(
     private authenticationService: AuthenticationService,
     private reportService: ReportService,
-    private summaryService: SummaryService,
     private dateRangeAdapter: DateRangeAdapter,
   ) {
     this.user = this.authenticationService.userValue;
@@ -58,7 +56,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     this.loading = true;
-    this.summaryService
+    this.reportService
       .getSummary()
       .pipe(
         concatMap((response) => {
@@ -77,7 +75,7 @@ export class HomeComponent implements OnInit {
         }),
         concatMap((response) => {
           this.movingAvgChartData = response;
-          return this.summaryService.getSalesChartData();
+          return this.reportService.getSalesChartData();
         }),
       )
       .subscribe((response) => {

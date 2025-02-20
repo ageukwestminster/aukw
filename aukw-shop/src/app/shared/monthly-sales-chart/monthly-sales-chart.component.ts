@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import Highcharts from 'highcharts/es-modules/masters/highcharts.src.js'; // From https://github.com/highcharts/highcharts/issues/14183
-import { SummaryService } from '@app/_services';
+import { ReportService } from '@app/_services';
 
 import { MonthlySalesChartData } from '@app/_models';
 import { environment } from '@environments/environment';
@@ -104,14 +104,14 @@ export class MonthlySalesChartComponent implements OnInit {
     ],
   };
 
-  constructor(private summaryService: SummaryService) {}
+  constructor(private reportService: ReportService) {}
 
   ngOnInit(): void {
     var t = new Date();
     var year = t.getFullYear();
     var month = t.getMonth(); // The number of the month: January is 0, February is 1,... December is 11
 
-    this.summaryService
+    this.reportService
       .getMonthlySalesChartData(
         environment.HARROWROAD_SHOPID,
         year - 3,
