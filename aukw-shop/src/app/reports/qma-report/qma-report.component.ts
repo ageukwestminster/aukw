@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import {
   NgbAccordionModule,
   NgbDatepickerModule,
@@ -14,11 +15,12 @@ import { DateRangeChooserComponent } from '@app/shared';
   standalone: true,
   imports: [
     CommonModule,
+    DateRangeChooserComponent,
     NgbAccordionModule,
     NgbDatepickerModule,
     NgIf,
     ReactiveFormsModule,
-    DateRangeChooserComponent,
+    RouterLink,    
   ],
   templateUrl: './qma-report.component.html',
   styleUrl: './qma-report.component.css',
