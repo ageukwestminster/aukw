@@ -46,18 +46,16 @@ export class QBReportService {
    * Association quarterly QMA request
    * @param string start The start date for the report
    * @param string end The end date for the report, must be a date after start
-   * @param string summarizeColumn Usually 'quarter' or 'month'
    * @returns object
    */
-    getQMAReport(
+    getInStoreSales(
       start: string,
       end: string,
-      summarizeColumn: string,
     ): Observable<QMAReport> {
       let realmId = environment.qboEnterprisesRealmID;
       return this.http.get<QMAReport>(
         `${baseUrl}/${realmId}/report/qma` +
-          `?start=${start}&end=${end}&summarizeColumn=${summarizeColumn}`,
+          `?start=${start}&end=${end}`,
       );
     }
 

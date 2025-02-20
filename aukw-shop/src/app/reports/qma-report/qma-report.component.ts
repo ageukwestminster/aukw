@@ -47,7 +47,7 @@ export class QmaReportComponent
 
   override refreshSummary(startDate: string, endDate: string) {
     this.loading = true;
-    this.reportService.getQMAReport(startDate, endDate, 'quarter').subscribe({
+    this.reportService.getInStoreSales(startDate, endDate).subscribe({
       next: (response) => (this.data = response),
       error: (error: any) => {
         this.loading = false;
