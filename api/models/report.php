@@ -270,26 +270,23 @@ class Report{
             $return['range']['previousPeriodEnd'] = $prevEndDate;
             $previousPeriod = $this->getAvgDailyTransactionSize($prevStartDate, $prevEndDate);
 
-            $return['data'] = array();
-            $rowItem = new RowItem;
-
             $rowItem = new RowItem;
             $rowItem->displayName = "Average number of transactions per day";
             $rowItem->currentValue = $currentPeriod['avg_daily_transactions'];
             $rowItem->previousValue = $previousPeriod['avg_daily_transactions'];
-            $return['data']['avg_daily_transactions'] = $rowItem;
+            $return['avg_daily_transactions'] = $rowItem;
 
             $rowItem = new RowItem;
             $rowItem->displayName = "Average value per transaction";
             $rowItem->currentValue = $currentPeriod['sales_per_txn'];
             $rowItem->previousValue = $previousPeriod['sales_per_txn'];
-            $return['data']['sales_per_txn'] = $rowItem;
+            $return['sales_per_txn'] = $rowItem;
 
             $rowItem = new RowItem;
             $rowItem->displayName = "Number of trading days in the period";
             $rowItem->currentValue = $currentPeriod['trading_days_in_period'];
             $rowItem->previousValue = $previousPeriod['trading_days_in_period'];
-            $return['data']['trading_days_in_period'] = $rowItem;
+            $return['trading_days_in_period'] = $rowItem;
 
             $rowItem = new RowItem;
             $rowItem->displayName = "Computed total of Sales";
@@ -297,13 +294,13 @@ class Report{
                 $currentPeriod['sales_per_txn']*$currentPeriod['avg_daily_transactions'],2);
             $rowItem->previousValue = round($previousPeriod['trading_days_in_period']*
                 $previousPeriod['sales_per_txn']*$previousPeriod['avg_daily_transactions'],2);
-            $return['data']['computed_total'] = $rowItem;
+            $return['computed_total'] = $rowItem;
 
             $rowItem = new RowItem;
             $rowItem->displayName = "Actual total of Sales";
             $rowItem->currentValue = $currentPeriod['total'];
             $rowItem->previousValue = $previousPeriod['total'];
-            $return['data']['actual_total'] = $rowItem;
+            $return['actual_total'] = $rowItem;
 
             return $return;
         } catch (\Exception $e) {
