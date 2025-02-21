@@ -9,6 +9,7 @@ import { WeeklySalesComponent } from './weekly-sales';
 import { QmaReportComponent } from './qma-report/qma-report.component';
 import { PnlReportComponent } from './pnl-report/pnl-report.component';
 import { SalesByDepartmentComponent } from './qma-sales-by-dept/sales-by-department.component';
+import { RaggingReportComponent } from './ragging/ragging-report.component';
 
 export const REPORTS_ROUTES: Routes = [
   { path: '', component: ReportsComponent },
@@ -26,5 +27,5 @@ export const REPORTS_ROUTES: Routes = [
   { path: 'weekly-sales', component: WeeklySalesComponent },
   { path: 'sales-by-department', component: SalesByDepartmentComponent },
   { path: 'daily-transaction-averages', component: DailyTransactionSizeComponent },
-  { path: 'ragging', component: WeeklySalesComponent },
+  { path: 'ragging', component: RaggingReportComponent },
 ];

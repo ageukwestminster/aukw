@@ -1,0 +1,95 @@
+<div class="card mt-4 col">
+  <div class="card-header d-flex justify-content-between">
+    <div class="col-sm">
+      <h4>Ragging Report</h4>
+      <small>Data from Enterprises QuickBooks file</small>
+    </div>
+    <div class="d-flex justify-content-between">
+      <button
+        type="button"
+        routerLink="/reports/daily-transaction-averages"
+        class="btn btn-success m-2"
+      >
+        &lt; Previous
+      </button>
+      <button
+        type="button"
+        routerLink="/reports"
+        class="btn btn-outline-dark m-2"
+      >
+        Close &times;
+      </button>
+    </div>
+  </div>
+  <date-range-chooser
+    class="p-2 col-sm-9"
+    [initialDateRangeEnum]="INITIALDATERANGE"
+    (dateDangeChosen)="dateRangeChanged($event)"
+  ></date-range-chooser>
+
+  <div class="p-2">
+    <h3>Table of QMA data</h3>
+  </div>
+
+  <div *ngIf="loading" class="row justify-content-between p-2">
+    <div class="col-sm-6">
+      <div>
+        <span class="spinner-border spinner-border-lg align-center"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-2 row class">
+    <div class="col-sm">
+      <table class="table table-striped table-hover table-responsive w-auto">
+        <caption>
+          Covering period:
+          {{
+            f["startDate"].value | date: "dd/MM/yy"
+          }}
+          -
+          {{
+            f["endDate"].value | date: "dd/MM/yy"
+          }}
+        </caption>
+        <thead>
+          <tr>
+            <th></th>
+            <td class="text-end">Weight (in kg.)</td>
+            <td class="text-end">Average Price Per kg.</td>
+            <td class="text-end">Value</td>
+          </tr>
+        </thead>
+        <tbody *ngIf="data">
+          <tr></tr>
+          <ng-container *ngFor="let salesitem of data">
+            <tr *ngIf="salesitem.israg">
+              <td>{{ salesitem.name }}</td>
+              <td class="text-end">
+                {{ salesitem.number | number: "1.0-0" }}
+              </td>
+              <td class="text-end">
+                £{{ salesitem.avgprice | number: "1.2-2" }}
+              </td>
+              <td class="text-end">
+                £{{ salesitem.amount | number: "1.2-2" }}
+              </td>
+            </tr>
+          </ng-container>
+          <tr class="border-tb2">
+            <td>Total</td>
+            <td class="text-end">
+              {{ total.number | number: "1.0-0" }}
+            </td>
+            <td class="text-end">
+              £{{ total.avgprice | number: "1.2-2" }}
+            </td>
+            <td class="text-end">
+              £{{ total.amount | number: "1.2-2" }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

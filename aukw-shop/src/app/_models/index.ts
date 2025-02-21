@@ -25,6 +25,7 @@ export * from './payroll-process-state.enum';
 export * from './profit-and-loss-data';
 export * from './role';
 export * from './sales-by-dept';
+export * from './sales-by-item';
 export * from './shop';
 export * from './summary';
 export * from './takings-filter';

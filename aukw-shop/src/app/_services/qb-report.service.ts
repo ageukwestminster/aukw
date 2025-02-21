@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { environment } from '@environments/environment';
 import { Observable } from 'rxjs';
-import { QBAccountListEntry, ProfitAndLossData, InStoreSalesData } from '@app/_models';
+import { QBAccountListEntry, ProfitAndLossData, InStoreSalesData, SalesByItem } from '@app/_models';
 
 const baseUrl = `${environment.apiUrl}/qb`;
 
@@ -86,6 +86,24 @@ export class QBReportService {
       }
       return this.http.get<ProfitAndLossData>(
         `${baseUrl}/${realmId}/report/profitandloss` +
+          `?start=${start}&end=${end}`,
+      );
+    }
+
+    /**
+    * Get a report that can be used to complete the Charity Retail
+    * Association quarterly QMA request. it shows sales grouped by item (aka Product)
+    * @param string start The start date for the report
+    * @param string end The end date for the report, must be a date after start
+    * @returns object
+    */
+    getSalesByItem(
+      start: string,
+      end: string,
+    ): Observable<SalesByItem[]> {
+      let realmId = environment.qboEnterprisesRealmID;
+      return this.http.get<SalesByItem[]>(
+        `${baseUrl}/${realmId}/report/salesbyitem` +
           `?start=${start}&end=${end}`,
       );
     }
