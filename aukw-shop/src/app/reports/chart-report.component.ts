@@ -43,13 +43,15 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
   }
 
   ngOnInit(): void {
+    let initialDateRange = DateRangeEnum.THIS_YEAR;
+    let dtRng = this.dateRangeAdapter.enumToDateRange(initialDateRange);
     this.form = this.formBuilder.group({
       dateRange: [DateRangeEnum.THIS_YEAR],
-      startDate: [null],
-      endDate: [null],
+      startDate: [dtRng.startDate],
+      endDate: [dtRng.endDate],
     });
 
-    this.onDateRangeChanged(DateRangeEnum.THIS_YEAR);
+    this.onDateRangeChanged(initialDateRange);
   }
 
   dateRangeChanged(dateRange: DateRange) {

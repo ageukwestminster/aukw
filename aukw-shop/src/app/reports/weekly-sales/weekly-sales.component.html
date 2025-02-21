@@ -59,7 +59,9 @@
             {{ data.range.currentPeriodStart | date: "dd/MM/yy" }} -
             {{ data.range.currentPeriodEnd | date: "dd/MM/yy" }}
           </td>
-          <th class="text-end d-none d-md-table-cell">&nbsp;&nbsp;&nbsp;&nbsp;Change</th>
+          <th class="text-end d-none d-md-table-cell">
+            &nbsp;&nbsp;&nbsp;&nbsp;Change
+          </th>
         </tr>
       </thead>
       <tbody *ngIf="data">
