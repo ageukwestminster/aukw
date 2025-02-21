@@ -152,8 +152,9 @@ class TakingsSummary{
                     "quarter_start" => $quarter_start,
                     "trading_year" => $trading_year,
                     "trading_quarter" => $trading_quarter,
-                    "weeks_in_quarter" => $count,
+                    "weeks_in_quarter" => $weeks_in_quarter,
                     "avg_weekly_income" => $avg_weekly_income,
+                    "avg_weekly_instore_sales" => $avg_weekly_instore_sales,
                 );
         
                     // create nonindexed array
