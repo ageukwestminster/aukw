@@ -67,19 +67,14 @@ export class RaggingReportComponent
           });
           return merge(...obs);
         }),
-        // reduce calculates total sum & count
-        reduce(
-          (prev: { sum: SalesByItem; count: number }, current) => {
-            return {
-              sum: current.israg ? prev.sum.add(current) : prev.sum,
-              count: prev.count + 1,
-            };
-          },
-          { sum: new SalesByItem(), count: 0 },
-        ),
+        // reduce calculates total sum
+        reduce((prev: SalesByItem, current) => {
+          // Only total ragging items
+          return current.israg ? prev.add(current) : prev;
+        }, new SalesByItem()),
       )
       .subscribe({
-        next: (reduced) => (this.total = reduced.sum),
+        next: (raggingTotals: SalesByItem) => (this.total = raggingTotals),
         error: (error: any) => {
           this.loading = false;
           this.data = [];

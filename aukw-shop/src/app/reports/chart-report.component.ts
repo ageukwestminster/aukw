@@ -7,8 +7,9 @@ import { Router } from '@angular/router';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
 import { DateRangeAdapter } from '@app/_helpers';
-import { DateRange, DateRangeEnum } from '@app/_models';
+import { DateRange, DateRangeEnum, User } from '@app/_models';
 import {
+  AuthenticationService,
   DateFormatHelper,
   ExportToCsvService,
   AlertService,
@@ -20,6 +21,7 @@ import {
   imports: [],
 })
 export abstract class AbstractChartReportComponent<T = any> implements OnInit {
+  protected user: User;
   protected form!: FormGroup;
   protected loading: boolean = false;
   protected enterprises: boolean = true; // When 'true' use Enterprises company, Charity otherwise
@@ -32,11 +34,16 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
   protected router = inject(Router);
   protected alertService = inject(AlertService);
   protected dateFormatHelper = inject(DateFormatHelper);
+  private authenticationService = inject(AuthenticationService);
 
   /** Expose the Math object to templates */
   Math = Math;
   /** Expose the DateRangeEnum enum to templates */
   DateRangeEnum = DateRangeEnum;
+
+  constructor() {
+    this.user = this.authenticationService.userValue;
+  }
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({

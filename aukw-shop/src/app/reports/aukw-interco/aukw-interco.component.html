@@ -21,7 +21,7 @@
         Found {{ data && data.length }} entries
       </div>
     </div>
-    <div class="col-xs-2">
+    <div class="col-xs-2" *ngIf="user.isAdmin">
       <div class="form-check m-2">
         <input
           type="checkbox"
