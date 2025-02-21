@@ -323,7 +323,7 @@ class Report{
      * @return array 
      */
     private function getAvgDailyTransactionSize($start, $end) {
-        // MySQL stored procedure
+        
         $query = "SELECT  count(*) as trading_days_in_period
                         , ROUND(AVG(customers_num_total),1) as avg_daily_transactions
                         , ROUND(SUM(clothing+brica+books+linens+other)/sum(customers_num_total),2) as sales_per_txn
@@ -356,6 +356,127 @@ class Report{
                     "avg_daily_transactions" => $avg_daily_transactions,
                     "sales_per_txn" => $sales_per_txn,
                     "total" => $total,
+                );
+        
+                    // create nonindexed array
+                    array_push ($quaterly_data, $avg_weekly_sales);
+            }
+        }
+    }
+
+    /**
+   * Show results of a query for average in-store income per shop per week
+   * for the date range supplied, and for the period 12 months before that date range.
+   * @return array The required data
+   */
+    public function avgWeeklySales() : array{        
+        try {
+            $return = array();
+            $return['title'] = 'Average In-Store Income Per Week';
+            $return['shopid'] = $this->shopID??null;
+            $return['range'] = array();
+            $return['range']['currentPeriodStart'] = $this->startdate;
+            $return['range']['currentPeriodEnd'] = $this->enddate;
+
+            $currentPeriod = $this->getAvgWeeklyInstoreIncome($this->startdate, $this->enddate);
+
+            // Do Previous year's values ... this means perform the query again, this time
+            // for a period that is 12 months before the current period
+            $prevStartDate = (new DateTime($this->startdate))->modify('-1 year')->format('Y-m-d');
+            $prevEndDate = (new DateTime($this->enddate))->modify('-1 year')->format('Y-m-d');
+            $return['range']['previousPeriodStart'] = $prevStartDate;
+            $return['range']['previousPeriodEnd'] = $prevEndDate;
+            $previousPeriod = $this->getAvgWeeklyInstoreIncome($prevStartDate, $prevEndDate);
+
+            $rowItem = new RowItem;
+            $rowItem->displayName = "Average instore sales per week";
+            $rowItem->currentValue = $currentPeriod['avg_weekly_sales'];
+            $rowItem->previousValue = $previousPeriod['avg_weekly_sales'];
+            $return['avg_weekly_sales'] = $rowItem;
+
+            $rowItem = new RowItem;
+            $rowItem->displayName = "Number of weeks in the period";
+            $rowItem->currentValue = $currentPeriod['week_count'];
+            $rowItem->previousValue = $previousPeriod['week_count'];
+            $return['week_count'] = $rowItem;
+
+            $rowItem = new RowItem;
+            $rowItem->displayName = "Number of trading days in the period";
+            $rowItem->currentValue = $currentPeriod['trading_days_in_period'];
+            $rowItem->previousValue = $previousPeriod['trading_days_in_period'];
+            $return['trading_days_in_period'] = $rowItem;
+
+            $rowItem = new RowItem;
+            $rowItem->displayName = "Computed total of Sales";
+            $rowItem->currentValue = round($currentPeriod['week_count']*
+                $currentPeriod['avg_weekly_sales'],2);
+            $rowItem->previousValue = round($previousPeriod['week_count']*
+                $previousPeriod['avg_weekly_sales'],2);
+            $return['computed_total'] = $rowItem;
+
+            $rowItem = new RowItem;
+            $rowItem->displayName = "Actual total of Sales";
+            $rowItem->currentValue = $currentPeriod['total'];
+            $rowItem->previousValue = $previousPeriod['total'];
+            $return['actual_total'] = $rowItem;
+
+            return $return;
+        } catch (\Throwable $e) {
+            http_response_code(400);  
+            echo json_encode(
+            array(
+                "message" => "Unable to generate average daily transaction size report.",
+                "extra" => $e->getMessage()
+            )
+            );
+            exit(1);
+        }
+    }
+
+    /**
+     * Private function to perform the actual MariaDB query for average in-store income 
+     * per shop per week for the date range supplied.
+     * @param string $startdate The beginning date of the accounting period
+     * @param string $enddate The end date of the accounting period
+     * @return array 
+     */
+    private function getAvgWeeklyInstoreIncome($start, $end) {
+        
+        $query = "SELECT SUM(clothing+brica+books+linens+other) as `instore_sales`
+                , COUNT(*) as number_of_trading_days
+                , WEEK(Min(date)) as first_week, WEEK(Max(date)) as last_week
+                , ROUND(DATEDIFF(Max(date), Min(date))/7, 2) AS week_count
+                , ROUND(SUM(clothing+brica+books+linens+other)*7/DATEDIFF(Max(date), Min(date)),2) as avg_weekly_sales
+                FROM takings t
+                WHERE t.date >= :start AND t.date <= :end" .
+                ($this->shopID ? ' AND t.shopID = :shopID ' : ' ');
+
+        $stmt = $this->conn->prepare( $query );
+        // bind id of product to be updated
+        $stmt->bindParam(":start", $start);
+        $stmt->bindParam(":end", $end);
+        if ($this->shopID) {
+            $shopID = filter_var($this->shopID, FILTER_SANITIZE_NUMBER_INT);
+            $stmt->bindParam (":shopID", $shopID, PDO::PARAM_INT);
+        }
+
+        // execute query
+        $stmt->execute();
+        $num = $stmt->rowCount();
+
+        // check if more than 0 records found
+        if($num>0){
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                extract($row);
+            
+                return array(
+
+                    "total" => $instore_sales,
+                    "trading_days_in_period" => $number_of_trading_days,
+                    "first_week" => $first_week,
+                    "last_week" => $last_week,
+                    "week_count" => $week_count,
+                    "avg_weekly_sales" => $avg_weekly_sales,
                 );
         
                     // create nonindexed array

@@ -77,11 +77,27 @@ class ReportCtl{
    * @return void Output is echoed directly to response.
    * 
    */
-  public static function avgWeeklySales($shopid){  
+  public static function avgWeeklySalesByQuarter($shopid){  
 
     $model = new \Models\TakingsSummary();
 
     echo json_encode($model->avgWeeklySales($shopid), JSON_NUMERIC_CHECK);
+  }
+
+      /**
+   * Retrieve a data set for the report which shows average weekly sales, by quarter.
+   *
+   * @param mixed $shopid Must be supplied.
+   * @return void Output is echoed directly to response.
+   * 
+   */
+  public static function avgWeeklySales($shopid){  
+
+    $model = new \Models\Report();
+    $model->shopID = $shopid;
+    ReportCtl::GetHttpDateParameters($model);
+
+    echo json_encode($model->avgWeeklySales(), JSON_NUMERIC_CHECK);
   }
 
   /**

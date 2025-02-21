@@ -75,6 +75,7 @@ $router->mount('/report', function () use ($router) {
     $router->get('/sales-chart', 'ReportCtl@salesChart');
     $router->get('/dept-chart', 'ReportCtl@departmentChart');
     $router->get('/avg-weekly-sales/(\d+)', 'ReportCtl@avgWeeklySales');
+    $router->get('/avg-weekly-sales-by-quarter/(\d+)', 'ReportCtl@avgWeeklySalesByQuarter');
     $router->get('/avg-daily-transaction-size/(\d+)', 'ReportCtl@avgDailyTransactionSize');
     $router->get('/avg-daily-txn-by-quarter/(\d+)', 'ReportCtl@avgDailyTransactionSizeByQuarter');
     $router->get('/sales-by-department/(\d+)', 'ReportCtl@salesByDepartment');
@@ -88,7 +89,7 @@ $router->mount('/report', function () use ($router) {
     $router->get('/takingssummary/shop/(\d+)', 'ReportCtl@takingsSummary');
     // Show takings data for the last 'datapoints' days for a given shop
     $router->get('/saleslist/shop/(\d+)/datapoints/(\d+)', 'ReporCtl@salesList');
-    
+
 });
 
 /***************/
