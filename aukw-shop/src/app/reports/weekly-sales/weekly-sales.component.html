@@ -1,58 +1,168 @@
-<div class="card mt-4 col-sm-11">
+<div class="card mt-4 col">
   <div class="card-header d-flex justify-content-between">
     <div class="col-sm">
-      <h4>Average Weekly Sales, By Quarter</h4>
+      <h4>Average Weekly Sales</h4>
+      <small>Data from takings Database</small>
     </div>
-    <div>
-      <button type="button" routerLink="/reports" class="btn btn-outline-dark">
+    <div class="d-flex justify-content-between">
+      <button
+        type="button"
+        routerLink="/reports/qma-report"
+        class="btn btn-success m-2"
+      >
+        &lt; Previous
+      </button>
+      <button
+        type="button"
+        routerLink="/reports/sales-by-department"
+        class="btn btn-success m-2"
+      >
+        Next &gt;
+      </button>
+      <button
+        type="button"
+        routerLink="/reports"
+        class="btn btn-outline-dark m-2"
+      >
         Close &times;
       </button>
     </div>
   </div>
-  <div class="card-body">
-    <div *ngIf="!data" class="spinner-border spinner-border-sm"></div>
-    <div class="row class">
-      <div class="col-sm">
-        <p class="p-2" *ngIf="data">
-          This report shows the average weekly sales, computed
-          quarter-by-quarter.
-        </p>
-        <p class="px-2" *ngIf="data">
-          The 'Count' column shows the number of trading weeks in each quarter.
-        </p>
-        <p class="px-2" *ngIf="data">
-          Average weekly sales is sometimes required by the Charity Retail
-          Association in their QMA surveys.
-        </p>
-        <table class="table table-striped table-hover table-responsive w-auto">
-          <thead>
-            <tr>
-              <th>Quarter</th>
-              <th>Count</th>
-              <th>Average Weekly Sales</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of data; index as i">
-              <th>
-                <span class="text-dark" *ngIf="data">{{
-                  data[i].year + "-Q" + data[i].quarter
-                }}</span>
-              </th>
-              <td class="text-center">{{ data[i].weeks_in_quarter }}</td>
-              <td class="text-center">
-                {{ data[i].avg_weekly_income | number: "1.2-2" }}
-              </td>
-            </tr>
-            <tr *ngIf="!data">
-              <td colspan="4" class="text-center">
-                <span
-                  class="spinner-border spinner-border-lg align-center"
-                ></span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+  <date-range-chooser
+    class="p-2 col-sm-9"
+    [initialDateRangeEnum]="INITIALDATERANGE"
+    (dateDangeChosen)="dateRangeChanged($event)"
+  ></date-range-chooser>
+
+  <div class="p-2">
+    <h3>Table of QMA data</h3>
+  </div>
+
+  <div *ngIf="loading" class="row justify-content-between p-2">
+    <div class="col-sm-6">
+      <div>
+        <span class="spinner-border spinner-border-lg align-center"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-2 col-sm">
+    <table class="table table-striped table-hover table-responsive w-auto">
+      <thead>
+        <tr *ngIf="data && data.range">
+          <th></th>
+          <td>
+            {{ data.range.previousPeriodStart | date: "dd/MM/yy" }} -
+            {{ data.range.previousPeriodEnd | date: "dd/MM/yy" }}
+          </td>
+          <td>
+            {{ data.range.currentPeriodStart | date: "dd/MM/yy" }} -
+            {{ data.range.currentPeriodEnd | date: "dd/MM/yy" }}
+          </td>
+          <th class="text-end">&nbsp;&nbsp;&nbsp;&nbsp;Change</th>
+        </tr>
+      </thead>
+      <tbody *ngIf="data">
+        <tr></tr>
+        <tr>
+          <th>Average Weekly Sales</th>
+          <td class="text-end">
+            {{ data.avg_weekly_sales.previousValue | number: "1.2-2" }}
+          </td>
+          <td class="text-end">
+            {{ data.avg_weekly_sales.currentValue | number: "1.2-2" }}
+          </td>
+          <td class="d-none d-lg-table-cell text-end">
+            {{
+              data.avg_weekly_sales.currentValue -
+                data.avg_weekly_sales.previousValue | number: "1.2-2"
+            }}
+          </td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>Number Of Weeks In Period</th>
+          <td class="text-end">
+            {{ data.week_count.previousValue | number: "1.2-2" }}
+          </td>
+          <td class="text-end">
+            {{ data.week_count.currentValue | number: "1.2-2" }}
+          </td>
+          <td class="d-none d-lg-table-cell text-end">
+            {{
+              data.week_count.currentValue - data.week_count.previousValue
+                | number: "1.2-2"
+            }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="p-2 col-sm-8">
+    <div ngbAccordion>
+      <div ngbAccordionItem [collapsed]="true">
+        <h2 ngbAccordionHeader class="text-white">
+          <button ngbAccordionButton class="bg-secondary text-white">
+            Table of Quarter-By-Quarter Historical Data
+          </button>
+        </h2>
+        <div ngbAccordionCollapse>
+          <div ngbAccordionBody>
+            <ng-template>
+              <p class="p-2" *ngIf="data">
+                This report shows the average weekly sales, computed
+                quarter-by-quarter.
+              </p>
+              <p class="px-2" *ngIf="data">
+                The 'Count' column shows the number of trading weeks in each
+                quarter.
+              </p>
+              <p class="px-2" *ngIf="data">
+                There will be small differences betweent hese numbers and the
+                numbers above because of calculation differences. This table assigns each whole week to a quarter 
+              </p>
+              <table
+                class="table table-striped table-hover table-responsive w-auto"
+              >
+                <thead>
+                  <tr>
+                    <th>Quarter</th>
+                    <th>Count</th>
+                    <th>Average Weekly Sales</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of chartData; index as i">
+                    <th>
+                      <span class="text-dark" *ngIf="chartData">{{
+                        chartData[i].year + "-Q" + chartData[i].quarter
+                      }}</span>
+                    </th>
+                    <td class="text-center">
+                      {{ chartData[i].weeks_in_quarter }}
+                    </td>
+                    <td class="text-center">
+                      {{ chartData[i].avg_weekly_income | number: "1.2-2" }}
+                    </td>
+                  </tr>
+                  <tr *ngIf="!data">
+                    <td colspan="4" class="text-center">
+                      <span
+                        class="spinner-border spinner-border-lg align-center"
+                      ></span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </ng-template>
+          </div>
+        </div>
       </div>
     </div>
   </div>

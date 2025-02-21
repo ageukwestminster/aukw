@@ -1,42 +1,82 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-
-import { tap } from 'rxjs/operators';
-
+import { concatMap } from 'rxjs/operators';
+import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '@environments/environment';
 
-import { AvgWeeklySalesData } from '@app/_models';
+import {
+  AvgWeeklySalesData,
+  AvgWeeklySalesDataByQuarter,
+  DateRange,
+  DateRangeEnum,
+} from '@app/_models';
 import { ReportService } from '@app/_services';
 import { AbstractChartReportComponent } from '../chart-report.component';
+import { DateRangeChooserComponent } from '@app/shared';
 
 @Component({
   templateUrl: './weekly-sales.component.html',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [
+    CommonModule,
+    DateRangeChooserComponent,
+    NgbAccordionModule,
+    NgFor,
+    NgIf,
+    ReactiveFormsModule,
+    RouterLink,
+  ],
 })
-export class WeeklySalesComponent implements OnInit {
-  private reportService = inject(ReportService);
-  data: AvgWeeklySalesData[] = [];
+export class WeeklySalesComponent extends AbstractChartReportComponent<AvgWeeklySalesData> {
+  chartData: AvgWeeklySalesDataByQuarter[] = [];
 
-  ngOnInit() {
-    this.refreshSummary();
+  private reportService = inject(ReportService);
+
+  readonly INITIALDATERANGE: DateRangeEnum = DateRangeEnum.LAST_QUARTER;
+
+  override ngOnInit() {
+    let dtRng = this.dateRangeAdapter.enumToDateRange(this.INITIALDATERANGE);
+
+    this.form = this.formBuilder.group({
+      dateRange: [this.INITIALDATERANGE],
+      startDate: [dtRng.startDate],
+      endDate: [dtRng.endDate],
+    });
+
+    this.onDateRangeChanged(this.INITIALDATERANGE);
   }
 
-  refreshSummary() {
+  dateRangeChanged(dateRange: DateRange) {
+    this.refreshSummary(dateRange.startDate, dateRange.endDate);
+  }
+
+  override refreshSummary(startDate: string, endDate: string) {
+    this.loading = true;
     this.reportService
-      .getAverageWeeklySalesData(environment.HARROWROAD_SHOPID)
+      .getAverageWeeklySalesData(
+        startDate,
+        endDate,
+        environment.HARROWROAD_SHOPID,
+      )
       .pipe(
-        tap({
-          next: (result) => {
-            this.data = result;
-          },
-          error: (error) => {
-            console.log(error);
-          },
+        concatMap((response) => {
+          this.data = response;
+          return this.reportService.getAverageWeeklySalesByQuarter(
+            environment.HARROWROAD_SHOPID,
+          );
         }),
       )
-      .subscribe();
+      .subscribe({
+        next: (response) => (this.chartData = response),
+        error: (error: any) => {
+          this.loading = false;
+          this.data = new AvgWeeklySalesData();
+          this.chartData = [];
+          this.alertService.error(error, { autoClose: false });
+        },
+        complete: () => (this.loading = false),
+      });
   }
 }

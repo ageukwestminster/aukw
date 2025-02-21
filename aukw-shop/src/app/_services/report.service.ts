@@ -6,6 +6,7 @@ import {
   AvgDailyTransactionData,
   AvgDailyTransactionDataByQuarter,
   AvgWeeklySalesData,
+  AvgWeeklySalesDataByQuarter,
   DepartmentSalesChartData,
   MonthlySalesChartData,
   SalesByDepartment,
@@ -21,6 +22,7 @@ const salesChartUrl = baseUrl + `/sales-chart`;
 const deptChartUrl = baseUrl + `/dept-chart`;
 const monthlySalesChartUrl = baseUrl + `/monthly-sales`;
 const averageWeeklySalesUrl = baseUrl + `/avg-weekly-sales`;
+const averageWeeklySalesByQUrl = baseUrl + `/avg-weekly-sales-by-quarter`;
 const averageDailyTxnSizeUrl = baseUrl + `/avg-daily-transaction-size`;
 const averageDailyTxnSizeByQUrl = baseUrl + `/avg-daily-txn-by-quarter`;
 const salesByDeptUrl = baseUrl + `/sales-by-department`;
@@ -80,20 +82,33 @@ export class ReportService {
   }
 
   /**
-   * Get the average weekly sales, organised by quarter for a shop
+   * Get the average weekly sales, for a particular date period and shop.
+   * @param start The start date of the report period in ISO 8601 format.
+   * @param end The end date of the report period in ISO 8601 format.
    * @param shopid The id of the shop. Almost always equal to '1' for Harrow Road
-   * @returns Array of AvgWeeklySalesData objects
+   * @returns
    */
-  getAverageWeeklySalesData(shopid: number) {
-    return this.http.get<AvgWeeklySalesData[]>(
-      averageWeeklySalesUrl + `/${shopid}`,
+  getAverageWeeklySalesData(start: string, end: string, shopid: number = 1) {
+    return this.http.get<AvgWeeklySalesData>(
+      averageWeeklySalesUrl + `/${shopid}?start=${start}&end=${end}`,
     );
   }
+
+    /**
+   * Get the average weekly sales, organised by quarter for a shop
+   * @param shopid The id of the shop. Almost always equal to '1' for Harrow Road
+   * @returns Array of AvgWeeklySalesDataByQuarter objects
+   */
+    getAverageWeeklySalesByQuarter(shopid: number) {
+      return this.http.get<AvgWeeklySalesDataByQuarter[]>(
+        averageWeeklySalesByQUrl + `/${shopid}`,
+      );
+    }
 
   /**
    * Get the average daily transaction number and size, organised by quarter for a shop
    * @param shopid The id of the shop. Almost always equal to '1' for Harrow Road
-   * @returns Array of AvgDailyTransactionData objects
+   * @returns Array of AvgDailyTransactionDataByQuarter objects
    */
   getAvgDailyTransactionsByQuarter(shopid: number) {
     return this.http.get<AvgDailyTransactionDataByQuarter[]>(

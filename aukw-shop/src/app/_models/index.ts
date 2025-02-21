@@ -4,6 +4,7 @@ export * from './apimessage';
 export * from './auditlog';
 export * from './auditlog-filter';
 export * from './avg-daily-txn-data';
+export * from './avg-weekly-sales-data';
 export * from './chart_data';
 export * from './date-range';
 export * from './date-range.enum';
