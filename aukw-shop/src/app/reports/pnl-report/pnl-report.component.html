@@ -5,6 +5,7 @@
 
   <div class="card-body">
     <date-range-chooser
+      class="p-2 col-sm-9"
       [initialDateRangeEnum]="DateRangeEnum.LAST_QUARTER"
       (dateDangeChosen)="dateRangeChanged($event)"
     ></date-range-chooser>
@@ -22,7 +23,7 @@
 
     <div class="row">
       <div><h3>Profit And Loss Report</h3></div>
-      <div class="col-xs-2"  *ngIf="user.isAdmin">
+      <div class="col-xs-2" *ngIf="user.isAdmin">
         <div class="form-check m-2">
           <input
             type="checkbox"
@@ -47,11 +48,11 @@
             </tr>
             <tr *ngIf="data && data.range">
               <th></th>
-              <td>
+              <td class="text-center">
                 {{ data.range.currentPeriodStart | date: "dd/MM/yy" }} -
                 {{ data.range.currentPeriodEnd | date: "dd/MM/yy" }}
               </td>
-              <td>
+              <td class="text-center">
                 {{ data.range.previousPeriodStart | date: "dd/MM/yy" }} -
                 {{ data.range.previousPeriodEnd | date: "dd/MM/yy" }}
               </td>

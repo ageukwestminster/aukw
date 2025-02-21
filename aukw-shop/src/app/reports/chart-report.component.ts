@@ -1,10 +1,7 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { KeyValue } from '@angular/common';
 import { Router } from '@angular/router';
-
-import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
 import { DateRangeAdapter } from '@app/_helpers';
 import { DateRange, DateRangeEnum, User } from '@app/_models';

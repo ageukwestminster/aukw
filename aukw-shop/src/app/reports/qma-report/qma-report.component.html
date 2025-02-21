@@ -5,10 +5,18 @@
       <small>Data from Enterprises QuickBooks file</small>
     </div>
     <div class="d-flex justify-content-between">
-      <button type="button" routerLink="/reports/weekly-sales" class="btn btn-success m-2">
+      <button
+        type="button"
+        routerLink="/reports/weekly-sales"
+        class="btn btn-success m-2"
+      >
         Next Report &gt;
       </button>
-      <button type="button" routerLink="/reports" class="btn btn-outline-dark m-2">
+      <button
+        type="button"
+        routerLink="/reports"
+        class="btn btn-outline-dark m-2"
+      >
         Close &times;
       </button>
     </div>
@@ -44,7 +52,7 @@
               {{ data.range.currentPeriodStart | date: "dd/MM/yy" }} -
               {{ data.range.currentPeriodEnd | date: "dd/MM/yy" }}
             </td>
-            <th class="text-end">&nbsp;&nbsp;&nbsp;&nbsp;Change</th>
+            <th class="text-end d-none d-md-table-cell">&nbsp;&nbsp;&nbsp;&nbsp;Change</th>
           </tr>
         </thead>
         <tbody *ngIf="data">
@@ -65,7 +73,7 @@
                   | number: "1.2-2"
               }}
             </td>
-            <td class="d-none d-lg-table-cell text-end">
+            <td class="d-none d-md-table-cell text-end">
               {{
                 data.income.currentValue +
                   data.donations.currentValue -
@@ -90,7 +98,7 @@
             <td class="text-end">
               {{ data.instorecustomersales.currentValue | number: "1.2-2" }}
             </td>
-            <td class="d-none d-lg-table-cell text-end">
+            <td class="d-none d-md-table-cell text-end">
               {{
                 data.instorecustomersales.currentValue -
                   data.instorecustomersales.previousValue | number: "1.2-2"
@@ -117,7 +125,7 @@
             <td class="text-end">
               {{ data.instorecustomersales.currentValue | number: "1.2-2" }}
             </td>
-            <td class="d-none d-lg-table-cell text-end">
+            <td class="d-none d-md-table-cell text-end">
               {{
                 data.instorecustomersales.currentValue -
                   data.instorecustomersales.previousValue | number: "1.2-2"
@@ -132,7 +140,7 @@
             <td class="text-end">
               {{ data.ragging.currentValue | number: "1.2-2" }}
             </td>
-            <td class="d-none d-lg-table-cell text-end">
+            <td class="d-none d-md-table-cell text-end">
               {{
                 data.ragging.currentValue - data.ragging.previousValue
                   | number: "1.2-2"
@@ -147,7 +155,7 @@
             <td class="text-end">
               {{ data.donations.currentValue | number: "1.2-2" }}
             </td>
-            <td class="d-none d-lg-table-cell text-end">
+            <td class="d-none d-md-table-cell text-end">
               {{
                 data.donations.currentValue - data.donations.previousValue
                   | number: "1.2-2"
@@ -162,7 +170,7 @@
             <td class="text-end">
               {{ data.miscellaneousincome.currentValue | number: "1.2-2" }}
             </td>
-            <td class="d-none d-lg-table-cell text-end">
+            <td class="d-none d-md-table-cell text-end">
               {{
                 data.miscellaneousincome.currentValue -
                   data.miscellaneousincome.previousValue | number: "1.2-2"
@@ -185,7 +193,7 @@
                   | number: "1.2-2"
               }}
             </td>
-            <td class="d-none d-lg-table-cell text-end border-tb">
+            <td class="d-none d-md-table-cell text-end border-tb">
               {{
                 data.income.currentValue +
                   data.donations.currentValue -
@@ -225,6 +233,4 @@
       </p>
     </div>
   </div>
-
-
 </div>

@@ -59,7 +59,9 @@
             {{ data.range.currentPeriodStart | date: "dd/MM/yy" }} -
             {{ data.range.currentPeriodEnd | date: "dd/MM/yy" }}
           </td>
-          <th class="text-end">&nbsp;&nbsp;&nbsp;&nbsp;Change</th>
+          <th class="text-end d-none d-md-table-cell">
+            &nbsp;&nbsp;&nbsp;&nbsp;Change
+          </th>
         </tr>
       </thead>
       <tbody *ngIf="data">
@@ -72,7 +74,7 @@
           <td class="text-end">
             {{ data.avg_daily_transactions.currentValue | number: "1.2-2" }}
           </td>
-          <td class="d-none d-lg-table-cell text-end">
+          <td class="d-none d-md-table-cell text-end">
             {{
               data.avg_daily_transactions.currentValue -
                 data.avg_daily_transactions.previousValue | number: "1.2-2"
@@ -87,7 +89,7 @@
           <td class="text-end">
             {{ data.sales_per_txn.currentValue | number: "1.2-2" }}
           </td>
-          <td class="d-none d-lg-table-cell text-end">
+          <td class="d-none d-md-table-cell text-end">
             {{
               data.sales_per_txn.currentValue - data.sales_per_txn.previousValue
                 | number: "1.2-2"
@@ -108,7 +110,7 @@
           <td class="text-end">
             {{ data.trading_days_in_period.currentValue | number: "1.2-2" }}
           </td>
-          <td class="d-none d-lg-table-cell text-end">
+          <td class="d-none d-md-table-cell text-end">
             {{
               data.trading_days_in_period.currentValue -
                 data.trading_days_in_period.previousValue | number: "1.2-2"
@@ -135,7 +137,7 @@
                 data.sales_per_txn.currentValue | number: "1.2-2"
             }}
           </td>
-          <td class="d-none d-lg-table-cell text-end">
+          <td class="d-none d-md-table-cell text-end">
             {{
               data.avg_daily_transactions.currentValue *
                 data.sales_per_txn.currentValue -
@@ -158,7 +160,7 @@
           <td class="text-end">
             {{ data.computed_total.currentValue | number: "1.2-2" }}
           </td>
-          <td class="d-none d-lg-table-cell text-end">
+          <td class="d-none d-md-table-cell text-end">
             {{
               data.computed_total.currentValue -
                 data.computed_total.previousValue | number: "1.2-2"
@@ -173,7 +175,7 @@
           <td class="text-end">
             {{ data.actual_total.currentValue | number: "1.2-2" }}
           </td>
-          <td class="d-none d-lg-table-cell text-end">
+          <td class="d-none d-md-table-cell text-end">
             {{
               data.actual_total.currentValue - data.actual_total.previousValue
                 | number: "1.2-2"
@@ -221,9 +223,20 @@
                 <tbody>
                   <tr *ngFor="let item of chartData; index as i">
                     <th>
-                      <span class="text-dark" *ngIf="chartData">{{
-                        chartData[i].year + "-Q" + chartData[i].quarter
-                      }}</span>
+                      <span
+                        class="text-dark d-none d-md-table-cell"
+                        *ngIf="chartData"
+                        >{{
+                          chartData[i].year + "-Q" + chartData[i].quarter
+                        }}</span
+                      >
+                      <span
+                        class="text-dark d-md-none d-md-table-cell"
+                        *ngIf="chartData"
+                        >{{
+                          chartData[i].year - 2000 + "-Q" + chartData[i].quarter
+                        }}</span
+                      >
                     </th>
                     <td class="text-center">
                       {{

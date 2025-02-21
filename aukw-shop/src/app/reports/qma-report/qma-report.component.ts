@@ -20,7 +20,7 @@ import { DateRangeChooserComponent } from '@app/shared';
     NgbDatepickerModule,
     NgIf,
     ReactiveFormsModule,
-    RouterLink,    
+    RouterLink,
   ],
   templateUrl: './qma-report.component.html',
   styleUrl: './qma-report.component.css',

@@ -56,7 +56,9 @@
           <tr>
             <th></th>
             <td class="text-end">Weight (in kg.)</td>
-            <td class="text-end">Average Price Per kg.</td>
+            <td class="text-center d-none d-md-table-cell">
+              Average Price Per kg.
+            </td>
             <td class="text-end">Value</td>
           </tr>
         </thead>
@@ -68,7 +70,7 @@
               <td class="text-end">
                 {{ salesitem.number | number: "1.0-0" }}
               </td>
-              <td class="text-end">
+              <td class="text-center d-none d-md-table-cell">
                 £{{ salesitem.avgprice | number: "1.2-2" }}
               </td>
               <td class="text-end">
@@ -81,7 +83,9 @@
             <td class="text-end">
               {{ total.number | number: "1.0-0" }}
             </td>
-            <td class="text-end">£{{ total.avgprice | number: "1.2-2" }}</td>
+            <td class="text-end d-none d-md-table-cell">
+              £{{ total.avgprice | number: "1.2-2" }}
+            </td>
             <td class="text-end">£{{ total.amount | number: "1.2-2" }}</td>
           </tr>
         </tbody>
