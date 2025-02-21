@@ -1,5 +1,5 @@
 <form [formGroup]="form">
-  <div class="row mb-4">
+  <div class="row">
     <div class="col-sm">
       <div class="input-group">
         <span class="input-group-text col-4" id="period-label">Date</span>
@@ -20,8 +20,8 @@
         </select>
       </div>
     </div>
-    <div class="col-sm-auto p-0">From</div>
-    <div class="col-sm-auto">
+    <div class="col-sm-auto mt-2">From</div>
+    <div class="col-sm-3">
       <div class="input-group col p-0 mb-1">
         <!-- If using MySql dates don't forget to import NgbUTCStringAdapter-->
         <input
@@ -45,8 +45,8 @@
         </div>
       </div>
     </div>
-    <div class="col-sm-auto p-0">To</div>
-    <div class="col-sm-auto">
+    <div class="col-sm-auto mt-2">To</div>
+    <div class="col-sm-3">
       <div class="input-group col p-0 mb-1">
         <input
           class="form-control text-end"

@@ -42,10 +42,11 @@ export class DateRangeChooserComponent implements OnInit {
   private dateFormatHelper = inject(DateFormatHelper);
 
   ngOnInit(): void {
+    let dtRng = this.dateRangeAdapter.enumToDateRange(this.initialDateRangeEnum);
     this.form = this.formBuilder.group({
       dateRange: this.initialDateRangeEnum,
-      startDate: [null],
-      endDate: [null],
+      startDate: [dtRng.startDate],
+      endDate: [dtRng.endDate],
     });
   }
 

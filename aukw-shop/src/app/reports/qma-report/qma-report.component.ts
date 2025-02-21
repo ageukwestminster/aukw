@@ -29,16 +29,19 @@ export class QmaReportComponent
   extends AbstractChartReportComponent<InStoreSalesData>
   implements OnInit
 {
+  readonly INITIALDATERANGE: DateRangeEnum = DateRangeEnum.LAST_QUARTER;
   private reportService = inject(QBReportService);
 
   override ngOnInit() {
+    let dtRng = this.dateRangeAdapter.enumToDateRange(this.INITIALDATERANGE);
+
     this.form = this.formBuilder.group({
-      dateRange: [DateRangeEnum.LAST_QUARTER],
-      startDate: [null],
-      endDate: [null],
+      dateRange: [this.INITIALDATERANGE],
+      startDate: [dtRng.startDate],
+      endDate: [dtRng.endDate],
     });
 
-    this.onDateRangeChanged(DateRangeEnum.LAST_QUARTER);
+    this.onDateRangeChanged(this.INITIALDATERANGE);
   }
 
   dateRangeChanged(dateRange: DateRange) {

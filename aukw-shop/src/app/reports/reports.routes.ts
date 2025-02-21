@@ -26,5 +26,5 @@ export const REPORTS_ROUTES: Routes = [
   { path: 'weekly-sales', component: WeeklySalesComponent },
   { path: 'sales-by-department', component: SalesByDepartmentComponent },
   { path: 'daily-transaction-averages', component: DailyTransactionSizeComponent },
-  { path: 'ragging-report', component: WeeklySalesComponent },
+  { path: 'ragging', component: WeeklySalesComponent },
 ];

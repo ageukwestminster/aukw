@@ -4,9 +4,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { concatMap } from 'rxjs/operators';
 import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
-
-import { tap } from 'rxjs/operators';
-
 import { environment } from '@environments/environment';
 
 import {

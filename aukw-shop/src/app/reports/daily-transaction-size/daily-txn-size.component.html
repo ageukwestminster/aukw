@@ -6,11 +6,18 @@
     </div>
     <div class="d-flex justify-content-between">
       <button
+      type="button"
+      routerLink="/reports/sales-by-department"
+      class="btn btn-success m-2"
+    >
+      &lt; Previous
+    </button>
+      <button
         type="button"
-        routerLink="/reports/weekly-sales"
+        routerLink="/reports/ragging"
         class="btn btn-success m-2"
       >
-        Next Report &gt;
+        Next &gt;
       </button>
       <button
         type="button"
@@ -22,7 +29,7 @@
     </div>
   </div>
   <date-range-chooser
-    class="p-2"
+    class="p-2 col-sm-9"
     [initialDateRangeEnum]="INITIALDATERANGE"
     (dateDangeChosen)="dateRangeChanged($event)"
   ></date-range-chooser>
