@@ -9,10 +9,11 @@ import {
 } from '@ng-bootstrap/ng-bootstrap';
 import { RouterLink } from '@angular/router';
 import { QBReportService } from '@app/_services';
-import { DateRangeEnum } from '@app/_models';
+import { DateRange, DateRangeEnum } from '@app/_models';
 import { AbstractChartReportComponent } from '../chart-report.component';
 import { QBAccountListEntry } from '@app/_models/qb-account-list-entry';
 import { CustomDateParserFormatter, NgbUTCStringAdapter } from '@app/_helpers';
+import { DateRangeChooserComponent } from '@app/shared';
 
 @Component({
   templateUrl: './aukw-interco.component.html',
@@ -24,6 +25,7 @@ import { CustomDateParserFormatter, NgbUTCStringAdapter } from '@app/_helpers';
     NgIf,
     RouterLink,
     ReactiveFormsModule,
+    DateRangeChooserComponent,
   ],
   providers: [
     { provide: NgbDateAdapter, useClass: NgbUTCStringAdapter },
@@ -37,18 +39,22 @@ export class AukwIntercoComponent
 {
   private reportService = inject(QBReportService);
 
+  readonly INITIALDATERANGE: DateRangeEnum = DateRangeEnum.LAST_SIX_MONTHS;
+
   /**
    * Override the default constructor on the base class because
    * I want to use a non-default date range, namely 'Last 6 Months'.
    */
   override ngOnInit() {
+    let dtRng = this.dateRangeAdapter.enumToDateRange(this.INITIALDATERANGE);
+
     this.form = this.formBuilder.group({
-      dateRange: [DateRangeEnum.LAST_SIX_MONTHS],
-      startDate: [null],
-      endDate: [null],
+      dateRange: [this.INITIALDATERANGE],
+      startDate: [dtRng.startDate],
+      endDate: [dtRng.endDate],
     });
 
-    this.onDateRangeChanged(DateRangeEnum.LAST_SIX_MONTHS);
+    this.onDateRangeChanged(this.INITIALDATERANGE);
   }
 
   override refreshSummary(startDate: string, endDate: string) {

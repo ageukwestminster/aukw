@@ -49,10 +49,6 @@ export class RaggingReportComponent
     this.onDateRangeChanged(this.INITIALDATERANGE);
   }
 
-  dateRangeChanged(dateRange: DateRange) {
-    this.refreshSummary(dateRange.startDate, dateRange.endDate);
-  }
-
   override refreshSummary(startDate: string, endDate: string) {
     this.loading = true;
     this.reportService

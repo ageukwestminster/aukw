@@ -42,10 +42,6 @@ export class SalesByDepartmentComponent
     this.onDateRangeChanged(DateRangeEnum.LAST_QUARTER);
   }
 
-  dateRangeChanged(dateRange: DateRange) {
-    this.refreshSummary(dateRange.startDate, dateRange.endDate);
-  }
-
   override refreshSummary(startDate: string, endDate: string) {
     this.loading = true;
     this.reportService

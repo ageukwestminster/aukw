@@ -52,6 +52,10 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
     this.onDateRangeChanged(DateRangeEnum.THIS_YEAR);
   }
 
+  dateRangeChanged(dateRange: DateRange) {
+    this.refreshSummary(dateRange.startDate, dateRange.endDate);
+  }
+
   /** Convenience getter for easy access to form fields */
   get f() {
     return this.form.controls;
