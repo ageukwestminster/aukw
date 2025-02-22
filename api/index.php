@@ -73,11 +73,17 @@ require 'models/qbrecurringtxn.php';
 require 'models/qbreport.php';
 require 'models/qbtoken.php';
 require 'models/report.php';
+require 'models/rowitem.php';
 require 'models/shop.php';
 require 'models/summary.php';
 require 'models/takings.php';
 require 'models/user.php';
 require 'models/usertoken.php';
+
+// QB Report models
+require 'models/qbreport/qbitemsales.php';
+require 'models/qbreport/qbgeneralledger.php';
+require 'models/qbreport/qbprofitandloss.php';
 
 // Define routes
 require 'pre_routes.php';

@@ -56,14 +56,13 @@ class QBReportCtl{
    */
   private static function profit_and_loss_impl(string $realmid) : array {
 
-    $model = new \Models\QuickbooksReport();
-    $model->realmid = $realmid;
+    $model = new \Models\QBProfitAndLossReport();
 
     try {
 
-      $currentPeriodPNL = QBReportCtl::profit_and_loss_raw_impl($realmid);
+      QBReportCtl::profit_and_loss_raw_impl($realmid, $model);
       /* simplfy the P&L report received from QBO */
-      $summariseCurrentPeriod = $model->summarisePNLFromQBO($currentPeriodPNL);
+      $summariseCurrentPeriod = $model->adaptReport();
       
       $start = $summariseCurrentPeriod['start'];
       $end = $summariseCurrentPeriod['end'];
@@ -72,8 +71,8 @@ class QBReportCtl{
       // for a period that is 12 months before the current period
       $model->startdate = (new DateTime($start))->modify('-1 year')->format('Y-m-d');
       $model->enddate = (new DateTime($end))->modify('-1 year')->format('Y-m-d');
-      $previousPeriodPNL = $model->profitAndLoss();  
-      $summarisePreviousPeriod = $model->summarisePNLFromQBO($previousPeriodPNL);
+      QBReportCtl::profit_and_loss_raw_impl($realmid, $model); 
+      $summarisePreviousPeriod = $model->adaptReport();
       
       return $model->mergecurrentAndPreviousPNLReports(
             $summariseCurrentPeriod, $summarisePreviousPeriod
@@ -91,6 +90,39 @@ class QBReportCtl{
     }
   }
 
+  
+  /**
+   * Show a QBO P&L report, exactly as it comes back from QBO. It will be 
+   * in raw JSON format. It only shows data from the supplied range, not
+   * the previous period.
+   * 
+   * HTTP parameters are: date_macro, start, end. Either date_macro OR 
+   * both of start and end must be supplied
+   * Note: SortBy,SortAscending, SummarizeColumn are not supported by this report
+   * @param string $realmid The id of the QBO company.
+   * @return mixed The required report
+   * 
+   */
+  private static function profit_and_loss_raw_impl(string $realmid, $model = null) {  
+
+    try {
+      if (!$model) $model = new \Models\QBProfitAndLossReport();
+      $model->realmid = $realmid;
+      QBReportCtl::GetHttpDateParameters($model);
+      return $model->run();
+
+    } catch (\Exception $e) {
+      http_response_code(400);  
+      echo json_encode(
+          array(
+              "message" => "Unable to generate p&l report. ",
+              "extra" => $e->getMessage()
+              )
+      );
+      exit(1);
+  }
+}
+
   /**
    * A helper function to get Date parameters from the request. It looks for 
    * 'date_macro' first and then 'start' & 'end'. The values obtained are
@@ -98,7 +130,7 @@ class QBReportCtl{
    * @param QuickbooksReport $model A QBReport object
    * @return void Nothing is output or returned
    */
-  private static function GetHttpDateParemeters(\Models\QuickbooksReport $model) : void {
+  private static function GetHttpDateParameters(\Models\QuickbooksReport $model) : void {
 
     if (isset($_GET['date_macro']) && !empty($_GET['date_macro'])) {
       try {
@@ -134,39 +166,6 @@ class QBReportCtl{
     }
   }
 
-  /**
-   * Show a QBO P&L report, exactly as it comes back from QBO. It will be 
-   * in raw JSON format. It only shows data from the supplied range, not
-   * the previous period.
-   * 
-   * HTTP parameters are: date_macro, start, end. Either date_macro OR 
-   * both of start and end must be supplied
-   * Note: SortBy,SortAscending, SummarizeColumn are not supported by this report
-   * @param string $realmid The id of the QBO company.
-   * @return mixed The required report
-   * 
-   */
-  private static function profit_and_loss_raw_impl(string $realmid) : mixed {  
-
-    try {
-      $model = new \Models\QuickbooksReport();
-      $model->realmid = $realmid;
-      QBReportCtl::GetHttpDateParemeters($model);
-      return $model->profitAndLoss();
-
-    } catch (\Exception $e) {
-      http_response_code(400);  
-      echo json_encode(
-          array(
-              "message" => "Unable to generate p&l report. ",
-              "extra" => $e->getMessage()
-              )
-      );
-      exit(1);
-  }
-
-  }
-
     /**
    * Show a QBO general Ledger report.
    * HTTP parameters are: account, start, end, summarizeColumn
@@ -176,9 +175,9 @@ class QBReportCtl{
    */
   public static function general_ledger(string $realmid){  
 
-    $model = new \Models\QuickbooksReport();
+    $model = new \Models\QBGeneralLedgerReport();
     $model->realmid = $realmid;
-    QBReportCtl::GetHttpDateParemeters($model);
+    QBReportCtl::GetHttpDateParameters($model);
 
     if (isset($_GET['summarizeColumn']) && !empty($_GET['summarizeColumn'])) {
         // must be 'Quarter', not 'quarter' or 'Month' not 'month'
@@ -186,7 +185,6 @@ class QBReportCtl{
     } else {
         $model->summarizeColumn = '';
     }
-
     if (isset($_GET['account']) && !empty($_GET['account'])) {
       $model->account = $_GET['account'];
     } 
@@ -202,7 +200,8 @@ class QBReportCtl{
     $model->sortBy = "tx_date";
 
     try {
-      echo json_encode($model->general_ledger(), JSON_NUMERIC_CHECK);
+      $model->run();
+      echo json_encode($model->adaptReport(), JSON_NUMERIC_CHECK);
     } catch (\Exception $e) {
       http_response_code(400);  
       echo json_encode(
@@ -224,10 +223,33 @@ class QBReportCtl{
    * 
    */
   public static function sales_by_item(string $realmid, bool $raw = false){  
+    $model = new \Models\QBItemSalesReport();
+    QBReportCtl::sales_by_item_impl($realmid, $model);
+    echo json_encode($model->adaptReport(), JSON_NUMERIC_CHECK);
+  }
 
-    $model = new \Models\QuickbooksReport();
+  /**
+   * Show a QBO report that summarizes sales by a particular item.
+   * HTTP parameters are: start, end, summarizeColumn, item
+   * @param string $realmid The id of the QBO company.
+   * @return void Output is echoed directly to response
+   * 
+   */
+  public static function sales_by_item_raw(string $realmid){  
+    echo json_encode(QBReportCtl::sales_by_item_impl($realmid), JSON_NUMERIC_CHECK);
+  }
+
+    /**
+   * Show a QBO report that summarizes sales by a particular item.
+   * HTTP parameters are: start, end, summarizeColumn, item
+   * @param string $realmid The id of the QBO company.
+   * @return mixed
+   * 
+   */
+  private static function sales_by_item_impl(string $realmid, $model = null){
+    if (!$model) $model = new \Models\QBItemSalesReport();
     $model->realmid = $realmid;
-    QBReportCtl::GetHttpDateParemeters($model);
+    QBReportCtl::GetHttpDateParameters($model);
 
     if (isset($_GET['summarizeColumn']) && !empty($_GET['summarizeColumn'])) {
       // must be 'Quarter', not 'quarter' or 'Month' not 'month'
@@ -243,18 +265,7 @@ class QBReportCtl{
       $model->item = null;
     }
 
-    echo json_encode($model->itemSales($raw), JSON_NUMERIC_CHECK);
-  }
-
-    /**
-   * Show a QBO report that summarizes sales by a particular item.
-   * HTTP parameters are: start, end, summarizeColumn, item
-   * @param string $realmid The id of the QBO company.
-   * @return void Output is echoed directly to response
-   * 
-   */
-  public static function sales_by_item_raw(string $realmid){  
-    return QBReportCtl::sales_by_item($realmid, true);
+    return $model->run();
   }
 
 
@@ -360,7 +371,7 @@ class QBReportCtl{
    */
   public static function ragging_by_quarter(string $realmid){  
 
-    $model = new \Models\QuickbooksReport();
+    $model = new \Models\QBItemSalesReport();
     $model->realmid = $realmid;
     $model->summarizeColumn = 'Quarter';
     $model->item = null;
@@ -385,7 +396,9 @@ class QBReportCtl{
     $model->startdate = $start;
     $model->enddate = $end;
 
-    echo json_encode($model->itemSales(), JSON_NUMERIC_CHECK);
+    $model->run();
+
+    echo json_encode($model->extractRaggingNumbers(), JSON_NUMERIC_CHECK);
   }
 
 }
