@@ -25,7 +25,9 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
 
   /* The main data that will be displayed in the chart or table */
   protected data!: T;
+  /** The first day of the date range that data for which will be retrieved.*/
   protected startDate!: string;
+  /** The last day of the date range that data for which will be retrieved.*/
   protected endDate!: string;
 
   protected exportToCsvService = inject(ExportToCsvService);
@@ -76,45 +78,48 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
     return 0;
   };
 
-
   /**
    * Called when the DateRange changes. A DateRange is a startdate/enddate pair.
    * @param dateRange The new DateRange
    */
   onDateRangeChanged(dateRange: DateRange) {
+    this.startDate = dateRange.startDate;
+    this.endDate = dateRange.endDate;
     this.refreshSummary(dateRange.startDate, dateRange.endDate);
   }
 
-  /** Called when the DateRangeEnum has changed 
+  /** Called when the DateRangeEnum has changed
    * @param value
-  */
+   */
   onDateRangeEnumSelected(value: string | null) {
-    let dtRng: DateRange;
+    let dateRange: DateRange;
     if (value == null || value == 'null') {
-      dtRng = this.dateRangeAdapter.enumToDateRange(DateRangeEnum.THIS_YEAR);
-      dtRng.startDate = '2000-01-01';
+      dateRange = this.dateRangeAdapter.enumToDateRange(DateRangeEnum.THIS_YEAR);
+      dateRange.startDate = '2000-01-01';
       this.f['startDate'].disable();
       this.f['endDate'].disable();
     } else if (value == DateRangeEnum.CUSTOM) {
       this.f['startDate'].enable();
       this.f['endDate'].enable();
-      dtRng = new DateRange({
+      dateRange = new DateRange({
         startDate: this.f['startDate'].value,
         endDate: this.f['endDate'].value,
       });
     } else {
       this.f['startDate'].enable();
       this.f['endDate'].enable();
-      dtRng = this.dateRangeAdapter.enumToDateRange(value! as DateRangeEnum);
-      this.f['startDate'].setValue(dtRng.startDate);
-      this.f['endDate'].setValue(dtRng.endDate);
+      dateRange = this.dateRangeAdapter.enumToDateRange(value! as DateRangeEnum);
+      this.f['startDate'].setValue(dateRange.startDate);
+      this.f['endDate'].setValue(dateRange.endDate);
+      this.startDate = dateRange.startDate;
+      this.endDate = dateRange.endDate;
     }
 
-    this.refreshSummary(dtRng.startDate, dtRng.endDate);
+    this.refreshSummary(dateRange.startDate, dateRange.endDate);
   }
 
   /**Implement this function in each child class to bring in the data */
-  abstract refreshSummary(startDate: string, endDate: string) : void;
+  abstract refreshSummary(startDate: string, endDate: string): void;
 
   /**
    * Export the data array to a CSV file

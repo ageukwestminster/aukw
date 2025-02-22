@@ -1,13 +1,13 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
 import {
+  FormBuilder,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
 import {
   NgbAccordionModule,
-  NgbDatepickerModule,
 } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '@environments/environment';
 import { Observable, BehaviorSubject } from 'rxjs';
@@ -28,14 +28,13 @@ import { DateRangeChooserComponent } from '@app/shared';
   imports: [
     CommonModule,
     NgIf,
-    NgbDatepickerModule,
     NgbAccordionModule,
     FormsModule,
     ReactiveFormsModule,
     DateRangeChooserComponent,
   ],
 })
-export class TakingsFilterComponent {
+export class TakingsFilterComponent implements OnInit {
   @Output()
   filter: EventEmitter<TakingsFilter> = new EventEmitter<TakingsFilter>();
   @Output() loading: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -54,19 +53,19 @@ export class TakingsFilterComponent {
 
   constructor(
     private takingsService: TakingsService,
+    private formBuilder : FormBuilder,
   ) {}
+
+  ngOnInit(): void {
+    this.form = this.formBuilder.group({
+      dateRange: [DateRangeEnum.THIS_YEAR],
+      startDate: [null],
+      endDate: [null],
+    });
+  }
 
   get f() {
     return this.form.controls;
-  }
-
-  DateRangeEnum = DateRangeEnum;
-
-
-  // Required so that the template can access the Enum
-  // From https://stackoverflow.com/a/59289208
-  public get DateRange() {
-    return DateRangeEnum;
   }
 
   onDateRangeObjectChanged(dateRange: DateRange) {

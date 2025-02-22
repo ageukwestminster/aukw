@@ -1,5 +1,5 @@
 import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
-import { CommonModule, KeyValue, NgFor, NgIf } from '@angular/common';
+import { CommonModule, NgFor, NgIf } from '@angular/common';
 import {
   FormBuilder,
   FormGroup,
@@ -8,25 +8,16 @@ import {
 } from '@angular/forms';
 import {
   NgbAccordionModule,
-  NgbDatepickerModule,
-  NgbDateAdapter,
-  NgbDateParserFormatter,
 } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, BehaviorSubject } from 'rxjs';
 
 import {
   DateRange,
-  DateRangeEnum,
   AuditLogFilter,
   AuditLog,
   User,
 } from '@app/_models';
-import { AuditLogService, DateFormatHelper, UserService } from '@app/_services';
-import {
-  CustomDateParserFormatter,
-  DateRangeAdapter,
-  NgbUTCStringAdapter,
-} from '@app/_helpers';
+import { AuditLogService, UserService } from '@app/_services';
 import { DateRangeChooserComponent } from '@app/shared'
 
 @Component({
@@ -37,15 +28,10 @@ import { DateRangeChooserComponent } from '@app/shared'
     CommonModule,
     NgFor,
     NgIf,
-    NgbDatepickerModule,
     NgbAccordionModule,
     FormsModule,
     ReactiveFormsModule,
     DateRangeChooserComponent,
-  ],
-  providers: [
-    { provide: NgbDateAdapter, useClass: NgbUTCStringAdapter },
-    { provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter },
   ],
 })
 export class AuditLogFilterComponent implements OnInit {

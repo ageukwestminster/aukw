@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule, NgFor } from '@angular/common';
+import { CommonModule, Location, NgFor } from '@angular/common';
 import { AuditLogService } from '@app/_services';
 import { AuditLog, AuditLogFilter } from '@app/_models';
 import { AuditLogFilterComponent } from './filter/auditlog-filter.component';
@@ -15,6 +15,7 @@ export class AuditLogComponent implements OnInit {
   filter!: AuditLogFilter;
 
   private auditLogService = inject(AuditLogService);
+  private location = inject(Location);
 
   constructor() {}
 
@@ -38,5 +39,11 @@ export class AuditLogComponent implements OnInit {
 
   auditLogUpdated(auditLog: AuditLog[]) {
     this.auditLog = auditLog;
+  }
+
+  /** Return to previous page */
+  goBack() {
+    this.location.back();
+    return false; // don't propagate event
   }
 }

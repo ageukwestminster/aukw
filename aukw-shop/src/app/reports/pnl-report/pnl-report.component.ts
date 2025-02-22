@@ -1,37 +1,25 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule, DatePipe, NgIf } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import {
-  NgbAccordionModule,
-  NgbCollapseModule,
-  NgbDateAdapter,
-  NgbDateParserFormatter,
-  NgbDatepickerModule,
-} from '@ng-bootstrap/ng-bootstrap';
+import { RouterLink } from '@angular/router';
+import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 import { QBReportService } from '@app/_services';
 import { AbstractChartReportComponent } from '../chart-report.component';
-import { DateRange, DateRangeEnum, ProfitAndLossData } from '@app/_models';
-import { CustomDateParserFormatter, NgbUTCStringAdapter } from '@app/_helpers';
+import { DateRangeEnum, ProfitAndLossData } from '@app/_models';
 import { DateRangeChooserComponent } from '@app/shared';
 
 @Component({
   standalone: true,
   imports: [
     CommonModule,
-    DatePipe,
-    NgbAccordionModule,
-    NgbDatepickerModule,
+    DateRangeChooserComponent,
     NgIf,
     NgbCollapseModule,
     ReactiveFormsModule,
-    DateRangeChooserComponent,
+    RouterLink,    
   ],
   templateUrl: './pnl-report.component.html',
   styleUrl: './pnl-report.component.css',
-  providers: [
-    { provide: NgbDateAdapter, useClass: NgbUTCStringAdapter },
-    { provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter },
-  ],
 })
 export class PnlReportComponent
   extends AbstractChartReportComponent<ProfitAndLossData>

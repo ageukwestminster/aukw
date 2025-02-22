@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
-
+import { RouterLink } from '@angular/router';
 import { of, merge, switchMap, reduce, tap } from 'rxjs';
 import { QBReportService } from '@app/_services';
 import { AbstractChartReportComponent } from '../chart-report.component';
@@ -9,11 +9,7 @@ import { DateRangeChooserComponent } from '@app/shared';
 
 @Component({
   standalone: true,
-  imports: [
-    CommonModule,
-    DateRangeChooserComponent,
-    NgIf,
-  ],
+  imports: [CommonModule, DateRangeChooserComponent, NgIf, RouterLink],
   templateUrl: './ragging-report.component.html',
   styleUrl: './ragging-report.component.css',
 })

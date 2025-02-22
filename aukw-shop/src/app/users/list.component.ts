@@ -1,5 +1,5 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { NgFor, NgIf } from '@angular/common';
+import { Location, NgFor, NgIf } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { AuthenticationService, UserService } from '@app/_services';
@@ -21,6 +21,7 @@ export class UserListComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private route: ActivatedRoute,
     private router: Router,
+    private location: Location,
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -41,5 +42,11 @@ export class UserListComponent implements OnInit {
 
   userWasDeleted(user: User): void {
     this.users = this.users.filter((x) => x.id !== user.id);
+  }
+
+  /** Return to previous page */
+  goBack() {
+    this.location.back();
+    return false; // don't propagate event
   }
 }

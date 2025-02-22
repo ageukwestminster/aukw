@@ -4,11 +4,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import {
   NgbAccordionModule,
-  NgbDatepickerModule,
 } from '@ng-bootstrap/ng-bootstrap';
 import { QBReportService } from '@app/_services';
 import { AbstractChartReportComponent } from '../chart-report.component';
-import { DateRange, DateRangeEnum, InStoreSalesData } from '@app/_models';
+import { DateRangeEnum, InStoreSalesData } from '@app/_models';
 import { DateRangeChooserComponent } from '@app/shared';
 
 @Component({
@@ -17,7 +16,6 @@ import { DateRangeChooserComponent } from '@app/shared';
     CommonModule,
     DateRangeChooserComponent,
     NgbAccordionModule,
-    NgbDatepickerModule,
     NgIf,
     ReactiveFormsModule,
     RouterLink,

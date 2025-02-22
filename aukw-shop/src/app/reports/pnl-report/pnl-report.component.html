@@ -1,6 +1,20 @@
 <div class="card mt-4 col">
-  <div class="card-header">
-    <h4>Income & Expenditure</h4>
+  <div class="card-header d-flex justify-content-between">
+    <div class="col-sm">
+      <div *ngIf="enterprises">
+        <h4>Income & Expenditure</h4>
+        <small>From Enterprises QuickBooks file</small>
+      </div>
+      <div *ngIf="!enterprises">
+        <h4>Income & Expenditure</h4>
+        <small>From Charity QuickBooks file</small>
+      </div>
+    </div>
+    <div>
+      <button type="button" routerLink="/reports" class="btn btn-outline-dark">
+        Close &times;
+      </button>
+    </div>
   </div>
 
   <div class="card-body">

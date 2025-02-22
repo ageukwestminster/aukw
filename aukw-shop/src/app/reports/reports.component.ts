@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Location, NgIf } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
@@ -10,7 +10,7 @@ import { User } from '@app/_models';
   standalone: true,
   imports: [NgbAccordionModule, NgIf, RouterLink],
 })
-export class ReportsComponent implements OnInit {
+export class ReportsComponent {
   user: User;
 
   private location = inject(Location);
@@ -20,8 +20,7 @@ export class ReportsComponent implements OnInit {
     this.user = this.authenticationService.userValue;
   }
 
-  ngOnInit(): void {}
-
+  /** Return to previous page */
   goBack() {
     this.location.back();
     return false; // don't propagate event
