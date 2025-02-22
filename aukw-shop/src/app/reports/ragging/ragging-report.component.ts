@@ -1,16 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import {
-  NgbAccordionModule,
-  NgbDatepickerModule,
-} from '@ng-bootstrap/ng-bootstrap';
-import { of, merge, map, switchMap, reduce, tap } from 'rxjs';
-import { environment } from '@environments/environment';
+
+import { of, merge, switchMap, reduce, tap } from 'rxjs';
 import { QBReportService } from '@app/_services';
 import { AbstractChartReportComponent } from '../chart-report.component';
-import { DateRange, DateRangeEnum, SalesByItem } from '@app/_models';
+import { DateRangeEnum, SalesByItem } from '@app/_models';
 import { DateRangeChooserComponent } from '@app/shared';
 
 @Component({
@@ -18,11 +12,7 @@ import { DateRangeChooserComponent } from '@app/shared';
   imports: [
     CommonModule,
     DateRangeChooserComponent,
-    NgbAccordionModule,
-    NgbDatepickerModule,
     NgIf,
-    ReactiveFormsModule,
-    RouterLink,
   ],
   templateUrl: './ragging-report.component.html',
   styleUrl: './ragging-report.component.css',

@@ -1,12 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import {
-  NgbDatepickerModule,
-  NgbDateAdapter,
-  NgbDateParserFormatter,
-} from '@ng-bootstrap/ng-bootstrap';
 import { tap } from 'rxjs/operators';
 
 import { environment } from '@environments/environment';
@@ -15,7 +9,6 @@ import { HistogramChartData } from '@app/_models';
 import { ReportService } from '@app/_services';
 import { AbstractChartReportComponent } from '../chart-report.component';
 import { SalesHistogramChartComponent } from '@app/shared';
-import { CustomDateParserFormatter, NgbUTCStringAdapter } from '@app/_helpers';
 import { DateRangeChooserComponent } from '@app/shared';
 
 @Component({
@@ -23,16 +16,9 @@ import { DateRangeChooserComponent } from '@app/shared';
   standalone: true,
   imports: [
     CommonModule,
-    NgbDatepickerModule,
-    ReactiveFormsModule,
     RouterLink,
     SalesHistogramChartComponent,
     DateRangeChooserComponent,
-  ],
-  providers: [
-    { provide: NgbDateAdapter, useClass: NgbUTCStringAdapter },
-    { provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter },
-    DatePipe,
   ],
 })
 export class SalesHistogramComponent extends AbstractChartReportComponent<HistogramChartData> {
