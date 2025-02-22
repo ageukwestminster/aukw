@@ -499,7 +499,13 @@ class QuickbooksReport{
         return $returnArray;
     }
     
-    public function mergecurrentAndPreviousPNLReports($current, $previous) {
+    /**
+     * Given two raw QBO P&L reports, merge them into a single report.
+     * @param mixed $current The P&L report for the current period.
+     * @param mixed $previous The P&L report for the same period 12 months ago (the 'previous' period).
+     * @return array The merged report
+     */
+    public function mergecurrentAndPreviousPNLReports($current, $previous) : array {
 
         $return = array();
         $return['title'] = 'Profit & Loss';
