@@ -41,7 +41,7 @@ export class QmaReportComponent
       endDate: [dtRng.endDate],
     });
 
-    this.onDateRangeChanged(this.INITIALDATERANGE);
+    this.onDateRangeEnumSelected(this.INITIALDATERANGE);
   }
 
   override refreshSummary(startDate: string, endDate: string) {

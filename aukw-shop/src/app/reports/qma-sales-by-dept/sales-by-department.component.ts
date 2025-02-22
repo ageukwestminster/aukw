@@ -39,7 +39,7 @@ export class SalesByDepartmentComponent
       endDate: [null],
     });
 
-    this.onDateRangeChanged(DateRangeEnum.LAST_QUARTER);
+    this.onDateRangeEnumSelected(DateRangeEnum.LAST_QUARTER);
   }
 
   override refreshSummary(startDate: string, endDate: string) {

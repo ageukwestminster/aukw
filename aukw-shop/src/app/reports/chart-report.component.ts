@@ -23,7 +23,10 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
   protected loading: boolean = false;
   protected enterprises: boolean = true; // When 'true' use Enterprises company, Charity otherwise
 
-  @Input() data!: T;
+  /* The main data that will be displayed in the chart or table */
+  protected data!: T;
+  protected startDate!: string;
+  protected endDate!: string;
 
   protected exportToCsvService = inject(ExportToCsvService);
   protected dateRangeAdapter = inject(DateRangeAdapter);
@@ -51,11 +54,7 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
       endDate: [dtRng.endDate],
     });
 
-    this.onDateRangeChanged(initialDateRange);
-  }
-
-  dateRangeChanged(dateRange: DateRange) {
-    this.refreshSummary(dateRange.startDate, dateRange.endDate);
+    this.onDateRangeEnumSelected(initialDateRange);
   }
 
   /** Convenience getter for easy access to form fields */
@@ -77,7 +76,19 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
     return 0;
   };
 
-  onDateRangeChanged(value: string | null) {
+
+  /**
+   * Called when the DateRange changes. A DateRange is a startdate/enddate pair.
+   * @param dateRange The new DateRange
+   */
+  onDateRangeChanged(dateRange: DateRange) {
+    this.refreshSummary(dateRange.startDate, dateRange.endDate);
+  }
+
+  /** Called when the DateRangeEnum has changed 
+   * @param value
+  */
+  onDateRangeEnumSelected(value: string | null) {
     let dtRng: DateRange;
     if (value == null || value == 'null') {
       dtRng = this.dateRangeAdapter.enumToDateRange(DateRangeEnum.THIS_YEAR);
@@ -102,18 +113,8 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
     this.refreshSummary(dtRng.startDate, dtRng.endDate);
   }
 
-  onRefreshPressed() {
-    if (this.f['startDate'].value && this.f['endDate'].value) {
-      const start = this.dateFormatHelper.formatedDate(
-        this.f['startDate'].value,
-      );
-      const end = this.dateFormatHelper.formatedDate(this.f['endDate'].value);
-      this.f['dateRange'].setValue(DateRangeEnum.CUSTOM);
-      this.refreshSummary(start!, end!);
-    }
-  }
-
-  refreshSummary(startDate: string, endDate: string) {}
+  /**Implement this function in each child class to bring in the data */
+  abstract refreshSummary(startDate: string, endDate: string) : void;
 
   /**
    * Export the data array to a CSV file
@@ -128,6 +129,6 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
    */
   checkboxClick() {
     this.enterprises = !this.enterprises;
-    this.onDateRangeChanged(this.f['dateRange'].value);
+    this.onDateRangeEnumSelected(this.f['dateRange'].value);
   }
 }

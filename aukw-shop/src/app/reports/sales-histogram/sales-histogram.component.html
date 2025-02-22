@@ -13,7 +13,7 @@
     <date-range-chooser
       class="p-2 col-sm-9"
       [initialDateRangeEnum]="DateRangeEnum.LAST_SIX_MONTHS"
-      (dateDangeChosen)="dateRangeChanged($event)"
+      (dateDangeChosen)="onDateRangeChanged($event)"
     ></date-range-chooser>
 
     <sales-histogram [histogramChartData]="data"></sales-histogram>

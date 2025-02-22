@@ -6,7 +6,7 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { KeyValue, KeyValuePipe, NgFor } from '@angular/common';
+import { KeyValue, KeyValuePipe, NgIf, NgFor } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
   NgbDateAdapter,
@@ -22,7 +22,7 @@ import { DateFormatHelper } from '@app/_services';
 @Component({
   selector: 'date-range-chooser',
   standalone: true,
-  imports: [KeyValuePipe, NgbDatepickerModule, NgFor, ReactiveFormsModule],
+  imports: [KeyValuePipe, NgbDatepickerModule, NgFor, NgIf, ReactiveFormsModule],
   templateUrl: './date-range-chooser.component.html',
   styleUrl: './date-range-chooser.component.css',
   providers: [
@@ -92,5 +92,14 @@ export class DateRangeChooserComponent implements OnInit {
     }
 
     this.dateDangeChosen.emit(dtRng);
+  }
+
+  onRefreshPressed() {
+    if (this.f['startDate'].value && this.f['endDate'].value) {
+
+      let dtRng = this.dateRangeAdapter.customDateRangeFromString(this.f['startDate'].value, this.f['endDate'].value);
+
+      this.dateDangeChosen.emit(dtRng);
+    }
   }
 }
