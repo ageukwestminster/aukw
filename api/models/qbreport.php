@@ -3,7 +3,6 @@
 namespace Models;
 
 use QuickBooksOnline\API\ReportService\ReportService;
-use QuickBooksOnline\API\ReportService\ReportName;
 use QuickBooksOnline\API\Exception\SdkException;
 
 /**
@@ -131,7 +130,7 @@ abstract class QuickbooksReport{
 
     /**
      * Abstract function that, when implemented, performs the QBO query and returns a
-     * QBO reposne object.
+     * QBO reponse object.
      */
     abstract protected function queryQuickBooks() : mixed;
 
