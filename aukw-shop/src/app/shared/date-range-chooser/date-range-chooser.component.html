@@ -69,7 +69,10 @@
         </div>
       </div>
     </div>
-    <div class="col-sm-auto p-0" *ngIf="f['dateRange'].value==DateRange.CUSTOM">
+    <div
+      class="col-sm-auto p-0"
+      *ngIf="f['dateRange'].value == DateRange.CUSTOM"
+    >
       <a class="btn btn-link" (click)="onRefreshPressed()">Refresh</a>
     </div>
   </div>

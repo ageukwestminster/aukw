@@ -94,7 +94,9 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
   onDateRangeEnumSelected(value: string | null) {
     let dateRange: DateRange;
     if (value == null || value == 'null') {
-      dateRange = this.dateRangeAdapter.enumToDateRange(DateRangeEnum.THIS_YEAR);
+      dateRange = this.dateRangeAdapter.enumToDateRange(
+        DateRangeEnum.THIS_YEAR,
+      );
       dateRange.startDate = '2000-01-01';
       this.f['startDate'].disable();
       this.f['endDate'].disable();
@@ -108,7 +110,9 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
     } else {
       this.f['startDate'].enable();
       this.f['endDate'].enable();
-      dateRange = this.dateRangeAdapter.enumToDateRange(value! as DateRangeEnum);
+      dateRange = this.dateRangeAdapter.enumToDateRange(
+        value! as DateRangeEnum,
+      );
       this.f['startDate'].setValue(dateRange.startDate);
       this.f['endDate'].setValue(dateRange.endDate);
       this.startDate = dateRange.startDate;

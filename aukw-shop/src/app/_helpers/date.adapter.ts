@@ -15,11 +15,10 @@ import { NgbDateAdapter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
  */
 @Injectable()
 export class NgbUTCStringAdapter extends NgbDateAdapter<string> {
-
   /**
    * Convert a string of format 'yyyy-MMM-dd' into an NgbDateStruct.
-   * @param date 
-   * @returns 
+   * @param date
+   * @returns
    */
   fromModel(date: string | null): NgbDateStruct | null {
     return date &&

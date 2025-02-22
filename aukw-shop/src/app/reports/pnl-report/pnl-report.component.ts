@@ -16,7 +16,7 @@ import { DateRangeChooserComponent } from '@app/shared';
     NgIf,
     NgbCollapseModule,
     ReactiveFormsModule,
-    RouterLink,    
+    RouterLink,
   ],
   templateUrl: './pnl-report.component.html',
   styleUrl: './pnl-report.component.css',

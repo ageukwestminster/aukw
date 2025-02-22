@@ -17,7 +17,6 @@ import { BasePayrollTransactionComponent } from '../parent.component';
   styleUrls: ['./employee-journals.component.css', '../shared.css'],
 })
 export class EmployeeJournalsComponent extends BasePayrollTransactionComponent<PayrollJournalEntry> {
-
   override recalculateTransactions() {
     if (!this.payslips.length) return;
 

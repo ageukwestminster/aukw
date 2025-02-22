@@ -9,10 +9,7 @@ import {
   Summary,
   User,
 } from '@app/_models';
-import {
-  AuthenticationService,
-  ReportService,
-} from '@app/_services';
+import { AuthenticationService, ReportService } from '@app/_services';
 import { DateRangeAdapter } from '@app/_helpers';
 import { concatMap } from 'rxjs/operators';
 import {

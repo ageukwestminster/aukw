@@ -1,4 +1,4 @@
-import {PnlReportLineItem, PnlReportRange } from "./profit-and-loss-data";
+import { PnlReportLineItem, PnlReportRange } from './profit-and-loss-data';
 
 export class AvgDailyTransactionDataByQuarter {
   shopid: number;
@@ -32,7 +32,7 @@ export class AvgDailyTransactionData {
   title: string;
   shopid: number;
   /** The period to which the values refer */
-  range: PnlReportRange;  
+  range: PnlReportRange;
   avg_daily_transactions: PnlReportLineItem;
   sales_per_txn: PnlReportLineItem;
   trading_days_in_period: PnlReportLineItem;

@@ -20,7 +20,6 @@ import { DateFormatHelper } from '@app/_services';
  */
 @Injectable()
 export class CustomDateParserFormatter extends NgbDateParserFormatter {
-
   private dateFormatHelper = inject(DateFormatHelper);
 
   parse(value: string): NgbDateStruct | null {

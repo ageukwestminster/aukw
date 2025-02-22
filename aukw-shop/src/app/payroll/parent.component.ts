@@ -69,7 +69,7 @@ export abstract class BasePayrollTransactionComponent<
    * Convert the array of IrisPayslips stored in payslips[] and the array of
    * project allocations stored in allocations[] to an array of objects in lines[].
    * Later, the line[] object will be used to create QBO transactions.
-   * 
+   *
    * This method is called in ngOnInit and nothing is returned (void).
    */
   recalculateTransactions() {}
@@ -80,7 +80,6 @@ export abstract class BasePayrollTransactionComponent<
    * @returns An array of transactions
    */
   filteredTransactions(prop: (p: IrisPayslip) => boolean) {
-
     return this.lines.filter((item) => {
       let ps = this.payslips.filter(
         (p) =>

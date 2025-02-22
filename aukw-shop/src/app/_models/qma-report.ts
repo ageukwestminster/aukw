@@ -1,6 +1,6 @@
-import { ProfitAndLossData, PnlReportLineItem } from "./profit-and-loss-data";
+import { ProfitAndLossData, PnlReportLineItem } from './profit-and-loss-data';
 
-export class InStoreSalesData extends ProfitAndLossData{
+export class InStoreSalesData extends ProfitAndLossData {
   ragging: PnlReportLineItem;
   donations: PnlReportLineItem;
   instorecustomersales: PnlReportLineItem;
@@ -14,4 +14,3 @@ export class InStoreSalesData extends ProfitAndLossData{
     this.miscellaneousincome = (obj && obj.miscellaneousIncome) || null;
   }
 }
-

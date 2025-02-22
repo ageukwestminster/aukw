@@ -6,9 +6,7 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
-import {
-  NgbAccordionModule,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '@environments/environment';
 import { Observable, BehaviorSubject } from 'rxjs';
 
@@ -53,7 +51,7 @@ export class TakingsFilterComponent implements OnInit {
 
   constructor(
     private takingsService: TakingsService,
-    private formBuilder : FormBuilder,
+    private formBuilder: FormBuilder,
   ) {}
 
   ngOnInit(): void {
@@ -82,5 +80,4 @@ export class TakingsFilterComponent implements OnInit {
         this.filteredTakings.emit(response);
       });
   }
-
 }

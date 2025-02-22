@@ -1,6 +1,6 @@
 /**
  * The form of data returned by the Sales By Item Report
- * 
+ *
  * Example item:
  *     {
  *       "id": 39,
@@ -19,10 +19,10 @@ export class SalesByItem {
   avgprice: number;
   israg: boolean;
 
-  add(item: SalesByItem ) : SalesByItem {
+  add(item: SalesByItem): SalesByItem {
     this.number += item.number;
-    this.amount += item.amount
-    this.avgprice = this.number?this.amount/this.number:0;
+    this.amount += item.amount;
+    this.avgprice = this.number ? this.amount / this.number : 0;
     return this;
   }
 

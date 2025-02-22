@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { environment } from '@environments/environment';
-import { 
+import {
   AvgDailyTransactionData,
   AvgDailyTransactionDataByQuarter,
   AvgWeeklySalesData,
@@ -11,9 +11,9 @@ import {
   MonthlySalesChartData,
   SalesByDepartment,
   SalesChartData,
-  HistogramChartData, 
+  HistogramChartData,
   MovingAverageSalesChartData,
-  Summary
+  Summary,
 } from '@app/_models';
 
 const baseUrl = `${environment.apiUrl}/report`;
@@ -28,7 +28,7 @@ const averageDailyTxnSizeByQUrl = baseUrl + `/avg-daily-txn-by-quarter`;
 const salesByDeptUrl = baseUrl + `/sales-by-department`;
 
 /**
- * Provides a set of methods to provide data for reports and charts. The data comes from 
+ * Provides a set of methods to provide data for reports and charts. The data comes from
  * the MariaDB database, not QuickBooks. For QBO reports use {@link QBReportService}.
  */
 @Injectable({ providedIn: 'root' })
@@ -37,10 +37,10 @@ export class ReportService {
 
   /**
    * Provide the data necessary to create the Histogram chart that appears on the Home page
-   * @param start 
-   * @param end 
+   * @param start
+   * @param end
    * @param shopid The id of the shop. Almost always equal to '1' for Harrow Road
-   * @returns 
+   * @returns
    */
   getSalesHistogram(start: string = '', end: string = '', shopid: number = 1) {
     return this.http.get<HistogramChartData>(
@@ -50,9 +50,9 @@ export class ReportService {
 
   /**
    * Provide the data necessary to create the Moving Average sales chart that appears on the Home page
-   * @param start 
+   * @param start
    * @param shopid The id of the shop. Almost always equal to '1' for Harrow Road
-   * @returns 
+   * @returns
    */
   getMovingAverageSales(start: string = '', shopid: number = 1) {
     return this.http.get<MovingAverageSalesChartData>(
@@ -61,11 +61,11 @@ export class ReportService {
   }
 
   /**
-   * 
+   *
    * @param start The start date of the report period in ISO 8601 format.
    * @param end The end date of the report period in ISO 8601 format.
    * @param shopid The id of the shop. Almost always equal to '1' for Harrow Road
-   * @returns 
+   * @returns
    */
   getSalesByDepartment(start: string, end: string, shopid: number = 1) {
     return this.http.get<SalesByDepartment>(
@@ -94,16 +94,16 @@ export class ReportService {
     );
   }
 
-    /**
+  /**
    * Get the average weekly sales, organised by quarter for a shop
    * @param shopid The id of the shop. Almost always equal to '1' for Harrow Road
    * @returns Array of AvgWeeklySalesDataByQuarter objects
    */
-    getAverageWeeklySalesByQuarter(shopid: number) {
-      return this.http.get<AvgWeeklySalesDataByQuarter[]>(
-        averageWeeklySalesByQUrl + `/${shopid}`,
-      );
-    }
+  getAverageWeeklySalesByQuarter(shopid: number) {
+    return this.http.get<AvgWeeklySalesDataByQuarter[]>(
+      averageWeeklySalesByQUrl + `/${shopid}`,
+    );
+  }
 
   /**
    * Get the average daily transaction number and size, organised by quarter for a shop
@@ -116,13 +116,12 @@ export class ReportService {
     );
   }
 
-    
   /**
    * Get the average daily transaction number and size, for a particular date period and shop.
    * @param start The start date of the report period in ISO 8601 format.
    * @param end The end date of the report period in ISO 8601 format.
    * @param shopid The id of the shop. Almost always equal to '1' for Harrow Road
-   * @returns 
+   * @returns
    */
   getAvgDailyTransactions(start: string, end: string, shopid: number = 1) {
     return this.http.get<AvgDailyTransactionData>(

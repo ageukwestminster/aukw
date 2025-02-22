@@ -80,13 +80,13 @@ export class QBConnectionRowComponent {
 
     connection.isRevoking = true;
     this.connectionService.delete(connection.realmid).subscribe({
-      next: () =>  {
-      this.alertService.success(
-        'Connection revoked for ' + connection.companyname,
-        {
-          keepAfterRouteChange: true,
-        },
-      );
+      next: () => {
+        this.alertService.success(
+          'Connection revoked for ' + connection.companyname,
+          {
+            keepAfterRouteChange: true,
+          },
+        );
       },
       error: (error: any) => {},
       complete: () => {
@@ -97,7 +97,7 @@ export class QBConnectionRowComponent {
         );
         connection.isRevoking = false;
         this.onConnectionRevoked.emit(connection);
-      }
+      },
     });
   }
 

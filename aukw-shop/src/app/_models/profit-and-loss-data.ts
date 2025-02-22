@@ -5,7 +5,7 @@ export class ProfitAndLossData {
   /** Title of the report */
   title: string;
   /** The period to which the values refer */
-  range: PnlReportRange;  
+  range: PnlReportRange;
   income: PnLItem;
   cogs: PnLItem;
   grossprofit: PnLItem;
@@ -31,7 +31,7 @@ export class ProfitAndLossData {
   }
 }
 /**
- * 
+ *
  */
 export class PnlReportRange {
   currentPeriodStart: string;
@@ -47,7 +47,7 @@ export class PnlReportRange {
 }
 
 /**
- * 
+ *
  */
 export class PnlReportLineItem {
   displayName: string;
@@ -61,10 +61,10 @@ export class PnlReportLineItem {
 }
 
 /**
- * 
+ *
  */
-export class PnLItem extends PnlReportLineItem{
-  rows: PnlReportLineItem[]
+export class PnLItem extends PnlReportLineItem {
+  rows: PnlReportLineItem[];
   constructor(obj?: any) {
     super(obj);
     this.rows = (obj && obj.rows) || null;

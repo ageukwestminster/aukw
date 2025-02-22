@@ -6,19 +6,12 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
-import {
-  NgbAccordionModule,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, BehaviorSubject } from 'rxjs';
 
-import {
-  DateRange,
-  AuditLogFilter,
-  AuditLog,
-  User,
-} from '@app/_models';
+import { DateRange, AuditLogFilter, AuditLog, User } from '@app/_models';
 import { AuditLogService, UserService } from '@app/_services';
-import { DateRangeChooserComponent } from '@app/shared'
+import { DateRangeChooserComponent } from '@app/shared';
 
 @Component({
   selector: 'auditlog-filter',
@@ -67,7 +60,6 @@ export class AuditLogFilterComponent implements OnInit {
     this.form = this.formBuilder.group({
       userid: [null],
     });
-
   }
 
   onDateRangeChanged(dateRange: DateRange) {
@@ -77,10 +69,13 @@ export class AuditLogFilterComponent implements OnInit {
 
   onUseridChanged(value: string | null) {
     if (value == null || value.startsWith('0')) {
-      this.refreshSummary(this.startAndEndDates.startDate, this.startAndEndDates.endDate);
+      this.refreshSummary(
+        this.startAndEndDates.startDate,
+        this.startAndEndDates.endDate,
+      );
     } else {
       this.refreshSummary(
-        this.startAndEndDates.startDate, 
+        this.startAndEndDates.startDate,
         this.startAndEndDates.endDate,
         this.f['userid'].value,
       );
@@ -99,5 +94,4 @@ export class AuditLogFilterComponent implements OnInit {
       this.filteredAuditLog.emit(response);
     });
   }
-
 }

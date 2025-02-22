@@ -74,9 +74,6 @@ export class MonthlySalesChartData {
   }
 }
 
-
-
-
 /**Stores data to build a histogram of net daily sales data */
 export class HistogramChartData {
   /**First day of period */

@@ -200,14 +200,13 @@ export class PayrollService {
    * Given a single employee's payslip, convert it into an object that can be used
    * to create a journal in QBO.
    * @param p The detailed salary and deduction amounts form an employee's payslip
-   * @returns A PayrollJournalEntry object containing just the information needed 
+   * @returns A PayrollJournalEntry object containing just the information needed
    * to create a QB journal entry.
    */
   private convertPayslipToQBOFormat(
     p: IrisPayslip,
     allocationsArray: EmployeeAllocation[],
   ): PayrollJournalEntry {
-
     const allocations = allocationsArray.filter(
       (allocation) => allocation.payrollNumber == p.payrollNumber,
     );

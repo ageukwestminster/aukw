@@ -2,9 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import {
-  NgbAccordionModule,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
 import { QBReportService } from '@app/_services';
 import { AbstractChartReportComponent } from '../chart-report.component';
 import { DateRangeEnum, InStoreSalesData } from '@app/_models';

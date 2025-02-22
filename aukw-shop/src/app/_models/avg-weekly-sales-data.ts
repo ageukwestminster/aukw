@@ -1,4 +1,4 @@
-import {PnlReportLineItem, PnlReportRange } from "./profit-and-loss-data";
+import { PnlReportLineItem, PnlReportRange } from './profit-and-loss-data';
 
 export class AvgWeeklySalesDataByQuarter {
   shopid: number;
@@ -30,7 +30,7 @@ export class AvgWeeklySalesData {
   title: string;
   shopid: number;
   /** The period to which the values refer */
-  range: PnlReportRange;  
+  range: PnlReportRange;
   avg_weekly_sales: PnlReportLineItem;
   week_count: PnlReportLineItem;
   trading_days_in_period: PnlReportLineItem;
