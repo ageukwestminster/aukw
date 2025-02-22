@@ -190,7 +190,9 @@ $router->mount('/qb', function () use ($router) {
     $router->get('/(\d+)/report/profitandlossraw', 'QBReportCtl@profit_and_loss_raw');
     $router->get('/(\d+)/report/profitandloss', 'QBReportCtl@profit_and_loss');
     $router->get('/(\d+)/report/salesbyitem', 'QBReportCtl@sales_by_item');
+    $router->get('/(\d+)/report/salesbyitemraw', 'QBReportCtl@sales_by_item_raw');
     $router->get('/(\d+)/report/qma', 'QBReportCtl@quarterly_market_report');
+    $router->get('/(\d+)/report/ragging-by-quarter', 'QBReportCtl@ragging_by_quarter');
 });
 
 /***************/

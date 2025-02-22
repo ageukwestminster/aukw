@@ -266,11 +266,11 @@ class QuickbooksReport{
 
     /**
      * Generate a listing of sales by Item (aka Product)
-     *
+     * @param bool $raw If 'true' then return the QBO report without adapting it
      * @return array
      * 
      */
-    public function itemSales(){
+    public function itemSales(bool $raw = false){
 
         $auth = new QuickbooksAuth();
         $dataService = $auth->prepare($this->realmid);
@@ -297,6 +297,8 @@ class QuickbooksReport{
         if ($error) {
             throw new SdkException("The Response message is: " . $error->getResponseBody());
         }        
+
+        if ($raw) return $customerSales;
 
         $returnObj = array();
 

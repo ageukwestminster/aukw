@@ -219,10 +219,11 @@ class QBReportCtl{
    * Show a QBO report that summarizes sales by a particular item.
    * HTTP parameters are: start, end, summarizeColumn, item
    * @param string $realmid The id of the QBO company.
+   * @param bool $raw If 'true' then return the QBO report without adapting it
    * @return void Output is echoed directly to response
    * 
    */
-  public static function sales_by_item(string $realmid){  
+  public static function sales_by_item(string $realmid, bool $raw = false){  
 
     $model = new \Models\QuickbooksReport();
     $model->realmid = $realmid;
@@ -242,7 +243,18 @@ class QBReportCtl{
       $model->item = null;
     }
 
-    echo json_encode($model->itemSales(), JSON_NUMERIC_CHECK);
+    echo json_encode($model->itemSales($raw), JSON_NUMERIC_CHECK);
+  }
+
+    /**
+   * Show a QBO report that summarizes sales by a particular item.
+   * HTTP parameters are: start, end, summarizeColumn, item
+   * @param string $realmid The id of the QBO company.
+   * @return void Output is echoed directly to response
+   * 
+   */
+  public static function sales_by_item_raw(string $realmid){  
+    return QBReportCtl::sales_by_item($realmid, true);
   }
 
 
@@ -335,6 +347,45 @@ class QBReportCtl{
       exit(1);
   }
 
+  }
+
+    /**
+   * Show a QBO report that summarizes ragging by quarter
+   * The only HTTP parameter accepted is 'start' and that is optional. 
+   * If 'start' is not supplied then the query defaults to the quarter 
+   * start date of 5 years ago.
+   * @param string $realmid The id of the QBO company.
+   * @return void Output is echoed directly to response
+   * 
+   */
+  public static function ragging_by_quarter(string $realmid){  
+
+    $model = new \Models\QuickbooksReport();
+    $model->realmid = $realmid;
+    $model->summarizeColumn = 'Quarter';
+    $model->item = null;
+
+    if(isset($_GET['start'])) {
+      $start=$_GET['start'];
+    } else {
+      // From https://stackoverflow.com/a/35509890/6941165
+      $current_quarter = ceil(date('n') / 3);
+      $first_date_of_current_quarter = 
+          date('Y-m-d', strtotime(date('Y') . '-' . (($current_quarter * 3) - 2) . '-1'));
+      // Next 2 lines not used but kept for reference
+      //$last_date_of_current_quarter = date('Y-m-t', 
+      //          strtotime(date('Y') . '-' . (($current_quarter * 3)) . '-1'));
+
+      // Now go back 5 years
+      $start=(new DateTime($first_date_of_current_quarter))->modify('-5 year')->format('Y-m-d');
+    }
+
+    list($start, $end) = \Core\DatesHelper::sanitizeDateValues($start, '');
+  
+    $model->startdate = $start;
+    $model->enddate = $end;
+
+    echo json_encode($model->itemSales(), JSON_NUMERIC_CHECK);
   }
 
 }
