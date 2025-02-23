@@ -375,22 +375,22 @@ class QBReportCtl{
     $model->realmid = $realmid;
     $model->summarizeColumn = 'Quarter';
     $model->item = null;
+    $model->sortAscending = false;
+
+    // From https://stackoverflow.com/a/35509890/6941165
+    $current_quarter = ceil(date('n') / 3);
+    $first_date_of_current_quarter = 
+        date('Y-m-d', strtotime(date('Y') . '-' . (($current_quarter * 3) - 2) . '-1'));
+    // Next line not used but kept for reference
+    //$last_date_of_current_quarter = date('Y-m-t', strtotime(date('Y') . '-' . (($current_quarter * 3)) . '-1'));
+    $end = (new DateTime($first_date_of_current_quarter))->modify('-1 day')->format('Y-m-d');
+    
 
     if(isset($_GET['start'])) {
       $start=$_GET['start'];
-      $end='';
     } else {
-      // From https://stackoverflow.com/a/35509890/6941165
-      $current_quarter = ceil(date('n') / 3);
-      $first_date_of_current_quarter = 
-          date('Y-m-d', strtotime(date('Y') . '-' . (($current_quarter * 3) - 2) . '-1'));
-      // Next 2 lines not used but kept for reference
-      //$last_date_of_current_quarter = date('Y-m-t', 
-      //          strtotime(date('Y') . '-' . (($current_quarter * 3)) . '-1'));
-
-      // Now go back 5 years
+      // if no start date provided then go back 5 years
       $start=(new DateTime($first_date_of_current_quarter))->modify('-5 year')->format('Y-m-d');
-      $end = (new DateTime($first_date_of_current_quarter))->modify('-1 day')->format('Y-m-d');
     }
 
     list($start, $end) = \Core\DatesHelper::sanitizeDateValues($start, $end);

@@ -46,7 +46,7 @@ class QBItemSalesReport extends QuickbooksReport{
                             array_push($returnObj, array(
                                 "id" => (property_exists($first, 'id')?$first->id:0),
                                 "name" => $first->value,
-                                "number" => $row[1]->value,
+                                "quantity" => $row[1]->value,
                                 "amount" => $row[2]->value,
                                 "avgprice" => $row[4]->value,
                                 "israg" => true,
@@ -81,7 +81,7 @@ class QBItemSalesReport extends QuickbooksReport{
                                             array_push($returnObj, array(
                                                 "id" => (property_exists($first, 'id')?$first->id:0),
                                                 "name" => $first->value,
-                                                "number" => $row[1]->value,
+                                                "quantity" => $row[1]->value,
                                                 "amount" => $row[2]->value,
                                                 "avgprice" => $row[4]->value,
                                                 "israg" => $first->value=='Ragging'?true:$rag,
@@ -242,6 +242,8 @@ class QBItemSalesReport extends QuickbooksReport{
                   $quarter->{$propertyName}->avgprice = (float)$raggingRow->ColData[4+$i*4]->value;
                 }
               }
+
+
             }          
           }
         }
@@ -250,7 +252,12 @@ class QBItemSalesReport extends QuickbooksReport{
       throw new \Exception ('Unable to locate Rows->Row section of ItemSales report.');
     }
 
-    return $returnObj;
+    if ($this->sortAscending) {
+      return $returnObj;    
+    } else {           
+      return array_reverse($returnObj);
+    }
+
   }
 }
 
