@@ -23,6 +23,7 @@ export * from './qma-report';
 export * from './payroll-journal-entry';
 export * from './payroll-process-state.enum';
 export * from './profit-and-loss-data';
+export * from './ragging-quarter';
 export * from './role';
 export * from './sales-by-dept';
 export * from './sales-by-item';

@@ -39,8 +39,8 @@
     </div>
   </div>
 
-  <div class="p-2 row class">
-    <div class="col-sm">
+  <div class="p-2 row d-flex align-items-center">
+    <div class="col-md">
       <table class="table table-striped table-hover table-responsive w-auto">
         <caption>
           Covering period:
@@ -68,7 +68,7 @@
             <tr *ngIf="salesitem.israg">
               <td>{{ salesitem.name }}</td>
               <td class="text-end">
-                {{ salesitem.number | number: "1.0-0" }}
+                {{ salesitem.quantity | number: "1.0-0" }}
               </td>
               <td class="text-center d-none d-md-table-cell">
                 £{{ salesitem.avgprice | number: "1.2-2" }}
@@ -81,7 +81,7 @@
           <tr class="border-tb2">
             <td>Total</td>
             <td class="text-end">
-              {{ total.number | number: "1.0-0" }}
+              {{ total.quantity | number: "1.0-0" }}
             </td>
             <td class="text-end d-none d-md-table-cell">
               £{{ total.avgprice | number: "1.2-2" }}
@@ -90,6 +90,122 @@
           </tr>
         </tbody>
       </table>
+    </div>
+    <div class="col-md">CHART</div>
+  </div>
+
+  <div class="p-2 col-sm-8">
+    <div ngbAccordion>
+      <div ngbAccordionItem [collapsed]="true">
+        <h2 ngbAccordionHeader class="text-white">
+          <button ngbAccordionButton class="bg-secondary text-white">
+            Table of Quarter-By-Quarter Historical Data
+          </button>
+        </h2>
+        <div ngbAccordionCollapse>
+          <div ngbAccordionBody>
+            <ng-template>
+              <table
+                class="table table-striped table-hover table-responsive w-auto"
+              >
+                <thead>
+                  <tr>
+                    <th>Quarter</th>
+                    <th>Clothing</th>
+                    <th>Books</th>
+                    <th>Shoes</th>
+                    <th>Household</th>
+                    <th>Other</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of tableData; index as i">
+                    <th>
+                      <span class="text-dark d-none d-md-table-cell">{{
+                        tableData[i].title
+                      }}</span>
+                    </th>
+                    <td class="text-end">
+                      {{ tableData[i].clothing.amount | number: "1.2-2" }}
+                    </td>
+                    <td class="text-end">
+                      {{ tableData[i].books.amount | number: "1.2-2" }}
+                    </td>
+                    <td class="text-end">
+                      {{ tableData[i].shoes.amount | number: "1.2-2" }}
+                    </td>
+                    <td class="text-end">
+                      {{ tableData[i].household.amount | number: "1.2-2" }}
+                    </td>
+                    <td class="text-end">
+                      {{
+                        tableData[i].rummage.amount + tableData[i].other.amount
+                          | number: "1.2-2"
+                      }}
+                    </td>
+                    <td class="text-end">
+                      {{
+                        tableData[i].books.amount +
+                          tableData[i].clothing.amount +
+                          tableData[i].household.amount +
+                          tableData[i].rummage.amount +
+                          tableData[i].shoes.amount +
+                          tableData[i].other.amount | number: "1.2-2"
+                      }}
+                    </td>
+                  </tr>
+                  <tr
+                    *ngIf="tableTotal && tableTotal.clothing.amount"
+                    class="border-tb2"
+                  >
+                    <th>
+                      <span class="text-dark d-none d-md-table-cell">
+                        Total
+                      </span>
+                    </th>
+                    <td class="text-end">
+                      {{ tableTotal.clothing.amount | number: "1.2-2" }}
+                    </td>
+                    <td class="text-end">
+                      {{ tableTotal.books.amount | number: "1.2-2" }}
+                    </td>
+                    <td class="text-end">
+                      {{ tableTotal.shoes.amount | number: "1.2-2" }}
+                    </td>
+                    <td class="text-end">
+                      {{ tableTotal.household.amount | number: "1.2-2" }}
+                    </td>
+                    <td class="text-end">
+                      {{
+                        tableTotal.rummage.amount + tableTotal.other.amount
+                          | number: "1.2-2"
+                      }}
+                    </td>
+                    <td class="text-end">
+                      {{
+                        tableTotal.books.amount +
+                          tableTotal.clothing.amount +
+                          tableTotal.household.amount +
+                          tableTotal.rummage.amount +
+                          tableTotal.shoes.amount +
+                          tableTotal.other.amount | number: "1.2-2"
+                      }}
+                    </td>
+                  </tr>
+                  <tr *ngIf="!tableData">
+                    <td colspan="7" class="text-center">
+                      <span
+                        class="spinner-border spinner-border-lg align-center"
+                      ></span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </ng-template>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

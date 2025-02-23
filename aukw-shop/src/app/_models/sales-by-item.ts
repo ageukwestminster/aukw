@@ -14,22 +14,22 @@
 export class SalesByItem {
   id: number;
   name: string;
-  number: number;
+  quantity: number;
   amount: number;
   avgprice: number;
   israg: boolean;
 
   add(item: SalesByItem): SalesByItem {
-    this.number += item.number;
+    this.quantity += item.quantity;
     this.amount += item.amount;
-    this.avgprice = this.number ? this.amount / this.number : 0;
+    this.avgprice = this.quantity ? this.amount / this.quantity : 0;
     return this;
   }
 
   constructor(obj?: any) {
     this.id = (obj && obj.id) || null;
     this.name = (obj && obj.name) || null;
-    this.number = (obj && obj.number) || 0;
+    this.quantity = (obj && obj.number) || 0;
     this.amount = (obj && obj.amount) || 0;
     this.avgprice = (obj && obj.avgprice) || 0;
     this.israg = (obj && obj.israg) || false;
