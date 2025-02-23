@@ -378,6 +378,7 @@ class QBReportCtl{
 
     if(isset($_GET['start'])) {
       $start=$_GET['start'];
+      $end='';
     } else {
       // From https://stackoverflow.com/a/35509890/6941165
       $current_quarter = ceil(date('n') / 3);
@@ -389,9 +390,10 @@ class QBReportCtl{
 
       // Now go back 5 years
       $start=(new DateTime($first_date_of_current_quarter))->modify('-5 year')->format('Y-m-d');
+      $end = (new DateTime($first_date_of_current_quarter))->modify('-1 day')->format('Y-m-d');
     }
 
-    list($start, $end) = \Core\DatesHelper::sanitizeDateValues($start, '');
+    list($start, $end) = \Core\DatesHelper::sanitizeDateValues($start, $end);
   
     $model->startdate = $start;
     $model->enddate = $end;
