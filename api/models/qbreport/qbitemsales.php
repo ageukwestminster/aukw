@@ -185,7 +185,7 @@ class QBItemSalesReport extends QuickbooksReport{
           }
         }
 
-        // Handle Ragging that has been records as part of daily takings process
+        // Handle Ragging that has been recorded as part of daily takings process
         if (property_exists($row, 'Header') && property_exists($row->Header, 'ColData')
             && is_array($row->Header->ColData) && count($row->Header->ColData)
             && $row->Header->ColData[0]->value == 'Daily Sales') {  
@@ -249,7 +249,6 @@ class QBItemSalesReport extends QuickbooksReport{
     } else {
       throw new \Exception ('Unable to locate Rows->Row section of ItemSales report.');
     }
-
 
     return $returnObj;
   }
