@@ -125,12 +125,12 @@ export class RaggingReportComponent
     data.other.push([timestamp, ragging.other.amount + ragging.rummage.amount]);
     data.total.push([
       timestamp,
-      ragging.books.amount +
+      this.Math.round(100*(ragging.books.amount +
         ragging.clothing.amount +
         ragging.household.amount +
         ragging.shoes.amount +
         ragging.other.amount +
-        ragging.rummage.amount,
+        ragging.rummage.amount))/100
     ]);
   }
 }

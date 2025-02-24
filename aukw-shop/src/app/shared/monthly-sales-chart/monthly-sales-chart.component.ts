@@ -149,7 +149,7 @@ export class MonthlySalesChartComponent implements OnInit {
           }
 
           /* The elaborate if statements below are to allow typescript to
-           * detecxt the presence of the 'data' property.
+           * detect the presence of the 'data' property.
            */
           if (
             this.optionsSimpleBarChart.series &&
