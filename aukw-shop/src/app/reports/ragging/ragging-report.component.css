@@ -1,7 +1,7 @@
-/* A 1 pixel wide single border at the top of a cell */
-.border-tb {
+/* A 1 pixel wide single border all around a cell */
+.border-all {
   border: 1px solid #000;
-  border-width: 2px 0 0 0;
+  border-width: 2px 2px 2px 2px;
 }
 
 /* A 2 pixel wide single border at the top of a cell */

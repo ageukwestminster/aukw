@@ -1,10 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { of, merge, switchMap, reduce, tap } from 'rxjs';
+import { reduce, tap } from 'rxjs';
 import { concatMap, map } from 'rxjs/operators';
 import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
-import { QBReportService } from '@app/_services';
+import { CustomRxjsOperatorsService, QBReportService } from '@app/_services';
 import { AbstractChartReportComponent } from '../chart-report.component';
 import {
   DateRangeEnum,
@@ -36,6 +36,7 @@ export class RaggingReportComponent
   raggingChartData!: RaggingChartData;
 
   private reportService = inject(QBReportService);
+  private customOperator = inject (CustomRxjsOperatorsService);
 
   readonly INITIALDATERANGE: DateRangeEnum = DateRangeEnum.LAST_QUARTER;
 
@@ -63,14 +64,8 @@ export class RaggingReportComponent
       .getSalesByItem(startDate, endDate)
       .pipe(
         tap((response) => (this.data = response)),
-        // This switchMap converts Observable<SalesByItem[]> (complex object)
-        // to Observable<SalesByItem>
-        switchMap((dataArray: SalesByItem[]) => {
-          const obs = dataArray.map((x) => {
-            return of(x);
-          });
-          return merge(...obs);
-        }),
+        // This converts Observable<SalesByItem[]> to Observable<SalesByItem>
+        this.customOperator.convertFromArrayToElementObservable(),
 
         // reduce calculates total sum
         reduce((prev: SalesByItem, current) => {
@@ -88,14 +83,9 @@ export class RaggingReportComponent
         tap((response) => (this.tableData = response)),
 
         // Convert to Obs of RaggingQuarter rather than RaggingQuarter[]
-        switchMap((dataArray: RaggingQuarter[]) => {
-          const obs = dataArray.map((x) => {
-            return of(x);
-          });
-          return merge(...obs);
-        }),
+        this.customOperator.convertFromArrayToElementObservable(),
 
-        // Map the histroical data into chart data form
+        // Map the historical data into chart data form
         map((raggingQuarter) => {
           //Don't know how to make async
           this.adaptQBODataToChartFormat(raggingQuarter);

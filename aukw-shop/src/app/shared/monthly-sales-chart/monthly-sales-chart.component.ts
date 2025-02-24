@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import Highcharts from 'highcharts/es-modules/masters/highcharts.src.js'; // From https://github.com/highcharts/highcharts/issues/14183
-import { ReportService } from '@app/_services';
+import { CustomRxjsOperatorsService, ReportService } from '@app/_services';
 
 import { MonthlySalesChartData } from '@app/_models';
 import { environment } from '@environments/environment';
@@ -23,6 +23,7 @@ import 'highcharts/es-modules/masters/modules/exporting.src.js';
  * Create two bar charts displaying  monthly sales using Highcarts
  */
 export class MonthlySalesChartComponent implements OnInit {
+  private customOperator = inject (CustomRxjsOperatorsService);
   public optionsSimpleBarChart: Highcharts.Options = {
     chart: {
       type: 'column',
@@ -118,13 +119,8 @@ export class MonthlySalesChartComponent implements OnInit {
         ++month,
       )
       .pipe(
-        // These 5 lines convert Observable<MonthlySalesChartData[]> to Observable<MonthlySalesChartData>
-        switchMap((dataArray: MonthlySalesChartData[]) => {
-          const obs = dataArray.map((x) => {
-            return of(x);
-          });
-          return merge(...obs);
-        }),
+        // Convert Observable<MonthlySalesChartData[]> to Observable<MonthlySalesChartData>
+        this.customOperator.convertFromArrayToElementObservable()
       )
       .subscribe({
         next: (value: MonthlySalesChartData) => {
