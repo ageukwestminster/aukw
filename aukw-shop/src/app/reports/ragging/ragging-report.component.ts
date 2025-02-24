@@ -65,7 +65,7 @@ export class RaggingReportComponent
       .pipe(
         tap((response) => (this.data = response)),
         // This converts Observable<SalesByItem[]> to Observable<SalesByItem>
-        this.customOperator.convertFromArrayToElementObservable(),
+        this.customOperator.convertFromArrayToElement(),
 
         // reduce calculates total sum
         reduce((prev: SalesByItem, current) => {
@@ -83,7 +83,7 @@ export class RaggingReportComponent
         tap((response) => (this.tableData = response)),
 
         // Convert to Obs of RaggingQuarter rather than RaggingQuarter[]
-        this.customOperator.convertFromArrayToElementObservable(),
+        this.customOperator.convertFromArrayToElement(),
 
         // Map the historical data into chart data form
         map((raggingQuarter) => {

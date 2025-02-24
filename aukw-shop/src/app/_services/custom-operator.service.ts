@@ -13,7 +13,7 @@ export class CustomRxjsOperatorsService<T> {
    * @returns A generic function that takes an observable of an array and returns an 
    * observable of the element of the array.
    */
-  convertFromArrayToElementObservable() : <T>(source:Observable<T[]>) => Observable<T>{
+  convertFromArrayToElement() : <T>(source:Observable<T[]>) => Observable<T>{
     return function<T>(source: Observable<T[]>) {
       return source.pipe(
         switchMap((dataArray: T[]) => {

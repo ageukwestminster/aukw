@@ -120,7 +120,7 @@ export class MonthlySalesChartComponent implements OnInit {
       )
       .pipe(
         // Convert Observable<MonthlySalesChartData[]> to Observable<MonthlySalesChartData>
-        this.customOperator.convertFromArrayToElementObservable()
+        this.customOperator.convertFromArrayToElement()
       )
       .subscribe({
         next: (value: MonthlySalesChartData) => {
