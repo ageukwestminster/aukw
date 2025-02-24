@@ -135,3 +135,26 @@ export class MovingAverageSalesChartData {
     this.avgYear = (obj && obj.avgYear) || null;
   }
 }
+
+/**Stores data to display a line graph of quarterly ragging
+ * The chart object is called 'ragging-chart'
+ */
+export class RaggingChartData {
+  /** Each item array is made up of i) unix timestamp*1000 and ii) net sales.
+   *  Timestamp is multiplied by 1000 because timestamps in Javascript are milliseconds */
+  books: [[number, number]];
+  clothing: [[number, number]];
+  household: [[number, number]];
+  shoes: [[number, number]];
+  other: [[number, number]];
+  total: [[number, number]];
+
+  constructor(obj?: any) {
+    this.books = (obj && obj.books) || [] ;
+    this.clothing = (obj && obj.clothing) || [];
+    this.household = (obj && obj.household) || [];
+    this.shoes = (obj && obj.shoes) || [];
+    this.other = (obj && obj.other) || [];
+    this.total = (obj && obj.total) || [];
+  }
+}

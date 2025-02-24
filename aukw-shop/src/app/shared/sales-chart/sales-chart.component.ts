@@ -2,7 +2,6 @@ import {
   Component,
   Input,
   OnChanges,
-  OnInit,
   SimpleChanges,
 } from '@angular/core';
 import Highcharts from 'highcharts/es-modules/masters/highcharts.src.js'; // From https://github.com/highcharts/highcharts/issues/14183
@@ -15,7 +14,7 @@ import { SalesChartData } from '@app/_models';
   standalone: true,
   imports: [],
 })
-export class SalesChartComponent implements OnInit, OnChanges {
+export class SalesChartComponent implements OnChanges {
   @Input() salesChartData?: SalesChartData;
   public options: Highcharts.Options = {
     title: {
@@ -35,6 +34,7 @@ export class SalesChartComponent implements OnInit, OnChanges {
     },
 
     tooltip: {
+      // format codes: https://api.highcharts.com/class-reference/Highcharts.Time#dateFormat
       xDateFormat: '%A, %e-%b-%Y',
       shared: true,
     },
@@ -47,6 +47,7 @@ export class SalesChartComponent implements OnInit, OnChanges {
       categories: [],
       labels: {
         formatter: function () {
+          // format codes: https://api.highcharts.com/class-reference/Highcharts.Time#dateFormat
           return Highcharts.dateFormat('%e %b', this.value as number);
         },
       },
@@ -102,10 +103,6 @@ export class SalesChartComponent implements OnInit, OnChanges {
       ],
     },
   };
-
-  constructor() {}
-
-  ngOnInit(): void {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['salesChartData']) {

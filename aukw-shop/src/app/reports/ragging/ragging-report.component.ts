@@ -2,12 +2,17 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { of, merge, switchMap, reduce, tap } from 'rxjs';
-import { concatMap } from 'rxjs/operators';
+import { concatMap, map } from 'rxjs/operators';
 import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
 import { QBReportService } from '@app/_services';
 import { AbstractChartReportComponent } from '../chart-report.component';
-import { DateRangeEnum, RaggingQuarter, SalesByItem } from '@app/_models';
-import { DateRangeChooserComponent } from '@app/shared';
+import {
+  DateRangeEnum,
+  RaggingChartData,
+  RaggingQuarter,
+  SalesByItem,
+} from '@app/_models';
+import { DateRangeChooserComponent, RaggingChartComponent } from '@app/shared';
 
 @Component({
   standalone: true,
@@ -16,6 +21,7 @@ import { DateRangeChooserComponent } from '@app/shared';
     DateRangeChooserComponent,
     NgbAccordionModule,
     NgIf,
+    RaggingChartComponent,
     RouterLink,
   ],
   templateUrl: './ragging-report.component.html',
@@ -27,6 +33,7 @@ export class RaggingReportComponent
 {
   tableData: RaggingQuarter[] = [];
   tableTotal!: RaggingQuarter;
+  raggingChartData!: RaggingChartData;
 
   private reportService = inject(QBReportService);
 
@@ -47,12 +54,16 @@ export class RaggingReportComponent
   }
 
   override refreshSummary(startDate: string, endDate: string) {
+    // Set flag to tell user to expect a wait
     this.loading = true;
+    // initialise chart data arrays
+    this.raggingChartData = new RaggingChartData();
+
     this.reportService
       .getSalesByItem(startDate, endDate)
       .pipe(
         tap((response) => (this.data = response)),
-        // switchMap converts Observable<SalesByItem[]> (complex object)
+        // This switchMap converts Observable<SalesByItem[]> (complex object)
         // to Observable<SalesByItem>
         switchMap((dataArray: SalesByItem[]) => {
           const obs = dataArray.map((x) => {
@@ -60,27 +71,43 @@ export class RaggingReportComponent
           });
           return merge(...obs);
         }),
+
         // reduce calculates total sum
         reduce((prev: SalesByItem, current) => {
-          // Only total ragging items
+          // Only include ragging items in calculation of sum
           return current.israg ? prev.add(current) : prev;
         }, new SalesByItem()),
+
+        //assign to class variable and query for ragging by quarter
         concatMap((raggingTotals: SalesByItem) => {
           this.total = raggingTotals;
           return this.reportService.raggingByQuarter();
         }),
+
+        // assign to class variable
         tap((response) => (this.tableData = response)),
+
+        // Convert to Obs of RaggingQuarter rather than RaggingQuarter[]
         switchMap((dataArray: RaggingQuarter[]) => {
           const obs = dataArray.map((x) => {
             return of(x);
           });
           return merge(...obs);
         }),
-        // reduce calculates total sum
+
+        // Map the histroical data into chart data form
+        map((raggingQuarter) => {
+          //Don't know how to make async
+          this.adaptQBODataToChartFormat(raggingQuarter);
+          return raggingQuarter;
+        }),
+
+        // This reduce calculates total of ragging by item
         reduce((prev: RaggingQuarter, current) => {
           return prev.add(current);
         }, new RaggingQuarter()),
       )
+
       .subscribe({
         next: (raggingTotal: RaggingQuarter) =>
           (this.tableTotal = raggingTotal),
@@ -94,5 +121,26 @@ export class RaggingReportComponent
         },
         complete: () => (this.loading = false),
       });
+  }
+
+  adaptQBODataToChartFormat(ragging: RaggingQuarter): void {
+    let timestamp = new Date(ragging.end).getTime();
+
+    let data = this.raggingChartData;
+
+    data.books.push([timestamp, ragging.books.amount]);
+    data.clothing.push([timestamp, ragging.clothing.amount]);
+    data.household.push([timestamp, ragging.household.amount]);
+    data.shoes.push([timestamp, ragging.shoes.amount]);
+    data.other.push([timestamp, ragging.other.amount + ragging.rummage.amount]);
+    data.total.push([
+      timestamp,
+      ragging.books.amount +
+        ragging.clothing.amount +
+        ragging.household.amount +
+        ragging.shoes.amount +
+        ragging.other.amount +
+        ragging.rummage.amount,
+    ]);
   }
 }

@@ -1,4 +1,4 @@
-<div class="card mt-4 col">
+<div class="card mt-4 row d-flex justify-content-center">
   <div class="card-header d-flex justify-content-between">
     <div class="col-sm">
       <h4>Ragging Report</h4>
@@ -27,10 +27,6 @@
     (dateDangeChosen)="onDateRangeChanged($event)"
   ></date-range-chooser>
 
-  <div class="p-2">
-    <h3>Table of QMA data</h3>
-  </div>
-
   <div *ngIf="loading" class="row justify-content-between p-2">
     <div class="col-sm-6">
       <div>
@@ -39,62 +35,68 @@
     </div>
   </div>
 
-  <div class="p-2 row d-flex align-items-center">
-    <div class="col-md">
-      <table class="table table-striped table-hover table-responsive w-auto">
-        <caption>
-          Covering period:
-          {{
-            f["startDate"].value | date: "dd/MM/yy"
-          }}
-          -
-          {{
-            f["endDate"].value | date: "dd/MM/yy"
-          }}
-        </caption>
-        <thead>
-          <tr>
-            <th></th>
-            <td class="text-end">Weight (in kg.)</td>
-            <td class="text-center d-none d-md-table-cell">
-              Average Price Per kg.
-            </td>
-            <td class="text-end">Value</td>
-          </tr>
-        </thead>
-        <tbody *ngIf="data">
-          <tr></tr>
-          <ng-container *ngFor="let salesitem of data">
-            <tr *ngIf="salesitem.israg">
-              <td>{{ salesitem.name }}</td>
-              <td class="text-end">
-                {{ salesitem.quantity | number: "1.0-0" }}
-              </td>
-              <td class="text-center d-none d-md-table-cell">
-                £{{ salesitem.avgprice | number: "1.2-2" }}
-              </td>
-              <td class="text-end">
-                £{{ salesitem.amount | number: "1.2-2" }}
-              </td>
-            </tr>
-          </ng-container>
-          <tr class="border-tb2">
-            <td>Total</td>
-            <td class="text-end">
-              {{ total.quantity | number: "1.0-0" }}
-            </td>
-            <td class="text-end d-none d-md-table-cell">
-              £{{ total.avgprice | number: "1.2-2" }}
-            </td>
-            <td class="text-end">£{{ total.amount | number: "1.2-2" }}</td>
-          </tr>
-        </tbody>
-      </table>
+  <div class="col d-flex flex-column">
+    <div class="d-flex justify-content-center">
+      <h3>Ragging By Propduct Type</h3>
     </div>
-    <div class="col-md">CHART</div>
+    <div class="d-flex justify-content-center">
+      <table class="table table-striped table-hover table-responsive w-auto">
+      <caption>
+        Covering period:
+        {{
+          f["startDate"].value | date: "dd/MM/yy"
+        }}
+        -
+        {{
+          f["endDate"].value | date: "dd/MM/yy"
+        }}
+      </caption>
+      <thead>
+        <tr>
+          <th></th>
+          <td class="text-end">Weight (in kg.)</td>
+          <td class="text-center d-none d-md-table-cell">
+            Average Price Per kg.
+          </td>
+          <td class="text-end">Value</td>
+        </tr>
+      </thead>
+      <tbody *ngIf="data">
+        <tr></tr>
+        <ng-container *ngFor="let salesitem of data">
+          <tr *ngIf="salesitem.israg">
+            <td>{{ salesitem.name }}</td>
+            <td class="text-end">
+              {{ salesitem.quantity | number: "1.0-0" }}
+            </td>
+            <td class="text-center d-none d-md-table-cell">
+              £{{ salesitem.avgprice | number: "1.2-2" }}
+            </td>
+            <td class="text-end">£{{ salesitem.amount | number: "1.2-2" }}</td>
+          </tr>
+        </ng-container>
+        <tr class="border-tb2">
+          <td>Total</td>
+          <td class="text-end">
+            {{ total.quantity | number: "1.0-0" }}
+          </td>
+          <td class="text-end d-none d-md-table-cell">
+            £{{ total.avgprice | number: "1.2-2" }}
+          </td>
+          <td class="text-end">£{{ total.amount | number: "1.2-2" }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
   </div>
 
-  <div class="p-2 col-sm-8">
+  <div class="col d-flex justify-content-center">
+    <div *ngIf="raggingChartData && raggingChartData.clothing.length">
+      <ragging-chart [raggingChartData]="raggingChartData"></ragging-chart>
+    </div>
+  </div>
+
+  <div class="p-2 col-sm d-flex justify-content-center">
     <div ngbAccordion>
       <div ngbAccordionItem [collapsed]="true">
         <h2 ngbAccordionHeader class="text-white">
@@ -112,33 +114,33 @@
                   <tr>
                     <th>Quarter</th>
                     <th>Clothing</th>
-                    <th>Books</th>
-                    <th>Shoes</th>
-                    <th>Household</th>
-                    <th>Other</th>
+                    <th class="d-none d-sm-table-cell">Books</th>
+                    <th class="d-none d-sm-table-cell">Shoes</th>
+                    <th class="d-none d-sm-table-cell">Household</th>
+                    <th class="d-none d-sm-table-cell">Other</th>
                     <th>Total</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let item of tableData; index as i">
                     <th>
-                      <span class="text-dark d-none d-md-table-cell">{{
+                      <span class="text-dark">{{
                         tableData[i].title
                       }}</span>
                     </th>
                     <td class="text-end">
                       {{ tableData[i].clothing.amount | number: "1.2-2" }}
                     </td>
-                    <td class="text-end">
+                    <td class="text-end d-none d-sm-table-cell">
                       {{ tableData[i].books.amount | number: "1.2-2" }}
                     </td>
-                    <td class="text-end">
+                    <td class="text-end d-none d-sm-table-cell">
                       {{ tableData[i].shoes.amount | number: "1.2-2" }}
                     </td>
-                    <td class="text-end">
+                    <td class="text-end d-none d-sm-table-cell">
                       {{ tableData[i].household.amount | number: "1.2-2" }}
                     </td>
-                    <td class="text-end">
+                    <td class="text-end d-none d-sm-table-cell">
                       {{
                         tableData[i].rummage.amount + tableData[i].other.amount
                           | number: "1.2-2"
