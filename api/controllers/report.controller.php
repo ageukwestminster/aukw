@@ -386,5 +386,31 @@ class ReportCtl{
 
     echo json_encode($model->cashRatioMovingAverage(), JSON_NUMERIC_CHECK);
   }
+
+      /**
+   * Retrieve a data set for the chart showing the moving averages of sales
+   * split by customer and by department
+   *
+   * @return void Output is echoed directly to response.
+   * 
+   */
+  public static function salesByDepartmentAndCustomerMovingAverage(int $shopid){  
+
+    $model = new \Models\Report();
+
+    if(isset($_GET['start']) && \Core\DatesHelper::validateDate($_GET['start'])) {
+        $model->startdate = $_GET['start'];
+    } else {
+      //  customers_num_total field (in takings table) is only populated from this date.
+      $model->startdate = '2017-03-01'; 
+    }
+    if ($shopid) {
+      $model->shopID = $shopid;
+    } else {
+      $model->shopID = 1; // Harrow Road
+    }
+
+    echo json_encode($model->salesByDepartmentAndCustomerMovingAverage(), JSON_NUMERIC_CHECK);
+  }
   
 }

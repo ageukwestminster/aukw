@@ -552,4 +552,75 @@ class Report{
         return $sales_arr;
     }
 
+    /**
+    * Retrieve a data set for the chart showing the moving averages of sales
+    * split by customer and by department
+    * @return array
+    */
+    public function salesByDepartmentAndCustomerMovingAverage() : array {
+        // The addition of the 61.2million miliseconds is to force the date into the correct day, even during BST
+        // The exact number (61.2m) does not really matter as the chart only shows data to the nearest day
+        $query = "SELECT `date`, UNIX_TIMESTAMP(`date`)*1000 + 61200000 as sales_timestamp
+                    ,ROUND(AVG(IF(clothing_num = 0,NULL,clothing/clothing_num))
+                            OVER (order by date ASC ROWS 74 PRECEDING),2) as clothing_avg_px 
+                    ,ROUND(AVG(IF(brica_num = 0,NULL,brica/brica_num))
+                            OVER (order by date ASC ROWS 74 PRECEDING),2) as brica_avg_px 
+                    ,ROUND(AVG(IF(books_num = 0,NULL,books/books_num))
+                            OVER (order by date ASC ROWS 74 PRECEDING),2) as books_avg_px              
+                    ,ROUND(AVG(IF(linens_num = 0,NULL,linens/linens_num))
+                            OVER (order by date ASC ROWS 74 PRECEDING),2) as linens_avg_px           
+                    ,ROUND(AVG((clothing+brica+books+linens)/(clothing_num+brica_num+books_num+linens_num))
+                            OVER (order by date ASC ROWS 74 PRECEDING),2) as total_avg_px 
+                    ,ROUND(AVG(customers_num_total)
+                            OVER (order by date ASC ROWS 74 PRECEDING),2) as avg_customers_num
+                    ,ROUND(AVG((clothing+brica+books+linens)/customers_num_total)
+                            OVER (order by date ASC ROWS 74 PRECEDING),2) as avg_customer_spend
+                    FROM takings
+                    WHERE `date` >= :start " .
+                    ($this->shopID ? ' AND shopID = :shopID ' : ' ') ;
+        
+        // prepare query statement
+        $stmt = $this->conn->prepare( $query );
+
+        // bind id of product to be updated
+        $stmt->bindParam(":start", $this->startdate);
+        if ($this->shopID) {
+            $shopID = filter_var($this->shopID, FILTER_SANITIZE_NUMBER_INT);
+            $stmt->bindParam (":shopID", $shopID, PDO::PARAM_INT);
+        }
+
+        // execute query
+        $stmt->execute();
+
+        $num = $stmt->rowCount();
+
+        $sales_arr=array();
+        $sales_arr["shopid"] = $this->shopID?$this->shopID:'';
+        $sales_arr["start"] = $this->startdate;
+        $sales_arr["dates"]=array();
+        $sales_arr["clothing_avg_px"]=array();
+        $sales_arr["books_avg_px"]=array();
+        $sales_arr["linens_avg_px"]=array();
+        $sales_arr["total_avg_px"]=array();
+        $sales_arr["avg_customers_num"]=array();
+        $sales_arr["avg_customer_spend"]=array();
+
+        if($num>0){
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                extract($row);
+
+                array_push($sales_arr["dates"], $row['date']);
+                array_push($sales_arr["clothing_avg_px"], array($row["sales_timestamp"],$row['clothing_avg_px']));
+                array_push($sales_arr["books_avg_px"], array($row["sales_timestamp"],$row['books_avg_px']));
+                array_push($sales_arr["linens_avg_px"], array($row["sales_timestamp"],$row['linens_avg_px']));
+                array_push($sales_arr["total_avg_px"], array($row["sales_timestamp"],$row['total_avg_px']));
+                array_push($sales_arr["avg_customers_num"], array($row["sales_timestamp"],$row['avg_customers_num']));
+                array_push($sales_arr["avg_customer_spend"], array($row["sales_timestamp"],$row['avg_customer_spend']));
+
+            }
+           
+        }       
+
+        return $sales_arr;
+    }
 }
