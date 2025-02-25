@@ -78,8 +78,25 @@ export class ReportService {
     return this.http.get<Summary[]>(salesTabletUrl);
   }
 
+
+  /**
+   * Get the data for the daily sales moving average chart
+   * @returns Observable<SalesChartData>
+   */
   getSalesChartData() {
     return this.http.get<SalesChartData>(salesChartUrl);
+  }
+
+  /**
+   * Provide the data necessary to create the Moving Average sales chart that appears on the Home page
+   * @param start
+   * @param shopid The id of the shop. Almost always equal to '1' for Harrow Road
+   * @returns
+   */
+  getCashRatioMovingAverage(start: string = '', shopid: number = 1) {
+    return this.http.get<MovingAverageSalesChartData>(
+      `${baseUrl}/moving-avg?start=${start}&shopID=${shopid}`,
+    );
   }
 
   /**

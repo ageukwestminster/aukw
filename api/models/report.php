@@ -495,7 +495,7 @@ class Report{
       *    series are incorrect until you have had enough data points to have the correct denominator
       * @return array
       */
-      public function cashToCCRatioMovingAverage() : array{
+      public function cashRatioMovingAverage() : array{
         // The addition of the 61.2million miliseconds is to force the date into the correct day, even during BST
         // The exact number (61.2m) does not really matter as the chart only shows data to the nearest day
         $query = "SELECT `date`, UNIX_TIMESTAMP(`date`)*1000 + 61200000 as sales_timestamp

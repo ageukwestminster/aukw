@@ -158,3 +158,31 @@ export class RaggingChartData {
     this.total = (obj && obj.total) || [];
   }
 }
+
+/**
+ * Stores data to display a line graph of moving averages of cash Vs. credit card receipts
+ */
+export class CashRatioMovingAverageChartData {
+  /**'1' for Harrow Road, '2' for Church Street (now closed) */
+  shopid: number;
+  /** Data starts on this day */
+  start: string;
+  /**The dates of the sales values */
+  dates: [string];
+  /** Each item array is made up of i) unix timestamp*1000 and ii) ratio cash/(cash+CC).
+   *  Timestamp is multiplied by 1000 because timestamps in Javascript are milliseconds */
+  ratio: [[number, number]];
+  avg20: [[number, number]];
+  avgQuarter: [[number, number]];
+
+  constructor(obj?: any) {
+    this.shopid = (obj && obj.shopid) || null;
+    this.start = (obj && obj.shopid) || null;
+    this.dates = (obj && obj.dates) || null;
+    this.ratio = (obj && obj.ratio) || null;
+    this.avg20 = (obj && obj.avg20) || null;
+    this.avgQuarter = (obj && obj.avgQuarter) || null;
+  }
+}
+
+

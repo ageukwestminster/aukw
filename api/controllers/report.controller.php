@@ -369,7 +369,7 @@ class ReportCtl{
    * @return void Output is echoed directly to response.
    * 
    */
-  public static function cashToCCRatioMovingAverage(int $shopid){  
+  public static function cashRatioMovingAverage(int $shopid){  
 
     $model = new \Models\Report();
 
@@ -384,7 +384,7 @@ class ReportCtl{
       $model->shopID = 1;
     }
 
-    echo json_encode($model->cashToCCRatioMovingAverage(), JSON_NUMERIC_CHECK);
+    echo json_encode($model->cashRatioMovingAverage(), JSON_NUMERIC_CHECK);
   }
   
 }

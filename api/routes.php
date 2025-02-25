@@ -79,7 +79,7 @@ $router->mount('/report', function () use ($router) {
     $router->get('/avg-daily-transaction-size/(\d+)', 'ReportCtl@avgDailyTransactionSize');
     $router->get('/avg-daily-txn-by-quarter/(\d+)', 'ReportCtl@avgDailyTransactionSizeByQuarter');
     $router->get('/sales-by-department/(\d+)', 'ReportCtl@salesByDepartment');
-    $router->get('/cc-ratio-moving-avg/(\d+)', 'ReportCtl@cashToCCRatioMovingAverage');
+    $router->get('/cash-ratio-moving-avg/(\d+)', 'ReportCtl@cashRatioMovingAverage');
 
     // Dynamic route with (successive) optional subpatterns: /monthly-sales/shopid(/year(/month(/day)))
     $router->get('/monthly-sales/(\d+)(/\d{4}(/\d{2}(/\d{2})?)?)?', 'ReportCtl@salesByMonth');
