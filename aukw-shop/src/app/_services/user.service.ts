@@ -10,8 +10,7 @@ const baseUrl = `${environment.apiUrl}/user`;
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  constructor(private http: HttpClient) {}
-
+  private http = inject(HttpClient);
   private auditLogService = inject(AuditLogService);
   private authenticationService = inject(AuthenticationService);
 

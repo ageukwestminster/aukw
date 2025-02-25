@@ -1,4 +1,4 @@
-﻿import { Injectable } from '@angular/core';
+﻿import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { environment } from '@environments/environment';
@@ -9,7 +9,7 @@ import { Observable, of } from 'rxjs';
 export class AuditLogService {
   private readonly auditLogUri = `${environment.apiUrl}/auditlog`;
 
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
 
   getAll(): Observable<AuditLog[]> {
     return this.http.get<AuditLog[]>(this.auditLogUri);

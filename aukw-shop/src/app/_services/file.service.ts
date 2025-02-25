@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
 import { environment } from '@environments/environment';
@@ -11,7 +11,7 @@ const baseUrl = `${environment.apiUrl}/xlsx`;
  */
 @Injectable({ providedIn: 'root' })
 export class FileService {
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
 
   upload(file: File) {
     let formData = new FormData();

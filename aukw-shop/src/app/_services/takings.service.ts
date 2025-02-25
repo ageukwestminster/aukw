@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { environment } from '@environments/environment';
@@ -15,7 +15,7 @@ const realmID = `${environment.qboEnterprisesRealmID}`;
 
 @Injectable({ providedIn: 'root' })
 export class TakingsService {
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
 
   getByShopID(shopid: number): Observable<Takings[]> {
     return this.http.get<Takings[]>(`${baseUrl}/shop/${shopid}`);

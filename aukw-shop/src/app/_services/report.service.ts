@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { environment } from '@environments/environment';
@@ -33,7 +33,8 @@ const salesByDeptUrl = baseUrl + `/sales-by-department`;
  */
 @Injectable({ providedIn: 'root' })
 export class ReportService {
-  constructor(private http: HttpClient) {}
+
+  private http = inject(HttpClient);
 
   /**
    * Provide the data necessary to create the Histogram chart that appears on the Home page

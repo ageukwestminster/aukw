@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { environment } from '@environments/environment';
@@ -14,7 +14,7 @@ const baseUrl = `${environment.apiUrl}/shop`;
  */
 @Injectable({ providedIn: 'root' })
 export class ShopService {
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
 
   /**
    * Get a list of the names of all available shops
