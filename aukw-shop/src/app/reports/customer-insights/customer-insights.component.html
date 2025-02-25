@@ -6,16 +6,15 @@
     <div class="d-flex justify-content-between">
       <button
         type="button"
-        routerLink="/reports/customer-insights"
+        routerLink="/reports/sales-histogram"
         class="btn btn-success m-2"
       >
         &lt; Previous
       </button>
       <button
         type="button"
-        routerLink="/reports"
+        routerLink="/reports/cash-ratio"
         class="btn btn-success m-2"
-        [disabled]="true"
       >
         Next &gt;
       </button>
@@ -41,5 +40,5 @@
   <p></p>
 </div>
 <div class="col-sm-10">
-  <cash-ratio-chart [movingAvgChartData]="data"></cash-ratio-chart>
+  
 </div>
