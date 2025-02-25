@@ -111,11 +111,11 @@ export class QBReportService {
    * first date of the quarter that started 5 years ago is used.
    * @returns Observable<RaggingQuarter[]>
    */
-    raggingByQuarter(start: string = ''): Observable<RaggingQuarter[]> {
-      let realmId = environment.qboEnterprisesRealmID;
-      //let url = `${baseUrl}/${realmId}/report/ragging-by-quarter${start?'/?start='+start:''}`;
-      return this.http.get<RaggingQuarter[]>(
-        `${baseUrl}/${realmId}/report/ragging-by-quarter${start?'/?start='+start:''}`,
-      );
-    }
+  raggingByQuarter(start: string = ''): Observable<RaggingQuarter[]> {
+    let realmId = environment.qboEnterprisesRealmID;
+    //let url = `${baseUrl}/${realmId}/report/ragging-by-quarter${start?'/?start='+start:''}`;
+    return this.http.get<RaggingQuarter[]>(
+      `${baseUrl}/${realmId}/report/ragging-by-quarter${start ? '/?start=' + start : ''}`,
+    );
+  }
 }

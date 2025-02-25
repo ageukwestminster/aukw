@@ -36,7 +36,7 @@ export class RaggingReportComponent
   raggingChartData!: RaggingChartData;
 
   private reportService = inject(QBReportService);
-  private customOperator = inject (CustomRxjsOperatorsService);
+  private customOperator = inject(CustomRxjsOperatorsService);
 
   readonly INITIALDATERANGE: DateRangeEnum = DateRangeEnum.LAST_QUARTER;
 
@@ -125,12 +125,15 @@ export class RaggingReportComponent
     data.other.push([timestamp, ragging.other.amount + ragging.rummage.amount]);
     data.total.push([
       timestamp,
-      this.Math.round(100*(ragging.books.amount +
-        ragging.clothing.amount +
-        ragging.household.amount +
-        ragging.shoes.amount +
-        ragging.other.amount +
-        ragging.rummage.amount))/100
+      this.Math.round(
+        100 *
+          (ragging.books.amount +
+            ragging.clothing.amount +
+            ragging.household.amount +
+            ragging.shoes.amount +
+            ragging.other.amount +
+            ragging.rummage.amount),
+      ) / 100,
     ]);
   }
 }

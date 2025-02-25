@@ -150,7 +150,7 @@ export class RaggingChartData {
   total: [[number, number]];
 
   constructor(obj?: any) {
-    this.books = (obj && obj.books) || [] ;
+    this.books = (obj && obj.books) || [];
     this.clothing = (obj && obj.clothing) || [];
     this.household = (obj && obj.household) || [];
     this.shoes = (obj && obj.shoes) || [];

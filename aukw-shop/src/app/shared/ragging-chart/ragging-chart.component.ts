@@ -82,22 +82,21 @@ export class RaggingChartComponent implements OnChanges {
         /**
          * Highcharts.dateFormats is a hook that allows you to define new date format codes.
          * In this case we are defining '%q' to give the quarter numer of the date.
-         * 
+         *
          * The Highcharts.dateFormats allows us to add new date format codes in the format
          * Record<string,TimeFormatCallbackFunction>
          * Where TimeFormatCallbackFunction is of the (timestamp:number) => string
          * It must return a string!
          */
-        Highcharts.dateFormats={
-          "q":  function (timestamp:number):string {
+        Highcharts.dateFormats = {
+          q: function (timestamp: number): string {
             var date = new Date(timestamp),
-            quarter = (Math.floor(date.getUTCMonth() / 3) + 1);
+              quarter = Math.floor(date.getUTCMonth() / 3) + 1;
             return quarter.toString();
           },
         };
-        
+
         Highcharts.chart('ragging-chart', this.options);
-        
       }
     }
   }

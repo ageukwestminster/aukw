@@ -23,7 +23,7 @@ import 'highcharts/es-modules/masters/modules/exporting.src.js';
  * Create two bar charts displaying  monthly sales using Highcarts
  */
 export class MonthlySalesChartComponent implements OnInit {
-  private customOperator = inject (CustomRxjsOperatorsService);
+  private customOperator = inject(CustomRxjsOperatorsService);
   public optionsSimpleBarChart: Highcharts.Options = {
     chart: {
       type: 'column',
@@ -120,7 +120,7 @@ export class MonthlySalesChartComponent implements OnInit {
       )
       .pipe(
         // Convert Observable<MonthlySalesChartData[]> to Observable<MonthlySalesChartData>
-        this.customOperator.fromArrayToElement()
+        this.customOperator.fromArrayToElement(),
       )
       .subscribe({
         next: (value: MonthlySalesChartData) => {
