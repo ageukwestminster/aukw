@@ -484,4 +484,72 @@ class Report{
             }
         }
     }
+
+        /**
+      * Get data to build a chart of moving average cash to credit cards.
+      *
+      * Note:
+      * 1) HighCharts date format is UNIX epoch in miliseconds
+      * 2) MariaDB windows frame method means moving average of start of data
+      *    set will be incorrect. i.e. the rolling average numbers at the start of the
+      *    series are incorrect until you have had enough data points to have the correct denominator
+      * @return array
+      */
+      public function cashToCCRatioMovingAverage() : array{
+        // The addition of the 61.2million miliseconds is to force the date into the correct day, even during BST
+        // The exact number (61.2m) does not really matter as the chart only shows data to the nearest day
+        $query = "SELECT `date`, UNIX_TIMESTAMP(`date`)*1000 + 61200000 as sales_timestamp
+                , cash_to_bank, credit_cards
+                , IF(credit_cards = 0,1,IF(cash_to_bank=0,0,cash_to_bank/(cash_to_bank+credit_cards))) as ratio
+                ,AVG(IF(credit_cards = 0,1,IF(cash_to_bank=0,0,cash_to_bank/(cash_to_bank+credit_cards))))
+                        OVER (order by date ASC ROWS 9 PRECEDING) as ten_day_avg 
+                ,AVG(IF(credit_cards = 0,1,IF(cash_to_bank=0,0,cash_to_bank/(cash_to_bank+credit_cards))))
+                        OVER (order by date ASC ROWS 19 PRECEDING) as twenty_day_avg 
+                ,AVG(IF(credit_cards = 0,1,IF(cash_to_bank=0,0,cash_to_bank/(cash_to_bank+credit_cards))))
+                        OVER (order by date ASC ROWS 74 PRECEDING) as quarter_avg 
+                ,AVG(IF(credit_cards = 0,1,IF(cash_to_bank=0,0,cash_to_bank/(cash_to_bank+credit_cards))))
+                        OVER (order by date ASC ROWS 299 PRECEDING) as year_avg  " .
+                    "FROM takings
+                    WHERE `date` >= :start " .
+                    ($this->shopID ? ' AND shopID = :shopID ' : ' ') ;
+        
+        // prepare query statement
+        $stmt = $this->conn->prepare( $query );
+
+        // bind id of product to be updated
+        $stmt->bindParam(":start", $this->startdate);
+        if ($this->shopID) {
+            $shopID = filter_var($this->shopID, FILTER_SANITIZE_NUMBER_INT);
+            $stmt->bindParam (":shopID", $shopID, PDO::PARAM_INT);
+        }
+
+        // execute query
+        $stmt->execute();
+
+        $num = $stmt->rowCount();
+
+        $sales_arr=array();
+        $sales_arr["shopid"] = $this->shopID?$this->shopID:'';
+        $sales_arr["start"] = $this->startdate;
+        $sales_arr["dates"]=array();
+        $sales_arr["avg20"]=array();
+        $sales_arr["avgQuarter"]=array();
+        $sales_arr["ratio"]=array();
+
+        if($num>0){
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                extract($row);
+
+                array_push($sales_arr["dates"], $row['date']);
+                array_push($sales_arr["ratio"], array($row["sales_timestamp"],$row['ratio']));
+                array_push($sales_arr["avg20"], array($row["sales_timestamp"],$row['twenty_day_avg']));
+                array_push($sales_arr["avgQuarter"], array($row["sales_timestamp"],$row['quarter_avg']));
+
+            }
+           
+        }       
+
+        return $sales_arr;
+    }
+
 }

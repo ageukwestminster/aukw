@@ -362,5 +362,29 @@ class ReportCtl{
       exit(1);
     }
   }
+
+    /**
+   * Retrieve a data set for the chart showing the ratio of cash/creditcard moving averages.
+   *
+   * @return void Output is echoed directly to response.
+   * 
+   */
+  public static function cashToCCRatioMovingAverage(int $shopid){  
+
+    $model = new \Models\Report();
+
+    if(isset($_GET['start']) && \Core\DatesHelper::validateDate($_GET['start'])) {
+        $model->startdate = $_GET['start'];
+    } else {
+      $model->startdate = '2000-01-01';
+    }
+    if ($shopid) {
+      $model->shopID = $shopid;
+    } else {
+      $model->shopID = 1;
+    }
+
+    echo json_encode($model->cashToCCRatioMovingAverage(), JSON_NUMERIC_CHECK);
+  }
   
 }
