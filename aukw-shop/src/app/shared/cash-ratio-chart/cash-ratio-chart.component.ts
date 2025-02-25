@@ -19,12 +19,12 @@ export class CashRatioChartComponent {
       text: 'Ratio of Cash to Total Receipts',
     },
     subtitle: {
-      text: 'Rolling avg. over 1 month and 3 months',
+      text: 'Rolling 3 month average',
     },
 
     // rangeSelector is a property of stockChart only
     rangeSelector: {
-      selected: 4, // All
+      selected: 3, // 5yr
       buttons: [
         {
           type: 'month',
