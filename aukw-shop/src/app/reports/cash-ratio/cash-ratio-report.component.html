@@ -1,9 +1,24 @@
-<div class="col-sm-10">
-  <div class="card-header d-sm-flex justify-content-between">
-    <div class="col-sm-10">
+<div class="card mt-4 col-sm-10">
+  <div class="card-header d-flex justify-content-between">
+    <div class="col-sm">
       <h4>Percentage Receipts Paid in Cash</h4>
     </div>
-    <div class="col-sm-2 d-flex justify-content-center">
+    <div class="d-flex justify-content-between">
+      <button
+        type="button"
+        routerLink="/reports/sales-histogram"
+        class="btn btn-success m-2"
+      >
+        &lt; Previous
+      </button>
+      <button
+        type="button"
+        routerLink="/reports"
+        class="btn btn-success m-2"
+        [disabled]="true"
+      >
+        Next &gt;
+      </button>
       <button
         type="button"
         routerLink="/reports"

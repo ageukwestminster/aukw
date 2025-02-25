@@ -1,10 +1,28 @@
-<div class="card mt-4 col-sm-11">
+<div class="card mt-4 col-sm-10">
   <div class="card-header d-flex justify-content-between">
     <div class="col-sm">
       <h4>Histogram of Daily Sales</h4>
     </div>
-    <div>
-      <button type="button" routerLink="/reports" class="btn btn-outline-dark">
+    <div class="d-flex justify-content-between">
+      <button
+        type="button"
+        routerLink="/reports/sales-list"
+        class="btn btn-success m-2"
+      >
+        &lt; Previous
+      </button>
+      <button
+        type="button"
+        routerLink="/reports/cash-ratio"
+        class="btn btn-success m-2"
+      >
+        Next &gt;
+      </button>
+      <button
+        type="button"
+        routerLink="/reports"
+        class="btn btn-outline-dark m-2"
+      >
         Close &times;
       </button>
     </div>

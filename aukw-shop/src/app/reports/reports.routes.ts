@@ -13,13 +13,13 @@ import { RaggingReportComponent } from './ragging/ragging-report.component';
 import { CashRatioReportComponent } from './cash-ratio/cash-ratio-report.component';
 
 export const REPORTS_ROUTES: Routes = [
+  //sales reports
   { path: '', component: ReportsComponent },
   { path: 'sales-list', component: SalesListComponent },
   { path: 'sales-histogram', component: SalesHistogramComponent },
-  {
-    path: 'daily-transaction-averages',
-    component: DailyTransactionSizeComponent,
-  },
+  { path: 'cash-ratio', component: CashRatioReportComponent },
+
+  // QuickBooks reports
   { path: 'aukw-interco', component: AukwIntercoComponent },
   { path: 'pnl-report', component: PnlReportComponent },
 
@@ -32,5 +32,5 @@ export const REPORTS_ROUTES: Routes = [
     component: DailyTransactionSizeComponent,
   },
   { path: 'ragging', component: RaggingReportComponent },
-  { path: 'cash-ratio', component: CashRatioReportComponent },
+ 
 ];

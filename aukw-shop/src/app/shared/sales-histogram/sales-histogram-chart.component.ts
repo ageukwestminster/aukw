@@ -29,6 +29,9 @@ export class SalesHistogramChartComponent implements OnInit, OnChanges {
     title: {
       text: 'Histogram of Net Daily Sales',
     },
+    subtitle: {
+      text: '', // Subtitle is set dynamically below
+    },
 
     xAxis: [
       {

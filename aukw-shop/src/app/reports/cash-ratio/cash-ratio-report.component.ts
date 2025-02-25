@@ -7,7 +7,7 @@ import { CashRatioChartComponent } from '@app/shared/cash-ratio-chart/cash-ratio
 
 /**  report sahowing the ration between cash and credit card recipts */
 @Component({
-  imports: [CashRatioChartComponent,RouterLink],
+  imports: [CashRatioChartComponent, RouterLink],
   templateUrl: './cash-ratio-report.component.html',
 })
 export class CashRatioReportComponent implements OnInit {
