@@ -59,7 +59,7 @@ export class CashRatioChartComponent {
 
     yAxis: {
       title: {
-        text: 'Percentage',
+        text: 'Percentage (%)',
       },
     },
 
