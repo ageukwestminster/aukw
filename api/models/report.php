@@ -500,7 +500,7 @@ class Report{
         // The exact number (61.2m) does not really matter as the chart only shows data to the nearest day
         $query = "SELECT `date`, UNIX_TIMESTAMP(`date`)*1000 + 61200000 as sales_timestamp
                 , cash_to_bank, credit_cards
-                , IF(credit_cards = 0,100,IF(cash_to_bank=0,0,cash_to_bank/(cash_to_bank+credit_cards))) as ratio".
+                , IF(credit_cards = 0,100,ROUND(100*IF(cash_to_bank=0,0,cash_to_bank/(cash_to_bank+credit_cards)),2)) as ratio".
                 //,AVG(IF(credit_cards = 0,100,100*IF(cash_to_bank=0,0,cash_to_bank/(cash_to_bank+credit_cards))))
                 //        OVER (order by date ASC ROWS 9 PRECEDING) as ten_day_avg 
                 ",ROUND(AVG(IF(credit_cards = 0,100,100*IF(cash_to_bank=0,0,cash_to_bank/(cash_to_bank+credit_cards))))

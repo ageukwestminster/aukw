@@ -30,15 +30,6 @@ export class SalesHistogramChartComponent implements OnInit, OnChanges {
       text: 'Histogram of Net Daily Sales',
     },
 
-    subtitle: {
-      text: '',
-    },
-
-    credits: {
-      text: 'Source Data',
-      href: '/reports/sales-histogram',
-    },
-
     xAxis: [
       {
         title: { text: 'Sales Date' },

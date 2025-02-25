@@ -24,7 +24,7 @@ export class CashRatioChartComponent {
 
     // rangeSelector is a property of stockChart only
     rangeSelector: {
-      selected: 2,
+      selected: 4, // All
       buttons: [
         {
           type: 'month',
@@ -66,6 +66,10 @@ export class CashRatioChartComponent {
     tooltip: {
       xDateFormat: '%A, %e-%b-%Y',
       shared: true,
+      formatter: function () {
+        return `The value for <b>${Highcharts.dateFormat('%e %b %y', 
+          Number.parseFloat(this.key!))}</b> is <b>${Math.round(this.y!*100)/100}%</b>`
+      },
     },
 
     xAxis: {
@@ -93,6 +97,7 @@ export class CashRatioChartComponent {
         data: [],
         type: 'line',
         color: '#800000',
+        visible: false,
       },
       {
         name: '3 month rolling average',
