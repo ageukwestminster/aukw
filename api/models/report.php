@@ -500,14 +500,14 @@ class Report{
         // The exact number (61.2m) does not really matter as the chart only shows data to the nearest day
         $query = "SELECT `date`, UNIX_TIMESTAMP(`date`)*1000 + 61200000 as sales_timestamp
                 , cash_to_bank, credit_cards
-                , IF(credit_cards = 0,1,IF(cash_to_bank=0,0,cash_to_bank/(cash_to_bank+credit_cards))) as ratio".
-                //,AVG(IF(credit_cards = 0,1,IF(cash_to_bank=0,0,cash_to_bank/(cash_to_bank+credit_cards))))
+                , IF(credit_cards = 0,100,IF(cash_to_bank=0,0,cash_to_bank/(cash_to_bank+credit_cards))) as ratio".
+                //,AVG(IF(credit_cards = 0,100,100*IF(cash_to_bank=0,0,cash_to_bank/(cash_to_bank+credit_cards))))
                 //        OVER (order by date ASC ROWS 9 PRECEDING) as ten_day_avg 
-                ",AVG(IF(credit_cards = 0,1,IF(cash_to_bank=0,0,cash_to_bank/(cash_to_bank+credit_cards))))
-                        OVER (order by date ASC ROWS 19 PRECEDING) as twenty_day_avg 
-                ,AVG(IF(credit_cards = 0,1,IF(cash_to_bank=0,0,cash_to_bank/(cash_to_bank+credit_cards))))
-                        OVER (order by date ASC ROWS 74 PRECEDING) as quarter_avg " .
-                //,AVG(IF(credit_cards = 0,1,IF(cash_to_bank=0,0,cash_to_bank/(cash_to_bank+credit_cards))))
+                ",ROUND(AVG(IF(credit_cards = 0,100,100*IF(cash_to_bank=0,0,cash_to_bank/(cash_to_bank+credit_cards))))
+                        OVER (order by date ASC ROWS 19 PRECEDING),2) as twenty_day_avg 
+                ,ROUND(AVG(IF(credit_cards = 0,100,100*IF(cash_to_bank=0,0,cash_to_bank/(cash_to_bank+credit_cards))))
+                        OVER (order by date ASC ROWS 74 PRECEDING),2) as quarter_avg " .
+                //,AVG(IF(credit_cards = 0,100,100*IF(cash_to_bank=0,0,cash_to_bank/(cash_to_bank+credit_cards))))
                 //        OVER (order by date ASC ROWS 299 PRECEDING) as year_avg  " .
                     "FROM takings
                     WHERE `date` >= :start " .

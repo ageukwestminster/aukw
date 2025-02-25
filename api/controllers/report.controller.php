@@ -376,7 +376,7 @@ class ReportCtl{
     if(isset($_GET['start']) && \Core\DatesHelper::validateDate($_GET['start'])) {
         $model->startdate = $_GET['start'];
     } else {
-      $model->startdate = '2000-01-01';
+      $model->startdate = '2018-01-01';
     }
     if ($shopid) {
       $model->shopID = $shopid;

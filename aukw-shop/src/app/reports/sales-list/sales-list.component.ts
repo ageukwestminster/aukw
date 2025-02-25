@@ -19,19 +19,18 @@ export class SalesListComponent extends AbstractChartReportComponent<SalesChartD
   private reportService = inject(ReportService);
 
   override refreshSummary() {
-    this.reportService
-      .getSalesChartData()
-      .pipe(
-        tap({
-          next: (result) => {
-            this.data = result;
-          },
-          error: (error) => {
-            console.log(error);
-          },
-        }),
-      )
-      .subscribe();
+    // Set flag to tell user to expect a wait
+    this.loading = true;
+
+    this.reportService.getSalesChartData().subscribe({
+      next: (result: SalesChartData) => (this.data = result),
+      error: (error: any) => {
+        this.loading = false;
+        this.data = new SalesChartData();
+        this.alertService.error(error, { autoClose: false });
+      },
+      complete: () => (this.loading = false),
+    });
   }
 
   onRowSelected(takingsID: number | null) {

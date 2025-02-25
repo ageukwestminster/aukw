@@ -7,6 +7,7 @@ import {
   AvgDailyTransactionDataByQuarter,
   AvgWeeklySalesData,
   AvgWeeklySalesDataByQuarter,
+  CashRatioMovingAverageChartData,
   DepartmentSalesChartData,
   MonthlySalesChartData,
   SalesByDepartment,
@@ -51,7 +52,7 @@ export class ReportService {
 
   /**
    * Provide the data necessary to create the Moving Average sales chart that appears on the Home page
-   * @param start
+   * @param start An optional date on which to start the data, in ISO 8601 format.
    * @param shopid The id of the shop. Almost always equal to '1' for Harrow Road
    * @returns
    */
@@ -89,13 +90,13 @@ export class ReportService {
 
   /**
    * Provide the data necessary to create the Moving Average sales chart that appears on the Home page
-   * @param start
+   * @param start An optional date on which to start the data, in ISO 8601 format.
    * @param shopid The id of the shop. Almost always equal to '1' for Harrow Road
    * @returns
    */
   getCashRatioMovingAverage(start: string = '', shopid: number = 1) {
-    return this.http.get<MovingAverageSalesChartData>(
-      `${baseUrl}/moving-avg?start=${start}&shopID=${shopid}`,
+    return this.http.get<CashRatioMovingAverageChartData>(
+      `${baseUrl}/cash-ratio-moving-avg/${shopid}?start=${start}`,
     );
   }
 

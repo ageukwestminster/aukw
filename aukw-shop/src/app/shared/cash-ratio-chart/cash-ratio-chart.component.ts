@@ -1,32 +1,25 @@
 import {
   Component,
   Input,
-  OnChanges,
-  OnInit,
   SimpleChanges,
 } from '@angular/core';
 import Highcharts from 'highcharts/es-modules/masters/highstock.src.js'; // From https://github.com/highcharts/highcharts/issues/14183
-import { MovingAverageSalesChartData } from '@app/_models'; // defined in _models/chart_data.ts
-
-/* from https://www.highcharts.com/docs/advanced-chart-features/highcharts-typescript-declarations */
-import 'highcharts/es-modules/masters/modules/accessibility.src.js';
-import 'highcharts/es-modules/masters/modules/exporting.src.js';
-import 'highcharts/es-modules/masters/modules/boost.src.js'; //Always import this last
+import { CashRatioMovingAverageChartData } from '@app/_models'; // defined in _models/chart_data.ts
 
 @Component({
-  selector: 'moving-average',
-  templateUrl: './moving-avg-chart.component.html',
-  standalone: true,
+  selector: 'cash-ratio-chart',
   imports: [],
+  templateUrl: './cash-ratio-chart.component.html',
+  styleUrl: './cash-ratio-chart.component.css'
 })
-export class MovingAverageChartComponent implements OnChanges {
-  @Input() movingAvgChartData?: MovingAverageSalesChartData;
+export class CashRatioChartComponent {
+  @Input() movingAvgChartData?: CashRatioMovingAverageChartData;
   public options: Highcharts.Options = {
     title: {
-      text: 'Charity Shop Daily Takings',
+      text: 'Ratio of Cash to Total Receipts',
     },
     subtitle: {
-      text: 'Daily sales, rolling avg. over 1 month and 3 months',
+      text: 'Rolling avg. over 1 month and 3 months',
     },
 
     // rangeSelector is a property of stockChart only
@@ -66,7 +59,7 @@ export class MovingAverageChartComponent implements OnChanges {
 
     yAxis: {
       title: {
-        text: 'Daily Sales Less Cash Expenses',
+        text: 'Percentage',
       },
     },
 
