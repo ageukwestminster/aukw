@@ -23,6 +23,7 @@ $router = new \Bramus\Router\Router();
 require 'core/config.php';
 require 'core/database.php';
 require 'core/headers.php';
+require 'core/GUID.php';
 require 'core/dateshelper.php';
 require 'core/qboconstants.php';
 

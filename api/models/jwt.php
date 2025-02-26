@@ -19,6 +19,8 @@ use Lcobucci\JWT\Validation\Constraint\LooseValidAt;
 use Lcobucci\JWT\Validation\Constraint\IssuedBy;
 use Lcobucci\JWT\Validation\Constraint\PermittedFor;
 
+use Core\GUID;
+
 /**
  * Provide properties and methods to handle creation, validation 
  * and destruction of JWT access and refresh tokens as part of the authentication process.
@@ -284,7 +286,7 @@ class JWTWrapper{
         $now = new DateTimeImmutable();
 
         $accessTokenExpiry = $now->modify(\Core\Config::read('token.accessExpiry')); // time limit on JWT session tokens
-        $accessJti = $this->GUIDv4();
+        $accessJti = GUID::GUIDv4();
         $accessToken = $this->getToken($user->id, $accessJti, $now, 
                                         $accessTokenExpiry, $user->username, $user->role);  
 
@@ -348,7 +350,7 @@ class JWTWrapper{
         if (empty($tokenExpiry)) {                
             $tokenExpiry = $now->modify(\Core\Config::read('token.refreshExpiry'));
         }
-        $refreshJti = $this->GUIDv4();
+        $refreshJti = GUID::GUIDv4();
         $token = $this->getToken($user_with_token['id'], $refreshJti, $now, $tokenExpiry);
 
         setcookie($this->cookiename, $token, $tokenExpiry->getTimestamp()
@@ -411,50 +413,5 @@ class JWTWrapper{
         $this->expiry = '';
         $this->id = 0;
         $this->jti = '';
-    }
-
-    /**
-    * Returns a GUIDv4 string. Used for token identifiers (aka jti claims).
-    *
-    * Uses the best cryptographically secure method
-    * for all supported pltforms with fallback to an older,
-    * less secure version.
-    *
-    * @param bool $trim If true then have no leading or trailing braces '{}'.
-    * @return string The newly generated GUIDv4 string.
-    */
-    private function GUIDv4 ($trim = true)
-    {
-        $lbrace = $trim ? "" : chr(123);    // "{"
-        $rbrace = $trim ? "" : chr(125);    // "}"
-
-        // Windows
-        if (function_exists('com_create_guid') === true) {
-            if ($trim === true)
-                return trim(com_create_guid(), '{}');
-            else
-                return com_create_guid();
-        }
-
-        // OSX/Linux
-        if (function_exists('openssl_random_pseudo_bytes') === true) {
-            $data = openssl_random_pseudo_bytes(16);
-            $data[6] = chr(ord($data[6]) & 0x0f | 0x40);    // set version to 0100
-            $data[8] = chr(ord($data[8]) & 0x3f | 0x80);    // set bits 6-7 to 10
-            return $lbrace.vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4)).$rbrace;
-        }
-
-        // Fallback (PHP 4.2+)
-        mt_srand((int)((double)microtime() * 10000));
-        $charid = strtolower(md5(uniqid(rand(), true)));
-        $hyphen = chr(45);                  // "-"
-        $guidv4 = $lbrace.
-                substr($charid,  0,  8).$hyphen.
-                substr($charid,  8,  4).$hyphen.
-                substr($charid, 12,  4).$hyphen.
-                substr($charid, 16,  4).$hyphen.
-                substr($charid, 20, 12).
-                $rbrace;
-        return $guidv4;
     }
 }
