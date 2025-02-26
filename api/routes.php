@@ -197,8 +197,10 @@ $router->mount('/qb', function () use ($router) {
     $router->get('/(\d+)/report/ragging-by-quarter', 'QBReportCtl@ragging_by_quarter');
 
     //QB Attachments
-    $router->get('/(\d+)/query/list-attachments', 'QBAttachmentCtl@list_attachments');
-    $router->get('/(\d+)/query/download-attachments', 'QBAttachmentCtl@download_attachments');
+    $router->get('/(\d+)/attachments', 'QBAttachmentCtl@read_one_by_id');
+    $router->get('/(\d+)/download-attachments', 'QBAttachmentCtl@download');
+    $router->post('/(\d+)/attachments', 'QBAttachmentCtl@upload');
+    $router->delete('/(\d+)/attachments', 'QBAttachmentCtl@delete');
 });
 
 /***************/
