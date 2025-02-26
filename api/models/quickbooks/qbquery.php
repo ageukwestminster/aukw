@@ -2,7 +2,7 @@
 
 namespace Models;
 
-use QuickBooksOnline\API\Facades\Bill;
+use QuickBooksOnline\API\Exception\SdkException;
 
 /**
  * Factory class that provides a method to query QBO entities
@@ -78,4 +78,33 @@ class QuickbooksQuery{
     
   }
 
+  /**
+   * Return an array of QBO attachments
+   * 
+   * More information: {@link https://developer.intuit.com/app/developer/qbo/docs/workflows/attach-images-and-notes}
+   * @param string $entity_type_name The QBO entity type name e.g. 'Bill' or 'JournalEntry'
+   * @param int $qb_txn_id The transaction id of the entity that we are querying
+   * @return array Returns an array of attachments
+   */
+  public function query_for_attachments(string $entity_type_name, int $qb_txn_id):array{
+
+    $auth = new QuickbooksAuth();
+    $dataService = $auth->prepare($this->realmid);
+    if ($dataService == false) {
+      return [];
+    }
+
+    $attachments = $dataService->Query("SELECT * FROM attachable WHERE AttachableRef.EntityRef.Type = '" . $entity_type_name 
+        ."' AND AttachableRef.EntityRef.value = '" . $qb_txn_id . "'");
+    $error = $dataService->getLastError();
+    if ($error) {
+        throw new SdkException("The Response message is: " . $error->getResponseBody());
+    }   
+    else if ($attachments) {
+      return $attachments;
+    }
+
+    return [];
+    
+  }  
 }

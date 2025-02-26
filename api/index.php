@@ -28,19 +28,19 @@ require 'core/qboconstants.php';
 
 // Define controllers
 require 'controllers/auditlog.controller.php';
-require 'controllers/qbauth.controller.php';
-require 'controllers/qbbill.controller.php';
-require 'controllers/qbclass.controller.php';
-require 'controllers/qbcompany.controller.php';
-require 'controllers/qbemployee.controller.php';
-require 'controllers/qbitem.controller.php';
-require 'controllers/qbjournal.controller.php';
-require 'controllers/qbpayrolljournal.controller.php';
-require 'controllers/qbpayrollquery.controller.php';
-require 'controllers/qbrealm.controller.php';
-require 'controllers/qbrecurringtxn.controller.php';
-require 'controllers/qbreport.controller.php';
-require 'controllers/qbsalesreceipt.controller.php';
+require 'controllers/quickbooks/qbauth.controller.php';
+require 'controllers/quickbooks/qbbill.controller.php';
+require 'controllers/quickbooks/qbclass.controller.php';
+require 'controllers/quickbooks/qbcompany.controller.php';
+require 'controllers/quickbooks/qbemployee.controller.php';
+require 'controllers/quickbooks/qbitem.controller.php';
+require 'controllers/quickbooks/qbjournal.controller.php';
+require 'controllers/quickbooks/qbpayrolljournal.controller.php';
+require 'controllers/quickbooks/qbpayrollquery.controller.php';
+require 'controllers/quickbooks/qbrealm.controller.php';
+require 'controllers/quickbooks/qbrecurringtxn.controller.php';
+require 'controllers/quickbooks/qbreport.controller.php';
+require 'controllers/quickbooks/qbsalesreceipt.controller.php';
 require 'controllers/report.controller.php';
 require 'controllers/shop.controller.php';
 require 'controllers/takings.controller.php';
@@ -55,23 +55,23 @@ require 'models/payrollbase.php'; // This must be included before the files that
 require 'models/payrollcsv.php'; // Depends on payrollbase.php
 require 'models/payrollxlsx.php'; // Depends on payrollbase.php
 require 'models/payslip.php';
-require 'models/qbauth.php';
-require 'models/qbdatemacroenum.php';
-require 'models/qbbill.php'; // This must be included before the files that depend on it.
-require 'models/qbclass.php';
-require 'models/qbemployee.php';
-require 'models/qbitem.php';
-require 'models/qbjournal.php'; // This must be included before the files that depend on it.
-require 'models/qbnijournal.php'; // Depends on qbjournal.php
-require 'models/qbpayrolljournal.php'; // Depends on qbjournal.php
-require 'models/qbpensionbill.php'; // Depends on qbbill.php
-require 'models/qbquery.php';
-require 'models/qbsalesreceipt.php';
-require 'models/qbshopjournal.php'; // Depends on qbjournal.php
-require 'models/qbrealm.php';
-require 'models/qbrecurringtxn.php';
-require 'models/qbreport.php';
-require 'models/qbtoken.php';
+require 'models/quickbooks/qbauth.php';
+require 'models/quickbooks/qbdatemacroenum.php';
+require 'models/quickbooks/qbbill.php'; // This must be included before the files that depend on it.
+require 'models/quickbooks/qbclass.php';
+require 'models/quickbooks/qbemployee.php';
+require 'models/quickbooks/qbitem.php';
+require 'models/quickbooks/qbjournal.php'; // This must be included before the files that depend on it.
+require 'models/quickbooks/qbnijournal.php'; // Depends on qbjournal.php
+require 'models/quickbooks/qbpayrolljournal.php'; // Depends on qbjournal.php
+require 'models/quickbooks/qbpensionbill.php'; // Depends on qbbill.php
+require 'models/quickbooks/qbquery.php';
+require 'models/quickbooks/qbsalesreceipt.php';
+require 'models/quickbooks/qbshopjournal.php'; // Depends on qbjournal.php
+require 'models/quickbooks/qbrealm.php';
+require 'models/quickbooks/qbrecurringtxn.php';
+require 'models/quickbooks/qbreport.php';
+require 'models/quickbooks/qbtoken.php';
 require 'models/report.php';
 require 'models/rowitem.php';
 require 'models/shop.php';
@@ -81,9 +81,9 @@ require 'models/user.php';
 require 'models/usertoken.php';
 
 // QB Report models
-require 'models/qbreport/qbitemsales.php';
-require 'models/qbreport/qbgeneralledger.php';
-require 'models/qbreport/qbprofitandloss.php';
+require 'models/quickbooks/qbreport/qbitemsales.php';
+require 'models/quickbooks/qbreport/qbgeneralledger.php';
+require 'models/quickbooks/qbreport/qbprofitandloss.php';
 
 // Define routes
 require 'pre_routes.php';
