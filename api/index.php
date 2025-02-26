@@ -29,6 +29,7 @@ require 'core/qboconstants.php';
 // Define controllers
 require 'controllers/auditlog.controller.php';
 require 'controllers/quickbooks/qbauth.controller.php';
+require 'controllers/quickbooks/qbattachment.controller.php';
 require 'controllers/quickbooks/qbbill.controller.php';
 require 'controllers/quickbooks/qbclass.controller.php';
 require 'controllers/quickbooks/qbcompany.controller.php';

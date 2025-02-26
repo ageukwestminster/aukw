@@ -195,6 +195,10 @@ $router->mount('/qb', function () use ($router) {
     $router->get('/(\d+)/report/salesbyitemraw', 'QBReportCtl@sales_by_item_raw');
     $router->get('/(\d+)/report/qma', 'QBReportCtl@quarterly_market_report');
     $router->get('/(\d+)/report/ragging-by-quarter', 'QBReportCtl@ragging_by_quarter');
+
+    //QB Attachments
+    $router->get('/(\d+)/query/list-attachments', 'QBAttachmentCtl@list_attachments');
+    $router->get('/(\d+)/query/download-attachments', 'QBAttachmentCtl@download_attachments');
 });
 
 /***************/

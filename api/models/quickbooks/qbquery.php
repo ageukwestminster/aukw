@@ -2,6 +2,7 @@
 
 namespace Models;
 
+use Core\QuickbooksConstants as QBO;
 use QuickBooksOnline\API\Exception\SdkException;
 
 /**
@@ -86,7 +87,7 @@ class QuickbooksQuery{
    * @param int $qb_txn_id The transaction id of the entity that we are querying
    * @return array Returns an array of attachments
    */
-  public function query_for_attachments(string $entity_type_name, int $qb_txn_id):array{
+  public function list_attachments(string $entity_type_name, string $qb_txn_id):array{
 
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->realmid);
@@ -94,8 +95,12 @@ class QuickbooksQuery{
       return [];
     }
 
-    $attachments = $dataService->Query("SELECT * FROM attachable WHERE AttachableRef.EntityRef.Type = '" . $entity_type_name 
-        ."' AND AttachableRef.EntityRef.value = '" . $qb_txn_id . "'");
+    //$query = "SELECT Id,FileName,FileAccessUri,TempDownloadUri,Size,ContentType FROM attachable 
+    $query = "SELECT * FROM attachable 
+                WHERE AttachableRef.EntityRef.Type = '" . $entity_type_name  
+                ."' AND AttachableRef.EntityRef.value = '" . $qb_txn_id . "'";
+
+    $attachments = $dataService->Query($query);
     $error = $dataService->getLastError();
     if ($error) {
         throw new SdkException("The Response message is: " . $error->getResponseBody());
@@ -106,5 +111,41 @@ class QuickbooksQuery{
 
     return [];
     
+  }  
+
+  /**
+   * Download QBO attachments to the downloads folder
+   * 
+   * More information: {@link https://developer.intuit.com/app/developer/qbo/docs/workflows/attach-images-and-notes}
+   * @param string $entity_type_name The QBO entity type name e.g. 'Bill' or 'JournalEntry'
+   * @param int $qb_txn_id The transaction id of the entity that we are querying
+   * @return array Returns an array of attachments
+   */
+  public function download_attachments(string $entity_type_name, string $qb_txn_id) : array{
+
+    $filenames = array();
+
+    $attachments = $this->list_attachments($entity_type_name, $qb_txn_id);
+    
+    $downloads_dir = \Core\Config::read('file.downloaddir') ?? "./downloads/";
+
+    // Clean download directory, by deleting every file, except index.html
+    // 'grep' code from https://stackoverflow.com/a/12284228/6941165
+    $files = preg_grep('/index\.html$/', glob($downloads_dir.'*'), PREG_GREP_INVERT);
+    foreach($files as $file){
+      if(is_file($file)) {
+          unlink($file);
+      }
+    }
+
+    foreach ($attachments as $attachment) {
+      $filePath = $downloads_dir . $attachment->FileName;
+
+      file_put_contents($filePath , file_get_contents($attachment->TempDownloadUri));
+
+      array_push($filenames, $filePath);
+    }
+    
+    return $filenames;
   }  
 }
