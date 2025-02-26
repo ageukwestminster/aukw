@@ -96,8 +96,8 @@ class QBAttachmentCtl{
   
         $file = array();
         $file['FileName'] = $filePath;
-        $file['Category'] = $attachment->Category;
-        $file['Tag'] = $attachment->Tag;
+        if ($attachment->Category) $file['Category'] = $attachment->Category;
+        if ($attachment->Tag) $file['Tag'] = $attachment->Tag;
         $file['ContentType'] = $attachment->ContentType;
         array_push($filenames, $file);
       }
@@ -117,7 +117,8 @@ class QBAttachmentCtl{
   }  
 
   /**
-   * Download QBO attachments to the downloads folder, for a given entity
+   * Upload files as attachments and attach to the entity given by the
+   * http parameters txn_id and entity_type.
    *
    * @param string $realmid The company ID for the QBO company.
    * @return void Output is echo'd directly to response 
@@ -137,14 +138,23 @@ class QBAttachmentCtl{
       } else {
         throw new \Exception('Missing txn_id http parameter');
       }
+
+      $attachments = array();
  
       foreach ($files as $file) {
-        QuickbooksAttachment::getInstance()
+        $attachment = QuickbooksAttachment::getInstance()
           ->setRealmID($realmid)
           ->setFileName($file->FileName)
           ->setContentType($file->ContentType)
           ->attach_to_entity($entity_type_name, $qb_txn_id);
+        array_push($attachments, $attachment);
       }
+
+      echo json_encode(
+        array(
+            "message" => "Successfully attached ".count($attachments). " attachments."
+            )
+    );
 
     } catch (\Throwable $e) {
       http_response_code(400);  

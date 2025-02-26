@@ -51,11 +51,17 @@ class QuickbooksAttachment{
    */
   protected string $contentType;
   /**
-   * DocumentId of the uploaded attachment from Document Service
+   * Id of the uploaded attachment
    *
    * @var string
    */
-  protected string $documentId;
+  protected string $id;
+    /**
+   * SyncToken of the uploaded attachment
+   *
+   * @var string
+   */
+  protected string $syncToken;
     /**
    * FileName of the attachment. Max Length: 1000
    *
@@ -82,8 +88,8 @@ class QuickbooksAttachment{
   /**
    * Private Document Id setter.
    */
-  public function setId(string $documentId) {
-    $this->documentId = $documentId;
+  public function setId(string $id) {
+    $this->id = $id;
     return $this;
   }
   /**
@@ -114,6 +120,13 @@ class QuickbooksAttachment{
     $this->contentType = $contentType;
     return $this;
   }
+      /**
+   * Private SyncToken setter.
+   */
+  public function setSyncToken(string $syncToken) {
+    $this->syncToken = $syncToken;
+    return $this;
+  }
   /**
    * ContentType getter.
    */
@@ -134,10 +147,17 @@ class QuickbooksAttachment{
   }
 
     /**
+   * File size getter.
+   */
+  public function getSyncToken() : string {
+    return $this->syncToken;
+}
+
+    /**
    * Document Id getter.
    */
   public function getId() : string {
-    return $this->documentId;
+    return $this->id;
 }
 
   /**
@@ -180,7 +200,7 @@ class QuickbooksAttachment{
    * @param int $qb_txn_id The transaction id of the entity that we are querying
    * @return 
    */
-  public function attach_to_entity(string $entity_type_name, string $qb_txn_id){
+  public function attach_to_entity(string $entity_type_name, string $qb_txn_id) : QuickbooksAttachment{
 
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->realmid);
@@ -208,7 +228,17 @@ class QuickbooksAttachment{
       throw new SdkException($resultObj->Fault->Error->Detail);
     }
     
-    return $resultObj;
+    if (property_exists($resultObj, 'Attachable') && $resultObj->Attachable) {
+      /** @var IPPAttachable $attachment */
+      $attachment = $resultObj->Attachable;
+      $this->id = $attachment->Id;
+      $this->syncToken = $attachment->SyncToken;
+      $this->size = $attachment->Size;
+      $this->fileName = $attachment->FileName;
+      return $this;
+    } else {
+      throw new \Exception('Unknown object type returned from upload response.');
+    }
   }
 
 }
