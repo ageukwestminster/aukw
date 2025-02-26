@@ -1,8 +1,4 @@
-import {
-  Component,
-  Input,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, Input, SimpleChanges } from '@angular/core';
 import Highcharts from 'highcharts/es-modules/masters/highstock.src.js'; // From https://github.com/highcharts/highcharts/issues/14183
 import { CashRatioMovingAverageChartData } from '@app/_models'; // defined in _models/chart_data.ts
 
@@ -10,7 +6,7 @@ import { CashRatioMovingAverageChartData } from '@app/_models'; // defined in _m
   selector: 'cash-ratio-chart',
   imports: [],
   templateUrl: './cash-ratio-chart.component.html',
-  styleUrl: './cash-ratio-chart.component.css'
+  styleUrl: './cash-ratio-chart.component.css',
 })
 export class CashRatioChartComponent {
   @Input() movingAvgChartData?: CashRatioMovingAverageChartData;
@@ -67,8 +63,10 @@ export class CashRatioChartComponent {
       xDateFormat: '%A, %e-%b-%Y',
       shared: true,
       formatter: function () {
-        return `The value for <b>${Highcharts.dateFormat('%e %b %y', 
-          Number.parseFloat(this.key!))}</b> is <b>${Math.round(this.y!*100)/100}%</b>`
+        return `The value for <b>${Highcharts.dateFormat(
+          '%e %b %y',
+          Number.parseFloat(this.key!),
+        )}</b> is <b>${Math.round(this.y! * 100) / 100}%</b>`;
       },
     },
 

@@ -8,6 +8,7 @@ import {
   AvgWeeklySalesData,
   AvgWeeklySalesDataByQuarter,
   CashRatioMovingAverageChartData,
+  CustomerInsightsChartData,
   DepartmentSalesChartData,
   MonthlySalesChartData,
   SalesByDepartment,
@@ -27,6 +28,7 @@ const averageWeeklySalesByQUrl = baseUrl + `/avg-weekly-sales-by-quarter`;
 const averageDailyTxnSizeUrl = baseUrl + `/avg-daily-transaction-size`;
 const averageDailyTxnSizeByQUrl = baseUrl + `/avg-daily-txn-by-quarter`;
 const salesByDeptUrl = baseUrl + `/sales-by-department`;
+const customerInsightsUrl = baseUrl + `/customer-insights`;
 
 /**
  * Provides a set of methods to provide data for reports and charts. The data comes from
@@ -97,6 +99,18 @@ export class ReportService {
   getCashRatioMovingAverage(start: string = '', shopid: number = 1) {
     return this.http.get<CashRatioMovingAverageChartData>(
       `${baseUrl}/cash-ratio-moving-avg/${shopid}?start=${start}`,
+    );
+  }
+
+  /**
+   * Provide the data necessary to create the Moving Average sales chart that appears on the Home page
+   * @param start An optional date on which to start the data, in ISO 8601 format.
+   * @param shopid The id of the shop. Almost always equal to '1' for Harrow Road
+   * @returns
+   */
+  salesByDepartmentAndCustomerMovingAverage(start: string = '', shopid: number = 1) {
+    return this.http.get<CustomerInsightsChartData>(
+      `${baseUrl}/customer-insights/${shopid}?start=${start}`,
     );
   }
 

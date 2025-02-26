@@ -569,11 +569,11 @@ class Report{
                             OVER (order by date ASC ROWS 74 PRECEDING),2) as books_avg_px              
                     ,ROUND(AVG(IF(linens_num = 0,NULL,linens/linens_num))
                             OVER (order by date ASC ROWS 74 PRECEDING),2) as linens_avg_px           
-                    ,ROUND(AVG((clothing+brica+books+linens)/(clothing_num+brica_num+books_num+linens_num))
-                            OVER (order by date ASC ROWS 74 PRECEDING),2) as total_avg_px 
+                    ,ROUND(AVG((clothing+brica+books+linens+other)/(clothing_num+brica_num+books_num+linens_num+other_num))
+                            OVER (order by date ASC ROWS 74 PRECEDING),2) as alldepartments_avg_px 
                     ,ROUND(AVG(customers_num_total)
                             OVER (order by date ASC ROWS 74 PRECEDING),2) as avg_customers_num
-                    ,ROUND(AVG((clothing+brica+books+linens)/customers_num_total)
+                    ,ROUND(AVG((clothing+brica+books+linens+other)/customers_num_total)
                             OVER (order by date ASC ROWS 74 PRECEDING),2) as avg_customer_spend
                     FROM takings
                     WHERE `date` >= :start " .
@@ -599,9 +599,10 @@ class Report{
         $sales_arr["start"] = $this->startdate;
         $sales_arr["dates"]=array();
         $sales_arr["clothing_avg_px"]=array();
+        $sales_arr["brica_avg_px"]=array();
         $sales_arr["books_avg_px"]=array();
         $sales_arr["linens_avg_px"]=array();
-        $sales_arr["total_avg_px"]=array();
+        $sales_arr["alldepartments_avg_px"]=array();
         $sales_arr["avg_customers_num"]=array();
         $sales_arr["avg_customer_spend"]=array();
 
@@ -611,9 +612,10 @@ class Report{
 
                 array_push($sales_arr["dates"], $row['date']);
                 array_push($sales_arr["clothing_avg_px"], array($row["sales_timestamp"],$row['clothing_avg_px']));
+                array_push($sales_arr["brica_avg_px"], array($row["sales_timestamp"],$row['brica_avg_px']));
                 array_push($sales_arr["books_avg_px"], array($row["sales_timestamp"],$row['books_avg_px']));
                 array_push($sales_arr["linens_avg_px"], array($row["sales_timestamp"],$row['linens_avg_px']));
-                array_push($sales_arr["total_avg_px"], array($row["sales_timestamp"],$row['total_avg_px']));
+                array_push($sales_arr["alldepartments_avg_px"], array($row["sales_timestamp"],$row['alldepartments_avg_px']));
                 array_push($sales_arr["avg_customers_num"], array($row["sales_timestamp"],$row['avg_customers_num']));
                 array_push($sales_arr["avg_customer_spend"], array($row["sales_timestamp"],$row['avg_customer_spend']));
 

@@ -34,5 +34,4 @@ export const REPORTS_ROUTES: Routes = [
     component: DailyTransactionSizeComponent,
   },
   { path: 'ragging', component: RaggingReportComponent },
- 
 ];

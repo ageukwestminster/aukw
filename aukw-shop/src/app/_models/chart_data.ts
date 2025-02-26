@@ -185,4 +185,39 @@ export class CashRatioMovingAverageChartData {
   }
 }
 
+/**
+ * Stores data to display a line graph of moving averages average item price by department,
+ * by total and average transaction amount per customer.
+ */
+export class CustomerInsightsChartData {
+  /**'1' for Harrow Road, '2' for Church Street (now closed) */
+  shopid: number;
+  /** Data starts on this day */
+  start: string;
+  /**The dates of the sales values */
+  dates: [string];
+  /** Each item array is made up of i) unix timestamp*1000 and ii) ratio cash/(cash+CC).
+   *  Timestamp is multiplied by 1000 because timestamps in Javascript are milliseconds */
+  clothing_avg_px: [[number, number]];
+  brica_avg_px: [[number, number]];
+  books_avg_px: [[number, number]];
+  linens_avg_px: [[number, number]];
+  alldepartments_avg_px: [[number, number]];
+  avg_customers_num: [[number, number]];
+  avg_customers_spend: [[number, number]];
+
+  constructor(obj?: any) {
+    this.shopid = (obj && obj.shopid) || null;
+    this.start = (obj && obj.shopid) || null;
+    this.dates = (obj && obj.dates) || null;
+    this.clothing_avg_px = (obj && obj.clothing_avg_px) || null;
+    this.brica_avg_px = (obj && obj.brica_avg_px) || null;
+    this.books_avg_px = (obj && obj.books_avg_px) || null;
+    this.linens_avg_px = (obj && obj.linens_avg_px) || null;
+    this.alldepartments_avg_px = (obj && obj.alldepartments_avg_px) || null;
+    this.avg_customers_num = (obj && obj.avg_customers_num) || null;
+    this.avg_customers_spend = (obj && obj.avg_customers_spend) || null;
+  }
+}
+
 

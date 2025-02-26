@@ -1,0 +1,39 @@
+<div class="input-group-append">
+  <div class="btn-group" role="group">
+  <button
+    type="button"
+    class="btn btn-success m-2"
+    (click)="showSeries(0)"
+  >
+    Clothing
+  </button>
+  <button
+    type="button"
+    class="btn btn-success m-2"
+    (click)="showSeries(1)"
+  >
+    Brica
+  </button>
+  <button
+    type="button"
+    class="btn btn-success m-2"
+    (click)="showSeries(2)"
+  >
+    Books
+  </button>
+</div>
+</div>
+<div class="input-group-append">
+  <div class="btn-group" role="group" aria-label="Choose department">
+    <button class="btn btn-sm btn-outline-secondary" (click)="showSeries(0)"
+      btnRadio="subscribed" >Clothing</button>
+    <button class="btn btn-sm btn-outline-secondary" (click)="showSeries(1)"
+      btnRadio="available">Bric-a-brac</button>
+    <button 
+      class="btn btn-sm btn-outline-secondary" (click)="showSeries(2)"
+      btnRadio="deleted">Books</button>
+  </div>
+</div>
+<figure>
+  <div id="moving-average"></div>
+</figure>

@@ -3,7 +3,7 @@ import { CashRatioMovingAverageChartData } from '@app/_models';
 import { RouterLink } from '@angular/router';
 
 import { AlertService, ReportService } from '@app/_services';
-import { CashRatioChartComponent } from '@app/shared/cash-ratio-chart/cash-ratio-chart.component';
+import { CashRatioChartComponent } from '@app/shared';
 
 /**  report sahowing the ration between cash and credit card recipts */
 @Component({
