@@ -106,9 +106,11 @@ class QBReportCtl{
   private static function profit_and_loss_raw_impl(string $realmid, $model = null) {  
 
     try {
-      if (!$model) $model = new \Models\QBProfitAndLossReport();
+      if (!$model) {
+        $model = new \Models\QBProfitAndLossReport();        
+        QBReportCtl::GetHttpDateParameters($model);
+      }
       $model->realmid = $realmid;
-      QBReportCtl::GetHttpDateParameters($model);
       return $model->run();
 
     } catch (\Exception $e) {
