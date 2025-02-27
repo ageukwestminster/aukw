@@ -219,5 +219,3 @@ export class CustomerInsightsChartData {
     this.avg_customers_spend = (obj && obj.avg_customers_spend) || null;
   }
 }
-
-

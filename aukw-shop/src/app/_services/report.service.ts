@@ -36,7 +36,6 @@ const customerInsightsUrl = baseUrl + `/customer-insights`;
  */
 @Injectable({ providedIn: 'root' })
 export class ReportService {
-
   private http = inject(HttpClient);
 
   /**
@@ -81,7 +80,6 @@ export class ReportService {
     return this.http.get<Summary[]>(salesTabletUrl);
   }
 
-
   /**
    * Get the data for the daily sales moving average chart
    * @returns Observable<SalesChartData>
@@ -108,7 +106,10 @@ export class ReportService {
    * @param shopid The id of the shop. Almost always equal to '1' for Harrow Road
    * @returns
    */
-  salesByDepartmentAndCustomerMovingAverage(start: string = '', shopid: number = 1) {
+  salesByDepartmentAndCustomerMovingAverage(
+    start: string = '',
+    shopid: number = 1,
+  ) {
     return this.http.get<CustomerInsightsChartData>(
       `${baseUrl}/customer-insights/${shopid}?start=${start}`,
     );

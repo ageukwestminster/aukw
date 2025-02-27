@@ -11,7 +11,7 @@ import { CustomerInsightsChartData } from '@app/_models'; // defined in _models/
 export class CustomerInsightsChartComponent {
   @Input() movingAvgChartData?: CustomerInsightsChartData;
 
-  private visibility:boolean[] = [true, false, false, false, false]
+  private visibility: boolean[] = [true, false, false, false, false];
 
   public options: Highcharts.Options = {
     title: {
@@ -95,8 +95,8 @@ export class CustomerInsightsChartComponent {
       layout: 'vertical',
       verticalAlign: 'top',
       y: 100,
-      shadow: true
-  },
+      shadow: true,
+    },
 
     series: [
       {
@@ -179,20 +179,18 @@ export class CustomerInsightsChartComponent {
           this.options.series[index].visible = true;
         } else {
           this.options.series[index].visible = false;
-        }       
+        }
       }
       (<any>this.options.series[0]).data =
-      this.movingAvgChartData.clothing_avg_px;
-    (<any>this.options.series[1]).data =
-      this.movingAvgChartData.brica_avg_px;
-    (<any>this.options.series[2]).data =
-      this.movingAvgChartData.books_avg_px;
-    (<any>this.options.series[3]).data =
-      this.movingAvgChartData.linens_avg_px;
-    (<any>this.options.series[4]).data =
-      this.movingAvgChartData.alldepartments_avg_px;
+        this.movingAvgChartData.clothing_avg_px;
+      (<any>this.options.series[1]).data = this.movingAvgChartData.brica_avg_px;
+      (<any>this.options.series[2]).data = this.movingAvgChartData.books_avg_px;
+      (<any>this.options.series[3]).data =
+        this.movingAvgChartData.linens_avg_px;
+      (<any>this.options.series[4]).data =
+        this.movingAvgChartData.alldepartments_avg_px;
 
       Highcharts.stockChart('moving-average', this.options); // Re-draw
     }
-  }  
+  }
 }
