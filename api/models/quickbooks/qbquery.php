@@ -2,7 +2,6 @@
 
 namespace Models;
 
-use Core\QuickbooksConstants as QBO;
 use QuickBooksOnline\API\Exception\SdkException;
 
 /**
@@ -109,9 +108,36 @@ class QuickbooksQuery{
     else if ($attachments) {
       return $attachments;
     }
-
-    return [];
     
   }  
  
+    /**
+   * Return an array of QBO attachment, given by id
+   * @param string $realmid The company ID for the QBO company.
+   * @param string $id The ID of the attachment.
+   * @return array Returns an array of attachments
+   */
+  public function find_attachment(string $id):array{
+
+    $auth = new QuickbooksAuth();
+    $dataService = $auth->prepare($this->realmid);
+    if ($dataService == false) {
+      return [];
+    }
+
+    //$query = "SELECT Id,FileName,FileAccessUri,TempDownloadUri,Size,ContentType FROM attachable 
+    $query = "SELECT * FROM attachable 
+                WHERE Id = '" . $id  . "'";
+
+    /** @var QuickBooksOnline\API\Data\IPPAttachable[] $attachments */
+    $attachment = $dataService->Query($query);
+    $error = $dataService->getLastError();
+    if ($error) {
+        throw new SdkException("The Response message is: " . $error->getResponseBody());
+    }   
+    else if ($attachment) {
+      return $attachment;
+    }
+    
+  }  
 }

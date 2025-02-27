@@ -7,6 +7,7 @@ use InvalidArgumentException;
 use Models\QuickbooksQuery;
 use Models\QuickbooksAttachment;
 use QuickBooksOnline\API\Exception\SdkException;
+use QuickBooksOnline\API\Data\IPPAttachable;
 
 /**
  * Controller to accomplish QBO Attachment related tasks, such as listing
@@ -23,7 +24,7 @@ class QBAttachmentCtl{
    * @param string $realmid The company ID for the QBO company.
    * @return void Output is echo'd directly to response 
    */
-  public static function read_one_by_id(string $realmid):void{  
+  public static function read_by_entity(string $realmid):void{  
 
     try {
       if (isset($_GET['entity_type']) && !empty($_GET['entity_type'])) {
@@ -41,6 +42,33 @@ class QBAttachmentCtl{
         ->list_attachments($entity_type_name, $qb_txn_id);
 
       echo json_encode(array_values($attachments)); 
+    } catch (\Exception $e) {
+      http_response_code(400);  
+      echo json_encode(
+          array(
+              "message" => "Unable to download attachments. ",
+              "extra" => $e->getMessage()
+              )
+      );
+      exit(1);
+    }
+  }
+
+    /**
+   * Query QBO for details of a single attachment, given by id
+   *
+   * @param string $realmid The company ID for the QBO company.
+   * @param string $id The ID of the attachment.
+   * @return void Output is echo'd directly to response 
+   */
+  public static function read_by_id(string $realmid, string $id):void{  
+
+    try {
+      $attachment = QuickbooksQuery::getInstance()
+        ->setRealmID($realmid)
+        ->find_attachment($id);
+
+      echo json_encode($attachment[0], JSON_NUMERIC_CHECK); 
     } catch (\Exception $e) {
       http_response_code(400);  
       echo json_encode(
@@ -117,118 +145,84 @@ class QBAttachmentCtl{
   }  
 
   /**
-   * Upload files as attachments and attach to the entity given by the
-   * http parameters txn_id and entity_type.
-   *
+   * Create multiple QBO Attachments from the HTTP Post body text.
+   * Files will be uploaded to QBO.
+   * Format of request body:
+   * {
+   *    "entityRefs": object[],
+   *      "attachments": {
+   *         "files": object[],
+   *         "notes": string[]
+   *     }
+   * }
    * @param string $realmid The company ID for the QBO company.
    * @return void Output is echo'd directly to response 
    */
-  public static function upload(string $realmid):void{  
+  public static function create(string $realmid):void{  
 
     try {
-      $files = json_decode(file_get_contents("php://input"));
 
-      if (isset($_GET['entity_type']) && !empty($_GET['entity_type'])) {
-        $entity_type_name = $_GET['entity_type'];
-      } else {
-        throw new \Exception('Missing entity_type http parameter');
+      // Check HTTP body data is of the right format
+      $data = json_decode(file_get_contents("php://input"));
+      if (!$data || !property_exists($data,'attachments') || !is_object($data->attachments)) {
+        throw new InvalidArgumentException("Property 'attachments' is missing or is not an object.");
       }
-      if (isset($_GET['txn_id']) && !empty($_GET['txn_id'])) {
-        $qb_txn_id = $_GET['txn_id'];
-      } else {
-        throw new \Exception('Missing txn_id http parameter');
+      if (!property_exists($data->attachments,'files') && !property_exists($data->attachments,'notes')) {
+        throw new InvalidArgumentException("Must provide either 'files' or 'notes' properties in 'attachments' object.");
       }
-
-      $attachments = array();
+      if ((property_exists($data->attachments,'files') && !is_array($data->attachments->files)) 
+            || (property_exists($data->attachments,'notes') && !is_array($data->attachments->notes))) {
+        throw new InvalidArgumentException("Must provide either 'files' or 'notes' and it must be an array.");
+      }
+      if (property_exists($data->attachments,'files')) {
+        $files = $data->attachments->files;
+      } else {
+        $files = [];
+      }
+      if (property_exists($data->attachments,'notes')) {
+        $notes = $data->attachments->notes;
+      } else {
+        $notes = [];
+      }
+      if (property_exists($data,'attachmentRefs') && is_array($data->attachmentRefs)) {
+        $attachmentRefs = $data->attachmentRefs;
+      } else {
+        $attachmentRefs = [];
+      }
  
+      $attachments = array();
       foreach ($files as $file) {
-        $attachment = QuickbooksAttachment::getInstance()
+        $model = QuickbooksAttachment::getInstance()
           ->setRealmID($realmid)
           ->setFileName($file->FileName)
-          ->setContentType($file->ContentType)
-          ->attach_to_entity($entity_type_name, $qb_txn_id);
-        array_push($attachments, $attachment);
+          ->setAttachmentRefs($attachmentRefs)
+          ->setContentType($file->ContentType);
+
+        $simplifiedQboAttachment = $model->upload(); 
+        array_push($attachments, $simplifiedQboAttachment);
+      }
+      foreach ($notes as $note) {
+        $simplifiedQboAttachment = QuickbooksAttachment::getInstance()
+          ->setRealmID($realmid)
+          ->setNote($note)
+          ->setAttachmentRefs($attachmentRefs)
+          ->create_note();
+
+        array_push($attachments, $simplifiedQboAttachment);
       }
 
-      echo json_encode(
-        array(
-            "message" => "Successfully attached ".count($attachments). " attachments."
-            )
-    );
+      echo json_encode($attachments, JSON_NUMERIC_CHECK);    
 
     } catch (\Throwable $e) {
       http_response_code(400);  
       echo json_encode(
           array(
-              "message" => "Unable to attach attachments. ",
+              "message" => "Unable to create attachments. ",
               "extra" => $e->getMessage()
               )
       );
       exit(1);
     }
-  }  
-
-  /**
-   * Download QBO attachments to the downloads folder, for a given entity
-   *
-   * @param string $realmid The company ID for the QBO company.
-   * @return void Output is echo'd directly to response 
-   */
-  public static function delete(string $realmid):void{  
-
-    throw new \Exception('Not implemented');
-/*
-    try {
-      if (isset($_GET['entity_type']) && !empty($_GET['entity_type'])) {
-        $entity_type_name = $_GET['entity_type'];
-      } else {
-        throw new \Exception('Missing entity_type http parameter');
-      }
-      if (isset($_GET['txn_id']) && !empty($_GET['txn_id'])) {
-        $qb_txn_id = $_GET['txn_id'];
-      } else {
-        throw new \Exception('Missing txn_id http parameter');
-      }
-
-      $attachments = QuickbooksQuery::getInstance()
-      ->setRealmID($realmid)
-      ->list_attachments($entity_type_name, $qb_txn_id);
-
-      if (!$attachments || !is_array($attachments) || !count($attachments)) {
-        throw new \Exception('No attachments found.');
-      }
-
-      $auth = new \Models\QuickbooksAuth();
-      $dataService = $auth->prepare($realmid);
-      if ($dataService == false) {
-        throw new \Exception('Unable to initialize DataService.');
-      }
-
-      foreach($attachments as $attachment){
-        // This always fails for some reason
-        $dataService->Delete($attachment);
-
-        $error = $dataService->getLastError();
-        if ($error) {
-          throw new SdkException("The Response message is: " . $error->getResponseBody());
-      } 
-      }
-      echo json_encode(
-        array(
-            "message" => count($attachments)." attachment(s) deleted from Entity. "
-            )
-      );
-
-    } catch (\Throwable $e) {
-      http_response_code(400);  
-      echo json_encode(
-          array(
-              "message" => "Unable to delete attachments. ",
-              "extra" => $e->getMessage()
-              )
-      );
-      exit(1);
-    }*/
-  }  
+  }
 
 }
