@@ -200,7 +200,6 @@ $router->mount('/qb', function () use ($router) {
     $router->get('/(\d+)/attachments', 'QBAttachmentCtl@read_by_entity');
     $router->get('/(\d+)/attachment/(\w+)', 'QBAttachmentCtl@read_by_id');
     $router->get('/(\d+)/download-attachments', 'QBAttachmentCtl@download');
-    $router->get('/(\d+)/attachments/no-links', 'QBAttachmentCtl@read_no_links');
     $router->post('/(\d+)/attachments', 'QBAttachmentCtl@create');
 });
 

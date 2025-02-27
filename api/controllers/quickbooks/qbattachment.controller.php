@@ -146,7 +146,9 @@ class QBAttachmentCtl{
 
   /**
    * Create multiple QBO Attachments from the HTTP Post body text.
-   * Files will be uploaded to QBO.
+   * It creates separate attachments for each item in the files array and
+   * each item in the notes array.
+   * In addition, for each item in the files array, the file will be uploaded to QBO.
    * Format of request body:
    * {
    *    "entityRefs": object[],
@@ -191,23 +193,23 @@ class QBAttachmentCtl{
       }
  
       $attachments = array();
+      
       foreach ($files as $file) {
-        $model = QuickbooksAttachment::getInstance()
+        $simplifiedQboAttachment = QuickbooksAttachment::getInstance()
           ->setRealmID($realmid)
           ->setFileName($file->FileName)
           ->setAttachmentRefs($attachmentRefs)
-          ->setContentType($file->ContentType);
-
-        $simplifiedQboAttachment = $model->upload(); 
+          ->setContentType($file->ContentType)
+          ->upload(); 
         array_push($attachments, $simplifiedQboAttachment);
       }
+
       foreach ($notes as $note) {
         $simplifiedQboAttachment = QuickbooksAttachment::getInstance()
           ->setRealmID($realmid)
           ->setNote($note)
           ->setAttachmentRefs($attachmentRefs)
           ->create_note();
-
         array_push($attachments, $simplifiedQboAttachment);
       }
 
