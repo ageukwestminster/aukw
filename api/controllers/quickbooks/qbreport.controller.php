@@ -57,6 +57,7 @@ class QBReportCtl{
   private static function profit_and_loss_impl(string $realmid) : array {
 
     $model = new \Models\QBProfitAndLossReport();
+    QBReportCtl::GetHttpDateParameters($model);
 
     try {
 
@@ -311,7 +312,8 @@ class QBReportCtl{
       }
 
       // Find donations
-      if ($pnlReport['otherincome'] && property_exists($pnlReport['otherincome'], 'rows')) {
+      if (array_key_exists('otherincome',$pnlReport) && 
+                  property_exists($pnlReport['otherincome'], 'rows')) {
         foreach ($pnlReport['otherincome']->rows as $rowItem) {
           if ($rowItem->displayName == 'Donations to Parent') {
             $pnlReport['donations'] = $rowItem;

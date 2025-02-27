@@ -161,7 +161,7 @@
               </td>
               <td class="text-end border-tb2">
                 {{
-                  data.grossprofit.previousValue - data.grossprofit.currentValue
+                  data.grossprofit.currentValue - data.grossprofit.previousValue
                     | number: "1.0-0"
                 }}
               </td>
@@ -179,7 +179,7 @@
                   {{ item.previousValue | number: "1.0-0" }}
                 </td>
                 <td class="text-end">
-                  {{ item.previousValue - item.currentValue | number: "1.0-0" }}
+                  {{ item.currentValue - item.previousValue | number: "1.0-0" }}
                 </td>
               </tr>
             </ng-container>
@@ -213,7 +213,7 @@
               </td>
               <td class="text-end border-tb">
                 {{
-                  data.expenses.previousValue - data.expenses.currentValue
+                  data.expenses.currentValue - data.expenses.previousValue
                     | number: "1.0-0"
                 }}
               </td>
@@ -228,8 +228,8 @@
               </td>
               <td class="text-end">
                 {{
-                  data.netoperatingincome.previousValue -
-                    data.netoperatingincome.currentValue | number: "1.0-0"
+                  data.netoperatingincome.currentValue -
+                    data.netoperatingincome.previousValue | number: "1.0-0"
                 }}
               </td>
             </tr>
@@ -247,7 +247,7 @@
                 </td>
                 <td class="text-end">
                   {{
-                    Math.round(item.previousValue - item.currentValue)
+                    Math.round(item.currentValue - item.previousValue)
                       | number: "1.0-0"
                   }}
                 </td>
@@ -303,8 +303,8 @@
               </td>
               <td class="text-end border-tb">
                 {{
-                  data.netotherincome.previousValue -
-                    data.netotherincome.currentValue | number: "1.0-0"
+                  data.netotherincome.currentValue -
+                    data.netotherincome.previousValue | number: "1.0-0"
                 }}
               </td>
             </tr>
@@ -318,7 +318,7 @@
               </td>
               <td class="text-end border-bb">
                 {{
-                  data.netincome.previousValue - data.netincome.currentValue
+                  data.netincome.currentValue - data.netincome.previousValue
                     | number: "1.0-0"
                 }}
               </td>
