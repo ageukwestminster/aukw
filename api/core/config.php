@@ -82,7 +82,7 @@ Config::write('token.cookiename', 'refreshToken');
 Config::write('token.cookiepath', Config::read('api.path') . 'auth');
 Config::write('token.cookiesecure', false);
 
-// Quickbooks SDK settings
+// QuickBooks SDK settings
 Config::write('qb.authmode', 'oauth2');
 Config::write('qb.authrequesturi', 'https://appcenter.intuit.com/connect/oauth2');
 Config::write('qb.tokenendpointuri', 'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer');

@@ -181,7 +181,7 @@ class TakingsCtl{
       if ($model->patch_quickbooks()) {
         echo json_encode(
           array(
-            "message" => "Takings with id=$model->id was patched to set Quickbooks to "
+            "message" => "Takings with id=$model->id was patched to set QuickBooks to "
             . $model->quickbooks .".",
             "id" => $model->id)
             , JSON_NUMERIC_CHECK);

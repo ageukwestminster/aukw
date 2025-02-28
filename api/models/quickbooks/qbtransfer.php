@@ -2,16 +2,16 @@
 
 namespace Models;
 
-use QuickBooksOnline\API\Facades\Bill;
+use QuickBooksOnline\API\Facades\Transfer;
 use QuickBooksOnline\API\Exception\SdkException;
+use QuickBooksOnline\API\Data\IPPIntuitEntity;
 
 /**
- * Factory class that provides limited CRUD ability for QBO Bills, specifically
- * the bill creqated each month for pension contributions.
+ * Factory class that provides data about QBO Transfers.
  * 
  * @category Model
  */
-class QuickbooksBill{
+class QuickbooksTransfer{
  
   /**
    * The QBO id of the Quickbooks Class.
@@ -28,32 +28,37 @@ class QuickbooksBill{
   protected string $realmid;
 
   /**
-   * The transaction date of the Bill
+   * The transaction date of the Transfer
    *
    * @var string
    */
   protected string $TxnDate;  
 
   /**
-   * The Reference number for the transaction. Does not have to be unique.
+   * The number of the 'from' account
+   *
+   * @var int
+   */
+  protected int $fromAccountNo;  
+
+  /**
+   * The number of the 'to' account
+   *
+   * @var int
+   */
+  protected int $toAccountNo;  
+  /**
+   * The amount of money to transfer, must be positive and non-zero
+   *
+   * @var float
+   */
+  protected float $amount; 
+  /**
+   * A memo about the transfer
    *
    * @var string
    */
-  protected string $DocNumber;  
-
-  /**
-   * Salary sacrifice total
-   *
-   * @var float
-   */
-  protected float $salarySacrificeTotal;  
-
-  /**
-   * Employee pension Contribution total
-   *
-   * @var float
-   */
-  protected float $employeePensContribTotal; 
+  protected string $privateNote; 
 
   /**
    * ID setter
@@ -70,14 +75,29 @@ class QuickbooksBill{
     $this->TxnDate = $txnDate;
     return $this;
   }
-
   /**
-   * Reference number setter.
+   * 
+   * amount setter.
    */
-  public function setDocNumber(string $docNumber) {
-      $this->DocNumber = $docNumber;
+  public function setAmount(string $amount) {
+    $this->amount = $amount;
+    return $this;
+}
+  /**
+   * From Account number setter.
+   */
+  public function setFromAccountNo(string $fromAccountNo) {
+      $this->fromAccountNo = $fromAccountNo;
       return $this;
   }
+
+  /**
+   * To Account number setter.
+   */
+  public function setToAccountNo(string $toAccountNo) {
+    $this->toAccountNo = $toAccountNo;
+    return $this;
+}  
 
   /**
    * Private realmID setter.
@@ -88,28 +108,25 @@ class QuickbooksBill{
   }
 
   /**
-   * Salary Sacrifice Total setter
+   * Private note setter.
    */
-  public function setSalarySacrificeTotal(float $salarySacrificeTotal) {
-    $this->salarySacrificeTotal = $salarySacrificeTotal;
+  public function setPrivateNote(string $privateNote) {
+    $this->privateNote = $privateNote;
     return $this;
   }
 
   /**
-   * Employee Pension Contribution Total setter
+   * 'To' account number getter.
    */
-  public function setEmployeePensContribTotal(float $employeePensContribTotal) {
-    $this->employeePensContribTotal = $employeePensContribTotal;
-    return $this;
+  public function getToAccountNo() : int {
+    return $this->toAccountNo;
   }
-
   /**
-   * Reference number getter.
+   * 'From' account number getter.
    */
-  public function getDocNumber() : string {
-    return $this->DocNumber;
+  public function getFromAccountNo() : int {
+    return $this->fromAccountNo;
   }
-
   /**
    * realmID getter.
    */
@@ -123,7 +140,18 @@ class QuickbooksBill{
   public function getTxnDate() : string {
       return $this->TxnDate;
   }
-
+  /**
+   * Private Note getter.
+   */
+  public function getPrivateNote() : string {
+    return $this->privateNote;
+  }
+  /**
+   * Amount getter.
+   */
+  public function getAmount() : float {
+    return $this->amount;
+  }
   /**
    * Constructor
    */
@@ -137,7 +165,7 @@ class QuickbooksBill{
   }
 
   /**
-   * Return details of the Bill identified by $id
+   * Return details of the Transfer identified by $id
    * 
    * @return IPPIntuitEntity Returns an item of specified Id.
    * 
@@ -151,7 +179,7 @@ class QuickbooksBill{
       }
 
       $dataService->forceJsonSerializers();
-      $item = $dataService->FindbyId('Bill', $this->id);
+      $item = $dataService->FindbyId('Transfer', $this->id);
       $error = $dataService->getLastError();
       if ($error) {
         throw new SdkException("The QBO Response message is: " . $error->getResponseBody());
@@ -162,7 +190,7 @@ class QuickbooksBill{
   }
 
   /**
-   * Push a new array describing a single line of a QBO bill into the given array
+   * Push a new array describing a single line of a QBO Transfer into the given array
    * Helper function used in create.
    *
    * @param mixed $line_array The given array
@@ -175,7 +203,7 @@ class QuickbooksBill{
    * @return void
    * 
    */
-  protected function bill_line(&$line_array, $description, $amount, 
+  protected function transfer_line(&$line_array, $description, $amount, 
                                             $class, $account, $taxcode) {
 
     if (abs($amount) <= 0.005) return;
@@ -193,38 +221,28 @@ class QuickbooksBill{
   }
 
   /**
-   * Delete a bill from the QB system.
+   * Delete a Transfer from the QB system.
    *
    * @return bool 'true' if success.
    * 
    */
   public function delete(): bool{
     $auth = new QuickbooksAuth();
-    try{
-      $dataService = $auth->prepare($this->realmid);
-    }
-    catch (\Exception $e) {
-      http_response_code(401);  
-      echo json_encode(
-        array("message" =>  $e->getMessage() )
-      );
-      return false;
-    }
-
+    $dataService = $auth->prepare($this->realmid);
     if ($dataService == false) {
-      return false;
+      throw new \Exception('Unable to initialize DataService.');
     }
 
     // Do not use $dataService->FindbyId to create the entity to delete
     // Use this simple representation instead
     // The problem is that FindbyId forces use of JSON and that doesnt work 
     // with the delete uri call
-    $bill = Bill::create([
+    $item = Transfer::create([
       "Id" => $this->id,
       "SyncToken" => "0"
     ]);
     
-    $dataService->Delete($bill);
+    $dataService->Delete($item);
 
     $error = $dataService->getLastError();
     if ($error) {
@@ -234,5 +252,37 @@ class QuickbooksBill{
     }
   }  
 
+  /**
+   * Create this bill in QBO
+   * 
+   * @return IPPIntuitEntity On success return an array with details of the new object. On failure return 'false'.
+   */
+  public function create() {
 
+    $auth = new QuickbooksAuth();
+    $dataService = $auth->prepare($this->realmid);
+    if ($dataService == false) {
+      throw new \Exception('Unable to initialize DataService.');
+    }
+
+    $transfer = Transfer::create([
+      "TxnDate" => $this->TxnDate,
+      "Amount" => strval($this->amount),
+      "PrivateNote" => $this->privateNote,
+      "FromAccountRef" => [
+        "value" => strval($this->fromAccountNo)
+      ],
+      "ToAccountRef" => [
+        "value" => strval($this->toAccountNo)
+      ],
+    ]);
+    /** @var IPPIntuitEntity $result */
+    $result = $dataService->Add($transfer);
+    $error = $dataService->getLastError();
+    if ($error) {
+      throw new SdkException("The QBO Response message is: " . $error->getResponseBody());
+    } else {      
+      return $result;
+    }
+  }
 }

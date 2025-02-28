@@ -107,11 +107,11 @@ $router->mount('/shop', function () use ($router) {
 });
 
 /*********************/
-/* Quickbooks Routes */
+/* QuickBooks Routes */
 /*********************/
 $router->mount('/qb', function () use ($router) {
     // The first parameter is realmid, as is customary with the QBO api
-    // The second param is the Quickbooks Journal Id. This number is not easily 
+    // The second param is the QuickBooks Journal Id. This number is not easily 
     // seen on the normal QB website but it can been seen in Audit Log.
     // It is not the DocNumber which can be seen when adding/editing on QBO.
     $router->get('/(\d+)/journal/(\d+)', 'QBJournalCtl@read_one');
@@ -124,7 +124,7 @@ $router->mount('/qb', function () use ($router) {
     // QB Payroll Journal for shop (aka 'Enterprises')
     $router->post('/(\d+)/journal/enterprises', 'QBPayrollJournalCtl@create_enterprises_journal');
 
-    // The 2nd param is the Quickbooks Journal Id. This number is not easily seen on 
+    // The 2nd param is the QuickBooks Journal Id. This number is not easily seen on 
     // the normal QB website but it can been seen in Audit Log.
     // It is not the DocNumber which can be seen when adding/editing on QBO.
     $router->get('/(\d+)/salesreceipt/(\w+)', 'QBSalesReceiptCtl@read_one');
@@ -201,6 +201,12 @@ $router->mount('/qb', function () use ($router) {
     $router->get('/(\d+)/attachment/(\w+)', 'QBAttachmentCtl@read_by_id');
     $router->get('/(\d+)/download-attachments', 'QBAttachmentCtl@download');
     $router->post('/(\d+)/attachments', 'QBAttachmentCtl@create');
+
+    // QB Transfer
+    $router->get('/(\d+)/transfer/(\w+)', 'QBTransferCtl@read_one');
+    $router->post('/(\d+)/transfer', 'QBTransferCtl@create');                                 
+    $router->delete('/(\d+)/transfer/(\w+)', 'QBTransferCtl@delete');
+    $router->post('/(\d+)/enterprises-interco', 'QBTransferCtl@create_enterprises_interco');  
 });
 
 /***************/

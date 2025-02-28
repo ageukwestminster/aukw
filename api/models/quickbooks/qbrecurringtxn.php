@@ -82,7 +82,7 @@ class QuickbooksRecurringTransaction{
     $recurringTransaction = $dataService->FindbyId('recurringtransaction', $this->id);
     $error = $dataService->getLastError();
     if ($error) {
-      throw new \Exception("The Response message is: " . $error->getResponseBody() . "\n");
+      throw new \Exception("The QBO Response message is: " . $error->getResponseBody() . "\n");
     }
     else {
       if (property_exists($recurringTransaction, 'RecurringTransaction')) {
@@ -111,7 +111,7 @@ class QuickbooksRecurringTransaction{
     $transactions = $dataService->recurringTransaction('SELECT * FROM RecurringTransaction');
     $error = $dataService->getLastError();
     if ($error) {
-      throw new \Exception("The Response message is: " . $error->getResponseBody() . "\n");
+      throw new \Exception("The QBO Response message is: " . $error->getResponseBody() . "\n");
     }
     else {
       if (property_exists($transactions, 'entities')) {

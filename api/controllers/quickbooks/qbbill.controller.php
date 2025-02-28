@@ -86,24 +86,24 @@ class QBBillCtl{
    */
   public static function create_pensions_bill(string $realmid){  
     
-    if(!isset($_GET['payrolldate']) || 
-            !\Core\DatesHelper::validateDate($_GET['payrolldate'])) {
-      http_response_code(400);   
-      echo json_encode(
-        array("message" => "Please supply a valid value for the 'payrolldate' parameter.")
-      );
-      exit(1);
-    } else {
-      $payrollDate = $_GET['payrolldate'];
-    }
+    try{
 
-    $data = json_decode(file_get_contents("php://input"));
+      if ($realmid != QBO::CHARITY_REALMID) {
+        throw new \Exception("Not implemented in Enterprises, this endpoint only exists for Charity QuickBooks.");
+      }
 
-    // The Ref No. that appears on QBO ui. 
-    // Format is "Payroll_YYYY_MM-LG" for a pension bill 
-    $docNumber = QBO::payrollDocNumber($payrollDate).'-LG';
+      if(!isset($_GET['payrolldate']) || 
+              !\Core\DatesHelper::validateDate($_GET['payrolldate'])) {
+        throw new \Exception("Please supply a valid value for the 'payrolldate' parameter.");
+      } else {
+        $payrollDate = $_GET['payrolldate'];
+      }
 
-    try {
+      $data = json_decode(file_get_contents("php://input"));
+
+      // The Ref No. that appears on QBO ui. 
+      // Format is "Payroll_YYYY_MM-LG" for a pension bill 
+      $docNumber = QBO::payrollDocNumber($payrollDate).'-LG';
 
       $model = QuickbooksPensionBill::getInstance()
         ->setRealmID($realmid)
@@ -113,24 +113,24 @@ class QBBillCtl{
         ->setEmployeePensContribTotal($data->employeePensionTotal)
         ->setTotal($data->total)
         ->setPensionCosts($data->pensionCosts);
-        
-    } catch (\Exception $e) {
-    http_response_code(400);  
-    echo json_encode(
-      array(
-        "message" => "Unable to enter payroll journal in Quickbooks. ",
-        "extra" => $e->getMessage()
-         )
-        , JSON_NUMERIC_CHECK);
-    exit(1);
-  }
 
-    $result = $model->create();
-    if ($result) {
-        echo json_encode(
-            array("message" => "Pension Bill has been added for " . $result['date'] . ".",
-                "id" => $result['id'])
-          );
+      $result = $model->create();
+      if ($result) {
+          echo json_encode(
+              array("message" => "Pension Bill has been added for " . $result['date'] . ".",
+                  "id" => $result['id'])
+            );
+      }
+
+    } catch (\Exception $e) {
+      http_response_code(400);  
+      echo json_encode(
+        array(
+          "message" => "Unable to enter payroll bill in QuickBooks. ",
+          "extra" => $e->getMessage()
+          )
+          , JSON_NUMERIC_CHECK);
+      exit(1);
     }
   }  
 }

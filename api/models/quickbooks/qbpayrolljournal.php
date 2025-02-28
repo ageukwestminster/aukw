@@ -242,7 +242,7 @@ class QuickbooksPayrollJournal extends QuickbooksJournal{
 
     $error = $dataService->getLastError();
     if ($error) {
-      throw new \Exception("The Response message is: " . $error->getResponseBody() . "\n");
+      throw new \Exception("The QBO Response message is: " . $error->getResponseBody() . "\n");
     } else {      
       return array(
           "id" => $resultingObj->Id,

@@ -294,7 +294,7 @@ class QuickbooksAttachment{
 
     $error = $dataService->getLastError();
     if ($error) {
-        throw new SdkException("The Response message is: " . $error->getResponseBody());
+        throw new SdkException("The QBO Response message is: " . $error->getResponseBody());
     }  
 
     return $this->simplifyIPPAttachable($attachment);

@@ -73,7 +73,7 @@ class QuickbooksEnterprisesJournal extends QuickbooksJournal{
       if ($error) {
           echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
           echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
-          echo "The Response message is: " . $error->getResponseBody() . "\n";
+          echo "The QBO Response message is: " . $error->getResponseBody() . "\n";
           return false;
       } else {      
         return array(

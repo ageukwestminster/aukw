@@ -68,7 +68,7 @@ class QuickbooksQuery{
     if ($error) {
         echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
         echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
-        echo "The Response message is: " . $error->getResponseBody() . "\n";
+        echo "The QBO Response message is: " . $error->getResponseBody() . "\n";
     }
     else if ($entities) {
       return $entities;
@@ -103,7 +103,7 @@ class QuickbooksQuery{
     $attachments = $dataService->Query($query);
     $error = $dataService->getLastError();
     if ($error) {
-        throw new SdkException("The Response message is: " . $error->getResponseBody());
+        throw new SdkException("The QBO Response message is: " . $error->getResponseBody());
     }   
     else if ($attachments) {
       return $attachments;
@@ -133,7 +133,7 @@ class QuickbooksQuery{
     $attachment = $dataService->Query($query);
     $error = $dataService->getLastError();
     if ($error) {
-        throw new SdkException("The Response message is: " . $error->getResponseBody());
+        throw new SdkException("The QBO Response message is: " . $error->getResponseBody());
     }   
     else if ($attachment) {
       return $attachment;

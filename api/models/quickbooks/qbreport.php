@@ -114,7 +114,7 @@ abstract class QuickbooksReport{
     protected function checkForError() : void {
         $error = $this->dataService->getLastError();
         if ($error) {
-            throw new SdkException("The Response message is: " . $error->getResponseBody());
+            throw new SdkException("The QBO Response message is: " . $error->getResponseBody());
         }   
     }
 

@@ -49,6 +49,7 @@ class QuickbooksConstants {
   const ENTERPRISES_REALMID = "9130350604308576";
   
   const AUKW_INTERCO_ACCOUNT = "80";
+  const AUEW_PAIDBYPARENT_ACCOUNT = "102";
   const AUEW_SALARIES_ACCOUNT = "106";
   const AUEW_NI_ACCOUNT = "150";
   const AUEW_PENSIONS_ACCOUNT = "139";
