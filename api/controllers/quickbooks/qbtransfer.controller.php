@@ -3,7 +3,6 @@
 namespace Controllers;
 
 use \Models\QuickbooksTransfer;
-use \Models\QuickbooksQuery;
 use Core\QuickbooksConstants as QBO;
 
 /**
@@ -129,6 +128,70 @@ class QBTransferCtl{
       echo json_encode(
         array(
           "message" => "Unable to create Transfer in Quickbooks. ",
+          "extra" => $e->getMessage()
+          )
+          , JSON_NUMERIC_CHECK);
+      exit(1);
+    }    
+  }  
+  /**
+   * Create a QBO transfer from data supplied via http POST
+   * 
+   * A positive amount is a transfer from interco to 'Paid by Parent.
+   * A negative amount is a transfer to interco from 'Paid by Parent.
+   * @param string $realmid The company ID for the QBO company.
+   * @return void Output is echoed directly to response 
+   * 
+   */
+  public static function create_enterprises_interco(string $realmid){  
+    
+    try{
+
+      if ($realmid != QBO::ENTERPRISES_REALMID) {
+        throw new \Exception("Not implemented in Charity, this endpoint exists for Enterprises QuickBooks only.");
+      }
+
+      $data = json_decode(file_get_contents("php://input"));
+
+      if (!isset($data->date)) {
+        throw new \InvalidArgumentException("'date' property is missing from POST body.");
+      } else if (!\Core\DatesHelper::validateDate($data->date) ) {
+        throw new \InvalidArgumentException("'date' property is not in the correct format. Value provided: $data->date, expect yyyy-mm-dd format.");
+      } else if (!isset($data->amount)) {
+        throw new \InvalidArgumentException("'amount' property is missing from POST body.");
+      } else if ($data->amount == 0) {
+        throw new \InvalidArgumentException("'amount' property must be non-zero.");
+      }
+
+      if ($data->amount > 0) {
+        $toAccountNo = QBO::AUEW_PAIDBYPARENT_ACCOUNT;
+        $fromAccountNo = QBO::AUKW_INTERCO_ACCOUNT;
+      } else {
+        $fromAccountNo = QBO::AUEW_PAIDBYPARENT_ACCOUNT;
+        $toAccountNo = QBO::AUKW_INTERCO_ACCOUNT;
+      }
+
+      $result = QuickbooksTransfer::getInstance()
+        ->setRealmID($realmid)
+        ->setTxnDate($data->date)
+        ->setFromAccountNo($fromAccountNo)
+        ->setToAccountNo($toAccountNo)
+        ->setPrivateNote(isset($data->note)?$data->note:'')
+        ->setAmount($data->amount)
+        ->create();
+
+      if ($result) {
+          echo json_encode(
+              array("message" => "Interco transfer has been added for " . $data->date . ".",
+                  "id" => $result->Id)
+            );
+      }
+
+    } catch (\Exception $e) {
+      http_response_code(400);  
+      echo json_encode(
+        array(
+          "message" => "Unable to create interco transfer in Quickbooks. ",
           "extra" => $e->getMessage()
           )
           , JSON_NUMERIC_CHECK);
