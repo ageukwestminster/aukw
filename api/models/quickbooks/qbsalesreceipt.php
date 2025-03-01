@@ -455,7 +455,8 @@ class QuickbooksSalesReceipt{
    * @return void
    * 
    */
-  private function salesreceipt_line(&$line_array, $description, $amount, $item, $class, $quantity, $account, $taxcoderef) {
+  private function salesreceipt_line(&$line_array, $description, $amount, $item, 
+                                              $class, $quantity, $account, $taxcoderef) {
     if (abs($amount) <= 0.005) return;
 
     if ($quantity == 0) {

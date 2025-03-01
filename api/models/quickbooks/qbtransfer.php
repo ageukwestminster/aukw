@@ -14,11 +14,18 @@ use QuickBooksOnline\API\Data\IPPIntuitEntity;
 class QuickbooksTransfer{
  
   /**
-   * The QBO id of the Quickbooks Class.
+   * The QBO id of the Quickbooks Transfer.
    *
    * @var string
    */
   protected string $id;
+
+    /**
+   * The QBO sync token of the Quickbooks Transfer.
+   *
+   * @var int
+   */
+  protected int $syncToken;
 
   /**
    * The QBO company ID
@@ -190,37 +197,6 @@ class QuickbooksTransfer{
   }
 
   /**
-   * Push a new array describing a single line of a QBO Transfer into the given array
-   * Helper function used in create.
-   *
-   * @param mixed $line_array The given array
-   * @param string $description
-   * @param float $amount
-   * @param string $class
-   * @param string $account
-   * @param string $taxcode
-   * 
-   * @return void
-   * 
-   */
-  protected function transfer_line(&$line_array, $description, $amount, 
-                                            $class, $account, $taxcode) {
-
-    if (abs($amount) <= 0.005) return;
-
-    array_push($line_array, array(
-      "Description" => $description,
-      "Amount" => $amount,
-      "DetailType" => "AccountBasedExpenseLineDetail",
-      "AccountBasedExpenseLineDetail" => [
-        "AccountRef" => $account,
-        "ClassRef" => $class,
-        "TaxCodeRef" => $taxcode
-      ]
-    ));
-  }
-
-  /**
    * Delete a Transfer from the QB system.
    *
    * @return bool 'true' if success.
@@ -253,7 +229,7 @@ class QuickbooksTransfer{
   }  
 
   /**
-   * Create this bill in QBO
+   * Create this transfer in QBO
    * 
    * @return IPPIntuitEntity On success return an array with details of the new object. On failure return 'false'.
    */

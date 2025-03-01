@@ -39,6 +39,7 @@ require 'controllers/quickbooks/qbitem.controller.php';
 require 'controllers/quickbooks/qbjournal.controller.php';
 require 'controllers/quickbooks/qbpayrolljournal.controller.php';
 require 'controllers/quickbooks/qbpayrollquery.controller.php';
+require 'controllers/quickbooks/qbpurchase.controller.php';
 require 'controllers/quickbooks/qbrealm.controller.php';
 require 'controllers/quickbooks/qbrecurringtxn.controller.php';
 require 'controllers/quickbooks/qbreport.controller.php';
@@ -69,6 +70,7 @@ require 'models/quickbooks/qbjournal.php'; // This must be included before the f
 require 'models/quickbooks/qbnijournal.php'; // Depends on qbjournal.php
 require 'models/quickbooks/qbpayrolljournal.php'; // Depends on qbjournal.php
 require 'models/quickbooks/qbpensionbill.php'; // Depends on qbbill.php
+require 'models/quickbooks/qbpurchase.php';
 require 'models/quickbooks/qbquery.php';
 require 'models/quickbooks/qbsalesreceipt.php';
 require 'models/quickbooks/qbshopjournal.php'; // Depends on qbjournal.php

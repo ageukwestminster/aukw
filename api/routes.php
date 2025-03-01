@@ -207,6 +207,11 @@ $router->mount('/qb', function () use ($router) {
     $router->post('/(\d+)/transfer', 'QBTransferCtl@create');                                 
     $router->delete('/(\d+)/transfer/(\w+)', 'QBTransferCtl@delete');
     $router->post('/(\d+)/enterprises-interco', 'QBTransferCtl@create_enterprises_interco');  
+
+    // QB Purchase
+    $router->get('/(\d+)/purchase/(\w+)', 'QBPurchaseCtl@read_one');
+    $router->post('/(\d+)/purchase', 'QBPurchaseCtl@create');                                 
+    $router->delete('/(\d+)/purchase/(\w+)', 'QBPurchaseCtl@delete');
 });
 
 /***************/

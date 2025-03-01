@@ -6,14 +6,14 @@ use \Models\QuickbooksTransfer;
 use Core\QuickbooksConstants as QBO;
 
 /**
- * Controller to accomplish QBO Bill (or invoice) related tasks. 
+ * Controller to accomplish QBO Transfer related tasks. 
  *
  * @category  Controller
 */
 class QBTransferCtl{
 
   /**
-   * Return details of the QBBill identified by $id
+   * Return details of the QBO Transfer identified by $id
    *
    * @param string $realmid The company ID for the QBO company.
    * @param string $id

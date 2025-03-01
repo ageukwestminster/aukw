@@ -56,6 +56,22 @@ class QuickbooksConstants {
 
   const HARROW_ROAD_CLASS = "400000000000618070";
 
+  static $taxcode = array(
+    "value" => 4
+  );
+  static $zero_rated_purchases_taxrate = array(
+    "value" => 8,
+    "rate" => 0
+  );
+  static $standard_rated_purchases_taxrate = array(
+    "value" => 30,
+    "rate" => 20
+  );
+  static $harrow_road_class = array(
+    "value" => 400000000000618070,
+    "name" => "Harrow Rd"
+  );
+
   /**
    * Helper function to regularise the DocNumber for payroll transactions. The 
    * return value is limited to a maximum of 21 characters
