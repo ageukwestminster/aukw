@@ -17,38 +17,49 @@
     </div>
   </div>
   <div class="row justify-content-between mt-2">
-    <div class="col-sm-6">
+    <div class="col-sm-3">
       <div>
-        <span
-          *ngIf="loading"
-          class="spinner-border spinner-border-lg align-center"
-        ></span>
+        <div>
+          <span
+            *ngIf="loading"
+            class="spinner-border spinner-border-lg align-center"
+          ></span>
+        </div>
+        <div *ngIf="data && data.length" class="m-2">
+          Found {{ data && data.length }} entries
+        </div>
       </div>
-      <div *ngIf="data && data.length" class="m-2">
-        Found {{ data && data.length }} entries
+      <div *ngIf="user.isAdmin">
+        <div class="form-check m-2">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            [checked]="enterprises"
+            (click)="checkboxClick()"
+            id="checkboxEnterprises"
+          />
+          <label class="form-check-label" for="checkboxEnterprises">
+            Enterprises
+          </label>
+        </div>
+      </div>
+      <div>
+        <button class="btn btn-primary mx-2" (click)="exportToCSV()">
+          Export To CSV
+        </button>
+        <button type="button" routerLink="/reports" class="btn btn-outline-dark">
+          Close &times;
+        </button>
       </div>
     </div>
-    <div class="col-xs-2" *ngIf="user.isAdmin">
-      <div class="form-check m-2">
-        <input
-          type="checkbox"
-          class="form-check-input"
-          [checked]="enterprises"
-          (click)="checkboxClick()"
-          id="checkboxEnterprises"
-        />
-        <label class="form-check-label" for="checkboxEnterprises">
-          Enterprises
-        </label>
+
+    <div class="col-sm-9">
+      <div class="card m-2">
+        <interco-trade 
+          [existingTrade]="selectedTrade"
+          [enterprises]="enterprises">
+        </interco-trade>
       </div>
-    </div>
-    <div class="col-xs-3 mb-2">
-      <button class="btn btn-primary mx-2" (click)="exportToCSV()">
-        Export To CSV
-      </button>
-      <button type="button" routerLink="/reports" class="btn btn-outline-dark">
-        Close &times;
-      </button>
     </div>
   </div>
   <div class="card-body">
@@ -79,7 +90,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of data">
+            <tr *ngFor="let item of data" (click)="onRowClick(item)">
               <th>
                 <span class="text-dark">{{ item.date }}</span>
               </th>

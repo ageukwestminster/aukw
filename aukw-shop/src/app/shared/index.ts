@@ -3,6 +3,7 @@ export * from './cash-ratio-chart/cash-ratio-chart.component';
 export * from './customer-insights-chart/customer-insights-chart.component';
 export * from './date-range-chooser/date-range-chooser.component';
 export * from './dept-chart/dept-chart.component';
+export * from './interco-trade/interco-trade.component';
 export * from './monthly-sales-chart/monthly-sales-chart.component';
 export * from './moving-avg-chart/moving-avg-chart.component';
 export * from './qbconn-list/list.component';

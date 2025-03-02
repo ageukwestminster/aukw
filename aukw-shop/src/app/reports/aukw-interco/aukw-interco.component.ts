@@ -6,13 +6,14 @@ import { QBReportService } from '@app/_services';
 import { DateRangeEnum } from '@app/_models';
 import { AbstractChartReportComponent } from '../chart-report.component';
 import { QBAccountListEntry } from '@app/_models/qb-account-list-entry';
-import { DateRangeChooserComponent } from '@app/shared';
+import { DateRangeChooserComponent, IntercoTradeComponent } from '@app/shared';
 
 @Component({
   templateUrl: './aukw-interco.component.html',
   standalone: true,
   imports: [
     CommonModule,
+    IntercoTradeComponent,
     NgIf,
     RouterLink,
     ReactiveFormsModule,
@@ -23,6 +24,8 @@ export class AukwIntercoComponent
   extends AbstractChartReportComponent<QBAccountListEntry[]>
   implements OnInit
 {
+  selectedTrade: QBAccountListEntry | null = null;
+
   private reportService = inject(QBReportService);
 
   readonly INITIALDATERANGE: DateRangeEnum = DateRangeEnum.LAST_SIX_MONTHS;
@@ -81,5 +84,9 @@ export class AukwIntercoComponent
     });
 
     this.exportToCsvService.exportToCSV(output);
+  }
+
+  onRowClick(item: QBAccountListEntry) {
+    this.selectedTrade = item;
   }
 }
