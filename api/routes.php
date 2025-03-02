@@ -125,8 +125,8 @@ $router->mount('/qb', function () use ($router) {
     $router->post('/(\d+)/journal/enterprises', 'QBPayrollJournalCtl@create_enterprises_journal');
 
     // The 2nd param is the QuickBooks Journal Id. This number is not easily seen on 
-    // the normal QB website but it can been seen in Audit Log.
-    // It is not the DocNumber which can be seen when adding/editing on QBO.
+    // the normal QB website but it can been seen in the QBO Audit Log.
+    // It is not the DocNumber which can be seen when adding/editing on QBO website.
     $router->get('/(\d+)/salesreceipt/(\w+)', 'QBSalesReceiptCtl@read_one');
 
     // Create a new sales receipt in QB

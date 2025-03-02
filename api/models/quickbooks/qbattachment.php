@@ -227,9 +227,11 @@ class QuickbooksAttachment{
   }
 
   /**
-   * Upload this attachment to QBO
+   * Create a 'file' Attachment in QBO, uploading the file in th eprocess.
    * 
-   * @return 
+   * Optionally attach it to the entities given by the property 'attachmentRefs'.
+   * 
+   * @return array
    */
   public function upload() : array {
 
@@ -268,12 +270,11 @@ class QuickbooksAttachment{
     }
   }
 
-        /**
-   * Attach a file to an entity
+  /**
+   * Create a 'note' Attachment in QBO. Optionally attach it to the entities given by the 
+   * property 'attachmentRefs'.
    * 
-   * @param string $entity_type_name The QBO entity type name e.g. 'Bill' or 'JournalEntry'
-   * @param int $qb_txn_id The transaction id of the entity that we are querying
-   * @return 
+   * @return array
    */
   public function create_note() : array {
 
@@ -300,7 +301,9 @@ class QuickbooksAttachment{
     return $this->simplifyIPPAttachable($attachment);
   }
 
-  /** Simplify a IPPAttachable to its minimum properties */
+  /** Simplify a IPPAttachable to its minimum properties 
+   * @param IPPAttachable $input The attachment to simplify
+  */
   private function simplifyIPPAttachable(IPPAttachable $input) {
 
     $output = array();

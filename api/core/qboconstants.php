@@ -70,10 +70,6 @@ class QuickbooksConstants {
   static $standard_rated_purchases_taxrate = array(
     "value" => 4
   );
-  static $harrow_road_class = array(
-    "value" => 400000000000618070,
-    "name" => "Harrow Rd"
-  );
 
   /**
    * Helper function to regularise the DocNumber for payroll transactions. The 

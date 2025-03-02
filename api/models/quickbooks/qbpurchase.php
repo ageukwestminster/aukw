@@ -365,7 +365,6 @@ class QuickbooksPurchase{
         "DetailType" => "AccountBasedExpenseLineDetail",
         "AccountBasedExpenseLineDetail" => [
           "AccountRef" => $this->expenseAccountNo,
-          //"ClassRef" => $this->harrow_road_class,
           "TaxCodeRef" => ["value"=>$this->taxCode['value']], //4 for zero, 2 for 20%
         ]        
         ],
