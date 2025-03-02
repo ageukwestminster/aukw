@@ -160,8 +160,7 @@ class QuickbooksQuery{
     }
 
     $query = "SELECT * FROM TaxCode";
-    $append = " WHERE Id = '$id'";
-    $query .= $append;
+    if ($id !== '') $query .= " WHERE Id = '$id'";
 
     $attachments = $dataService->Query($query);
     $error = $dataService->getLastError();
