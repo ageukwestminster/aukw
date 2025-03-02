@@ -211,7 +211,11 @@ $router->mount('/qb', function () use ($router) {
     // QB Purchase
     $router->get('/(\d+)/purchase/(\w+)', 'QBPurchaseCtl@read_one');
     $router->post('/(\d+)/purchase', 'QBPurchaseCtl@create');                                 
-    $router->delete('/(\d+)/purchase/(\w+)', 'QBPurchaseCtl@delete');
+    $router->delete('/(\d+)/purchase/(\d+)', 'QBPurchaseCtl@delete');
+
+    // QB Tax Rates
+    $router->get('/(\d+)/tax-code', 'QBTaxCtl@read_all');
+    $router->get('/(\d+)/tax-code/(\w+)', 'QBTaxCtl@read_one');
 });
 
 /***************/

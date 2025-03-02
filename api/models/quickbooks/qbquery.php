@@ -108,6 +108,8 @@ class QuickbooksQuery{
     else if ($attachments) {
       return $attachments;
     }
+
+    return [];
     
   }  
  
@@ -139,5 +141,40 @@ class QuickbooksQuery{
       return $attachment;
     }
     
-  }  
+    return [];
+  }
+
+  /**
+   * Return an array of QBO tax rates
+   * 
+   * More information: {@link https://developer.intuit.com/app/developer/qbo/docs/workflows/attach-images-and-notes}
+   * @param string $entity_type_name The QBO entity type name e.g. 'Bill' or 'JournalEntry'
+   * @param int $qb_txn_id The transaction id of the entity that we are querying
+   * @return array Returns an array of attachments
+   */
+  public function list_tax_codes(string $id = ''):array{
+
+    $auth = new QuickbooksAuth();
+    $dataService = $auth->prepare($this->realmid);
+    if ($dataService == false) {
+      return [];
+    }
+
+    //$query = "SELECT Id,FileName,FileAccessUri,TempDownloadUri,Size,ContentType FROM attachable 
+    $query = "SELECT * FROM TaxCode";
+    $append = " WHERE Id = '$id'";
+    $query .= $append;
+
+    $attachments = $dataService->Query($query);
+    $error = $dataService->getLastError();
+    if ($error) {
+        throw new SdkException("The QBO Response message is: " . $error->getResponseBody());
+    }   
+    else if ($attachments) {
+      return $attachments;
+    }
+
+    return [];
+    
+  } 
 }

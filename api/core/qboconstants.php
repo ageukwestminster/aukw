@@ -56,16 +56,19 @@ class QuickbooksConstants {
 
   const HARROW_ROAD_CLASS = "400000000000618070";
 
-  static $taxcode = array(
-    "value" => 4
-  );
-  static $zero_rated_purchases_taxrate = array(
-    "value" => 8,
+  static $zero_rated_taxcode = array(
+    "value" => 4,
     "rate" => 0
   );
-  static $standard_rated_purchases_taxrate = array(
-    "value" => 30,
+  static $standard_rated_taxcode = array(
+    "value" => 2,
     "rate" => 20
+  );
+  static $zero_rated_purchases_taxrate = array(
+    "value" => 8
+  );
+  static $standard_rated_purchases_taxrate = array(
+    "value" => 4
   );
   static $harrow_road_class = array(
     "value" => 400000000000618070,

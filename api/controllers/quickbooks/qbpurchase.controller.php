@@ -108,11 +108,13 @@ class QBPurchaseCtl{
         throw new \InvalidArgumentException("'entityno' property is missing from POST body.");
       } 
 
-      $taxcode = QBO::$taxcode;
+      
       if ($data->taxamount == 0 ) {
-        $taxRate = QBO::$zero_rated_purchases_taxrate;
+        $taxcode = QBO::$zero_rated_taxcode;
+        $taxRateRef = QBO::$zero_rated_purchases_taxrate;
       } else {
-        $taxRate = QBO::$standard_rated_purchases_taxrate;
+        $taxcode = QBO::$standard_rated_taxcode;
+        $taxRateRef = QBO::$standard_rated_purchases_taxrate;
       }
 
       $result = QuickbooksPurchase::getInstance()
@@ -127,7 +129,7 @@ class QBPurchaseCtl{
         ->setAmount($data->amount)
         ->setTaxAmount($data->taxamount)
         ->setTaxCode($taxcode)
-        ->setTaxRate($taxRate)
+        ->setTaxRate($taxRateRef)
         ->create();
 
       if ($result) {

@@ -365,8 +365,8 @@ class QuickbooksPurchase{
         "DetailType" => "AccountBasedExpenseLineDetail",
         "AccountBasedExpenseLineDetail" => [
           "AccountRef" => $this->expenseAccountNo,
-          "ClassRef" => $this->harrow_road_class,
-          "TaxCodeRef" => ["value"=>2], //4 for zero, 2 for 20%
+          //"ClassRef" => $this->harrow_road_class,
+          "TaxCodeRef" => ["value"=>$this->taxCode['value']], //4 for zero, 2 for 20%
         ]        
         ],
       "TxnTaxDetail"=> [
@@ -374,18 +374,17 @@ class QuickbooksPurchase{
           "Amount" => $this->taxAmount,
           "DetailType" => "TaxLineDetail",
           "TaxLineDetail" => [
-            "TaxRateRef" => ["value"=>4], //8 for zero, 4 for 20%
+            "TaxRateRef" => $this->taxRate, //value is 8 for zero, 4 for 20%
             "PercentBased" => true,
-            "TaxPercent" => 20,
-            "NetAmountTaxable" => round($this->amount- $this->taxAmount,2)
+            "TaxPercent" => $this->taxCode['rate'],
+            "NetAmountTaxable" => round($this->amount-$this->taxAmount,2)
           ]
         ]
       ],
       "DocNumber" => $this->docNumber,
       "PrivateNote" => $this->privateNote,
     ]);
-    //echo json_encode($purchase);
-    //return;
+
     /** @var IPPIntuitEntity $result */
     $result = $dataService->Add($purchase);
     $error = $dataService->getLastError();

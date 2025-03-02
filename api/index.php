@@ -43,6 +43,7 @@ require 'controllers/quickbooks/qbpurchase.controller.php';
 require 'controllers/quickbooks/qbrealm.controller.php';
 require 'controllers/quickbooks/qbrecurringtxn.controller.php';
 require 'controllers/quickbooks/qbreport.controller.php';
+require 'controllers/quickbooks/qbtax.controller.php';
 require 'controllers/quickbooks/qbtransfer.controller.php';
 require 'controllers/quickbooks/qbsalesreceipt.controller.php';
 require 'controllers/report.controller.php';
