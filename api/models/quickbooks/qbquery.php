@@ -145,12 +145,11 @@ class QuickbooksQuery{
   }
 
   /**
-   * Return an array of QBO tax rates
+   * Return an array of QBO tax codes, or a single tax code, if 'id' is supplied
+   * More info {@link https://developer.intuit.com/app/developer/qbo/docs/workflows/manage-sales-tax-for-non-us-locales}
    * 
-   * More information: {@link https://developer.intuit.com/app/developer/qbo/docs/workflows/attach-images-and-notes}
-   * @param string $entity_type_name The QBO entity type name e.g. 'Bill' or 'JournalEntry'
-   * @param int $qb_txn_id The transaction id of the entity that we are querying
-   * @return array Returns an array of attachments
+   * @param string $id an optional id of the entity that we are querying
+   * @return array Returns an array of taxCodes
    */
   public function list_tax_codes(string $id = ''):array{
 
@@ -160,7 +159,6 @@ class QuickbooksQuery{
       return [];
     }
 
-    //$query = "SELECT Id,FileName,FileAccessUri,TempDownloadUri,Size,ContentType FROM attachable 
     $query = "SELECT * FROM TaxCode";
     $append = " WHERE Id = '$id'";
     $query .= $append;
