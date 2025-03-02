@@ -105,6 +105,7 @@ export class CustomerInsightsChartComponent {
         type: 'line',
         color: '#800000',
         visible: this.visibility[0],
+        showInLegend: this.visibility[0],
       },
       {
         name: 'Bric-a-brac',
@@ -112,24 +113,28 @@ export class CustomerInsightsChartComponent {
         type: 'line',
         color: '#1cb2f5',
         visible: this.visibility[1],
+        showInLegend: this.visibility[1],
       },
       {
         name: 'Books',
         data: [],
         type: 'line',
         visible: this.visibility[2],
+        showInLegend: this.visibility[2],
       },
       {
         name: 'Linens',
         data: [],
         type: 'line',
         visible: this.visibility[3],
+        showInLegend: this.visibility[3],
       },
       {
         name: 'All Departments',
         data: [],
         type: 'line',
         visible: this.visibility[4],
+        showInLegend: this.visibility[4],
       },
     ],
 
@@ -177,8 +182,10 @@ export class CustomerInsightsChartComponent {
       for (let index = 0; index < 5; index++) {
         if (index == index_of_series) {
           this.options.series[index].visible = true;
+          this.options.series[index].showInLegend = true;
         } else {
           this.options.series[index].visible = false;
+          this.options.series[index].showInLegend = false;
         }
       }
       (<any>this.options.series[0]).data =
