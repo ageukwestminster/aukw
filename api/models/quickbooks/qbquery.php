@@ -174,4 +174,35 @@ class QuickbooksQuery{
     return [];
     
   } 
+
+  /**
+   * Return an array of QBO entities, or a single entity, if 'id' is supplied
+   * 
+   * @param string $type The name of the IPPEntity type that we are querying
+   * @param bool $inActive If false, search only for disabled entities
+   * @return array Returns an array of taxCodes
+   */
+  public function list_entities(string $type, bool $inActive = false):array{
+
+    $auth = new QuickbooksAuth();
+    $dataService = $auth->prepare($this->realmid);
+    if ($dataService == false) {
+      return [];
+    }
+
+    $query = "SELECT * FROM $type";
+    if ($inActive) $query .= " WHERE Active = false";
+
+    $entities = $dataService->Query($query);
+    $error = $dataService->getLastError();
+    if ($error) {
+        throw new SdkException("The QBO Response message is: " . $error->getResponseBody());
+    }   
+    else if ($entities) {
+      return $entities;
+    }
+
+    return [];
+    
+  } 
 }

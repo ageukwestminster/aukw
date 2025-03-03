@@ -216,6 +216,11 @@ $router->mount('/qb', function () use ($router) {
     // QB Tax Rates
     $router->get('/(\d+)/tax-code', 'QBTaxCtl@read_all');
     $router->get('/(\d+)/tax-code/(\w+)', 'QBTaxCtl@read_one');
+
+    // QB Entities
+    $router->get('/(\d+)/entity/vendor', 'QBEntityCtl@read_all_vendors');
+    $router->get('/(\d+)/entity/customer', 'QBEntityCtl@read_all_customers');
+    $router->get('/(\d+)/entity/account', 'QBEntityCtl@read_all_accounts');
 });
 
 /***************/

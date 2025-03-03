@@ -35,6 +35,7 @@ require 'controllers/quickbooks/qbbill.controller.php';
 require 'controllers/quickbooks/qbclass.controller.php';
 require 'controllers/quickbooks/qbcompany.controller.php';
 require 'controllers/quickbooks/qbemployee.controller.php';
+require 'controllers/quickbooks/qbentity.controller.php';
 require 'controllers/quickbooks/qbitem.controller.php';
 require 'controllers/quickbooks/qbjournal.controller.php';
 require 'controllers/quickbooks/qbpayrolljournal.controller.php';
