@@ -14,6 +14,7 @@ export * from './form-mode.enum';
 export * from './irispayslip';
 export * from './line-item-detail';
 export * from './qb-account-list-entry';
+export * from './qb-attachment';
 export * from './qb-auth-uri';
 export * from './qb-connection-details';
 export * from './qb-flags';

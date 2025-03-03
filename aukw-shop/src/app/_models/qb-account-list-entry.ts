@@ -1,5 +1,5 @@
 /**
- * The name and id numbers of an employee
+ * Details of an entry in an account. Taken from QBO.
  */
 export class QBAccountListEntry {
   /**

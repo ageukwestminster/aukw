@@ -11,6 +11,7 @@ export * from './loading-indicator.service';
 export * from './payroll-process-state.service';
 export * from './payroll.service';
 export * from './payslip-list.service';
+export * from './qb-attachment.service';
 export * from './qb-connection.service';
 export * from './qb-employee.service';
 export * from './qb-payroll.service';
