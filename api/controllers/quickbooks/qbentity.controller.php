@@ -40,13 +40,19 @@ class QBEntityCtl{
         ->setRealmID($realmid)
         ->list_entities('account');
 
+        if(isset($_GET['raw']) && $_GET['raw'] == 'true') {
+          echo json_encode($entities, JSON_NUMERIC_CHECK);
+          exit;
+        }
+
         $entities = array_map(fn($entity) => [
           "Id" => $entity->Id,
           "Name" => $entity->{'FullyQualifiedName'},
           "AccountType" => $entity->{'AccountType'}
         ] , array_values($entities));
 
-        //$entities = array_filter();
+        $entities = array_filter($entities, fn($item) => str_contains($item['AccountType'],'Expense')
+                          || $item['AccountType'] == 'Cost of Goods Sold');
 
         usort(
           $entities, 
