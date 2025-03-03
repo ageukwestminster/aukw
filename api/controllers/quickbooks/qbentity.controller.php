@@ -35,13 +35,33 @@ class QBEntityCtl{
    * @return void Output is echo'd directly to response 
    */
   public static function read_all_accounts(string $realmid){  
-    $entities = QuickbooksQuery::getInstance()
-    ->setRealmID($realmid)
-    ->list_entities('account');
-    //echo json_encode($entities, JSON_NUMERIC_CHECK);
+    try {
+      $entities = QuickbooksQuery::getInstance()
+        ->setRealmID($realmid)
+        ->list_entities('account');
 
-    $entities = QBEntityCtl::read_all_impl($realmid, 'account', 'FullyQualifiedName');
-    echo json_encode($entities, JSON_NUMERIC_CHECK);
+        $entities = array_map(fn($entity) => [
+          "Id" => $entity->Id,
+          "Name" => $entity->{'FullyQualifiedName'},
+          "AccountType" => $entity->{'AccountType'}
+        ] , array_values($entities));
+
+        //$entities = array_filter();
+
+        usort(
+          $entities, 
+          fn($a, $b) => strtolower($a['Name']) <=> strtolower($b['Name'])
+        );
+
+        echo json_encode($entities, JSON_NUMERIC_CHECK);
+    } catch (\Exception $e) {
+      http_response_code(400);   
+      echo json_encode(
+        array("message" => "Unable to obtain list of entities from QuickBooks.",
+        "details" => $e->getMessage())
+      );
+      exit(1);
+    }
   }
     /**
    * List name and id of all the QB Entities of the given type
