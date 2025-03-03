@@ -10,6 +10,7 @@ import { DateRangeChooserComponent, IntercoTradeComponent } from '@app/shared';
 
 @Component({
   templateUrl: './aukw-interco.component.html',
+  styleUrl: './aukw-interco.component.css',
   standalone: true,
   imports: [
     CommonModule,

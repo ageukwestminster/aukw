@@ -12,18 +12,18 @@ const baseUrl = `${environment.apiUrl}/qb`;
  * transactions and download their associated attachments. It can also
  * add attachments to existing transactions. 
  * It can also copy attachemtns from a transaction in one QBO company 
- * file to another QBO company file. 
+ * file to a transaction or transactions in another QBO company file. 
  */
 @Injectable({ providedIn: 'root' })
 export class QBAttachmentService {
   private http = inject(HttpClient);
 
   /**
-   * Get a list of the names of all available employees
+   * Download QBO attachments to the downloads folder, for a given entity
    * @param realmID The company ID for the QBO company.
    * @returns Array of employee ids and names
    */
-  downloadAttachments(realmID: string, type: string, id: string): Observable<QBAttachment[]> {
+  downloadAttachments(realmID: string, type: string, id: number): Observable<QBAttachment[]> {
     return this.http.get<QBAttachment[]>(`${baseUrl}/${realmID}/download-attachments?entity_type=${type}&txn_id=${id}`);
   }
 }

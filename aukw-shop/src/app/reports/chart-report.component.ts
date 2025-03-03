@@ -21,7 +21,7 @@ export abstract class AbstractChartReportComponent<T = any> implements OnInit {
   protected user: User;
   protected form!: FormGroup;
   protected loading: boolean = false;
-  protected enterprises: boolean = true; // When 'true' use Enterprises company, Charity otherwise
+  protected enterprises: boolean = false; // When 'true' use Enterprises company, Charity otherwise
 
   /* The main data that will be displayed in the chart or table */
   protected data!: T;
