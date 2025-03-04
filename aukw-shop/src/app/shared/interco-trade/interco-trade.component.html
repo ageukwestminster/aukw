@@ -6,7 +6,7 @@
           <div class="col-2">
             <div>Date</div>
             <div>Entity</div>
-            <div>Amount</div>
+            <div>Account</div>
           </div>
           <div class="col-5">
             <div class="row">
@@ -48,6 +48,7 @@
           <div class="col-4">
             <div>VAT ?</div>
             <div>Attachments ?</div>
+            <div>Amount</div>
           </div>
           <div class="col-1">
             <div>
@@ -64,20 +65,16 @@
             <div>
               {{ this.attachments.length == 0 ? "" : this.attachments.length }}
             </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-2">
-            <div>Memo</div>
-          </div>
-          <div class="col-10">
             <div>
-              <textarea
+              <input
+                id="txnAmount"
+                name="txnAmount"
+                type="number"
                 class="form-control"
-                id="commentsTextarea"
-                rows="2"
-                formControlName="Note"
-              ></textarea>
+                placeholder="£0.00"
+                pattern="^\d*(\.\d{0,2})?$"
+                formControlName="amount"
+              />
             </div>
           </div>
         </div>
@@ -96,6 +93,21 @@
 
             Insert into <span>Enterprises</span> QuickBooks
           </button>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-2">
+        <div>Memo</div>
+      </div>
+      <div class="col-10">
+        <div>
+          <textarea
+            class="form-control"
+            id="commentsTextarea"
+            rows="1"
+            formControlName="Note"
+          ></textarea>
         </div>
       </div>
     </div>

@@ -39,6 +39,10 @@ export class QBAccountListEntry {
    * The running total of the account
    */
   balance: number;
+  /**
+  * A transaction in the opposing QBO company that matches this transaction.
+  */
+  matching_txn: ValueIdPair;
 
   constructor(obj?: any) {
     this.date = (obj && obj.date) || null;
@@ -50,6 +54,7 @@ export class QBAccountListEntry {
     this.amount = (obj && obj.amount) || null;
     this.balance = (obj && obj.balance) || null;
     this.is_cleared = (obj && obj.is_cleared) || null;
+    this.matching_txn = (obj && obj.matching_txn) || null;
   }
 
   public stringRepresentation() {

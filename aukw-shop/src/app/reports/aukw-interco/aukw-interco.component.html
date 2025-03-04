@@ -73,12 +73,17 @@
             <tr>
               <th>Date</th>
               <th class="d-none d-md-table-cell">Type</th>
-              <th class="d-none d-md-table-cell">Name</th>
-              <th class="d-none d-sm-table-cell">Memo</th>
-              <th>
+              <th class="d-none d-md-table-cell">
                 <!-- Tooltip must be on element inside header, not header itself-->
                 <!-- From https://stackoverflow.com/a/48324991/6941165 -->
-                <div ngbTooltip="Reconciliation status">Rec?</div>
+                <div ngbTooltip="Name of charity shop employee.">Name</div>
+              </th>
+              <th class="d-none d-sm-table-cell">Memo</th>
+              <th>
+                <div ngbTooltip="QBO Reconciliation status">Rec</div>
+              </th>
+              <th>
+                <div ngbTooltip="Matching transaction exists in other QBO file.">M</div>
               </th>
               <th class="d-none d-lg-table-cell">Increase</th>
               <th class="d-none d-lg-table-cell">Decrease</th>
@@ -101,6 +106,7 @@
                 {{ item.memo }}
               </td>
               <td class="text-center">{{ item.is_cleared }}</td>
+              <td class="text-center"><i class="fas fa-check" *ngIf="item.matching_txn"></i></td>
               <td class="d-none d-lg-table-cell text-end">
                 {{ formatPositiveNumber(item.amount) | number: "1.2-2" }}
               </td>

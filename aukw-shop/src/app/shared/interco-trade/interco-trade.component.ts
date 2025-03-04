@@ -57,10 +57,16 @@ export class IntercoTradeComponent implements OnInit {
 
     if (changes['existingTrade']) {
       if (!this.existingTrade) return;
-      this.loading = true;
+      
+
+      // Set values we know already
       this.f['amount'].setValue(this.existingTrade.amount);
       this.f['txnDate'].setValue(this.existingTrade.date);
       this.f['Note'].setValue(this.existingTrade.memo);
+
+      // Download attachemnts (if any)
+      this.loading = true;
+      this.attachments = [];
       this.attachmentService
         .downloadAttachments(
           this.realmid,

@@ -2,11 +2,14 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { QBReportService } from '@app/_services';
+import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
+import { QBReportService, CustomRxjsOperatorsService } from '@app/_services';
 import { DateRangeEnum } from '@app/_models';
 import { AbstractChartReportComponent } from '../chart-report.component';
 import { QBAccountListEntry } from '@app/_models/qb-account-list-entry';
 import { DateRangeChooserComponent, IntercoTradeComponent } from '@app/shared';
+import { map, switchMap, tap } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   templateUrl: './aukw-interco.component.html',
@@ -15,6 +18,7 @@ import { DateRangeChooserComponent, IntercoTradeComponent } from '@app/shared';
   imports: [
     CommonModule,
     IntercoTradeComponent,
+    NgbTooltip,
     NgIf,
     RouterLink,
     ReactiveFormsModule,
@@ -26,8 +30,10 @@ export class AukwIntercoComponent
   implements OnInit
 {
   selectedTrade: QBAccountListEntry | null = null;
+  otherCompanyTrades: QBAccountListEntry[] = [];
 
   private reportService = inject(QBReportService);
+  private customOperator = inject(CustomRxjsOperatorsService);
 
   readonly INITIALDATERANGE: DateRangeEnum = DateRangeEnum.LAST_SIX_MONTHS;
 
@@ -51,8 +57,34 @@ export class AukwIntercoComponent
     this.loading = true;
     this.reportService
       .getIntercoAccountLedger(startDate, endDate, this.enterprises)
+      .pipe(
+        tap(() => this.data = []),
+        // Convert to Obs of QBAccountListEntry rather than QBAccountListEntry[]
+        this.customOperator.fromArrayToElement(),
+        map((accountListEntry) => {
+          return new QBAccountListEntry(accountListEntry);
+        }),
+        switchMap((accountListEntry) => {
+          this.data.push(accountListEntry);
+          return this.reportService.getIntercoAccountLedger(
+            startDate, 
+            endDate, 
+            !this.enterprises);
+        }),
+        switchMap((response) => {
+          this.otherCompanyTrades = response;
+          this.data.forEach(item => {
+            var findEntries = this.otherCompanyTrades.filter((x)=> x.date == item.date &&
+                                          x.amount == item.amount)
+            if (findEntries && findEntries.length) {
+              item.matching_txn = findEntries[0].type
+            }
+          });
+
+          return of(true);
+        })
+      )
       .subscribe({
-        next: (response) => (this.data = response),
         error: (error: any) => {
           this.loading = false;
           this.data = [];
