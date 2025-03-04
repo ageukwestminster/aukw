@@ -192,6 +192,7 @@ class QuickbooksQuery{
 
     $query = "SELECT * FROM $type";
     if ($inActive) $query .= " WHERE Active = false";
+    $query .= " STARTPOSITION 0 MAXRESULTS 1000";
 
     $entities = $dataService->Query($query);
     $error = $dataService->getLastError();

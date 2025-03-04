@@ -27,6 +27,7 @@ class QuickbooksConstants {
   const PENSION_COSTS_ACCOUNT = "285";
   const STAFF_SALARIES_ACCOUNT = "261";
   const TAX_ACCOUNT = "256";
+  const PLEO_ACCOUNT = "429";
 
   const ADMIN_CLASS = "1400000000000130710";
 

@@ -46,17 +46,17 @@ class QBEntityCtl{
         }
 
         $entities = array_map(fn($entity) => [
-          "Id" => $entity->Id,
-          "Name" => $entity->{'FullyQualifiedName'},
-          "AccountType" => $entity->{'AccountType'}
+          "id" => $entity->Id,
+          "value" => $entity->{'FullyQualifiedName'},
+          "type" => $entity->{'AccountType'}
         ] , array_values($entities));
 
-        $entities = array_filter($entities, fn($item) => str_contains($item['AccountType'],'Expense')
-                          || $item['AccountType'] == 'Cost of Goods Sold');
+        $entities = array_filter($entities, fn($item) => str_contains($item['type'],'Expense')
+                          || $item['type'] == 'Cost of Goods Sold');
 
         usort(
           $entities, 
-          fn($a, $b) => strtolower($a['Name']) <=> strtolower($b['Name'])
+          fn($a, $b) => strtolower($a['value']) <=> strtolower($b['value'])
         );
 
         echo json_encode($entities, JSON_NUMERIC_CHECK);
@@ -84,13 +84,13 @@ class QBEntityCtl{
         ->list_entities($type);
 
         $simplifiedEntities = array_map(fn($entity) => [
-          "Id" => $entity->Id,
-          "Name" => $entity->{$nameProperty}
+          "id" => $entity->Id,
+          "value" => $entity->{$nameProperty}
         ] , array_values($entities));
 
         usort(
           $simplifiedEntities, 
-          fn($a, $b) => strtolower($a['Name']) <=> strtolower($b['Name'])
+          fn($a, $b) => strtolower($a['value']) <=> strtolower($b['value'])
         );
 
         return $simplifiedEntities;

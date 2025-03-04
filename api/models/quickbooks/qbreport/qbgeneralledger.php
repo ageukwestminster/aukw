@@ -3,6 +3,7 @@
 namespace Models;
 
 use \QuickBooksOnline\API\ReportService\ReportName;
+use Core\QuickbooksConstants as QBO;
 
 class QBGeneralLedgerReport extends QuickbooksReport{
   
@@ -32,7 +33,15 @@ class QBGeneralLedgerReport extends QuickbooksReport{
 
     $report = $this->report;
 
-    $report_arr=array();            
+    $report_arr=array();      
+
+    // Is the report empty? If so, return an empty record set.
+    if ($report->Header && $report->Header->Option 
+            && is_array($report->Header->Option) && count($report->Header->Option)
+            && $report->Header->Option[0]->Name == 'NoReportData'
+            && $report->Header->Option[0]->Value == 'true') {
+        return [];
+    }
             
     /** @disregard Intelephense error on next line */
     $data = $report->Rows->Row[0]->Rows->Row;

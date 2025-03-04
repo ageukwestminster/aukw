@@ -203,8 +203,12 @@ class QBReportCtl{
     $model->sortBy = "tx_date";
 
     try {
-      $model->run();
-      echo json_encode($model->adaptReport(), JSON_NUMERIC_CHECK);
+      $report = $model->run();
+      if (isset($_GET['raw']) && $_GET['raw']=='true') {
+        echo json_encode($report, JSON_NUMERIC_CHECK);
+      } else {
+        echo json_encode($model->adaptReport(), JSON_NUMERIC_CHECK);
+      }
     } catch (\Exception $e) {
       http_response_code(400);  
       echo json_encode(
