@@ -14,6 +14,7 @@ export * from './payslip-list.service';
 export * from './qb-attachment.service';
 export * from './qb-connection.service';
 export * from './qb-employee.service';
+export * from './qb-entity.service';
 export * from './qb-payroll.service';
 export * from './qb-realm.service';
 export * from './qb-report.service';

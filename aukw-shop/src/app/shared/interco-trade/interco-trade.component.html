@@ -1,19 +1,20 @@
 <div class="card-body">
   <form [formGroup]="form">
     <div class="row">
-      <div class="col-8">
+      <div class="col-2">
+        <div class="p-2">Date</div>
+        <div class="p-2">Entity</div>
+        <div class="p-2">Account</div>
+        <div class="p-2">Memo</div>
+      </div>
+      <div class="col-10">
         <div class="row">
-          <div class="col-2">
-            <div>Date</div>
-            <div>Entity</div>
-            <div>Account</div>
-          </div>
-          <div class="col-5">
+          <div class="col-4">
             <div class="row">
-              <div class="col-9">
+              <div class="col-9 p-0">
                 <input
                   class="form-control text-end"
-                  placeholder="Start"
+                  placeholder="Txn Date"
                   name="dp1"
                   ngbDatepicker
                   #d1="ngbDatepicker"
@@ -32,26 +33,51 @@
                 </button>
               </div>
             </div>
-            <div>Entity</div>
             <div>
-              <input
-                id="txnAmount"
-                name="txnAmount"
-                type="number"
-                class="form-control"
-                placeholder="£0.00"
-                pattern="^\d*(\.\d{0,2})?$"
-                formControlName="amount"
-              />
+              <div class="row">
+                <select
+                  formControlName="entity"
+                  id="entitySelect"
+                  name="entitySelect"
+                  class="form-control"
+                >
+                  <option
+                    *ngFor="let vendor of vendors"
+                    [ngValue]="vendor.id"
+                    class="text-end"
+                  >
+                    {{ vendor.value }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <div class="row">
+                <select
+                  formControlName="account"
+                  id="accountSelect"
+                  name="accountSelect"
+                  class="form-control"
+                >
+                  <option
+                    *ngFor="let account of accounts"
+                    [ngValue]="account.id"
+                    class="text-center"
+                  >
+                    {{ account.value }}
+                  </option>
+                </select>
+              </div>
             </div>
           </div>
-          <div class="col-4">
-            <div>VAT ?</div>
-            <div>Attachments ?</div>
-            <div>Amount</div>
+          <div class="col-3">
+            <div class="p-2">VAT</div>
+            <div class="p-2">Attachments</div>
+            <div class="p-2">Amount</div>
+            <div></div>
           </div>
-          <div class="col-1">
-            <div>
+          <div class="col-3">
+            <div class="pt-2">
               <div class="form-check">
                 <input
                   type="checkbox"
@@ -63,7 +89,14 @@
               </div>
             </div>
             <div>
-              {{ this.attachments.length == 0 ? "" : this.attachments.length }}
+              <input
+                id="txnAttachments"
+                name="txnAttachments"
+                type="number"
+                class="form-control"
+                formControlName="attachments"
+                [readonly]="true"
+              />
             </div>
             <div>
               <input
@@ -74,91 +107,43 @@
                 placeholder="£0.00"
                 pattern="^\d*(\.\d{0,2})?$"
                 formControlName="amount"
+                aria-label="The amount of the expense"
               />
+            </div>
+            <div></div>
+          </div>
+          <div class="col-2">
+            <div class="mx-auto">
+              <button
+                type="submit"
+                [disabled]="loading || !this.existingTrade"
+                class="btn btn-primary btn-lg"
+                aria-label="Create Transaction in Quickbooks"
+              >
+                <span
+                  *ngIf="loading"
+                  class="spinner-border spinner-border-sm me-1"
+                ></span>
+
+                Add Trade
+              </button>
             </div>
           </div>
         </div>
-      </div>
-      <div class="col-4">
-        <div class="mx-auto">
-          <button
-            type="submit"
-            [disabled]="loading || !this.existingTrade"
-            class="btn btn-primary btn-lg"
-          >
-            <span
-              *ngIf="loading"
-              class="spinner-border spinner-border-sm me-1"
-            ></span>
-
-            Insert into <span>Enterprises</span> QuickBooks
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-2">
-        <div>Memo</div>
-      </div>
-      <div class="col-10">
-        <div>
-          <textarea
-            class="form-control"
-            id="commentsTextarea"
-            rows="1"
-            formControlName="Note"
-          ></textarea>
+        <div class="row">
+          <div class="col p-0">
+            <div>
+              <textarea
+                class="form-control pl-1"
+                id="commentsTextarea"
+                rows="1"
+                formControlName="Note"
+                placeholder="Optional memo describing the transaction."
+              ></textarea>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </form>
 </div>
-<!--
-    <div class="input-group mb-1">
-      <div class="d-flex flex-row">
-        <div>
-          <label for="clothingAmount" class="form-label p-2"> Amount </label>
-        </div>
-        <div>
-          <input
-            id="transactionAmount"
-            name="transactionAmount"
-            type="number"
-            class="form-control ms-2"
-            placeholder="0.00"
-            formControlName="amount"
-            pattern="^\d*(\.\d{0,2})?$"
-          />
-        </div>
-      </div>
-    </div>
-    <div class="col-sm-6">
-      <div class="input-group col p-0 mb-1">
-        <div class="d-flex flex-row">
-          <div>
-            <label for="clothingAmount" class="form-label p-2"> Txn Date </label>
-          </div>
-          <div class="d-flex flex-row">
-            <input
-              class="form-control text-end"
-              placeholder="Start"
-              name="dp1"
-              ngbDatepicker
-              #d1="ngbDatepicker"
-              formControlName="startDate"
-              id="inputStartDate"
-              placement="bottom"
-            />
-            <div class="input-group-append p-2">
-              <button
-                class="btn btn-outline-secondary"
-                (click)="d1.toggle()"
-                type="button"
-              >
-                <i class="far fa-calendar-alt"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>-->
