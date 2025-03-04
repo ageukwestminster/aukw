@@ -3,13 +3,15 @@ import { CommonModule, NgIf } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
-import { QBReportService, CustomRxjsOperatorsService } from '@app/_services';
-import { DateRangeEnum } from '@app/_models';
-import { AbstractChartReportComponent } from '../chart-report.component';
 import { QBAccountListEntry } from '@app/_models/qb-account-list-entry';
-import { DateRangeChooserComponent, IntercoTradeComponent } from '@app/shared';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
+
+import { AbstractChartReportComponent } from '../chart-report.component';
+import { fromArrayToElement } from '@app/_helpers';
+import { QBReportService } from '@app/_services';
+import { DateRangeEnum } from '@app/_models';
+import { DateRangeChooserComponent, IntercoTradeComponent } from '@app/shared';
 
 @Component({
   templateUrl: './aukw-interco.component.html',
@@ -33,7 +35,6 @@ export class AukwIntercoComponent
   otherCompanyTrades: QBAccountListEntry[] = [];
 
   private reportService = inject(QBReportService);
-  private customOperator = inject(CustomRxjsOperatorsService);
 
   readonly INITIALDATERANGE: DateRangeEnum = DateRangeEnum.LAST_SIX_MONTHS;
 
@@ -60,7 +61,7 @@ export class AukwIntercoComponent
       .pipe(
         tap(() => this.data = []),
         // Convert to Obs of QBAccountListEntry rather than QBAccountListEntry[]
-        this.customOperator.fromArrayToElement(),
+        fromArrayToElement(),
         map((accountListEntry) => {
           return new QBAccountListEntry(accountListEntry);
         }),

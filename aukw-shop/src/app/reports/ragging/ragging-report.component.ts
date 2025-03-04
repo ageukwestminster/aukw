@@ -4,8 +4,9 @@ import { RouterLink } from '@angular/router';
 import { reduce, tap } from 'rxjs';
 import { concatMap, map } from 'rxjs/operators';
 import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
-import { CustomRxjsOperatorsService, QBReportService } from '@app/_services';
+import { QBReportService } from '@app/_services';
 import { AbstractChartReportComponent } from '../chart-report.component';
+import { fromArrayToElement } from '@app/_helpers';
 import {
   DateRangeEnum,
   RaggingChartData,
@@ -36,7 +37,6 @@ export class RaggingReportComponent
   raggingChartData!: RaggingChartData;
 
   private reportService = inject(QBReportService);
-  private customOperator = inject(CustomRxjsOperatorsService);
 
   readonly INITIALDATERANGE: DateRangeEnum = DateRangeEnum.LAST_QUARTER;
 
@@ -65,7 +65,7 @@ export class RaggingReportComponent
       .pipe(
         tap((response) => (this.data = response)),
         // This converts Observable<SalesByItem[]> to Observable<SalesByItem>
-        this.customOperator.fromArrayToElement(),
+        fromArrayToElement(),
 
         // reduce calculates total sum
         reduce((prev: SalesByItem, current) => {
@@ -83,7 +83,7 @@ export class RaggingReportComponent
         tap((response) => (this.tableData = response)),
 
         // Convert to Obs of RaggingQuarter rather than RaggingQuarter[]
-        this.customOperator.fromArrayToElement(),
+        fromArrayToElement(),
 
         // Map the historical data into chart data form
         map((raggingQuarter) => {
