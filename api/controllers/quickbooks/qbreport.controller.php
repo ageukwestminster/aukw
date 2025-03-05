@@ -2,6 +2,7 @@
 
 namespace Controllers;
 
+use DateMalformedStringException;
 use DateTime;
 use \Models\QbDateMacro;
 use \Models\RowItem;
@@ -326,21 +327,9 @@ class QBReportCtl{
       }
 
       // Fill in any blanks
-      if (!array_key_exists('ragging', $pnlReport)) {
-        $rowItem = new RowItem;
-        $rowItem->displayName = 'Ragging';
-        $pnlReport['ragging'] = $rowItem;
-      }
-      if (!array_key_exists('instorecustomersales', $pnlReport)) {
-        $rowItem = new RowItem;
-        $rowItem->displayName = 'Daily Sales Income';
-        $pnlReport['instorecustomersales'] = $rowItem;
-      }
-      if (!array_key_exists('donations', $pnlReport)) {
-        $rowItem = new RowItem;
-        $rowItem->displayName = 'Donations to Parent';
-        $pnlReport['donations'] = $rowItem;
-      }
+      QBReportCtl::AddMissingRowItem($pnlReport, 'ragging', 'Ragging');
+      QBReportCtl::AddMissingRowItem($pnlReport, 'instorecustomersales', 'Daily Sales Income');
+      QBReportCtl::AddMissingRowItem($pnlReport, 'donations', 'Donations to Parent');
 
       // Deduce miscellaneous income
       $rowItem = new RowItem;
@@ -368,6 +357,21 @@ class QBReportCtl{
 
   }
 
+  /**
+   * Add a RowItem to the report. This new element has a key equal to $element_key
+   * @param mixed &$report 
+   * @param string $element_key The array key of the new element.
+   * @param string $element_value The
+   * @return void 
+   */
+  private static function AddMissingRowItem(&$report, string $element_key, string $element_value) : void{
+    if (!array_key_exists($element_key, $report)) {
+      $rowItem = new RowItem;
+      $rowItem->displayName = $element_value;
+      $pnlReport[$element_key] = $rowItem;
+    }
+  }
+
     /**
    * Show a QBO report that summarizes ragging by quarter
    * The only HTTP parameter accepted is 'start' and that is optional. 
@@ -385,30 +389,49 @@ class QBReportCtl{
     $model->item = null;
     $model->sortAscending = false;
 
-    // From https://stackoverflow.com/a/35509890/6941165
-    $current_quarter = ceil(date('n') / 3);
-    $first_date_of_current_quarter = 
-        date('Y-m-d', strtotime(date('Y') . '-' . (($current_quarter * 3) - 2) . '-1'));
-    // Next line not used but kept for reference
-    //$last_date_of_current_quarter = date('Y-m-t', strtotime(date('Y') . '-' . (($current_quarter * 3)) . '-1'));
-    $end = (new DateTime($first_date_of_current_quarter))->modify('-1 day')->format('Y-m-d');
-    
-
-    if(isset($_GET['start'])) {
-      $start=$_GET['start'];
-    } else {
-      // if no start date provided then go back 5 years
-      $start=(new DateTime($first_date_of_current_quarter))->modify('-5 year')->format('Y-m-d');
-    }
-
-    list($start, $end) = \Core\DatesHelper::sanitizeDateValues($start, $end);
-  
-    $model->startdate = $start;
-    $model->enddate = $end;
+    $model->enddate = QBReportCtl::lastDayInPreviousQuarter($model);
+    $model->startdate = $_GET['start']??QBReportCtl::getStartDateofRaggingReport(
+                                                                  $model->enddate, 5);
 
     $model->run();
 
     echo json_encode($model->extractRaggingNumbers(), JSON_NUMERIC_CHECK);
   }
+
+  /**
+   * Get the last date of the quarter before the current quarter.
+   * For example, if today is 15th Feb then the current quarter is Jan 1 to March 31. Thus this
+   * funciton would return Dec 31st.
+   * @return string A string formatted date
+   * @throws DateMalformedStringException 
+   */
+  private static function lastDayInPreviousQuarter() {
+
+    $current_quarter = ceil(date('n') / 3); // From https://stackoverflow.com/a/35509890/6941165
+    $first_date_of_current_quarter = 
+        date('Y-m-d', strtotime(date('Y') . '-' . (($current_quarter * 3) - 2) . '-1'));
+    // Next line commented out but kept for reference
+    //$last_date_of_current_quarter = date('Y-m-t', strtotime(date('Y') . '-' . (($current_quarter * 3)) . '-1'));
+    return (new DateTime($first_date_of_current_quarter))->modify('-1 day')->format('Y-m-d');
+   
+  }
+
+  /**
+   * 
+   * @param mixed $last_date_of_previous_quarter 
+   * @param mixed $number_of_years Number of years to go back into the past
+   * @return string 
+   * @throws DateMalformedStringException 
+   */
+  private static function getStartDateofRaggingReport(
+                                  $last_date_of_previous_quarter,
+                                  $number_of_years) : string{
+
+        return (new DateTime($last_date_of_previous_quarter))
+                ->modify('+1 day')
+                ->modify("-$number_of_years year")
+                ->format('Y-m-d');
+  }
+
 
 }
