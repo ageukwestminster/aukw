@@ -3,7 +3,8 @@
 namespace Controllers;
 
 use DateTime;
-use \Models\QbDateMacro;
+use \Core\ErrorResponse as Error;
+use Exception;
 
 /**
  * Controller to accomplish Report related tasks. 
@@ -19,31 +20,34 @@ class ReportCtl{
    * 
    */
   public static function dailySalesHistogram(){  
+    try {
+      $model = new \Models\Report();
 
-    $model = new \Models\Report();
+      if(isset($_GET['start']) || isset($_GET['end'])) {
+        $start='';
+        $end='';
+        list($start, $end) = \Core\DatesHelper::sanitizeDateValues(
+                                    !isset($_GET['start']) ? '' : $_GET['start'], 
+                                    !isset($_GET['end']) ? '' : $_GET['end']
+                                );
+    
+        $model->startdate = $start;
+        $model->enddate = $end;
+    } else {
+        $model->startdate = '2000-01-01';
+        $model->enddate = date('Y-m-d');
+    }
 
-    if(isset($_GET['start']) || isset($_GET['end'])) {
-      $start='';
-      $end='';
-      list($start, $end) = \Core\DatesHelper::sanitizeDateValues(
-                                  !isset($_GET['start']) ? '' : $_GET['start'], 
-                                  !isset($_GET['end']) ? '' : $_GET['end']
-                              );
-  
-      $model->startdate = $start;
-      $model->enddate = $end;
-  } else {
-      $model->startdate = '2000-01-01';
-      $model->enddate = date('Y-m-d');
-  }
+    if (isset($_GET['shopID']) && !empty($_GET['shopID'])) {
+        $model->shopID = $_GET['shopID'];
+    } else {
+        $model->shopID = 1;
+    }
 
-  if (isset($_GET['shopID']) && !empty($_GET['shopID'])) {
-      $model->shopID = $_GET['shopID'];
-  } else {
-      $model->shopID = 1;
-  }
-
-    echo json_encode($model->dailySalesHistogram(), JSON_NUMERIC_CHECK);
+      echo json_encode($model->dailySalesHistogram(), JSON_NUMERIC_CHECK);
+    } catch (Exception $e) {
+      Error::response("Unable to retrieve a dataset for the histogram of daily sales chart.", $e);
+    }
   }
 
   /**
@@ -53,21 +57,24 @@ class ReportCtl{
    * 
    */
   public static function dailySalesMovingAverage(){  
+    try {
+      $model = new \Models\Report();
 
-    $model = new \Models\Report();
+      if(isset($_GET['start']) && \Core\DatesHelper::validateDate($_GET['start'])) {
+          $model->startdate = $_GET['start'];
+      } else {
+        $model->startdate = '2000-01-01';
+      }
+      if (isset($_GET['shopID']) && !empty($_GET['shopID'])) {
+        $model->shopID = $_GET['shopID'];
+      } else {
+          $model->shopID = 1;
+      }
 
-    if(isset($_GET['start']) && \Core\DatesHelper::validateDate($_GET['start'])) {
-        $model->startdate = $_GET['start'];
-    } else {
-      $model->startdate = '2000-01-01';
+      echo json_encode($model->dailySalesMovingAverage(), JSON_NUMERIC_CHECK);
+    } catch (Exception $e) {
+      Error::response("Unable to retrieve a dataset for the chart showing daily sales moving averages.", $e);
     }
-    if (isset($_GET['shopID']) && !empty($_GET['shopID'])) {
-      $model->shopID = $_GET['shopID'];
-    } else {
-        $model->shopID = 1;
-    }
-
-    echo json_encode($model->dailySalesMovingAverage(), JSON_NUMERIC_CHECK);
   }
 
     /**
@@ -78,26 +85,32 @@ class ReportCtl{
    * 
    */
   public static function avgWeeklySalesByQuarter($shopid){  
+    try {
+      $model = new \Models\TakingsSummary();
 
-    $model = new \Models\TakingsSummary();
-
-    echo json_encode($model->avgWeeklySales($shopid), JSON_NUMERIC_CHECK);
+      echo json_encode($model->avgWeeklySales($shopid), JSON_NUMERIC_CHECK);
+    } catch (Exception $e) {
+      Error::response("Unable to retrieve a dataset for the report which shows average weekly sales, by quarter.", $e);
+    }
   }
 
       /**
-   * Retrieve a data set for the report which shows average weekly sales, by quarter.
+   * Retrieve a data set for the report which shows average weekly sales, within the given date range.
    *
    * @param mixed $shopid Must be supplied.
    * @return void Output is echoed directly to response.
    * 
    */
   public static function avgWeeklySales($shopid){  
+    try {
+      $model = new \Models\Report();
+      $model->shopID = $shopid;
+      ReportCtl::GetHttpDateParameters($model);
 
-    $model = new \Models\Report();
-    $model->shopID = $shopid;
-    ReportCtl::GetHttpDateParameters($model);
-
-    echo json_encode($model->avgWeeklySales(), JSON_NUMERIC_CHECK);
+      echo json_encode($model->avgWeeklySales(), JSON_NUMERIC_CHECK);
+    } catch (Exception $e) {
+      Error::response("Unable to retrieve a dataset for the report which shows average weekly sales.", $e);
+    }
   }
 
   /**
@@ -108,10 +121,14 @@ class ReportCtl{
    * 
    */
   public static function avgDailyTransactionSizeByQuarter($shopid){  
+    try {
+      $model = new \Models\TakingsSummary();
 
-    $model = new \Models\TakingsSummary();
-
-    echo json_encode($model->avgDailyTransactionSizeByQuarter($shopid), JSON_NUMERIC_CHECK);
+      echo json_encode($model->avgDailyTransactionSizeByQuarter($shopid), JSON_NUMERIC_CHECK);
+    } catch (Exception $e) {
+      Error::response("Unable to retrieve a dataset for the report which shows ".
+                              "average daily sales per transaction, by quarter.", $e);
+    }
   }
 
     /**
@@ -122,12 +139,16 @@ class ReportCtl{
    * 
    */
   public static function avgDailyTransactionSize($shopid){  
+    try {
+      $model = new \Models\Report();
+      $model->shopID = $shopid;
+      ReportCtl::GetHttpDateParameters($model);
 
-    $model = new \Models\Report();
-    $model->shopID = $shopid;
-    ReportCtl::GetHttpDateParameters($model);
-
-    echo json_encode($model->avgDailyTransactionSize(), JSON_NUMERIC_CHECK);
+      echo json_encode($model->avgDailyTransactionSize(), JSON_NUMERIC_CHECK);
+    } catch (Exception $e) {
+      Error::response("Unable to retrieve a dataset for the report which shows ".
+                              "average daily sales per transaction.", $e);
+    }
   }
 
   /**

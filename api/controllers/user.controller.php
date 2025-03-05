@@ -2,6 +2,9 @@
 
 namespace Controllers;
 
+use \Core\ErrorResponse as Error;
+use Exception;
+
 /**
  * Controller to acomplish User related tasks
  *

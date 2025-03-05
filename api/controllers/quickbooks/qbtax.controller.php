@@ -4,6 +4,8 @@ namespace Controllers;
 
 use \Models\QuickbooksQuery;
 use Core\QuickbooksConstants as QBO;
+use \Core\ErrorResponse as Error;
+use Exception;
 
 /**
  * Controller to accomplish QBO Transfer related tasks. 
@@ -25,15 +27,8 @@ class QBTaxCtl{
         ->list_tax_codes();
 
       echo json_encode($taxCodes, JSON_NUMERIC_CHECK);
-    } catch (\Exception $e) {
-      http_response_code(400);  
-      echo json_encode(
-          array(
-              "message" => "Unable to retrieve QB Tax Codes.",
-              "extra" => $e->getMessage()
-              )
-      );
-      exit(1);
+    } catch (Exception $e) {
+      Error::response("Unable to retrieve QB Tax Codes.", $e);
     }
   }
 
@@ -51,14 +46,7 @@ class QBTaxCtl{
 
       echo json_encode($taxCodes, JSON_NUMERIC_CHECK);
     } catch (\Exception $e) {
-      http_response_code(400);  
-      echo json_encode(
-          array(
-              "message" => "Unable to retrieve QB Tax Codes.",
-              "extra" => $e->getMessage()
-              )
-      );
-      exit(1);
+      Error::response("Unable to retrieve QB Tax Code with Id=$id.", $e);
     }
   }
 

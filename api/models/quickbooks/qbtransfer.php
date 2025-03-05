@@ -196,10 +196,10 @@ class QuickbooksTransfer{
   /**
    * Delete a Transfer from the QB system.
    *
-   * @return bool 'true' if success.
+   * @return true 'true' if success.
    * 
    */
-  public function delete(): bool{
+  public function delete(): true{
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->realmid);
 

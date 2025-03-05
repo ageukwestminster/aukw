@@ -4,7 +4,8 @@ namespace Controllers;
 
 use \Models\QuickbooksSalesReceipt;
 use \Models\Takings;
-
+use \Core\ErrorResponse as Error;
+use Exception;
 
 /**
  * Controller to accomplish QBO sales receipt related tasks. 
@@ -21,12 +22,15 @@ class QBSalesReceiptCtl{
    * @return void Output is echoed directly to response 
    */
   public static function read_one(string $realmid, int $id){  
+    try {
+      $model = QuickbooksSalesReceipt::getInstance()
+                  ->setId($id)
+                  ->setRealmID($realmid);
 
-    $model = QuickbooksSalesReceipt::getInstance()
-                ->setId($id)
-                ->setRealmID($realmid);
-
-    echo json_encode($model->readone(), JSON_NUMERIC_CHECK);   
+      echo json_encode($model->readone(), JSON_NUMERIC_CHECK);   
+    } catch (Exception $e) {
+      Error::response("Unable to return details of the sales receipt identified by Id=$id.", $e);
+    }
   }
 
   /**
@@ -36,24 +40,20 @@ class QBSalesReceiptCtl{
    * @return void Output is echoed directly to response 
    */
   public static function delete(string $realmid, int $id){  
+    try {
+      $model = QuickbooksSalesReceipt::getInstance()
+          ->setId($id)
+          ->setRealmID($realmid);
 
-    $model = QuickbooksSalesReceipt::getInstance()
-        ->setId($id)
-        ->setRealmID($realmid);
-
-    if($model->delete()) {
-      echo json_encode(
-        array(
-          "message" => "Takings with id=$id was deleted.",
-          "id" => $id)
-          , JSON_NUMERIC_CHECK);
-    } else{
-        http_response_code(400);  
+      if($model->delete()) {
         echo json_encode(
           array(
-            "message" => "Unable to DELETE row.",
+            "message" => "Takings with id=$id was deleted.",
             "id" => $id)
             , JSON_NUMERIC_CHECK);
+      }
+    } catch (Exception $e) {
+      Error::response("Unable to delete the sales receipt identified by Id=$id.", $e);
     }
   }
 
@@ -102,41 +102,26 @@ class QBSalesReceiptCtl{
         ->setRealmID($realmid);
       
     } catch (\TypeError $e) {
-      http_response_code(422);  
-      echo json_encode(
-        array(
-          "message" => "Unable to enter daily sales receipt in Quickbooks. ",
-          "extra" => $e->getMessage()
-           )
-          , JSON_NUMERIC_CHECK);
-      exit(1);
-    } catch (\Exception $e) {
-    http_response_code(400);  
-    echo json_encode(
-      array(
-        "message" => "Unable to enter daily sales receipt in Quickbooks. ",
-        "extra" => $e->getMessage()
-         )
-        , JSON_NUMERIC_CHECK);
-    exit(1);
-  }
-
-    if (!$model->validate()) {
-      http_response_code(400);  
-      echo json_encode(
-        array(
-          "message" => "Unable to enter sales receipt in Quickbooks. Transaction is not in balance for '" .
-          $data->date . "'.")
-          , JSON_NUMERIC_CHECK);
-      exit(1);      
+      Error::response("Unable to enter daily sales receipt in Quickbooks.", $e, 422);
+    } catch (Exception $e) {
+      Error::response("Unable to enter daily sales receipt in Quickbooks.", $e);
     }
 
-    $result = $model->create();
-    if ($result) {
-        echo json_encode(
-            array("message" => "Sales Receipt [". $result['label']  ."] has been added for " . $result['date'] . ".",
-                "id" => $result['id'])
-          );
+    if (!$model->validate()) {
+      Error::response("Unable to enter sales receipt in QuickBooks. Transaction is not in balance for '" .
+          $data->date . "'.");    
+    }
+
+    try {
+      $result = $model->create();
+      if ($result) {
+          echo json_encode(
+              array("message" => "Sales Receipt [". $result['label']  ."] has been added for " . $result['date'] . ".",
+                  "id" => $result['id'])
+            );
+      }
+    } catch (Exception $e) {
+      Error::response("Unable to create sales receipt in QuickBooks.", $e);
     }
   }
 
@@ -149,37 +134,32 @@ class QBSalesReceiptCtl{
    * 
    */
   public static function create_from_takings(string $realmid, int $takingsid){  
+    try {
+      $takings = new Takings();
+      $takings->id = $takingsid;
+      $takings->readOne();
 
-    $takings = new Takings();
-    $takings->id = $takingsid;
-    $takings->readOne();
+      if ($takings->quickbooks != 0) {
+        throw new Exception("ID " . $takingsid ." already entered into QuickBooks.");
+      } else if ($takings->date == null) {
+        throw new Exception("No takings found in aukw database with that id ($takingsid).");
+      } else if ($takings->id == 0) {
+        exit(0);
+      }
 
-    if ($takings->quickbooks != 0) {
-      http_response_code(400);
-      echo json_encode(
-        array("message" => "ID " . $takingsid ." already entered into Quickbooks.")
-      );
-      exit(0);
-    } else if ($takings->date == null) {
-      http_response_code(400);
-      echo json_encode(
-        array("message" => "No takings found in aukw database with that id (" . $takingsid .").")
-      );
-      exit(0);
-    } else if ($takings->id == 0) {
-      exit(0);
-    }
-
-    $model=QBSalesReceiptCtl::transfer_takings_data($takings);
-    $model->setRealmID($realmid);
-    $result = $model->create();
-    if ($result) {
-      $takings->quickbooks = 1;
-      $takings->patch_quickbooks();
-      echo json_encode(
-            array("message" => "Sales Receipt [". $result['label']  ."] has been added for " . $result['date'] . ".",
-                "id" => $result['id'])
-          );
+      $model=QBSalesReceiptCtl::transfer_takings_data($takings);
+      $model->setRealmID($realmid);
+      $result = $model->create();
+      if ($result) {
+        $takings->quickbooks = 1;
+        $takings->patch_quickbooks();
+        echo json_encode(
+              array("message" => "Sales Receipt [". $result['label']  ."] has been added for " . $result['date'] . ".",
+                  "id" => $result['id'])
+            );
+      }
+    } catch (Exception $e) {
+      Error::response("Unable to create QBO Sales Receipt from aukw takings record.", $e);
     }
   }
 
@@ -190,44 +170,46 @@ class QBSalesReceiptCtl{
    * 
    */
   public static function create_all_from_takings(string $realmid){  
+    try {
+      // search for all the takings objects that are not yet entered into QuickBooks
+      $takingsModel = new \Models\Takings();
+      $takingsArray = $takingsModel->read_by_quickbooks_status(false);
 
-    // search for all the takings objects that are not yet entered into Quickbooks
-    $takingsModel = new \Models\Takings();
-    $takingsArray = $takingsModel->read_by_quickbooks_status(false);
-
-    // Empty array ?
-    if ( count($takingsArray) == 0) {
-      http_response_code(200);
-      echo json_encode(
-        array("message" => "No takings available to be entered into Quickbooks. Empty array returned from database.")
-      );
-      exit(0);
-    }
-
-    $message=array();
-
-    foreach ($takingsArray as $takingsRow) {
-
-      $takings = new Takings();
-      $takings->id = $takingsRow["id"];
-      $takings->readOne();
-      
-      $model=QBSalesReceiptCtl::transfer_takings_data($takings);
-
-      // TODO: USe QBO Batch https://intuit.github.io/QuickBooks-V3-PHP-SDK/quickstart.html#batch-request
-
-      $result = $model->create();
-      if ($result) {
-        $takings->quickbooks = 1;
-        $takings->patch_quickbooks();
-        $message[] = array("message" => "Sales Receipt [". $result['label']  
-                    ."] has been added for " . $result['date'] 
-                    . ".", "id" => $result['id']);
+      // Empty array ?
+      if ( count($takingsArray) == 0) {
+        http_response_code(200); // This is not an error situation.
+        echo json_encode(
+          array("message" => "No takings available to be entered into QuickBooks. Empty array returned from database.")
+        );
+        exit(0);
       }
+
+      $message=array();
+
+      foreach ($takingsArray as $takingsRow) {
+
+        $takings = new Takings();
+        $takings->id = $takingsRow["id"];
+        $takings->readOne();
+        
+        $model=QBSalesReceiptCtl::transfer_takings_data($takings);
+
+        // TODO: USe QBO Batch https://intuit.github.io/QuickBooks-V3-PHP-SDK/quickstart.html#batch-request
+
+        $result = $model->create();
+        if ($result) {
+          $takings->quickbooks = 1;
+          $takings->patch_quickbooks();
+          $message[] = array("message" => "Sales Receipt [". $result['label']  
+                      ."] has been added for " . $result['date'] 
+                      . ".", "id" => $result['id']);
+        }
+      }
+
+      echo json_encode($message);
+    } catch (Exception $e) {
+      Error::response("Error occurred while processing takings into QBO.", $e);
     }
-
-    echo json_encode($message);
-
   }
 
   /**
@@ -258,33 +240,14 @@ class QBSalesReceiptCtl{
         ->setPrivateNote($takings->comments ?? ''
       );
     } catch (\TypeError $e) {
-      http_response_code(422);  
-      echo json_encode(
-        array(
-          "message" => "Unable to enter daily sales receipt in Quickbooks. ",
-          "extra" => $e->getMessage()
-          )
-          , JSON_NUMERIC_CHECK);
-      exit(1);
-    } catch (\Exception $e) {
-      http_response_code(400);  
-      echo json_encode(
-        array(
-          "message" => "Unable to enter daily sales receipt in Quickbooks. ",
-          "extra" => $e->getMessage()
-          )
-          , JSON_NUMERIC_CHECK);
-      exit(1);
+      Error::response("Unable to enter daily sales receipt in Quickbooks.", $e, 422);
+    } catch (Exception $e) {
+      Error::response("Unable to enter daily sales receipt in Quickbooks.", $e);
     }
 
     if (!$model->validate()) {
-      http_response_code(400);  
-      echo json_encode(
-        array(
-          "message" => "Unable to enter sales receipt in Quickbooks. Transaction is not in balance for '" .
-          $takings->date . "'.")
-          , JSON_NUMERIC_CHECK);
-      exit(1);      
+      Error::response("Unable to enter sales receipt in QuickBooks. Transaction is not in balance for '" .
+          $takings->date . "'.");      
     }
 
     return $model;

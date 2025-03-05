@@ -1,6 +1,8 @@
 <?php
 
 namespace Controllers;
+use \Core\ErrorResponse as Error;
+use Exception;
 /**
  * Controller to accomplish QBRealm related tasks. 
  *
@@ -16,11 +18,15 @@ class QBRealmCtl{
    */
   public static function read_all(){  
 
-    $includeSandbox = $_GET['includeSandbox'] ?? false; 
+    try {
+      $includeSandbox = $_GET['includeSandbox'] ?? false; 
 
-    $model = new \Models\QBRealm();
+      $model = new \Models\QBRealm();
 
-    echo json_encode($model->read($includeSandbox), JSON_NUMERIC_CHECK);
+      echo json_encode($model->read($includeSandbox), JSON_NUMERIC_CHECK);
+    } catch (Exception $e) {
+      Error::response("Unable to generate list of all realms.", $e);
+    }
   }
 
 
@@ -33,11 +39,14 @@ class QBRealmCtl{
    * 
    */
   public static function read_one(string $realmid){  
+    try {
+      $model = new \Models\QBRealm();
+      $model->realmid = $realmid;
 
-    $model = new \Models\QBRealm();
-    $model->realmid = $realmid;
-
-    echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
+      echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
+    } catch (Exception $e) {
+      Error::response("Unable to show details of realm with realmid=$realmid.", $e);
+    }
   }
 
 }

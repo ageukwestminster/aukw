@@ -2,6 +2,9 @@
 
 namespace Controllers;
 
+use \Core\ErrorResponse as Error;
+use Exception;
+
 /**
  * Controller to read details of QBO recurring transactions
  *
@@ -16,12 +19,15 @@ class QBRecurringTransactionCtl{
    * @return void Output is echo'd directly to response 
    */
   public static function read_one(string $realmid, int $id){  
+    try {
+      $model = \Models\QuickbooksRecurringTransaction::getInstance()
+        ->setRealmID($realmid)
+        ->setId($id);  
 
-    $model = \Models\QuickbooksRecurringTransaction::getInstance()
-      ->setRealmID($realmid)
-      ->setId($id);  
-
-    echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
+      echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
+    } catch (Exception $e) {
+      Error::response("Unable to return details of the QBO recurring transaction identified by Id=$id.", $e);
+    }
   }
 
 
@@ -31,10 +37,13 @@ class QBRecurringTransactionCtl{
    * @return void Output is echo'd directly to response 
    */
   public static function read_all(string $realmid){  
-
+    try {
     $model = \Models\QuickbooksRecurringTransaction::getInstance()
       ->setRealmID($realmid);
 
     echo json_encode($model->read(), JSON_NUMERIC_CHECK);
+  } catch (Exception $e) {
+    Error::response("Unable to return details of all the QBO recurring transactions.", $e);
+  }
   }
 }

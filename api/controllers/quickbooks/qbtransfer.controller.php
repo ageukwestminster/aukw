@@ -4,6 +4,8 @@ namespace Controllers;
 
 use \Models\QuickbooksTransfer;
 use Core\QuickbooksConstants as QBO;
+use \Core\ErrorResponse as Error;
+use Exception;
 
 /**
  * Controller to accomplish QBO Transfer related tasks. 
@@ -27,14 +29,7 @@ class QBTransferCtl{
 
     echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
     } catch (\Exception $e) {
-      http_response_code(400);  
-      echo json_encode(
-          array(
-              "message" => "Unable to retrieve QB Transfer with id=$id".". ",
-              "extra" => $e->getMessage()
-              )
-      );
-      exit(1);
+      Error::response("Unable to retrieve QB Transfer with id=$id.", $e);
     }
   }
 
@@ -64,13 +59,7 @@ class QBTransferCtl{
       } 
     
     } catch (\Exception $e) {
-      http_response_code(400);  
-      echo json_encode(
-        array(
-          "message" => "Unable to delete QB Transfer with id=$id".". ",
-          "extra" => $e->getMessage()
-        )
-      );
+      Error::response("Unable to delete QB Transfer with id=$id.", $e);
     }
   }  
 
@@ -124,14 +113,7 @@ class QBTransferCtl{
       }
 
     } catch (\Exception $e) {
-      http_response_code(400);  
-      echo json_encode(
-        array(
-          "message" => "Unable to create Transfer in Quickbooks. ",
-          "extra" => $e->getMessage()
-          )
-          , JSON_NUMERIC_CHECK);
-      exit(1);
+      Error::response("Unable to create Transfer in Quickbooks.", $e);
     }    
   }  
   /**
@@ -188,14 +170,7 @@ class QBTransferCtl{
       }
 
     } catch (\Exception $e) {
-      http_response_code(400);  
-      echo json_encode(
-        array(
-          "message" => "Unable to create interco transfer in Quickbooks. ",
-          "extra" => $e->getMessage()
-          )
-          , JSON_NUMERIC_CHECK);
-      exit(1);
+      Error::response("Unable to create interco transfer in Quickbooks.", $e);
     }    
   }  
 }

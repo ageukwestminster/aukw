@@ -2,6 +2,7 @@
 
 namespace Models;
 
+use Exception;
 use \PDO;
 
 /**
@@ -164,26 +165,14 @@ class AuditLog{
         $stmt->bindParam(":description", $this->description);
 
         // execute query
-        try {
-            if($stmt->execute()){
-                $this->id = $this->conn->lastInsertId();
-                if($this->id) {
-                    return true;
-                } else {
-                    return false;
-                }
+        if($stmt->execute()){
+            $this->id = $this->conn->lastInsertId();
+            if($this->id) {
+                return true;
+            } else {
+                throw new Exception("Id of AuditLog entry is missing.");
             }
         }
-        catch (\Exception $e) {
-            http_response_code(400); 
-            echo json_encode(
-                array("message" => "Unable to add audit log entry to database.",
-                "error" => $e->getMessage())
-              );
-            exit(1);
-        }
-        
-        return false;
     }
 
 }

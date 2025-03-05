@@ -2,10 +2,13 @@
 
 namespace Models;
 
-use QuickBooksOnline\API\DataService\DataService;
 use QuickBooksOnline\API\Facades\SalesReceipt;
+use QuickBooksOnline\API\Exception\SdkException;
 
 use DateTime;
+use Exception;
+use QuickBooksOnline\API\Exception\IdsException;
+use ReflectionException;
 
 /**
  * Create and retrieve QBO sales receipt objects.
@@ -274,39 +277,24 @@ class QuickbooksSalesReceipt{
     return true;
   }
 
-
   /**
    * Return details of the QBO sales receipt identified by $id
-   *
-   * @param int $id The QBO id of the Quickbooks sales receipt.
-   * 
-   * @return object|false Returns a sales receipt  with specified Id.
-   * 
+   * @return object Returns a sales receipt with specified Id.
+   * @throws Exception 
+   * @throws SdkException 
+   * @throws IdsException 
    */
-  public function readOne():object|false{
+  public function readOne():object{
 
       $auth = new QuickbooksAuth();
-      try{
-        $dataService = $auth->prepare($this->realmid);
-      }
-      catch (\Exception $e) {
-        http_response_code(401);  
-        echo json_encode(
-          array("message" =>  $e->getMessage() )
-        );
-        return false;
-      }
+      $dataService = $auth->prepare($this->realmid);
 
       $dataService->forceJsonSerializers();
       $salesreceipt = $dataService->FindbyId('SalesReceipt', $this->id);
       $error = $dataService->getLastError();
       if ($error) {
-          echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
-          echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
-          echo "The QBO Response message is: " . $error->getResponseBody() . "\n";
-          return false;
-      }
-      else {
+        throw new SdkException("The QBO Response message is: " . $error->getResponseBody());
+      } else {
         if (property_exists($salesreceipt, 'SalesReceipt')) {
           /** @disregard Intelephense error on next line */
           return $salesreceipt->SalesReceipt;
@@ -316,12 +304,14 @@ class QuickbooksSalesReceipt{
       }
   }
 
-  /**
-   * Add a new sales receipt to QBO
-   * 
-   * @return object
-   * 
-   */
+   /**
+    * Add a new sales receipt to QBO
+    * @return array{id: int, date: string, label: string} 
+    * @throws Exception 
+    * @throws ReflectionException 
+    * @throws SdkException 
+    * @throws IdsException 
+    */
   public function create(){
 
     $docnumber = (new DateTime($this->date))->format('Ymd') . ($this->shopid==2?'C':'H'); //'H' is short for Harrow Road
@@ -394,15 +384,9 @@ class QuickbooksSalesReceipt{
       $this->cashToCharity, $this->charitycash_item, $class,
       1, $this->cash_to_charity_account, $this->no_vat_taxcode); //$quantity = 1
     }
-    catch (\Exception $e){
-      http_response_code(422);  
-      echo json_encode(
-        array(
-          "message" => "Unable to enter daily sales receipt in Quickbooks. Error ocurred in preparation of SalesReceipt lines.",
-          "extra" => $e->getMessage()
-          )
-          , JSON_NUMERIC_CHECK);
-      exit(1);
+    catch (Exception){
+      throw new Exception("Unable to enter daily sales receipt in Quickbooks. ".
+                                "Error ocurred in preparation of SalesReceipt lines.");
     }
 
     $theResourceObj = SalesReceipt::create($salesreceipt);
@@ -414,10 +398,7 @@ class QuickbooksSalesReceipt{
 
     $error = $dataService->getLastError();
     if ($error) {
-        echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
-        echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
-        echo "The QBO Response message is: " . $error->getResponseBody() . "\n";
-        return false;
+      throw new SdkException("The QBO Response message is: " . $error->getResponseBody());
     } else {
       if ($resultingObj)  {    
         return array(
@@ -426,7 +407,7 @@ class QuickbooksSalesReceipt{
             "label" => $docnumber
         );
       } else {
-        throw new \Exception("No result body returned from QuickBooks.");
+        throw new Exception("No result body returned from QuickBooks.");
       }
     }
   }
@@ -472,12 +453,14 @@ class QuickbooksSalesReceipt{
   }
 
   /**
-   * Delete a QBO Sales receipt the QB system.
-   *
-   * @return bool 'true' if success.
-   * 
+   * Delete this QBO Sales receipt from the QBO system.
+   * @return true 'true' if success.
+   * @throws Exception 
+   * @throws SdkException 
+   * @throws ReflectionException 
+   * @throws IdsException 
    */
-  public function delete(): bool{
+  public function delete(): true{
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->realmid);
 
@@ -489,14 +472,11 @@ class QuickbooksSalesReceipt{
       "Id" => $this->id,
       "SyncToken" => "0"
     ]);
-    $resultingObj = $dataService->Delete($salesreceipt);
+    $dataService->Delete($salesreceipt);
 
     $error = $dataService->getLastError();
     if ($error) {
-        echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
-        echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
-        echo "The QBO Response message is: " . $error->getResponseBody() . "\n";
-        return false;
+      throw new SdkException("The QBO Response message is: " . $error->getResponseBody());
     } else {      
       return true;
     }

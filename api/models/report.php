@@ -370,67 +370,57 @@ class Report{
    * @return array The required data
    */
     public function avgWeeklySales() : array{        
-        try {
-            $return = array();
-            $return['title'] = 'Average In-Store Income Per Week';
-            $return['shopid'] = $this->shopID??null;
-            $return['range'] = array();
-            $return['range']['currentPeriodStart'] = $this->startdate;
-            $return['range']['currentPeriodEnd'] = $this->enddate;
 
-            $currentPeriod = $this->getAvgWeeklyInstoreIncome($this->startdate, $this->enddate);
+        $return = array();
+        $return['title'] = 'Average In-Store Income Per Week';
+        $return['shopid'] = $this->shopID??null;
+        $return['range'] = array();
+        $return['range']['currentPeriodStart'] = $this->startdate;
+        $return['range']['currentPeriodEnd'] = $this->enddate;
 
-            // Do Previous year's values ... this means perform the query again, this time
-            // for a period that is 12 months before the current period
-            $prevStartDate = (new DateTime($this->startdate))->modify('-1 year')->format('Y-m-d');
-            $prevEndDate = (new DateTime($this->enddate))->modify('-1 year')->format('Y-m-d');
-            $return['range']['previousPeriodStart'] = $prevStartDate;
-            $return['range']['previousPeriodEnd'] = $prevEndDate;
-            $previousPeriod = $this->getAvgWeeklyInstoreIncome($prevStartDate, $prevEndDate);
+        $currentPeriod = $this->getAvgWeeklyInstoreIncome($this->startdate, $this->enddate);
 
-            $rowItem = new RowItem;
-            $rowItem->displayName = "Average instore sales per week";
-            $rowItem->currentValue = $currentPeriod['avg_weekly_sales'];
-            $rowItem->previousValue = $previousPeriod['avg_weekly_sales'];
-            $return['avg_weekly_sales'] = $rowItem;
+        // Do Previous year's values ... this means perform the query again, this time
+        // for a period that is 12 months before the current period
+        $prevStartDate = (new DateTime($this->startdate))->modify('-1 year')->format('Y-m-d');
+        $prevEndDate = (new DateTime($this->enddate))->modify('-1 year')->format('Y-m-d');
+        $return['range']['previousPeriodStart'] = $prevStartDate;
+        $return['range']['previousPeriodEnd'] = $prevEndDate;
+        $previousPeriod = $this->getAvgWeeklyInstoreIncome($prevStartDate, $prevEndDate);
 
-            $rowItem = new RowItem;
-            $rowItem->displayName = "Number of weeks in the period";
-            $rowItem->currentValue = $currentPeriod['week_count'];
-            $rowItem->previousValue = $previousPeriod['week_count'];
-            $return['week_count'] = $rowItem;
+        $rowItem = new RowItem;
+        $rowItem->displayName = "Average instore sales per week";
+        $rowItem->currentValue = $currentPeriod['avg_weekly_sales'];
+        $rowItem->previousValue = $previousPeriod['avg_weekly_sales'];
+        $return['avg_weekly_sales'] = $rowItem;
 
-            $rowItem = new RowItem;
-            $rowItem->displayName = "Number of trading days in the period";
-            $rowItem->currentValue = $currentPeriod['trading_days_in_period'];
-            $rowItem->previousValue = $previousPeriod['trading_days_in_period'];
-            $return['trading_days_in_period'] = $rowItem;
+        $rowItem = new RowItem;
+        $rowItem->displayName = "Number of weeks in the period";
+        $rowItem->currentValue = $currentPeriod['week_count'];
+        $rowItem->previousValue = $previousPeriod['week_count'];
+        $return['week_count'] = $rowItem;
 
-            $rowItem = new RowItem;
-            $rowItem->displayName = "Computed total of Sales";
-            $rowItem->currentValue = round($currentPeriod['week_count']*
-                $currentPeriod['avg_weekly_sales'],2);
-            $rowItem->previousValue = round($previousPeriod['week_count']*
-                $previousPeriod['avg_weekly_sales'],2);
-            $return['computed_total'] = $rowItem;
+        $rowItem = new RowItem;
+        $rowItem->displayName = "Number of trading days in the period";
+        $rowItem->currentValue = $currentPeriod['trading_days_in_period'];
+        $rowItem->previousValue = $previousPeriod['trading_days_in_period'];
+        $return['trading_days_in_period'] = $rowItem;
 
-            $rowItem = new RowItem;
-            $rowItem->displayName = "Actual total of Sales";
-            $rowItem->currentValue = $currentPeriod['total'];
-            $rowItem->previousValue = $previousPeriod['total'];
-            $return['actual_total'] = $rowItem;
+        $rowItem = new RowItem;
+        $rowItem->displayName = "Computed total of Sales";
+        $rowItem->currentValue = round($currentPeriod['week_count']*
+            $currentPeriod['avg_weekly_sales'],2);
+        $rowItem->previousValue = round($previousPeriod['week_count']*
+            $previousPeriod['avg_weekly_sales'],2);
+        $return['computed_total'] = $rowItem;
 
-            return $return;
-        } catch (\Exception $e) {
-            http_response_code(400);  
-            echo json_encode(
-            array(
-                "message" => "Unable to generate average daily transaction size report.",
-                "extra" => $e->getMessage()
-            )
-            );
-            exit(1);
-        }
+        $rowItem = new RowItem;
+        $rowItem->displayName = "Actual total of Sales";
+        $rowItem->currentValue = $currentPeriod['total'];
+        $rowItem->previousValue = $previousPeriod['total'];
+        $return['actual_total'] = $rowItem;
+
+        return $return;
     }
 
     /**

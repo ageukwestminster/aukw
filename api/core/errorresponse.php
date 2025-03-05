@@ -2,7 +2,7 @@
 
 namespace Core;
 
-use Exception;
+use Throwable;
 
 /**
  * A static class to provide methods to handle exceptions
@@ -12,7 +12,7 @@ use Exception;
 abstract class ErrorResponse { 
   /**
    * Send back a http error response and message.
-   * @param Exception $e Optional error object.
+   * @param Throwable $e Optional error object. Throwable used in case an exception inherits from Error.
    * @param string $message An optional message to include in the error response. Defaults to 'Error occurred.'.
    * @param int $errorCode The HTTP error code. Defaults to 400. Do not use 200.
    * @param string $extra Some extra information to include in the error response
@@ -20,7 +20,7 @@ abstract class ErrorResponse {
    */
   public static function response ( 
         string $message = 'Error occurred.', 
-        ?Exception $e = null,
+        ?Throwable $e = null,
         int $errorCode = 400, 
         string $extra = '')
   {

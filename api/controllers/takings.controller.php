@@ -2,7 +2,8 @@
 
 namespace Controllers;
 
-use DateTime;
+use \Core\ErrorResponse as Error;
+use Exception;
 
 /**
  * Controller to accomplish Takings related tasks. 
