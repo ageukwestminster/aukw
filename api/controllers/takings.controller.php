@@ -21,11 +21,14 @@ class TakingsCtl{
    * 
    */
   public static function read_one(int $id){  
+    try {
+      $model = new \Models\Takings();
+      $model->id = $id;
 
-    $model = new \Models\Takings();
-    $model->id = $id;
-
-    echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
+      echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
+    } catch (Exception $e) {
+      Error::response("Error retrieving details of Takings with id=$id.", $e);
+    }
   }
 
   /**
@@ -37,10 +40,13 @@ class TakingsCtl{
    * 
    */
   public static function read_by_quickbooks_status(int $quickbooks){  
+    try {
+      $model = new \Models\Takings();
 
-    $model = new \Models\Takings();
-
-    echo json_encode($model->read_by_quickbooks_status($quickbooks), JSON_NUMERIC_CHECK);
+      echo json_encode($model->read_by_quickbooks_status($quickbooks), JSON_NUMERIC_CHECK);
+    } catch (Exception $e) {
+      Error::response("Error retrieving details of all Takings with the given 'quicklbooks' value.", $e);
+    }
   }
 
   /**
@@ -52,10 +58,13 @@ class TakingsCtl{
    * 
    */
   public static function read_by_shop(int $shopid){  
+    try {
+      $model = new \Models\Takings();
 
-    $model = new \Models\Takings();
-
-    echo json_encode($model->read_by_shop($shopid), JSON_NUMERIC_CHECK);
+      echo json_encode($model->read_by_shop($shopid), JSON_NUMERIC_CHECK);
+    } catch (Exception $e) {
+      Error::response("Error retrieving details of all Takings with shopid=$shopid.", $e);
+    }
   }
 
   /**
@@ -68,10 +77,13 @@ class TakingsCtl{
    * 
    */
   public static function read_most_recent($shopid){  
+    try {
+      $model = new \Models\Takings();
 
-    $model = new \Models\Takings();
-
-    echo json_encode($model->read_most_recent($shopid), JSON_NUMERIC_CHECK);
+      echo json_encode($model->read_most_recent($shopid), JSON_NUMERIC_CHECK);
+    } catch (Exception $e) {
+      Error::response("Error retrieving details of most recent Takings.", $e);
+    }
   }
 
   /**
@@ -81,25 +93,23 @@ class TakingsCtl{
    * 
    */
   public static function create(){
+    try {
+      $model = new \Models\Takings();
+      $data = json_decode(file_get_contents("php://input"));
+      TakingsCtl::transferParameters($data, $model);
+      
+      // INSERT the row into the database
+      $model->create();
 
-    $model = new \Models\Takings();
-    $data = json_decode(file_get_contents("php://input"));
-    TakingsCtl::transferParameters($data, $model);
-    
-    // INSERT the row into the database
-    if( $model->create()) {
       echo json_encode(
         array(
           "message" => "New takings with id=$model->id was created for $model->date.",
           "id" => $model->id
         )
       , JSON_NUMERIC_CHECK);
-    } else{
-      // if unable to create the model, tell the admin
-        http_response_code(400);  
-        echo json_encode(
-          array("message" => "Unable to add takings to database. Possibly a duplicate?")
-        );
+      
+    } catch (Exception $e) {
+      Error::response("Unable to add takings to database. Possibly a duplicate?", $e);
     }
   }
 
@@ -110,26 +120,25 @@ class TakingsCtl{
    * 
    */
   public static function update($id){
+    try {
+      $model = new \Models\Takings();
+      $model->id = $id;
 
-    $model = new \Models\Takings();
-    $model->id = $id;
+      $data = json_decode(file_get_contents("php://input"));
+      TakingsCtl::transferParameters($data, $model);
 
-    $data = json_decode(file_get_contents("php://input"));
-    TakingsCtl::transferParameters($data, $model);
-
-    if($model->update()){
+      if ($model->update()) {
         echo json_encode(
             array(
                 "message" => "Takings with id=$model->id was updated.",
                 "id" => $model->id
             )
             , JSON_NUMERIC_CHECK);
-    }
-    else{
-        http_response_code(400); 
-        echo json_encode(
-            array("message" => "Unable to UPDATE takings.")
-        );
+      } else {
+        throw new Exception("Updating takings with id=$id failed for unknown reason.");
+      }
+    } catch (Exception $e) {
+      Error::response("Unable to update takings with id=$id in database.", $e);
     }
   }
 
@@ -142,23 +151,21 @@ class TakingsCtl{
    * 
    */
   public static function delete(int $id){  
+    try {
+      $model = new \Models\Takings();
+      $model->id = $id;
 
-    $model = new \Models\Takings();
-    $model->id = $id;
-
-    if( $model->delete()) {
-        echo json_encode(
-          array(
-            "message" => "Takings with id=$model->id was deleted.",
-            "id" => $model->id)
-            , JSON_NUMERIC_CHECK);
-      } else{
-          http_response_code(400);  
+      if( $model->delete()) {
           echo json_encode(
             array(
-              "message" => "Unable to DELETE row.",
+              "message" => "Takings with id=$model->id was deleted.",
               "id" => $model->id)
               , JSON_NUMERIC_CHECK);
+        } else{
+          throw new Exception("Deleting takings with id=$id failed for unknown reason.");
+        }
+      } catch (Exception $e) {
+        Error::response("Unable to delete takings with id=$id in database.", $e);
       }
   }
 
@@ -166,35 +173,39 @@ class TakingsCtl{
    * PATCH the takings with the given id. 
    * At present this only works for the quickbooks property.
    *
-   * @param int $id The database id of the taking object.
+   * @param int $id The database id of the takings object.
    * 
    * @return void Output is echo'd directly to response
    * 
    */
   public static function patch(int $id){
-    $data = json_decode(file_get_contents("php://input"));
-    if(isset($data->quickbooks)){
+    try {
+      $data = json_decode(file_get_contents("php://input"));
+      if(isset($data->quickbooks)){
 
-      $model = new \Models\Takings();
-      $model->id = $id;
-      $model->quickbooks = empty($data->quickbooks)?0:$data->quickbooks;
+        $model = new \Models\Takings();
+        $model->id = $id;
+        $model->quickbooks = empty($data->quickbooks)?0:$data->quickbooks;
 
-      if ($model->patch_quickbooks()) {
-        echo json_encode(
-          array(
-            "message" => "Takings with id=$model->id was patched to set QuickBooks to "
-            . $model->quickbooks .".",
-            "id" => $model->id)
-            , JSON_NUMERIC_CHECK);
-      } else {
-        http_response_code(400);  
-        echo json_encode(
-          array(
-            "message" => "Unable to PATCH takings row.",
-            "id" => $model->id,
-            "quickbooks" => $data->quickbooks)
-            , JSON_NUMERIC_CHECK);
-      }            
+        if ($model->patch_quickbooks()) {
+          echo json_encode(
+            array(
+              "message" => "Takings with id=$model->id was patched to set QuickBooks to "
+              . $model->quickbooks .".",
+              "id" => $model->id)
+              , JSON_NUMERIC_CHECK);
+        } else {
+          http_response_code(400);  
+          echo json_encode(
+            array(
+              "message" => "Unable to PATCH takings row.",
+              "id" => $model->id,
+              "quickbooks" => $data->quickbooks)
+              , JSON_NUMERIC_CHECK);
+        }            
+      }
+    } catch (Exception $e) {
+      Error::response("Unable to delete takings with id=$id in database.", $e);
     }
   }
 
@@ -212,12 +223,12 @@ class TakingsCtl{
     if (isset($data->date)) {
         $model->date = $data->date;          
     } else {
-        $returnValue= "Takings 'date' missing";
+        throw new Exception("Takings 'date' missing");
     }
     if (isset($data->shopid)) {
         $model->shopid = $data->shopid;          
     } else {
-        $returnValue= "Takings 'shopid' missing";
+        throw new Exception("Takings 'shopid' missing");
     }
     $model->clothing_num = empty($data->clothing_num)?0:$data->clothing_num;
     $model->brica_num = empty($data->brica_num)?0:$data->brica_num;

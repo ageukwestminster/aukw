@@ -22,62 +22,55 @@ class XlsxCtl{
    * 
    */
   public static function upload(){  
+    try {
+        $uploaddir = XlsxCtl::getUploadDirectory();
 
-    $uploaddir = XlsxCtl::getUploadDirectory();
+        // Clean upload directory
+        XlsxCtl::delete_all_spreadsheets($uploaddir); 
+        XlsxCtl::delete_all_CSVs($uploaddir); 
 
-    // Clean upload directory
-    XlsxCtl::delete_all_spreadsheets($uploaddir); 
-    XlsxCtl::delete_all_CSVs($uploaddir); 
+        // Check that a file has been uploaded
+        if (!$_FILES || !array_key_exists('file', $_FILES) || !$_FILES['file']) {
+            throw new Exception("Uploaded file collection is empty or the uploaded ".
+                "object is missing the key named 'file'.");
+        }
 
-    // Check that a file has been uploaded
-    if (!$_FILES || !array_key_exists('file', $_FILES) || !$_FILES['file']) {
-        http_response_code(400);   
-        echo json_encode(
-            array("message" => "Uploaded file collection is empty or the uploaded object is missing the key named 'file'.")
-        );
-        exit(1);
+        // Set the new file name
+        $filename = XlsxCtl::getUploadedFilename(isset($_GET['filename'])?$_GET['filename']:'');
+        $uploadpathandfile = $uploaddir . $filename;
+
+        // Move file from PHP temp folder to upload directory
+        if(move_uploaded_file($_FILES['file']['tmp_name'], $uploadpathandfile))
+        {
+            echo json_encode(
+                array("message" => "The file has been uploaded successfully.",
+                "isEncrypted" =>   EncryptedXlsx::getInstance()
+                                    ->isEncrypted($uploadpathandfile),
+                "filename" => $filename)
+            );
+        } else {
+            throw new Exception("There was an error uploading the file.");
+        }
+    } catch (Exception $e) {
+        Error::response("Unable to clear upload directory and upload the new payroll file.", $e);
     }
-
-    // Set the new file name
-    $filename = XlsxCtl::getUploadedFilename(isset($_GET['filename'])?$_GET['filename']:'');
-    $uploadpathandfile = $uploaddir . $filename;
-
-    // Move file from PHP temp folder to upload directory
-    if(move_uploaded_file($_FILES['file']['tmp_name'], $uploadpathandfile))
-    {
-        echo json_encode(
-            array("message" => "The file has been uploaded successfully.",
-            "isEncrypted" =>   EncryptedXlsx::getInstance()
-                                ->isEncrypted($uploadpathandfile),
-            "filename" => $filename)
-        );
-    }
-    else
-    {
-        http_response_code(400);
-        echo json_encode(
-            array("message" => "There was an error uploading the file.")
-        );
-    }
-
   }
 
   /**
-   * Extract all relevent data from the Payrol lspreadsheet and then delete it.
+   * Extract all relevent data from the Payroll spreadsheet and then delete it.
    * 
    * @return void Output is echo'd directly to response 
    * 
    */
   public static function parse(){  
-
-    $uploaddir = XlsxCtl::getUploadDirectory();
-
-    $decryptedFilePath = $uploaddir . 
-        XlsxCtl::getDecryptedFilename(isset($_GET['filename'])?$_GET['filename']:'');
-
     try {
+        $uploaddir = XlsxCtl::getUploadDirectory();
+
+        $decryptedFilePath = $uploaddir . 
+            XlsxCtl::getDecryptedFilename(isset($_GET['filename'])?$_GET['filename']:'');
+
         if (!is_file($decryptedFilePath)) {
-            throw new \Exception('File not found. File name: ('. $decryptedFilePath .')');
+            throw new Exception('File not found. File name: ('. $decryptedFilePath .')');
         }
 
         // test if file is CSV or XLSX
@@ -96,25 +89,15 @@ class XlsxCtl{
                     unlink($decryptedFilePath);
                 }
             }
-           
+        
             echo json_encode($model->getPayslips());
 
         } else {
-            http_response_code(400);   
-            echo json_encode(
-                array("message" => "Unable to parse spreadsheet for unknown reason.")
-            );
-            exit(1);
+            throw new Exception("Unable to parse spreadsheet for unknown reason.");
         }
-        
-    }
-    catch (\Exception $e){
-        http_response_code(400);   
-        echo json_encode(
-            array("message" => "Unable to parse spreadsheet.",
-            "details" => $e->getMessage())
-        );
-        exit(1);
+            
+    } catch (Exception $e) {
+        Error::response("Error parsing payroll spreadsheet.", $e);
     }
   }
 
@@ -125,15 +108,15 @@ class XlsxCtl{
    * 
    */
   public static function parse_worksheets(){  
+    try {
+        $uploaddir = XlsxCtl::getUploadDirectory();
 
-    $uploaddir = XlsxCtl::getUploadDirectory();
-
-    $decryptedFilePath = $uploaddir . 
+        $decryptedFilePath = $uploaddir . 
         XlsxCtl::getDecryptedFilename(isset($_GET['filename'])?$_GET['filename']:'');
 
-    try {
+
         if (!is_file($decryptedFilePath)) {
-            throw new \Exception('Decrypted file not found. File name: ('. $decryptedFilePath .')');
+            throw new Exception('Decrypted file not found. File name: ('. $decryptedFilePath .')');
         }
 
         // test if file is CSV or XLSX
@@ -148,13 +131,8 @@ class XlsxCtl{
         echo json_encode($model->parse_worksheets(), JSON_NUMERIC_CHECK);
         
     }
-    catch (\Exception $e){
-        http_response_code(400);   
-        echo json_encode(
-            array("message" => "Unable to open decrypted file for reading. Incorrect password?",
-            "details" => $e->getMessage())
-        );
-        exit(1);
+    catch (Exception $e){
+        Error::response("Unable to parse worksheets.", $e);
     }
   }
 
@@ -165,29 +143,27 @@ class XlsxCtl{
    * 
    */
   public static function decrypt(){  
-
-    $uploaddir = XlsxCtl::getUploadDirectory();
-
-    $encryptedFilePath = $uploaddir . 
-        XlsxCtl::getUploadedFilename(isset($_GET['filename'])?$_GET['filename']:'');
-
-    $decryptedFilePath = $uploaddir . \Core\Config::read('file.decryptedfilename');
-
-    $data = json_decode(file_get_contents("php://input"));
-    if(!$data->password) {
-        http_response_code(400);   
-        echo json_encode(
-            array("message" => "Password not provided.")
-        );
-        exit(1);
-    }
-
-    $model = EncryptedXlsx::getInstance()
-        ->setEncryptedFilePath($encryptedFilePath)
-        ->setPassword($data->password)
-        ->setDecryptedFilePath($decryptedFilePath);
-
     try {
+        $uploaddir = XlsxCtl::getUploadDirectory();
+
+        $encryptedFilePath = $uploaddir . 
+            XlsxCtl::getUploadedFilename(isset($_GET['filename'])?$_GET['filename']:'');
+
+        $decryptedFilePath = $uploaddir . \Core\Config::read('file.decryptedfilename');
+
+        $data = json_decode(file_get_contents("php://input"));
+        if(!$data->password) {
+            http_response_code(400);   
+            echo json_encode(
+                array("message" => "Password not provided.")
+            );
+            exit(1);
+        }
+
+        $model = EncryptedXlsx::getInstance()
+            ->setEncryptedFilePath($encryptedFilePath)
+            ->setPassword($data->password)
+            ->setDecryptedFilePath($decryptedFilePath);
 
         $model->decrypt();       
         
@@ -202,19 +178,11 @@ class XlsxCtl{
                 array("message" => "Spreadsheet decrypted.")
             );
         } else {
-            http_response_code(400);   
-            echo json_encode(
-                array("message" => "File not found. Decryption of spreadsheet failed.")
-            );
+            throw new Exception("File not found. Decryption of spreadsheet failed.");
         }
     }
-    catch (\Exception $e){
-        http_response_code(400);   
-        echo json_encode(
-            array("message" => "Decryption of spreadsheet failed.",
-            "details" => $e->getMessage())
-        );
-        exit(1);
+    catch (Exception $e){
+        Error::response("Decryption of spreadsheet failed.", $e);
     }
   }
 

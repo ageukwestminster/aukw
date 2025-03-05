@@ -159,10 +159,13 @@ class ReportCtl{
    * 
    */
   public static function performanceSummary(){  
+    try {
+      $model = new \Models\TakingsSummary();
 
-    $model = new \Models\TakingsSummary();
-
-    echo json_encode($model->performanceSummary(NULL, NULL), JSON_NUMERIC_CHECK| JSON_UNESCAPED_SLASHES);
+      echo json_encode($model->performanceSummary(NULL, NULL), JSON_NUMERIC_CHECK| JSON_UNESCAPED_SLASHES);
+    } catch (Exception $e) {
+      Error::response("Error retrieving performance summary.", $e);
+    }
   }
 
   /**
@@ -174,10 +177,13 @@ class ReportCtl{
    * 
    */  
   public static function salesChart(){  
+    try {
+      $model = new \Models\TakingsSummary();
 
-    $model = new \Models\TakingsSummary();
-
-    echo json_encode($model->salesChart(1, NULL), JSON_NUMERIC_CHECK);
+      echo json_encode($model->salesChart(1, NULL), JSON_NUMERIC_CHECK);
+    } catch (Exception $e) {
+      Error::response("Error retrieving sales chart data.", $e);
+    }
   }
 
   /**
@@ -189,10 +195,13 @@ class ReportCtl{
    * 
    */  
   public static function departmentChart(){  
+    try {
+      $model = new \Models\TakingsSummary();
 
-    $model = new \Models\TakingsSummary();
-
-    echo json_encode($model->departmentChart(NULL, NULL), JSON_NUMERIC_CHECK);
+      echo json_encode($model->departmentChart(NULL, NULL), JSON_NUMERIC_CHECK);
+    } catch (Exception $e) {
+      Error::response("Error retrieving department pie chart data.", $e);
+    }
   }
 
   /**
@@ -210,22 +219,25 @@ class ReportCtl{
    * 
    */
   public static function salesByMonth($shopid, $year = null, $month = null, $day = null){  
-
-    $model = new \Models\TakingsSummary();
-    $date = '';
-    if (!$year) {
-      $date = '2021-01-01';
+    try {
+      $model = new \Models\TakingsSummary();
+      $date = '';
+      if (!$year) {
+        $date = '2021-01-01';
+      }
+      else if (!$month) {
+        $date = $year . '-01-01';
+      }
+      else if (!$day) {
+        $date = $year . '-' . $month .'-01';
+      }
+      else {
+        $date = $year . '-' . $month .'-' . $day;
+      }
+      echo json_encode($model->salesByMonth($shopid, $date), JSON_NUMERIC_CHECK);
+    } catch (Exception $e) {
+      Error::response("Error retrieving sales by month data.", $e);
     }
-    else if (!$month) {
-      $date = $year . '-01-01';
-    }
-    else if (!$day) {
-      $date = $year . '-' . $month .'-01';
-    }
-    else {
-      $date = $year . '-' . $month .'-' . $day;
-    }
-    echo json_encode($model->salesByMonth($shopid, $date), JSON_NUMERIC_CHECK);
   }
 
   /**
@@ -240,18 +252,21 @@ class ReportCtl{
    * @return void Output is echoed directly to response.
    * 
    */
-  public static function salesByQuarter($shopid, $year = null){  
+  public static function salesByQuarter($shopid, $year  = null){  
+    try {
+      $model = new \Models\TakingsSummary();
+      $date = '';
+      if (!$year) {
+        $date = '2021-01-01';
+      }
+      else {
+        $date = $year . '-01-01';
+      }
 
-    $model = new \Models\TakingsSummary();
-    $date = '';
-    if (!$year) {
-      $date = '2021-01-01';
+      echo json_encode($model->salesByQuarter($shopid, $date), JSON_NUMERIC_CHECK);
+    } catch (Exception $e) {
+      Error::response("Error retrieving sales by quarter data.", $e);
     }
-    else {
-      $date = $year . '-01-01';
-    }
-
-    echo json_encode($model->salesByQuarter($shopid, $date), JSON_NUMERIC_CHECK);
   }
 
     /**
@@ -263,12 +278,15 @@ class ReportCtl{
    * 
    */
   public static function salesByDepartment(int $shopid){  
+    try {
+      $model = new \Models\Report();
+      $model->shopID = $shopid;
+      ReportCtl::GetHttpDateParameters($model);
 
-    $model = new \Models\Report();
-    $model->shopID = $shopid;
-    ReportCtl::GetHttpDateParameters($model);
-
-    echo json_encode($model->salesByDepartment(), JSON_NUMERIC_CHECK);
+      echo json_encode($model->salesByDepartment(), JSON_NUMERIC_CHECK);
+    } catch (Exception $e) {
+      Error::response("Error retrieving sales by department data.", $e);
+    }
   }
 
   /**
@@ -299,44 +317,47 @@ class ReportCtl{
    * 
    */
   public static function takingsSummary(int $shopid){  
+    try {
+      $model = new \Models\Takings();
 
-    $model = new \Models\Takings();
+      $startdate='';
+      $enddate='';
 
-    $startdate='';
-    $enddate='';
-
-    // if parameters are provided use them
-    if(isset($_GET['start']) || isset($_GET['end'])) {
-      list($startdate, $enddate) = \Core\DatesHelper::sanitizeDateValues(
-                                  !isset($_GET['start']) ? '' : $_GET['start'], 
-                                  !isset($_GET['end']) ? '' : $_GET['end']
-                              );
-    } 
-    
-    // default values are:
-    // enddate: the most recent trading day, or today if none found
-    // startdate: 3 months ago before end date
-    if ($startdate == '') {    
-      if ($enddate == '') {           
-
-        // Check for the most recent shop takings in the database
-        //$most_recent_takings=array();
-        $most_recent_takings=$model->read_most_recent($shopid);
-        if ($most_recent_takings && $most_recent_takings['date']) {
-          $enddate = $most_recent_takings['date'];
-        }
-        else {
-          $enddate = date('Y-m-d');      
-        }
-
-      }
+      // if parameters are provided use them
+      if(isset($_GET['start']) || isset($_GET['end'])) {
+        list($startdate, $enddate) = \Core\DatesHelper::sanitizeDateValues(
+                                    !isset($_GET['start']) ? '' : $_GET['start'], 
+                                    !isset($_GET['end']) ? '' : $_GET['end']
+                                );
+      } 
       
-      $startdate = (new DateTime($enddate))->modify('-3 month')->format('Y-m-d');
-    } else if ($enddate == '') {           
-      $enddate = (new DateTime($startdate))->modify('+3 month')->format('Y-m-d');
-    }    
+      // default values are:
+      // enddate: the most recent trading day, or today if none found
+      // startdate: 3 months ago before end date
+      if ($startdate == '') {    
+        if ($enddate == '') {           
 
-    echo json_encode($model->summary($shopid, $startdate, $enddate), JSON_NUMERIC_CHECK);
+          // Check for the most recent shop takings in the database
+          //$most_recent_takings=array();
+          $most_recent_takings=$model->read_most_recent($shopid);
+          if ($most_recent_takings && $most_recent_takings['date']) {
+            $enddate = $most_recent_takings['date'];
+          }
+          else {
+            $enddate = date('Y-m-d');      
+          }
+
+        }
+        
+        $startdate = (new DateTime($enddate))->modify('-3 month')->format('Y-m-d');
+      } else if ($enddate == '') {           
+        $enddate = (new DateTime($startdate))->modify('+3 month')->format('Y-m-d');
+      }    
+
+      echo json_encode($model->summary($shopid, $startdate, $enddate), JSON_NUMERIC_CHECK);
+    } catch (Exception $e) {
+      Error::response("Error retrieving summarized takings data.", $e);
+    }
   }
 
   /**
@@ -378,9 +399,7 @@ class ReportCtl{
       $model->enddate = $end;
     }
     else {
-      http_response_code(400);  
-      echo json_encode(array("message" => "Unable to generate report, start/end dates are missing."));
-      exit(1);
+      throw new Exception("Start/end dates are missing.");
     }
   }
 
@@ -391,24 +410,27 @@ class ReportCtl{
    * 
    */
   public static function cashRatioMovingAverage(int $shopid){  
+    try {
+      $model = new \Models\Report();
 
-    $model = new \Models\Report();
+      if(isset($_GET['start']) && \Core\DatesHelper::validateDate($_GET['start'])) {
+          $model->startdate = $_GET['start'];
+      } else {
+        $model->startdate = '2018-01-01';
+      }
+      if ($shopid) {
+        $model->shopID = $shopid;
+      } else {
+        $model->shopID = 1;
+      }
 
-    if(isset($_GET['start']) && \Core\DatesHelper::validateDate($_GET['start'])) {
-        $model->startdate = $_GET['start'];
-    } else {
-      $model->startdate = '2018-01-01';
+      echo json_encode($model->cashRatioMovingAverage(), JSON_NUMERIC_CHECK);
+    } catch (Exception $e) {
+      Error::response("Error retrieving cash:CC ratio data.", $e);
     }
-    if ($shopid) {
-      $model->shopID = $shopid;
-    } else {
-      $model->shopID = 1;
-    }
-
-    echo json_encode($model->cashRatioMovingAverage(), JSON_NUMERIC_CHECK);
   }
 
-      /**
+  /**
    * Retrieve a data set for the chart showing the moving averages of sales
    * split by customer and by department
    *
@@ -416,22 +438,25 @@ class ReportCtl{
    * 
    */
   public static function salesByDepartmentAndCustomerMovingAverage(int $shopid){  
+    try {
+      $model = new \Models\Report();
 
-    $model = new \Models\Report();
+      if(isset($_GET['start']) && \Core\DatesHelper::validateDate($_GET['start'])) {
+          $model->startdate = $_GET['start'];
+      } else {
+        //  customers_num_total field (in takings table) is only populated from this date.
+        $model->startdate = '2017-03-01'; 
+      }
+      if ($shopid) {
+        $model->shopID = $shopid;
+      } else {
+        $model->shopID = 1; // Harrow Road
+      }
 
-    if(isset($_GET['start']) && \Core\DatesHelper::validateDate($_GET['start'])) {
-        $model->startdate = $_GET['start'];
-    } else {
-      //  customers_num_total field (in takings table) is only populated from this date.
-      $model->startdate = '2017-03-01'; 
+      echo json_encode($model->salesByDepartmentAndCustomerMovingAverage(), JSON_NUMERIC_CHECK);
+    } catch (Exception $e) {
+      Error::response("Error retrieving moving average data.", $e);
     }
-    if ($shopid) {
-      $model->shopID = $shopid;
-    } else {
-      $model->shopID = 1; // Harrow Road
-    }
-
-    echo json_encode($model->salesByDepartmentAndCustomerMovingAverage(), JSON_NUMERIC_CHECK);
   }
   
 }

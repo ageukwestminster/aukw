@@ -3,6 +3,8 @@
 namespace Models;
 
 use \PDO;
+use Exception;
+use PDOException;
 
 /**
  * Defines a Takings and has data persistance capbility.
@@ -362,7 +364,13 @@ class Takings{
         }
     }
 
-    function create(){
+    /**
+     * Add this takings object to the database.
+     * @return true 
+     * @throws PDOException 
+     * @throws Exception 
+     */
+    function create() : true{
         $query = "INSERT INTO
                     " . $this->table_name . "
                     SET 
@@ -446,29 +454,24 @@ class Takings{
         $stmt->bindParam(":comments", $this->comments);
 
         // execute query
-        try {
-            if($stmt->execute()){
-                $this->id = $this->conn->lastInsertId();
-                if($this->id) {
-                    return true;
-                } else {
-                    return false;
-                }
+        if($stmt->execute()){
+            $this->id = $this->conn->lastInsertId();
+            if($this->id) {
+                return true;
+            } else {
+                throw new Exception("Id of Takings entry is missing.");
             }
+        } else {
+            throw new Exception("Unable to add takings to database. Possibly a duplicate?");
         }
-        catch (\Exception $e) {
-            http_response_code(400); 
-            echo json_encode(
-                array("message" => "Unable to add takings to database. Possibly a duplicate?",
-                "error" => $e->getMessage())
-              );
-            exit(1);
-        }
-        
-        return false;
     }
 
-    function update(){
+    /**
+     * Update an existing Takings entry in the database with new data.
+     * @return bool 'true' if updated succeeded.
+     * @throws PDOException 
+     */
+    function update() : bool{
         $query = "UPDATE
                     " . $this->table_name . "
                     SET 
@@ -562,26 +565,25 @@ class Takings{
         return $stmt->execute();
     }
 
-    function delete(){
+    /**
+     * Delete this takings record from the database.
+     * @return bool 'true' if delete succeeded.
+     * @throws PDOException 
+     */
+    function delete():bool{
         $query = "DELETE FROM " . $this->table_name . " WHERE takingsid = ?";
 
         $stmt = $this->conn->prepare($query);
         $this->id=htmlspecialchars(strip_tags($this->id));
         $stmt->bindParam(1, $this->id);
 
-        // execute query
-        if($stmt->execute()){
-            return true;
-        }
-
-        return false;
+        return $stmt->execute();
     }
 
     /**
-     * [Description for patch_quickbooks]
-     *
-     * @return bool
-     * 
+     * Update the quickbooks field for the given takings record.
+     * @return bool 'true' if updated succeeded.
+     * @throws PDOException 
      */
     public function patch_quickbooks(){
         $query = "UPDATE
@@ -605,7 +607,12 @@ class Takings{
         return $stmt->execute();
     }
 
-    function pass_row_data($row) {
+    /**
+     * Convert the row from a PDO result set into an array, with different field names.
+     * @param mixed $row The row from a PDO result set.
+     * @return array The new array.
+     */
+    private function pass_row_data($row) {
 
         // extract row
         // this will make $row['name'] to

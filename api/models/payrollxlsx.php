@@ -120,7 +120,7 @@ class PayrollXlsx extends PayrollBase{
       if (DateTime::createFromFormat('Y-m-d', $payrollDate) !== false) {
         $this->paymentDate = DateTime::createFromFormat('Y-m-d', $payrollDate);
       } else {
-        throw new \Exception('Unable to set date from supplied http parameter value: "'. $payrollDate . '".');
+        throw new Exception('Unable to set date from supplied http parameter value: "'. $payrollDate . '".');
       }  
     }
 

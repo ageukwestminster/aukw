@@ -3,6 +3,8 @@
 namespace Core;
 
 use \PDO;
+use Exception;
+use \Core\ErrorResponse as Error;
 
 /**
  * Provide open PDO database connection via $conn property.  
@@ -68,15 +70,11 @@ class Database{
                 $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);    
             }
             else {
-                http_response_code(503);
-                echo json_encode(
-                    array("message" => "Connection error: " . "Connection refused by " .$host . " on ". $port)
-                );
-                exit(1);
+                Error::response("Database error: Connection refused by $host:$port");
             }
                 
-        }catch(\PDOException $exception){
-            echo "Connection error: " . $exception->getMessage();
+        }catch(Exception $e){
+            Error::response("Database error: Connection refused by $host:$port", $e, 503);
         }
     }
 
@@ -92,18 +90,14 @@ class Database{
      */
     private function testConnection(string $host, int $port) : bool{
         $waitTimeoutInSeconds = 1;
-        try {
-            if ($fp = fsockopen($host,$port,$errCode,$errStr,$waitTimeoutInSeconds)) {
-                // It worked
-                return true;
-            } else {
-                // It didn't work
-                return false;
-            }
-            fclose($fp);
-        } catch (\Exception $e) {
-            echo 'Caught exception: ',  $e->getMessage(), "\n";
+
+        if ($fp = fsockopen($host,$port,$errCode,$errStr,$waitTimeoutInSeconds)) {
+            // It worked
+            return true;
+        } else {
+            // It didn't work
             return false;
         }
+        fclose($fp);
     }
 }

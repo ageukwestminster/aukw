@@ -3,6 +3,8 @@
 namespace Models;
 
 use \PDO;
+use Exception;
+use PDOException;
 
 /**
  * Defines a user and has data persistance capbility.
@@ -146,14 +148,13 @@ class User{
         $this->transferPropertiestoModel($stmt);
     }
 
-
     /**
      * Add a new User to the database.
-     * 
-     * @return bool 'true' if database insert succeeded.
-     * 
+     * @return true 'true' if database insert succeeded.
+     * @throws PDOException 
+     * @throws Exception 
      */
-    function create(){
+    function create():true{
         $query = "INSERT INTO
                     " . $this->table_name . "
                     SET 
@@ -208,11 +209,11 @@ class User{
             if($this->id) {
                 return true;
             } else {
-                return false;
+                throw new Exception("Id of new User is missing.");
             }
+        } else {
+            throw new Exception("Unable to add user to database.");
         }
-        
-        return false;
     }
 
     /**
@@ -221,7 +222,7 @@ class User{
      * @return bool 'true' if database update succeeded.
      * 
      */
-    function update(){
+    function update():bool{
         $query = "UPDATE
                     " . $this->table_name . "
                     SET 
@@ -279,12 +280,7 @@ class User{
         $stmt->bindParam(":shopid", $this->shopid, PDO::PARAM_INT);   
         $stmt->bindParam(":failedloginattempts", $this->failedloginattempts, PDO::PARAM_INT); 
 
-        // execute query
-        if($stmt->execute()){
-            return true;
-        }
-        
-        return false;
+        return $stmt->execute();
     }
 
     /**
@@ -294,19 +290,14 @@ class User{
      * @return bool 'true' if database delete succeeded.
      * 
      */
-    public function delete(){
+    public function delete():bool{
         $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
 
         $stmt = $this->conn->prepare($query);
         $this->id=filter_var($this->id, FILTER_SANITIZE_NUMBER_INT);
         $stmt->bindParam(1, $this->id, PDO::PARAM_INT);
 
-        // execute query
-        if($stmt->execute()){
-            return true;
-        }
-
-        return false;
+        return $stmt->execute();
     }
 
 

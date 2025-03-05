@@ -99,5 +99,15 @@ require 'models/quickbooks/qbreport/qbprofitandloss.php';
 require 'pre_routes.php';
 require 'routes.php';
 
+// From https://stackoverflow.com/a/40096085/6941165
+function error_handler($errno, $errstr, $errfile, $errline)
+{
+    if( ($errno & error_reporting()) > 0 )
+        throw new ErrorException($errstr, 500, $errno, $errfile, $errline);
+    else
+        return false;
+}
+set_error_handler('error_handler');
+
 // Run it!
 $router->run();
