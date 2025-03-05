@@ -100,7 +100,18 @@ require 'pre_routes.php';
 require 'routes.php';
 
 // From https://stackoverflow.com/a/40096085/6941165
-function error_handler($errno, $errstr, $errfile, $errline)
+
+/**
+ * This function will be used to handle errors in this PHP code. This 
+ * is different from Exception handling.
+ * @param int $errno The level of the error raised, an integer
+ * @param string $errstr The error message
+ * @param string $errfile The filename that the error was raised in
+ * @param int $errline The line number where the error was raised
+ * @return false If the function returns false then the normal error handler continues.
+ * @throws ErrorException 
+ */
+function error_handler(int $errno, string $errstr, string $errfile, int $errline)
 {
     if( ($errno & error_reporting()) > 0 )
         throw new ErrorException($errstr, 500, $errno, $errfile, $errline);
