@@ -17,8 +17,7 @@ class QBEntityCtl{
    * @return void Output is echo'd directly to response 
    */
   public static function read_all_vendors(string $realmid){  
-    $entities = QBEntityCtl::read_all_impl($realmid, 'vendor', 'DisplayName');
-    echo json_encode($entities, JSON_NUMERIC_CHECK);
+    QBEntityCtl::read_all_impl($realmid, 'vendor', 'DisplayName');
   }
   /**
    * List name and id of all the QB Vendors
@@ -26,8 +25,7 @@ class QBEntityCtl{
    * @return void Output is echo'd directly to response 
    */
   public static function read_all_customers(string $realmid){  
-    $entities = QBEntityCtl::read_all_impl($realmid, 'customer', 'DisplayName');
-    echo json_encode($entities, JSON_NUMERIC_CHECK);
+    QBEntityCtl::read_all_impl($realmid, 'customer', 'DisplayName');
   }
   /**
    * List name and id of all the QB Vendors
@@ -35,65 +33,51 @@ class QBEntityCtl{
    * @return void Output is echo'd directly to response 
    */
   public static function read_all_accounts(string $realmid){  
-    try {
-      $entities = QuickbooksQuery::getInstance()
-        ->setRealmID($realmid)
-        ->list_entities('account');
+    QBEntityCtl::read_all_impl($realmid, 'account', 'FullyQualifiedName');
+  }
 
-        if(isset($_GET['raw']) && $_GET['raw'] == 'true') {
-          echo json_encode($entities, JSON_NUMERIC_CHECK);
-          exit;
-        }
-
-        $entities = array_map(fn($entity) => [
-          "id" => $entity->Id,
-          "value" => $entity->{'FullyQualifiedName'},
-          "type" => $entity->{'AccountType'}
-        ] , array_values($entities));
-
-        $entities = array_filter($entities, fn($item) => str_contains($item['type'],'Expense')
-                          || $item['type'] == 'Cost of Goods Sold');
-
-        usort(
-          $entities, 
-          fn($a, $b) => strtolower($a['value']) <=> strtolower($b['value'])
-        );
-
-        echo json_encode($entities, JSON_NUMERIC_CHECK);
-    } catch (\Exception $e) {
-      http_response_code(400);   
-      echo json_encode(
-        array("message" => "Unable to obtain list of entities from QuickBooks.",
-        "details" => $e->getMessage())
-      );
-      exit(1);
-    }
+  private static function sortByLowerCaseElement(array &$array, string $elementName) : true {
+    return usort(
+      $array, 
+      fn($a, $b) => strtolower($a[$elementName]) <=> strtolower($b[$elementName])
+    );
   }
     /**
    * List name and id of all the QB Entities of the given type
    * @param string $realmid The company ID for the QBO company.
    * @param string $type The type of IPPEntity
    * @param string $nameProperty The name of th eproperty to call when simplifying the IPPEntity
-   * @return array
+   * @return void Output is echo'd directly to response
    */
-  private static function read_all_impl(string $realmid, string $type, string $nameProperty) : array{  
+  private static function read_all_impl(string $realmid, string $type, string $nameProperty) : void{  
 
     try {
       $entities = QuickbooksQuery::getInstance()
         ->setRealmID($realmid)
         ->list_entities($type);
 
-        $simplifiedEntities = array_map(fn($entity) => [
-          "id" => $entity->Id,
-          "value" => $entity->{$nameProperty}
-        ] , array_values($entities));
+        // If the raw http parameter is set then return the QBO data without changing it
+        if(isset($_GET['raw']) && $_GET['raw'] == 'true') {
+          echo json_encode($entities, JSON_NUMERIC_CHECK);
+          exit;
+        }
 
-        usort(
-          $simplifiedEntities, 
-          fn($a, $b) => strtolower($a['value']) <=> strtolower($b['value'])
-        );
+        if ($type == 'account') {
+          $entities = array_map(fn($entity) => [
+            "id" => $entity->Id,
+            "value" => $entity->{'FullyQualifiedName'},
+            "type" => $entity->{'AccountType'}
+          ] , array_values($entities));
+        } else {
+          $entities = array_map(fn($entity) => [
+            "id" => $entity->Id,
+            "value" => $entity->{$nameProperty}
+          ] , array_values($entities));
+        }
 
-        return $simplifiedEntities;
+        QBEntityCtl::sortByLowerCaseElement($entities, 'value');
+
+        echo json_encode($entities, JSON_NUMERIC_CHECK);
     } catch (\Exception $e) {
       http_response_code(400);   
       echo json_encode(
