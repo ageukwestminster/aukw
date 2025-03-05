@@ -3,6 +3,7 @@
 namespace Controllers;
 
 use Models\QuickbooksAuth;
+use \Core\ErrorResponse as Error;
 
 /**
  * Controller that provides methods to create and manage a 
@@ -38,11 +39,7 @@ class QBAuthCtl{
     $state = $_GET['state'];
 
     if (empty($code) || empty($realmId) || empty($state) ) {
-        http_response_code(400);  
-        echo json_encode(
-          array("message" => "Unable to proceed with QB callback: provided parameters not as expected")
-        );
-        exit(0);
+      Error::response("Unable to proceed with QB callback: provided parameters not as expected");
     }
 
     $model = new QuickbooksAuth();
@@ -64,11 +61,7 @@ class QBAuthCtl{
         "id" => $realmid
         ));
     } else {
-      http_response_code(400);
-      echo json_encode(
-      array("message" => "Unable to revoke Quickbooks token.",
-      "id" => $realmid)
-    );
+      Error::response("Unable to revoke Quickbooks token for realmid=$realmid");
   }
 
   }
@@ -90,11 +83,7 @@ class QBAuthCtl{
       "id" => $realmid)
       );
     } else {
-    http_response_code(400);
-    echo json_encode(
-      array("message" => "Unable to refresh Quickbooks Tokens.",
-      "id" => $realmid)
-      );
+      Error::response("Unable to refresh Quickbooks tokens for realmid=$realmid");
     }
   }
 

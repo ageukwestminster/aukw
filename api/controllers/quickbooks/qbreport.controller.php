@@ -6,6 +6,7 @@ use DateMalformedStringException;
 use DateTime;
 use \Models\QbDateMacro;
 use \Models\RowItem;
+use \Core\ErrorResponse as Error;
 
 /**
  * Controller to accomplish QBO report related tasks.
@@ -81,14 +82,7 @@ class QBReportCtl{
         );
 
     } catch (\Throwable $e) {
-      http_response_code(400);  
-      echo json_encode(
-        array(
-          "message" => "Unable to generate p&l report.",
-          "extra" => $e->getMessage()
-        )
-      );
-      exit(1);
+      Error::response("Unable to generate p&l report.", $e);
     }
   }
 
@@ -116,14 +110,7 @@ class QBReportCtl{
       return $model->run();
 
     } catch (\Exception $e) {
-      http_response_code(400);  
-      echo json_encode(
-          array(
-              "message" => "Unable to generate p&l report. ",
-              "extra" => $e->getMessage()
-              )
-      );
-      exit(1);
+      Error::response("Unable to generate p&l report.", $e);
   }
 }
 
@@ -142,14 +129,7 @@ class QBReportCtl{
         $date_macro =  QbDateMacro::from($_GET['date_macro']);
         $model->dateMacro = $date_macro->value;
       } catch (\Throwable $e) {
-        http_response_code(400);  
-        echo json_encode(
-            array(
-                "message" => "Unable to generate p&l report: invalid date_macro supplied.",
-                "extra" => str_replace('"',"'", $e->getMessage())
-                )
-        );
-        exit(1);
+        Error::response("Unable to generate p&l report: invalid date_macro supplied.", $e);
       }      
     }
     else if(isset($_GET['start']) || isset($_GET['end'])) {
@@ -164,9 +144,7 @@ class QBReportCtl{
       $model->enddate = $end;
     }
     else {
-      http_response_code(400);  
-      echo json_encode(array("message" => "Unable to generate p&l report, date_macro and start/end dates are missing."));
-      exit(1);
+      Error::response("Unable to generate p&l report, date_macro and start/end dates are missing.");
     }
   }
 
@@ -210,15 +188,8 @@ class QBReportCtl{
       } else {
         echo json_encode($model->adaptReport(), JSON_NUMERIC_CHECK);
       }
-    } catch (\Exception $e) {
-      http_response_code(400);  
-      echo json_encode(
-          array(
-              "message" => "Unable to generate general ledger report. ",
-              "extra" => $e->getMessage()
-              )
-      );
-      exit(1);
+    } catch (\Throwable $e) {
+      Error::response("Unable to generate general ledger report.", $e);
   }
   }
 
@@ -255,25 +226,29 @@ class QBReportCtl{
    * 
    */
   private static function sales_by_item_impl(string $realmid, $model = null){
-    if (!$model) $model = new \Models\QBItemSalesReport();
-    $model->realmid = $realmid;
-    QBReportCtl::GetHttpDateParameters($model);
+    try {
+      if (!$model) $model = new \Models\QBItemSalesReport();
+      $model->realmid = $realmid;
+      QBReportCtl::GetHttpDateParameters($model);
 
-    if (isset($_GET['summarizeColumn']) && !empty($_GET['summarizeColumn'])) {
-      // must be 'Quarter', not 'quarter' or 'Month' not 'month'
-      $model->summarizeColumn = ucwords(strtolower($_GET['summarizeColumn']));
-    } else {
-      $model->summarizeColumn = '';
+      if (isset($_GET['summarizeColumn']) && !empty($_GET['summarizeColumn'])) {
+        // must be 'Quarter', not 'quarter' or 'Month' not 'month'
+        $model->summarizeColumn = ucwords(strtolower($_GET['summarizeColumn']));
+      } else {
+        $model->summarizeColumn = '';
+      }
+
+      // item is a number
+      if (isset($_GET['item']) && !empty($_GET['item'])) {
+        $model->item = $_GET['item'];
+      } else {
+        $model->item = null;
+      }
+
+      return $model->run();
+    } catch (\Throwable $e) {
+      Error::response("Unable to generate Sales By Item report.", $e);
     }
-
-    // item is a number
-    if (isset($_GET['item']) && !empty($_GET['item'])) {
-      $model->item = $_GET['item'];
-    } else {
-      $model->item = null;
-    }
-
-    return $model->run();
   }
 
 
@@ -344,35 +319,13 @@ class QBReportCtl{
 
       echo json_encode($pnlReport, JSON_NUMERIC_CHECK);
 
-    } catch (\Exception $e) {
-      http_response_code(400);  
-      echo json_encode(
-          array(
-              "message" => "Unable to generate QMA report. ",
-              "extra" => $e->getMessage()
-              )
-      );
-      exit(1);
-  }
+    } catch (\Throwable $e) {
+      Error::response("Unable to generate QMA report.", $e);
+    }
 
   }
 
   /**
-   * Add a RowItem to the report. This new element has a key equal to $element_key
-   * @param mixed &$report 
-   * @param string $element_key The array key of the new element.
-   * @param string $element_value The
-   * @return void 
-   */
-  private static function AddMissingRowItem(&$report, string $element_key, string $element_value) : void{
-    if (!array_key_exists($element_key, $report)) {
-      $rowItem = new RowItem;
-      $rowItem->displayName = $element_value;
-      $pnlReport[$element_key] = $rowItem;
-    }
-  }
-
-    /**
    * Show a QBO report that summarizes ragging by quarter
    * The only HTTP parameter accepted is 'start' and that is optional. 
    * If 'start' is not supplied then the query defaults to the quarter 
@@ -382,20 +335,23 @@ class QBReportCtl{
    * 
    */
   public static function ragging_by_quarter(string $realmid){  
+    try {
+      $model = new \Models\QBItemSalesReport();
+      $model->realmid = $realmid;
+      $model->summarizeColumn = 'Quarter';
+      $model->item = null;
+      $model->sortAscending = false;
 
-    $model = new \Models\QBItemSalesReport();
-    $model->realmid = $realmid;
-    $model->summarizeColumn = 'Quarter';
-    $model->item = null;
-    $model->sortAscending = false;
+      $model->enddate = QBReportCtl::lastDayInPreviousQuarter($model);
+      $model->startdate = $_GET['start']??QBReportCtl::getStartDateofRaggingReport(
+                                                                    $model->enddate, 5);
 
-    $model->enddate = QBReportCtl::lastDayInPreviousQuarter($model);
-    $model->startdate = $_GET['start']??QBReportCtl::getStartDateofRaggingReport(
-                                                                  $model->enddate, 5);
+      $model->run();
 
-    $model->run();
-
-    echo json_encode($model->extractRaggingNumbers(), JSON_NUMERIC_CHECK);
+      echo json_encode($model->extractRaggingNumbers(), JSON_NUMERIC_CHECK);
+    } catch (\Throwable $e) {
+      Error::response("Unable to generate ragging_by_quarter report.", $e);
+    }
   }
 
   /**
@@ -433,5 +389,18 @@ class QBReportCtl{
                 ->format('Y-m-d');
   }
 
-
+  /**
+   * Add a RowItem to the report. This new element has a key equal to $element_key
+   * @param mixed &$report 
+   * @param string $element_key The array key of the new element.
+   * @param string $element_value The
+   * @return void 
+   */
+  private static function AddMissingRowItem(&$report, string $element_key, string $element_value) : void{
+    if (!array_key_exists($element_key, $report)) {
+      $rowItem = new RowItem;
+      $rowItem->displayName = $element_value;
+      $pnlReport[$element_key] = $rowItem;
+    }
+  }
 }

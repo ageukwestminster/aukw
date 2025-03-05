@@ -3,6 +3,7 @@
 namespace Controllers;
 
 use \Models\QuickbooksEmployee;
+use \Core\ErrorResponse as Error;
 
 /**
  * Controller to accomplish QBO Employee related tasks. 
@@ -18,12 +19,15 @@ class QBEmployeeCtl{
    * @return void Output is echo'd directly to response 
    */
   public static function read_one(string $realmid, int $id){  
+    try {
+      $model = QuickbooksEmployee::getInstance()
+        ->setId($id)
+        ->setRealmID($realmid);   
 
-    $model = QuickbooksEmployee::getInstance()
-      ->setId($id)
-      ->setRealmID($realmid);   
-
-    echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
+      echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
+    } catch (\Throwable $e) {
+      Error::response("Unable to obtain list of employees from QuickBooks.", $e);
+    }
   }
 
   /**
@@ -40,15 +44,8 @@ class QBEmployeeCtl{
 
       echo json_encode(array_values($model->readAll()), JSON_NUMERIC_CHECK);
 
-    } catch (\Exception $e) {
-
-      http_response_code(400);   
-      echo json_encode(
-        array("message" => "Unable to obtain list of employees from QuickBooks.",
-        "details" => "QBO ID realm = " . $realmid,
-        "quickbooks" => $e->getMessage())
-      );
-
+    } catch (\Throwable $e) {
+      Error::response("Unable to obtain list of employees from QuickBooks.", $e);
     }
   }
 

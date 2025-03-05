@@ -22,6 +22,7 @@ $router = new \Bramus\Router\Router();
 // Define core, database and helper classes
 require 'core/config.php';
 require 'core/database.php';
+require 'core/errorresponse.php';
 require 'core/headers.php';
 require 'core/GUID.php';
 require 'core/dateshelper.php';

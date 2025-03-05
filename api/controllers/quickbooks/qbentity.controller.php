@@ -3,6 +3,7 @@
 namespace Controllers;
 
 use \Models\QuickbooksQuery;
+use \Core\ErrorResponse as Error;
 
 /**
  * Controller to accomplish QBO Employee related tasks. 
@@ -41,7 +42,8 @@ class QBEntityCtl{
    * @param string $realmid The company ID for the QBO company.
    * @param string $type The type of IPPEntity
    * @param string $nameProperty The name of th eproperty to call when simplifying the IPPEntity
-   * @return void Output is echo'd directly to response
+   * @return void Output is echo'd directly to response, in JSON. if the http parameter 'raw' 
+   * is provided then the output is just the raw QBO response.
    */
   private static function read_all_impl(string $realmid, string $type, string $nameProperty) : void{  
 
@@ -51,7 +53,7 @@ class QBEntityCtl{
         ->list_entities($type);
 
       // If the raw http parameter is set then return the QBO data without changing it
-      if(isset($_GET['raw']) && $_GET['raw'] == 'true') {
+      if(isset($_GET['raw'])) {
         echo json_encode($entities, JSON_NUMERIC_CHECK);
         exit;
       }
@@ -74,12 +76,7 @@ class QBEntityCtl{
       echo json_encode($entities, JSON_NUMERIC_CHECK);
 
     } catch (\Exception $e) {
-      http_response_code(400);   
-      echo json_encode(
-        array("message" => "Unable to obtain list of entities from QuickBooks.",
-        "details" => $e->getMessage())
-      );
-      exit(1);
+      Error::response("Unable to obtain list of entities from QuickBooks.", $e);
     }
   }
 
