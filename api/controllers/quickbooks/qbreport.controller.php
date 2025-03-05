@@ -7,6 +7,7 @@ use DateTime;
 use \Models\QbDateMacro;
 use \Models\RowItem;
 use \Core\ErrorResponse as Error;
+use Exception;
 
 /**
  * Controller to accomplish QBO report related tasks.
@@ -81,7 +82,7 @@ class QBReportCtl{
             $summariseCurrentPeriod, $summarisePreviousPeriod
         );
 
-    } catch (\Throwable $e) {
+    } catch (Exception $e) {
       Error::response("Unable to generate p&l report.", $e);
     }
   }
@@ -128,7 +129,7 @@ class QBReportCtl{
         //Check that its a valid date_macro value
         $date_macro =  QbDateMacro::from($_GET['date_macro']);
         $model->dateMacro = $date_macro->value;
-      } catch (\Throwable $e) {
+      } catch (Exception $e) {
         Error::response("Unable to generate p&l report: invalid date_macro supplied.", $e);
       }      
     }
@@ -188,7 +189,7 @@ class QBReportCtl{
       } else {
         echo json_encode($model->adaptReport(), JSON_NUMERIC_CHECK);
       }
-    } catch (\Throwable $e) {
+    } catch (Exception $e) {
       Error::response("Unable to generate general ledger report.", $e);
   }
   }
@@ -246,7 +247,7 @@ class QBReportCtl{
       }
 
       return $model->run();
-    } catch (\Throwable $e) {
+    } catch (Exception $e) {
       Error::response("Unable to generate Sales By Item report.", $e);
     }
   }
@@ -319,7 +320,7 @@ class QBReportCtl{
 
       echo json_encode($pnlReport, JSON_NUMERIC_CHECK);
 
-    } catch (\Throwable $e) {
+    } catch (Exception $e) {
       Error::response("Unable to generate QMA report.", $e);
     }
 
@@ -349,7 +350,7 @@ class QBReportCtl{
       $model->run();
 
       echo json_encode($model->extractRaggingNumbers(), JSON_NUMERIC_CHECK);
-    } catch (\Throwable $e) {
+    } catch (Exception $e) {
       Error::response("Unable to generate ragging_by_quarter report.", $e);
     }
   }

@@ -4,7 +4,6 @@ namespace Controllers;
 
 use Core\QuickbooksConstants as QBO;
 use \Core\ErrorResponse as Error;
-use Throwable;
 use Exception;
 use InvalidArgumentException;
 use Models\QuickbooksQuery;
@@ -45,7 +44,7 @@ class QBAttachmentCtl{
         ->list_attachments($entity_type_name, $qb_txn_id);
 
       echo json_encode(array_values($attachments)); 
-    } catch (Throwable $e) {
+    } catch (Exception $e) {
       Error::response("Unable to query QBO entity for attachments.", $e);
     }
   }
@@ -65,7 +64,7 @@ class QBAttachmentCtl{
         ->find_attachment($id);
 
       echo json_encode($attachment[0], JSON_NUMERIC_CHECK); 
-    } catch (Throwable $e) {
+    } catch (Exception $e) {
       Error::response("Unable to query QBO entity, with id=$id, for attachments.", $e);
     }
   }
@@ -199,7 +198,7 @@ class QBAttachmentCtl{
 
       echo json_encode($attachments, JSON_NUMERIC_CHECK);    
 
-    } catch (Throwable $e) {
+    } catch (Exception $e) {
       Error::response("Unable to create attachment in QBO.", $e);
     }
   }

@@ -2,6 +2,8 @@
 
 namespace Models;
 
+use QuickBooksOnline\API\Exception\SdkException;
+
 /**
  * Factory class that provides data about QBO Classes.
  * 
@@ -83,12 +85,8 @@ class QuickbooksClass{
       $item = $dataService->FindbyId('Class', $this->id);
       $error = $dataService->getLastError();
       if ($error) {
-          echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
-          echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
-          echo "The QBO Response message is: " . $error->getResponseBody() . "\n";
-          return false;
-      }
-      else {
+        throw new SdkException("The QBO Response message is: " . $error->getResponseBody());
+      } else {
         if (property_exists($item, 'Class')) {
           /** @disregard Intelephense error on next line */
           return $item->Class;
@@ -116,12 +114,8 @@ class QuickbooksClass{
     $items = $dataService->FindAll('Class');
     $error = $dataService->getLastError();
     if ($error) {
-        echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
-        echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
-        echo "The QBO Response message is: " . $error->getResponseBody() . "\n";
-        return [];
-    }
-    else {
+      throw new SdkException("The QBO Response message is: " . $error->getResponseBody());
+    } else {
         return $items;
     }
 }

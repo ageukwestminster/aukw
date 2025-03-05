@@ -13,6 +13,10 @@ use Models\QuickbooksToken;
 
 use DateTime;
 use DateTimeZone;
+use Exception;
+use QuickBooksOnline\API\Exception\SdkException;
+use QuickBooksOnline\API\Exception\IdsException;
+use QuickBooksOnline\API\Exception\ServiceException;
 
 /**
  * This is a wrapper class that provides methods to manage the QBO OAuth2 process.
@@ -137,104 +141,85 @@ class QuickbooksAuth{
 
         $this->init($realmId);
             
-        try {
-            if ($realmId != QBO::CHARITY_REALMID && $realmId != QBO::ENTERPRISES_REALMID) {
-                http_response_code(401);  
-                echo json_encode(
-                    array("message" => "Unable to proceed with QB callback: 'realmid' does not match valid values.")
-                );
-                exit(0);
-            }
+        if ($realmId != QBO::CHARITY_REALMID && $realmId != QBO::ENTERPRISES_REALMID) {
+            throw new Exception("Unable to proceed with QB callback: 'realmid' does not match valid values.");
+        }
 
-            // The state value is used to verify that this is a legitimiate callback, not a hoax
-            if ($state != $this->config['state']) {
-                http_response_code(401);  
-                echo json_encode(
-                    array("message" => "Unable to proceed with QB callback: 'state' does not match initial value.")
-                );
-                exit(0);
-            }
-                        
-            $OAuth2LoginHelper = $this->GetOAuth2LoginHelper();
-            $accessTokenObj = $OAuth2LoginHelper->exchangeAuthorizationCodeForToken($code, $realmId);
+        // The state value is used to verify that this is a legitimiate callback, not a hoax
+        if ($state != $this->config['state']) {
+            throw new Exception("Unable to proceed with QB callback: 'state' does not match initial value.");
+        }
+                    
+        $OAuth2LoginHelper = $this->GetOAuth2LoginHelper();
+        $accessTokenObj = $OAuth2LoginHelper->exchangeAuthorizationCodeForToken($code, $realmId);
 
-            $this->dataService->updateOAuth2Token($accessTokenObj);
+        $this->dataService->updateOAuth2Token($accessTokenObj);
 
-            $userInfo = $OAuth2LoginHelper->getUserInfo($accessTokenObj->getAccessToken(), 
-                                        strtolower($this->config['baseUrl']));
+        $userInfo = $OAuth2LoginHelper->getUserInfo($accessTokenObj->getAccessToken(), 
+                                    strtolower($this->config['baseUrl']));
 
-            if (!$userInfo['emailVerified']) {
-                http_response_code(401);  
-                echo json_encode(
-                  array("message" => "Your Quickbooks email address is not verified. Please " . 
-                    "verify it at https://accounts.intuit.com/app/account-manager/security and try again.")
-                );
-                exit(0);
-            } 
-                                
-            
-            $user = new \Models\User();
-            $user->firstname = $userInfo['givenName'];
-            $user->surname = $userInfo['familyName'];
-            $user->email = $userInfo['email'];
-            
-            $user->readOneByNameAndEmail();
+        if (!$userInfo['emailVerified']) {
+            $message = "Your Quickbooks email address is not verified. Please " . 
+                "verify it at https://accounts.intuit.com/app/account-manager/security and try again.";
+            throw new Exception($message);
+        } 
+                            
         
-            // Is user in database? if not then create
-            if (empty($user->username) ) {                
-                $user->username = $userInfo['email'];
-                $user->create();
-            } 
-            
-            // Has the aukw user got a QBO id link in the MariaDB database? 
-            // If not then update user with the quickbooksUserId
-            if ($user->quickbooksUserId != $userInfo['sub']) {
-                // update to add QB sub
-                $user->quickbooksUserId = $userInfo['sub'];
-                $user->update();
-            }
-
-            // Store QB tokens
-            $this->store_tokens_in_database($accessTokenObj, $user->id, $user->email);
-
-            // Generate user tokens (these are the auth tokens for the aukw app, not QB)
-            $jwt = new \Models\JWTWrapper();
-            $user_with_token = $jwt->getUserWithAccessToken($user);
-
-            //Create a new aukw refresh token and put it into a cookie.
-            // Also store in database
-            $jwt->setRefreshTokenCookieFor($user_with_token);
-
-            // Return logged in info
-            echo json_encode($user_with_token);            
-            
+        $user = new \Models\User();
+        $user->firstname = $userInfo['givenName'];
+        $user->surname = $userInfo['familyName'];
+        $user->email = $userInfo['email'];
+        
+        $user->readOneByNameAndEmail();
+    
+        // Is user in database? if not then create
+        if (empty($user->username) ) {                
+            $user->username = $userInfo['email'];
+            $user->create();
+        } 
+        
+        // Has the aukw user got a QBO id link in the MariaDB database? 
+        // If not then update user with the quickbooksUserId
+        if ($user->quickbooksUserId != $userInfo['sub']) {
+            // update to add QB sub
+            $user->quickbooksUserId = $userInfo['sub'];
+            $user->update();
         }
-        catch (\Exception $e) {
-            http_response_code(400);  
-            echo json_encode(
-              array("message" => "Unable to proceed with QB callback.",
-              "details" => $e->getMessage())
-            );
-            exit(0);
-        }
+
+        // Store QB tokens
+        $this->store_tokens_in_database($accessTokenObj, $user->id, $user->email);
+
+        // Generate user tokens (these are the auth tokens for the aukw app, not QB)
+        $jwt = new \Models\JWTWrapper();
+        $user_with_token = $jwt->getUserWithAccessToken($user);
+
+        //Create a new aukw refresh token and put it into a cookie.
+        // Also store in database
+        $jwt->setRefreshTokenCookieFor($user_with_token);
+
+        // Return logged in info
+        echo json_encode($user_with_token);            
+            
     
         return true;
       }
 
-      /**
-       * Refresh the QB access token from the refresh token
-       * @param string $realmid The company ID 
-       * @return bool 'true' if token successfully refreshed
-       */
-    public function refresh($realmid, $userid):bool {
+     /**
+      * Refresh the QB access token from the refresh token
+      * @param string $realmid The company ID 
+      * @param int $userid The id of the QBO connection user
+      * @return true 
+      * @throws Exception 
+      * @throws SdkException 
+      * @throws IdsException 
+      * @throws ServiceException 
+      */  
+    public function refresh(string $realmid, int $userid):true {
 
         if($this->jwt->id != $userid) {
-            http_response_code(401);  
-            echo json_encode(
-              array("message" => "Unable to refresh Quickbooks tokens, userid mismatch.",
-              "details" => "JWT userid = '".$this->jwt->id."', provided userid = '".$userid."'.")
-            );
-            exit(0);
+            $message = "Unable to refresh Quickbooks tokens, userid mismatch: ".
+              "JWT userid = '".$this->jwt->id."', provided userid = '".$userid."'.";
+            throw new Exception($message);
         }
 
         $this->init($realmid);
@@ -242,32 +227,22 @@ class QuickbooksAuth{
         $this->tokenModel->read($realmid);
 
         if ($this->tokenModel === NULL || $this->tokenModel->refreshtoken === NULL) {
-            return false;
+            throw new Exception("Null reference detected.");
         }
 
-        try {
-            $OAuth2LoginHelper = $this->GetOAuth2LoginHelper();
-            $accessTokenObj = $OAuth2LoginHelper->refreshAccessTokenWithRefreshToken(
-                            $this->tokenModel->refreshtoken);
-                            
-            if (!$accessTokenObj->getRealmID()) {
-                $accessTokenObj->setRealmID($realmid);
-            }
-
-            // Assign the new Access token to the DataService
-            $this->dataService->updateOAuth2Token($accessTokenObj);      
-
-            // Store rew access/refresh pair in our database
-            $this->store_tokens_in_database($accessTokenObj);
+        $OAuth2LoginHelper = $this->GetOAuth2LoginHelper();
+        $accessTokenObj = $OAuth2LoginHelper->refreshAccessTokenWithRefreshToken(
+                        $this->tokenModel->refreshtoken);
+                        
+        if (!$accessTokenObj->getRealmID()) {
+            $accessTokenObj->setRealmID($realmid);
         }
-        catch (\Exception $e) {
-            http_response_code(400);  
-            echo json_encode(
-              array("message" => "Unable to refresh Quickbooks tokens. ",
-              "details" => $e->getMessage())
-            );
-            exit(0);
-        }
+
+        // Assign the new Access token to the DataService
+        $this->dataService->updateOAuth2Token($accessTokenObj);      
+
+        // Store rew access/refresh pair in our database
+        $this->store_tokens_in_database($accessTokenObj);
 
         return true;
     }
@@ -285,34 +260,22 @@ class QuickbooksAuth{
         $this->tokenModel->read($realmid);
             
         if ($this->tokenModel === NULL || $this->tokenModel->refreshtoken === NULL) {
-            return false;
+            throw new Exception("Null reference detected.");
         }
 
-        try {
-            $OAuth2LoginHelper = $this->GetOAuth2LoginHelper();
-            $accessTokenObj = $OAuth2LoginHelper->refreshAccessTokenWithRefreshToken(
-                $this->tokenModel->refreshtoken);
-                            
-            if (!$accessTokenObj->getRealmID()) {
-                $accessTokenObj->setRealmID($realmid);
-            }
-
-            $this->dataService->updateOAuth2Token($accessTokenObj);      
-
-            $this->store_tokens_in_database($accessTokenObj);
-
-            return $this->dataService->getCompanyInfo();
-        }
-        catch (\Exception $e) {
-            http_response_code(400);  
-            echo json_encode(
-              array("message" => "Unable to refresh Quickbooks token. ",
-              "details" => $e->getMessage())
-            );
-            exit(0);
+        $OAuth2LoginHelper = $this->GetOAuth2LoginHelper();
+        $accessTokenObj = $OAuth2LoginHelper->refreshAccessTokenWithRefreshToken(
+            $this->tokenModel->refreshtoken);
+                        
+        if (!$accessTokenObj->getRealmID()) {
+            $accessTokenObj->setRealmID($realmid);
         }
 
-        return true;
+        $this->dataService->updateOAuth2Token($accessTokenObj);      
+
+        $this->store_tokens_in_database($accessTokenObj);
+
+        return $this->dataService->getCompanyInfo();
     }
 
     /**
@@ -320,16 +283,19 @@ class QuickbooksAuth{
      * @param string $realmid The company ID for the QBO company.
      * @return bool 'true' if token successfully revoked with no errors
      */
+
+     /**
+      * Break the link between this app and Quickbooks
+      * @param mixed $realmid The id of the QBO company.
+      * @return true 
+      * @throws Exception 
+      * @throws SdkException 
+      */
     public function revoke($realmid) {
 
         // Only admins can break QB link
         if(!$this->jwt->isAdmin) {
-            http_response_code(401);  
-            echo json_encode(
-              array("message" => "Only admins can revoke QB tokens. ",
-              "details" => "")
-            );
-            return false;
+            throw new Exception("Only admins can revoke QB tokens.");
         }
 
         $this->init($realmid);
@@ -339,18 +305,10 @@ class QuickbooksAuth{
         if ($this->tokenModel->accesstoken) {
             $this->remove_tokens_from_database($realmid);
             $OAuth2LoginHelper = $this->GetOAuth2LoginHelper();
-            try {
-            return $OAuth2LoginHelper->revokeToken($this->tokenModel->accesstoken);
-            }
-            catch (\Exception $e) {
-                http_response_code(400);  
-                echo json_encode(
-                  array("message" => "Unable to revoke Quickbooks token. ",
-                  "details" => $e->getMessage())
-                );
-                exit(0);
-            }
+            $OAuth2LoginHelper->revokeToken($this->tokenModel->accesstoken);
+            return true;
         } else {
+            // Already revoked!
             return true;
         }    
     }
@@ -375,22 +333,13 @@ class QuickbooksAuth{
         // Is the refresh token still valid?
         $refreshtokenexpiry = $this->tokenModel->refreshtokenexpiry;
         if ($refreshtokenexpiry == null) {
-            http_response_code(400);  
-            echo json_encode(
-                array("message" => "QuickBooks authorisation seems to be missing. Have you authorised the app?")
-            );
-            exit();
+            throw new Exception("QuickBooks authorisation seems to be missing. Have you authorised the app?");
         }
         $refreshtokenexpiry = new DateTime($refreshtokenexpiry, new DateTimeZone('Europe/London'));
         $now = new DateTime("now", new DateTimeZone('Europe/London'));
 
         if($refreshtokenexpiry < $now) {
-            # the refresh token has expired
-            http_response_code(400);  
-            echo json_encode(
-                array("message" => "Refresh token has expired. Please re-authorise the app.")
-            );
-            exit();
+            throw new Exception("Refresh token has expired. Please re-authorise the app.");
         }
  
         $this->dataService = DataService::Configure(array(
@@ -415,11 +364,7 @@ class QuickbooksAuth{
                 $accessToken = $OAuth2LoginHelper->refreshToken();
             }
             catch (\Exception $e) {
-                http_response_code(401);  
-                echo json_encode(
-                    array("message" => "Unable to log in to QuickBooks. Ask the QuickBooks administrator to re-authorise the app.")
-                );
-                exit();
+                throw new Exception("Unable to log in to QuickBooks. Ask the QuickBooks administrator to re-authorise the app.");
             }
 
             $this->store_tokens_in_database($accessToken);
@@ -482,11 +427,7 @@ class QuickbooksAuth{
             $isUpdate = false;
 
             if ($userid == 0 || $email == '') {
-                http_response_code(400);  
-                echo json_encode(
-                    array("message" => "Unable to store new token: either email or userid was empty.")
-                );
-                exit();
+                throw new Exception("Unable to store new token: either email or userid was empty.");
             }
 
             $this->tokenModel->linkcreatoruserid = $userid;

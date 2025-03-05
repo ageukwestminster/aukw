@@ -6,6 +6,8 @@ use \Models\QuickbooksBill;
 use \Models\QuickbooksPensionBill;
 use \Models\QuickbooksQuery;
 use Core\QuickbooksConstants as QBO;
+use \Core\ErrorResponse as Error;
+use Exception;
 
 /**
  * Controller to accomplish QBO Bill (or invoice) related tasks. 
@@ -22,12 +24,15 @@ class QBBillCtl{
    * @return void Output is echo'd directly to response 
    */
   public static function read_one(string $realmid, string $id){  
+    try {
+      $model = QuickbooksBill::getInstance()
+        ->setRealmID($realmid)  
+        ->setId($id);
 
-    $model = QuickbooksBill::getInstance()
-      ->setRealmID($realmid)  
-      ->setId($id);
-
-    echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
+      echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
+    } catch (Exception $e) {
+      Error::response("Unable to find QB Bill with id=$id.", $e);
+    }
   }
   
   /**
@@ -38,12 +43,15 @@ class QBBillCtl{
    * @return void Output is echo'd directly to response 
    */
   public static function query_by_docnumber(string $realmid, string $doc_number){  
+    try {
+      $bills = QuickbooksQuery::getInstance()
+        ->setRealmID($realmid)
+        ->query_by_docnumber('Bill', $doc_number); 
 
-    $bills = QuickbooksQuery::getInstance()
-      ->setRealmID($realmid)
-      ->query_by_docnumber('Bill', $doc_number); 
-
-    echo json_encode($bills);
+      echo json_encode($bills);
+    } catch (Exception $e) {
+      Error::response("Unable to find QB Bill with DocNumber=$doc_number.", $e);
+    }
   }
 
   /**
@@ -56,24 +64,22 @@ class QBBillCtl{
    * @return void Output is echoed directly to response 
    */
   public static function delete(string $realmid, int $id){  
+    try {
+      $model = QuickbooksBill::getInstance()
+        ->setId($id)
+        ->setRealmID($realmid); 
 
-    $model = QuickbooksBill::getInstance()
-      ->setId($id)
-      ->setRealmID($realmid); 
-
-    if($model->delete()) {
-      echo json_encode(
-        array(
-          "message" => "Bill with id=$id was deleted.",
-          "id" => $id)
-          , JSON_NUMERIC_CHECK);
-    } else{
-        http_response_code(400);  
+      if($model->delete()) {
         echo json_encode(
           array(
-            "message" => "Unable to delete QB bill.",
+            "message" => "Bill with id=$id was deleted.",
             "id" => $id)
             , JSON_NUMERIC_CHECK);
+      } else{
+        throw new \Exception("Unable to delete QB bill with id=$id.");
+      }
+    } catch (Exception $e) {
+      Error::response("Unable to delete QB bill.", $e);
     }
   }  
 
@@ -122,15 +128,8 @@ class QBBillCtl{
             );
       }
 
-    } catch (\Exception $e) {
-      http_response_code(400);  
-      echo json_encode(
-        array(
-          "message" => "Unable to enter payroll bill in QuickBooks. ",
-          "extra" => $e->getMessage()
-          )
-          , JSON_NUMERIC_CHECK);
-      exit(1);
+    } catch (Exception $e) {
+      Error::response("Unable to enter payroll bill in QuickBooks.", $e);
     }
   }  
 }

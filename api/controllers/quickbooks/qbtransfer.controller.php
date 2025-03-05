@@ -26,7 +26,7 @@ class QBTransferCtl{
       ->setId($id);
 
     echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
-    } catch (\Throwable $e) {
+    } catch (\Exception $e) {
       http_response_code(400);  
       echo json_encode(
           array(
@@ -63,7 +63,7 @@ class QBTransferCtl{
             , JSON_NUMERIC_CHECK);
       } 
     
-    } catch (\Throwable $e) {
+    } catch (\Exception $e) {
       http_response_code(400);  
       echo json_encode(
         array(

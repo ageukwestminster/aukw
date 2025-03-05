@@ -2,7 +2,6 @@
 
 namespace Core;
 
-use Throwable;
 use Exception;
 
 /**
@@ -12,22 +11,23 @@ use Exception;
  */
 abstract class ErrorResponse { 
   /**
-   * 
-   * @param Throwable $e 
-   * @param string $message 
-   * @param int $errorCode 
+   * Send back a http error response and message.
+   * @param Exception $e Optional error object.
+   * @param string $message An optional message to include in the error response. Defaults to 'Error occurred.'.
+   * @param int $errorCode The HTTP error code. Defaults to 400. Do not use 200.
+   * @param string $extra Some extra information to include in the error response
    * @return never 
    */
   public static function response ( 
-        string $message = 'Error ocurred.', 
-        ?Throwable $e = null,
+        string $message = 'Error occurred.', 
+        ?Exception $e = null,
         int $errorCode = 400, 
         string $extra = '')
   {
     http_response_code($errorCode);
 
     $output = array("message" => $message, 
-                  "details" => $e->getMessage());
+                  "details" => $e?$e->getMessage():'');
 
     if ($extra != '') {
       $output['extra'] = $extra;

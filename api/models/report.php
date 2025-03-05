@@ -421,7 +421,7 @@ class Report{
             $return['actual_total'] = $rowItem;
 
             return $return;
-        } catch (\Throwable $e) {
+        } catch (\Exception $e) {
             http_response_code(400);  
             echo json_encode(
             array(

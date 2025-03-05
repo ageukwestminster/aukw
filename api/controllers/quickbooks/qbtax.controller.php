@@ -25,7 +25,7 @@ class QBTaxCtl{
         ->list_tax_codes();
 
       echo json_encode($taxCodes, JSON_NUMERIC_CHECK);
-    } catch (\Throwable $e) {
+    } catch (\Exception $e) {
       http_response_code(400);  
       echo json_encode(
           array(
@@ -50,7 +50,7 @@ class QBTaxCtl{
         ->list_tax_codes($id);
 
       echo json_encode($taxCodes, JSON_NUMERIC_CHECK);
-    } catch (\Throwable $e) {
+    } catch (\Exception $e) {
       http_response_code(400);  
       echo json_encode(
           array(

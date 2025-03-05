@@ -25,8 +25,8 @@ class QBEmployeeCtl{
         ->setRealmID($realmid);   
 
       echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
-    } catch (\Throwable $e) {
-      Error::response("Unable to obtain list of employees from QuickBooks.", $e);
+    } catch (\Exception $e) {
+      Error::response("Unable to find employee with id=$id in QuickBooks.", $e);
     }
   }
 
@@ -44,7 +44,7 @@ class QBEmployeeCtl{
 
       echo json_encode(array_values($model->readAll()), JSON_NUMERIC_CHECK);
 
-    } catch (\Throwable $e) {
+    } catch (\Exception $e) {
       Error::response("Unable to obtain list of employees from QuickBooks.", $e);
     }
   }

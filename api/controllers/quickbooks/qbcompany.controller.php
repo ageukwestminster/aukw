@@ -3,6 +3,8 @@
 namespace Controllers;
 
 use Models\QuickbooksAuth;
+use \Core\ErrorResponse as Error;
+use Exception;
 
 /**
  * Controller that provides methods to interrogate the QBO Company object. Currently
@@ -19,9 +21,12 @@ class QBCompanyCtl{
    * @return void Output is echo'd directly to response
    */
   public static function companyInfo(string $realmid){  
+    try {
+      $model = new QuickbooksAuth();
 
-    $model = new QuickbooksAuth();
-
-    echo json_encode($model->companyInfo($realmid), JSON_NUMERIC_CHECK);
+      echo json_encode($model->companyInfo($realmid), JSON_NUMERIC_CHECK);
+    } catch (Exception $e) {
+      Error::response("Unable to get information about the QB company.", $e);
+    }
   }
 }

@@ -2,7 +2,8 @@
 
 namespace Controllers;
 
-use \Datetime;
+use \Core\ErrorResponse as Error;
+use Exception;
 
 /**
  * Controller to accomplish QBO Class related tasks. 
@@ -19,12 +20,15 @@ class QBClassCtl{
    * @return void Output is echo'd directly to response 
    */
   public static function read_one(string $realmid, string $id){  
+    try {
+      $model = \Models\QuickbooksClass::getInstance()
+        ->setRealmID($realmid)
+        ->setId($id);      
 
-    $model = \Models\QuickbooksClass::getInstance()
-      ->setRealmID($realmid)
-      ->setId($id);      
-
-    echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
+      echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
+    } catch (Exception $e) {
+      Error::response("Unable to read details of Class with id=$id.", $e);
+    }
   }
 
   /**
@@ -33,11 +37,14 @@ class QBClassCtl{
    * @return void Output is echo'd directly to response 
    */
   public static function read_all(string $realmid){  
+    try {
+      $model = \Models\QuickbooksClass::getInstance()
+        ->setRealmID($realmid);
 
-    $model = \Models\QuickbooksClass::getInstance()
-      ->setRealmID($realmid);
-
-    echo json_encode($model->readAll(), JSON_NUMERIC_CHECK);
+      echo json_encode($model->readAll(), JSON_NUMERIC_CHECK);
+    
+    } catch (Exception $e) {
+      Error::response("Unable to return lsit of QBO Classes.", $e);
+    }
   }
-
 }

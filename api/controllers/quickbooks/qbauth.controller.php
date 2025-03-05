@@ -3,6 +3,7 @@
 namespace Controllers;
 
 use Models\QuickbooksAuth;
+use Exception;
 use \Core\ErrorResponse as Error;
 
 /**
@@ -18,10 +19,13 @@ class QBAuthCtl{
    * @return array The Uri to follow to make the link plus instructions on what to do
    */
   public static function oauth2_begin(){
+    try {
+      $model = new QuickbooksAuth();
 
-    $model = new QuickbooksAuth();
-
-    echo json_encode($model->begin(), JSON_NUMERIC_CHECK);
+      echo json_encode($model->begin(), JSON_NUMERIC_CHECK);
+    } catch (Exception $e) {
+      Error::response("Unable to generate OAuth2 url.", $e, 401);
+    }
   }
 
   /**
@@ -33,17 +37,20 @@ class QBAuthCtl{
    * @return void Output is echo'd directly to response
    */
   public static function oauth2_callback(){
+    try {
+      $code = $_GET['code'];        
+      $realmId = $_GET['realmId'];
+      $state = $_GET['state'];
 
-    $code = $_GET['code'];        
-    $realmId = $_GET['realmId'];
-    $state = $_GET['state'];
+      if (empty($code) || empty($realmId) || empty($state) ) {
+        throw new Exception("Provided parameters not as expected. One of code, realmid or state is empty.");
+      }
 
-    if (empty($code) || empty($realmId) || empty($state) ) {
-      Error::response("Unable to proceed with QB callback: provided parameters not as expected");
+      $model = new QuickbooksAuth();
+      $model->callback($code, $realmId, $state);
+    } catch (Exception $e) {
+      Error::response("Unable to perform QBO callback.", $e, 401);
     }
-
-    $model = new QuickbooksAuth();
-    $model->callback($code, $realmId, $state);
   }
 
   /**
@@ -52,18 +59,21 @@ class QBAuthCtl{
    * @return void Output is echo'd directly to response.
    */
   public static function oauth2_revoke(string $realmid) : void{
-    $model = new QuickbooksAuth();
+    try {
+      $model = new QuickbooksAuth();
 
-    if ($model->revoke($realmid)) {
-      echo json_encode(
-      array(
-        "message" => "Your QuickBooks token has been revoked.",
-        "id" => $realmid
-        ));
-    } else {
-      Error::response("Unable to revoke Quickbooks token for realmid=$realmid");
-  }
-
+      if ($model->revoke($realmid)) {
+        echo json_encode(
+        array(
+          "message" => "Your QuickBooks token has been revoked.",
+          "id" => $realmid
+          ));
+      } else {
+        throw new Exception("Revoke method returned 'false'. Realmid=$realmid.");
+      }
+    } catch (Exception $e) {
+      Error::response("Unable to revoke QBO tokens.", $e);
+    }
   }
 
 
@@ -75,51 +85,53 @@ class QBAuthCtl{
    * 
    */
   public static function oauth2_refresh(string $realmid, string $userid) : void{
-    $model = new QuickbooksAuth();
+    try {
+      $model = new QuickbooksAuth();
 
-    if ($model->refresh($realmid, $userid)) {
-    echo json_encode(
-      array("message" => "Quickbooks Tokens refreshed.",
-      "id" => $realmid)
-      );
-    } else {
-      Error::response("Unable to refresh Quickbooks tokens for realmid=$realmid");
+      $model->refresh($realmid, $userid);
+      echo json_encode(
+        array("message" => "Quickbooks Tokens refreshed.",
+        "id" => $realmid)
+        );
+    } catch (Exception $e) {
+      Error::response("Unable to refresh QBO tokens for realmid=$realmid", $e, 401);
     }
   }
 
   /**
-   * Show details of authenticated connections with QBO for a given user.
+   * Show details of authenticated connections with QBO.
    * @param string $realmid The id of the QBO company.
-   * @param string $userid The database id of the user whose connections are being sought
    * @return QuickbooksToken[] Containing the access and refresh tokens for QBO
    */
   public static function connection_details(string $realmid){  
+    try {
+      $model = new \Models\QuickbooksToken();
+      
+      $model->read($realmid);
 
-    $model = new \Models\QuickbooksToken();
-    
-    $model->read($realmid);
-
-    if ($model->accesstoken) {
-      echo json_encode($model, JSON_NUMERIC_CHECK);
-    } else {
-      $model = new \stdClass();
-      echo json_encode($model, JSON_NUMERIC_CHECK);
+      if ($model->accesstoken) {
+        echo json_encode($model, JSON_NUMERIC_CHECK);
+      } else {
+        $model = new \stdClass();
+        echo json_encode($model, JSON_NUMERIC_CHECK);
+      }
+    } catch (Exception $e) {
+      Error::response("Unable to provide QBO connection details.", $e);
     }
-
   }
 
   /**
    * 
-   * Show details of all the authenticated connections with QBO for a given user.
-   * @param int The Id of the user
-   * 
+   * Show details of all the authenticated connections with QBO.
    * @return QuickbooksToken[] Containing the access and refresh tokens for QBO
    */
   public static function all_connection_details(){  
-
-    $model = new \Models\QuickbooksToken();
-
-    echo json_encode($model->read_all(), JSON_NUMERIC_CHECK);
+    try {
+      $model = new \Models\QuickbooksToken();
+      echo json_encode($model->read_all(), JSON_NUMERIC_CHECK);
+    } catch (Exception $e) {
+      Error::response("Unable to provide list of QBO connections.", $e);
+    }
   }
 
 }
