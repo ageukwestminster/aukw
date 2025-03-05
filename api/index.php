@@ -99,8 +99,6 @@ require 'models/quickbooks/qbreport/qbprofitandloss.php';
 require 'pre_routes.php';
 require 'routes.php';
 
-
-
 /**
  * This function will be used to convert errors in this PHP code into Exceptions, which can
  * then be handled by try...catch blocks.
