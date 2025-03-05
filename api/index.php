@@ -99,11 +99,12 @@ require 'models/quickbooks/qbreport/qbprofitandloss.php';
 require 'pre_routes.php';
 require 'routes.php';
 
-// From https://stackoverflow.com/a/40096085/6941165
+
 
 /**
  * This function will be used to handle errors in this PHP code. This 
  * is different from Exception handling.
+ * From {@link https://stackoverflow.com/a/40096085/6941165}
  * @param int $errno The level of the error raised, an integer
  * @param string $errstr The error message
  * @param string $errfile The filename that the error was raised in
