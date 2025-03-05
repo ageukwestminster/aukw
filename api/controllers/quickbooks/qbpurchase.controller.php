@@ -4,6 +4,8 @@ namespace Controllers;
 
 use \Models\QuickbooksPurchase;
 use Core\QuickbooksConstants as QBO;
+use \Core\ErrorResponse as Error;
+use Exception;
 
 /**
  * Controller to accomplish QBO Bill (or expense) related tasks. 
@@ -27,14 +29,7 @@ class QBPurchaseCtl{
 
     echo json_encode($model->readone(), JSON_NUMERIC_CHECK);
     } catch (\Exception $e) {
-      http_response_code(400);  
-      echo json_encode(
-          array(
-              "message" => "Unable to retrieve QB Purchase with id=$id".". ",
-              "extra" => $e->getMessage()
-              )
-      );
-      exit(1);
+      Error::response("Unable to retrieve QB Purchase with id=$id.", $e);
     }
   }
 
@@ -64,13 +59,7 @@ class QBPurchaseCtl{
       } 
     
     } catch (\Exception $e) {
-      http_response_code(400);  
-      echo json_encode(
-        array(
-          "message" => "Unable to delete QB Purchase with id=$id".". ",
-          "extra" => $e->getMessage()
-        )
-      );
+      Error::response("Unable to delete QB Purchase with id=$id.", $e);
     }
   }  
 
@@ -140,14 +129,7 @@ class QBPurchaseCtl{
       }
 
     } catch (\Exception $e) {
-      http_response_code(400);  
-      echo json_encode(
-        array(
-          "message" => "Unable to create Purchase in Quickbooks. ",
-          "extra" => $e->getMessage()
-          )
-          , JSON_NUMERIC_CHECK);
-      exit(1);
+      Error::response("Unable to create QB Purchase.", $e);
     }    
   }  
           

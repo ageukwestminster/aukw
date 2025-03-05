@@ -63,10 +63,8 @@ class QuickbooksQuery{
         ." WHERE DocNumber LIKE '" . $doc_number . "%'");
     $error = $dataService->getLastError();
     if ($error) {
-        echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
-        echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
-        echo "The QBO Response message is: " . $error->getResponseBody() . "\n";
-    }
+      throw new SdkException("The QBO Response message is: " . $error->getResponseBody());
+    }  
     else if ($entities) {
       return $entities;
     }
