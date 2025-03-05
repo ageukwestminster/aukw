@@ -102,21 +102,26 @@ require 'routes.php';
 
 
 /**
- * This function will be used to handle errors in this PHP code. This 
- * is different from Exception handling.
- * From {@link https://stackoverflow.com/a/40096085/6941165}
+ * This function will be used to convert errors in this PHP code into Exceptions, which can
+ * then be handled by try...catch blocks.
+ * From {@link https://stackoverflow.com/a/40096085/6941165} and {@link https://www.php.net/manual/en/class.errorexception.php}
  * @param int $errno The level of the error raised, an integer
  * @param string $errstr The error message
  * @param string $errfile The filename that the error was raised in
  * @param int $errline The line number where the error was raised
  * @return false If the function returns false then the normal error handler continues.
- * @throws ErrorException 
+ * @throws ErrorException This 
  */
 function error_handler(int $errno, string $errstr, string $errfile, int $errline)
 {
-    if( ($errno & error_reporting()) > 0 )
-        throw new ErrorException($errstr, 500, $errno, $errfile, $errline);
-    else
+    if( ($errno & error_reporting()) > 0 ) {
+        if ($errno === E_DEPRECATED || $errno === E_USER_DEPRECATED) {
+            // Do not throw an Exception for deprecation warnings as new or unexpected
+            // deprecations would break the application.
+            return false;
+        }
+        throw new ErrorException($errstr, 500, $errno, $errfile, $errline);        
+    } else
         return false;
 }
 set_error_handler('error_handler');
