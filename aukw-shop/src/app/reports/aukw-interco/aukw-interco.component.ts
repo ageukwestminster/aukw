@@ -59,12 +59,16 @@ export class AukwIntercoComponent
     this.reportService
       .getIntercoAccountLedger(startDate, endDate, this.enterprises)
       .pipe(
+
         tap(() => this.data = []),
-        // Convert to Obs of QBAccountListEntry rather than QBAccountListEntry[]
+
+        // Convert from Observable<T[]> to Observable<T>
         fromArrayToElement(),
+
         map((accountListEntry) => {
           return new QBAccountListEntry(accountListEntry);
         }),
+
         switchMap((accountListEntry) => {
           this.data.push(accountListEntry);
           return this.reportService.getIntercoAccountLedger(
@@ -72,6 +76,7 @@ export class AukwIntercoComponent
             endDate, 
             !this.enterprises);
         }),
+        
         switchMap((response) => {
           this.otherCompanyTrades = response;
           this.data.forEach(item => {

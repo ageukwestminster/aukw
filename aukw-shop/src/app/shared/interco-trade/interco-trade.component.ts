@@ -41,6 +41,7 @@ export class IntercoTradeComponent implements OnInit {
   attachments: QBAttachment[] = [];
   vendors: ValueIdPair[] = [];
   accounts: ValueIdPair[] = [];
+  customers: ValueIdPair[] = [];
 
   private realmid: string = environment.qboEnterprisesRealmID;
   private otherRealmid: string = environment.qboCharityRealmID;
@@ -74,19 +75,23 @@ export class IntercoTradeComponent implements OnInit {
         this.otherRealmid = environment.qboEnterprisesRealmID;
       }
 
-      // Get a list of vendors and accounts
+      // Get lists of vendors, customers and accounts
       this.loading = true;
       this.entityService
         .getAllVendors(this.otherRealmid)
         .pipe(
           switchMap((response) => {
-            this.vendors = response;
+            this.accounts = response;
             return this.entityService.getAllAccounts(this.otherRealmid);
+          }),
+          switchMap((response) => {
+            this.vendors = response;
+            return this.entityService.getAllCustomers(this.otherRealmid);
           }),
         )
         .subscribe({
           next: (response) => {
-            this.accounts = response;
+            this.customers = response;
           },
           error: (error: any) => {
             this.loading = false;
@@ -106,9 +111,6 @@ export class IntercoTradeComponent implements OnInit {
       this.f['txnDate'].setValue(this.existingTrade.date);
       this.f['Note'].setValue(this.existingTrade.memo);
 
-      // Try to match Vendor
-      if (this.existingTrade.account.value=='Pleo') // PLEO
-
       // Download attachemnts (if any)
       this.loading = true;
       this.attachments = [];
@@ -118,7 +120,7 @@ export class IntercoTradeComponent implements OnInit {
           this.existingTrade.type.value,
           this.existingTrade.type.id,
         )
-        .subscribe({
+        .subscribe({ 
           next: (response) => {
             this.attachments = response;
             this.f['attachments'].setValue(this.attachments.length);
