@@ -289,9 +289,6 @@ class QuickbooksPurchase{
 
       $auth = new QuickbooksAuth();
       $dataService = $auth->prepare($this->realmid);
-      if ($dataService == false) {
-        return;
-      }
 
       $dataService->forceJsonSerializers();
       $item = $dataService->FindbyId('Purchase', $this->id);
@@ -313,9 +310,6 @@ class QuickbooksPurchase{
   public function delete(): bool{
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->realmid);
-    if ($dataService == false) {
-      throw new \Exception('Unable to initialize DataService.');
-    }
 
     // Do not use $dataService->FindbyId to create the entity to delete
     // Use this simple representation instead
@@ -345,9 +339,6 @@ class QuickbooksPurchase{
 
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->realmid);
-    if ($dataService == false) {
-      throw new \Exception('Unable to initialize DataService.');
-    }
 
     $purchase = Purchase::create([
       "TxnDate" => $this->txnDate,
@@ -393,9 +384,4 @@ class QuickbooksPurchase{
       return $result;
     }
   }
-
-  private $harrow_road_class = [
-    "value" => 400000000000618070,
-    "name" => "Harrow Rd"
-  ];
 }

@@ -2,6 +2,10 @@
 
 namespace Models;
 
+use Exception;
+use QuickBooksOnline\API\Exception\SdkException;
+use QuickBooksOnline\API\Exception\ServiceException;
+
 /**
  * Factory class that provides data about QBO Items. Items can also be known as Products.
  * 
@@ -70,25 +74,19 @@ class QuickbooksItem{
    *
    * @param int $id The QBO id of the Quickbooks Item.
    * 
-   * @return object|false Returns an item of specified Id.
+   * @return object Returns an item of specified Id.
    * 
    */
-  public function readOne():object|false{
+  public function readOne():object{
 
       $auth = new QuickbooksAuth();
       $dataService = $auth->prepare($this->realmid);
-      if ($dataService == false) {
-        return false;
-      }
 
       $dataService->forceJsonSerializers();
       $item = $dataService->FindbyId('Item', $this->id);
       $error = $dataService->getLastError();
       if ($error) {
-          echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
-          echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
-          echo "The QBO Response message is: " . $error->getResponseBody() . "\n";
-          return false;
+        throw new SdkException("The QBO Response message is: " . $error->getResponseBody());
       }
       else {
         if (property_exists($item, 'Item')) {
@@ -102,26 +100,20 @@ class QuickbooksItem{
 
   /**
    * Return details of all QBO Items
-   * 
    * @return array An array of QBO Items
-   * 
+   * @throws Exception 
+   * @throws SdkException 
+   * @throws ServiceException 
    */
   public function readAll():array{
 
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->realmid);
-    if ($dataService == false) {
-      return [];
-    }
 
-    //$dataService->forceJsonSerializers();
     $items = $dataService->FindAll('Item');
     $error = $dataService->getLastError();
     if ($error) {
-        echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
-        echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
-        echo "The QBO Response message is: " . $error->getResponseBody() . "\n";
-        return [];
+      throw new SdkException("The QBO Response message is: " . $error->getResponseBody());
     }
     else {
         return $items;

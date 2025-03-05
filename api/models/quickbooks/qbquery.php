@@ -58,9 +58,6 @@ class QuickbooksQuery{
 
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->realmid);
-    if ($dataService == false) {
-      return [];
-    }
 
     $entities = $dataService->Query("SELECT * FROM " . $entity_type_name 
         ." WHERE DocNumber LIKE '" . $doc_number . "%'");
@@ -90,9 +87,6 @@ class QuickbooksQuery{
 
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->realmid);
-    if ($dataService == false) {
-      return [];
-    }
 
     //$query = "SELECT Id,FileName,FileAccessUri,TempDownloadUri,Size,ContentType FROM attachable 
     $query = "SELECT * FROM attachable 
@@ -123,9 +117,6 @@ class QuickbooksQuery{
 
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->realmid);
-    if ($dataService == false) {
-      return [];
-    }
 
     //$query = "SELECT Id,FileName,FileAccessUri,TempDownloadUri,Size,ContentType FROM attachable 
     $query = "SELECT * FROM attachable 
@@ -155,9 +146,6 @@ class QuickbooksQuery{
 
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->realmid);
-    if ($dataService == false) {
-      return [];
-    }
 
     $query = "SELECT * FROM TaxCode";
     if ($id !== '') $query .= " WHERE Id = '$id'";
@@ -186,9 +174,6 @@ class QuickbooksQuery{
 
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->realmid);
-    if ($dataService == false) {
-      return [];
-    }
 
     $query = "SELECT * FROM $type";
     if ($inActive) $query .= " WHERE Active = false";

@@ -237,9 +237,6 @@ class QuickbooksAttachment{
 
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->realmid);
-    if ($dataService == false) {
-      throw new \Exception('Unable to initialize DataService.');
-    }
 
     $objAttachable = new IPPAttachable();
     $objAttachable->FileName = pathinfo($this->fileName, PATHINFO_BASENAME);
@@ -280,9 +277,6 @@ class QuickbooksAttachment{
 
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->realmid);
-    if ($dataService == false) {
-      throw new \Exception('Unable to initialize DataService.');
-    }
     
     $objAttachable = new IPPAttachable();
     $objAttachable->Note = $this->note;

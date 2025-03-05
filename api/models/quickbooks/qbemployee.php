@@ -76,9 +76,6 @@ class QuickbooksEmployee{
 
       $auth = new QuickbooksAuth();
       $dataService = $auth->prepare($this->realmid);
-      if ($dataService == false) {
-        return;
-      }
 
       $dataService->forceJsonSerializers();
       $item = $dataService->FindbyId('Employee', $this->id);
@@ -126,9 +123,6 @@ class QuickbooksEmployee{
 
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->realmid);
-    if ($dataService == false) {
-      return [];
-    }
 
     $items = $dataService->FindAll('Employee');
     $error = $dataService->getLastError();

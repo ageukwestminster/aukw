@@ -74,9 +74,6 @@ class QuickbooksRecurringTransaction{
 
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->realmid);
-    if ($dataService == false) {
-      return false;
-    }
 
     $dataService->forceJsonSerializers();
     $recurringTransaction = $dataService->FindbyId('recurringtransaction', $this->id);
@@ -104,9 +101,6 @@ class QuickbooksRecurringTransaction{
 
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->realmid);
-    if ($dataService == false) {
-      return [];
-    }
                         
     $transactions = $dataService->recurringTransaction('SELECT * FROM RecurringTransaction');
     $error = $dataService->getLastError();

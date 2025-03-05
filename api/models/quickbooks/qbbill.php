@@ -2,8 +2,11 @@
 
 namespace Models;
 
+use Exception;
+use QuickBooksOnline\API\Exception\IdsException;
 use QuickBooksOnline\API\Facades\Bill;
 use QuickBooksOnline\API\Exception\SdkException;
+use ReflectionException;
 
 /**
  * Factory class that provides limited CRUD ability for QBO Bills, specifically
@@ -146,9 +149,6 @@ class QuickbooksBill{
 
       $auth = new QuickbooksAuth();
       $dataService = $auth->prepare($this->realmid);
-      if ($dataService == false) {
-        return;
-      }
 
       $dataService->forceJsonSerializers();
       $item = $dataService->FindbyId('Bill', $this->id);
@@ -193,27 +193,16 @@ class QuickbooksBill{
   }
 
   /**
-   * Delete a bill from the QB system.
-   *
+   * Delete this bill from the QB system.
    * @return bool 'true' if success.
-   * 
+   * @throws Exception 
+   * @throws SdkException 
+   * @throws ReflectionException 
+   * @throws IdsException 
    */
   public function delete(): bool{
     $auth = new QuickbooksAuth();
-    try{
-      $dataService = $auth->prepare($this->realmid);
-    }
-    catch (\Exception $e) {
-      http_response_code(401);  
-      echo json_encode(
-        array("message" =>  $e->getMessage() )
-      );
-      return false;
-    }
-
-    if ($dataService == false) {
-      return false;
-    }
+    $dataService = $auth->prepare($this->realmid);
 
     // Do not use $dataService->FindbyId to create the entity to delete
     // Use this simple representation instead

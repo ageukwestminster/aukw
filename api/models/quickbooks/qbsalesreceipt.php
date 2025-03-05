@@ -297,10 +297,6 @@ class QuickbooksSalesReceipt{
         return false;
       }
 
-      if ($dataService == false) {
-        return false;
-      }
-
       $dataService->forceJsonSerializers();
       $salesreceipt = $dataService->FindbyId('SalesReceipt', $this->id);
       $error = $dataService->getLastError();
@@ -413,9 +409,6 @@ class QuickbooksSalesReceipt{
     
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->realmid);
-    if ($dataService == false) {
-      return false;
-    }
     
     $resultingObj = $dataService->Add($theResourceObj);
 
@@ -486,20 +479,7 @@ class QuickbooksSalesReceipt{
    */
   public function delete(): bool{
     $auth = new QuickbooksAuth();
-    try{
-      $dataService = $auth->prepare($this->realmid);
-    }
-    catch (\Exception $e) {
-      http_response_code(401);  
-      echo json_encode(
-        array("message" =>  $e->getMessage() )
-      );
-      return false;
-    }
-
-    if ($dataService == false) {
-      return false;
-    }
+    $dataService = $auth->prepare($this->realmid);
 
     // Do not use $dataService->FindbyId to create the entity to delete
     // Use this simple representation instead

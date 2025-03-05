@@ -181,9 +181,6 @@ class QuickbooksTransfer{
 
       $auth = new QuickbooksAuth();
       $dataService = $auth->prepare($this->realmid);
-      if ($dataService == false) {
-        return;
-      }
 
       $dataService->forceJsonSerializers();
       $item = $dataService->FindbyId('Transfer', $this->id);
@@ -205,9 +202,6 @@ class QuickbooksTransfer{
   public function delete(): bool{
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->realmid);
-    if ($dataService == false) {
-      throw new \Exception('Unable to initialize DataService.');
-    }
 
     // Do not use $dataService->FindbyId to create the entity to delete
     // Use this simple representation instead
@@ -237,9 +231,6 @@ class QuickbooksTransfer{
 
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->realmid);
-    if ($dataService == false) {
-      throw new \Exception('Unable to initialize DataService.');
-    }
 
     $transfer = Transfer::create([
       "TxnDate" => $this->TxnDate,

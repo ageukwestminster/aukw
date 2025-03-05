@@ -2,7 +2,11 @@
 
 namespace Models;
 
+use Exception;
+use QuickBooksOnline\API\Exception\IdsException;
 use QuickBooksOnline\API\Facades\JournalEntry;
+use QuickBooksOnline\API\Exception\SdkException;
+use ReflectionException;
 
 /**
  * Factory class that provides data about QBO General Journals.
@@ -120,18 +124,12 @@ class QuickbooksJournal{
 
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->realmid);
-    if ($dataService == false) {
-      return null;
-    }
 
     $dataService->forceJsonSerializers();
     $journalentry = $dataService->FindbyId('journalentry', $this->id);
     $error = $dataService->getLastError();
     if ($error) {
-        echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
-        echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
-        echo "The QBO Response message is: " . $error->getResponseBody() . "\n";
-        return null;
+      throw new SdkException("The QBO Response message is: " . $error->getResponseBody());
     }
     else {
       if (property_exists($journalentry, 'JournalEntry')) {
@@ -144,27 +142,16 @@ class QuickbooksJournal{
   }
 
   /**
-   * Delete a journal from the QB system.
-   *
-   * @return bool 'true' if success.
-   * 
+   * Delete this journal from the QBO system.
+   * @return true 'true' if success.
+   * @throws Exception 
+   * @throws SdkException 
+   * @throws ReflectionException 
+   * @throws IdsException 
    */
-  public function delete(): bool{
+  public function delete(): true{
     $auth = new QuickbooksAuth();
-    try{
-      $dataService = $auth->prepare($this->realmid);
-    }
-    catch (\Exception $e) {
-      http_response_code(401);  
-      echo json_encode(
-        array("message" =>  $e->getMessage() )
-      );
-      return false;
-    }
-
-    if ($dataService == false) {
-      return false;
-    }
+    $dataService = $auth->prepare($this->realmid);
 
     // Do not use $dataService->FindbyId to create the entity to delete
     // Use this simple representation instead
@@ -179,10 +166,7 @@ class QuickbooksJournal{
 
     $error = $dataService->getLastError();
     if ($error) {
-        echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
-        echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
-        echo "The QBO Response message is: " . $error->getResponseBody() . "\n";
-        return false;
+      throw new SdkException("The QBO Response message is: " . $error->getResponseBody());
     } else {      
       return true;
     }

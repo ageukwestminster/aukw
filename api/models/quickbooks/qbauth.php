@@ -313,7 +313,7 @@ class QuickbooksAuth{
         }    
     }
 
-    /**
+     /**
      * Prepare the dataService object for API calls. Called before all QBO api calls.
      * 
      * Process:
@@ -322,10 +322,12 @@ class QuickbooksAuth{
      *      * Configure a new DataService object from the given realID and default values.
      *      * Append the new or unexpired access token to the QBO DataService object
      *      * Return this prepared DataService object
-     * @param string $realmid QBO Company id 
-     * @return DataService|null 
-     */
-    public function prepare($realmid){
+      * @param string $realmid QBO Company id
+      * @return DataService 
+      * @throws Exception 
+      * @throws SdkException 
+      */
+    public function prepare(string $realmid){
 
         $this->tokenModel = new QuickbooksToken();
         $this->tokenModel->read($realmid);

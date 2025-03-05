@@ -234,9 +234,6 @@ class QuickbooksPayrollJournal extends QuickbooksJournal{
 
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->getrealmId());
-    if ($dataService == false) {
-      return false;
-    }
 
     $resultingObj = $dataService->Add($theResourceObj);
 

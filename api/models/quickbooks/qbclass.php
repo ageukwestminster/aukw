@@ -77,9 +77,6 @@ class QuickbooksClass{
 
       $auth = new QuickbooksAuth();
       $dataService = $auth->prepare($this->realmid);
-      if ($dataService == false) {
-        return false;
-      }
 
       $dataService->forceJsonSerializers();
       $item = $dataService->FindbyId('Class', $this->id);
@@ -106,11 +103,7 @@ class QuickbooksClass{
 
     $auth = new QuickbooksAuth();
     $dataService = $auth->prepare($this->realmid);
-    if ($dataService == false) {
-      return [];
-    }
 
-    //$dataService->forceJsonSerializers();
     $items = $dataService->FindAll('Class');
     $error = $dataService->getLastError();
     if ($error) {

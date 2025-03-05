@@ -4,6 +4,8 @@ namespace Controllers;
 
 use \Models\QuickbooksJournal;
 use \Models\QuickbooksQuery;
+use \Core\ErrorResponse as Error;
+use Exception;
 
 /**
  * Controller to accomplish QBO General Journal related tasks. 
@@ -49,24 +51,20 @@ class QBJournalCtl{
    * @return void Output is echoed directly to response 
    */
   public static function delete(string $realmid, int $id){  
+    try {
+      $model = QuickbooksJournal::getInstance()
+        ->setRealmID($realmid)
+        ->setId($id);
 
-    $model = QuickbooksJournal::getInstance()
-      ->setRealmID($realmid)
-      ->setId($id);
-
-    if($model->delete()) {
-      echo json_encode(
-        array(
-          "message" => "Journal entry with id=$id was deleted.",
-          "id" => $id)
-          , JSON_NUMERIC_CHECK);
-    } else{
-        http_response_code(400);  
+      if($model->delete()) {
         echo json_encode(
           array(
-            "message" => "Unable to DELETE QB journal.",
+            "message" => "Journal entry with id=$id was deleted.",
             "id" => $id)
             , JSON_NUMERIC_CHECK);
+      }
+    } catch (Exception $e) {
+      Error::response("Unable to delete QBO Journal with id=$id.", $e);
     }
   }
 }
