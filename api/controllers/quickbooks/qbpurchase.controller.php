@@ -76,29 +76,29 @@ class QBPurchaseCtl{
 
       $data = json_decode(file_get_contents("php://input"));
 
-      if (!isset($data->date)) {
-        throw new \InvalidArgumentException("'date' property is missing from POST body.");
-      } else if (!\Core\DatesHelper::validateDate($data->date) ) {
-        throw new \InvalidArgumentException("'date' property is not in the correct format. Value provided: $data->date, expect yyyy-mm-dd format.");
-      } else if (!isset($data->bankaccountno)) {
-        throw new \InvalidArgumentException("'bankaccountno' property is missing from POST body.");
-      } else if (!isset($data->expenseaccountno)) {
-        throw new \InvalidArgumentException("'expenseaccountno' property is missing from POST body.");
-      } else if ($data->expenseaccountno == $data->bankaccountno) {
-        throw new \InvalidArgumentException("'expenseaccountno' must be different from 'bankaccountno'.");
+      if (!isset($data->txnDate)) {
+        throw new \InvalidArgumentException("'txnDate' property is missing from POST body.");
+      } else if (!\Core\DatesHelper::validateDate($data->txnDate) ) {
+        throw new \InvalidArgumentException("'txnDate' property is not in the correct format. Value provided: $data->date, expect yyyy-mm-dd format.");
+      } else if (!isset($data->bankAccount)) {
+        throw new \InvalidArgumentException("'bankAccount' property is missing from POST body.");
+      } else if (!isset($data->expenseAccount)) {
+        throw new \InvalidArgumentException("'expenseAccount' property is missing from POST body.");
+      } else if ($data->expenseAccount == $data->bankAccount) {
+        throw new \InvalidArgumentException("'expenseAccount' must be different from 'bankAccount'.");
       } else if (!isset($data->amount)) {
         throw new \InvalidArgumentException("'amount' property is missing from POST body.");
       } else if ($data->amount <= 0) {
         throw new \InvalidArgumentException("'amount' property must be greater than zero.");
-      } else if ($data->taxamount < 0) {
-        throw new \InvalidArgumentException("'taxamount' property must be greater than or equal to zero.");
+      } else if (!$data->taxAmount || $data->taxAmount < 0) {
+        throw new \InvalidArgumentException("'taxAmount' property must exist and be greater than or equal to zero.");
       } 
-      if (!isset($data->entityno)) {
-        throw new \InvalidArgumentException("'entityno' property is missing from POST body.");
+      if (!isset($data->entity)) {
+        throw new \InvalidArgumentException("'entity' property is missing from POST body.");
       } 
 
       
-      if ($data->taxamount == 0 ) {
+      if ($data->taxAmount == 0 ) {
         $taxcode = QBO::$zero_rated_taxcode;
         $taxRateRef = QBO::$zero_rated_purchases_taxrate;
       } else {
@@ -108,22 +108,22 @@ class QBPurchaseCtl{
 
       $result = QuickbooksPurchase::getInstance()
         ->setRealmID($realmid)
-        ->setTxnDate($data->date)
-        ->setEntityNo($data->entityno)
-        ->setBankAccountNo($data->bankaccountno)
-        ->setExpenseAccountNo($data->expenseaccountno)
-        ->setPrivateNote(isset($data->note)?$data->note:'')
+        ->setTxnDate($data->txnDate)
+        ->setEntity($data->entity)
+        ->setBankAccount($data->bankAccount)
+        ->setExpenseAccount($data->expenseAccount)
+        ->setPrivateNote(isset($data->privateNote)?$data->privateNote:'')
         ->setDescription(isset($data->description)?$data->description:'')
         ->setDocnumber(isset($data->docnumber)?$data->docnumber:'')
         ->setAmount($data->amount)
-        ->setTaxAmount($data->taxamount)
+        ->setTaxAmount($data->taxAmount)
         ->setTaxCode($taxcode)
         ->setTaxRate($taxRateRef)
         ->create();
 
       if ($result) {
           echo json_encode(
-              array("message" => "Purchase has been added for " . $data->date . ".",
+              array("message" => "Purchase has been added for " . $data->txnDate . ".",
                   "id" => $result->Id)
             );
       }

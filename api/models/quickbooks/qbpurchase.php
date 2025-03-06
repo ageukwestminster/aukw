@@ -55,19 +55,19 @@ class QuickbooksPurchase{
    *
    * @var int
    */
-  protected int $entityNo;  
+  protected int $entity;  
   /**
    * The number of the bank account that the expense is paid from.
    *
    * @var int
    */
-  protected int $bankAccountNo;  
+  protected int $bankAccount;  
   /**
    * The number of the account that the expense is accounted into.
    *
    * @var int
    */
-  protected int $expenseAccountNo; 
+  protected int $expenseAccount; 
   /**
    * A memo about the purchase
    *
@@ -150,23 +150,23 @@ class QuickbooksPurchase{
    * 
    * Bank Account number setter.
    */
-  public function setBankAccountNo(int $bankAccountNo) {
-      $this->bankAccountNo = $bankAccountNo;
+  public function setBankAccount(int $bankAccount) {
+      $this->bankAccount = $bankAccount;
       return $this;
   }
   /**
    * 
    * Expense Account number setter.
    */
-  public function setExpenseAccountNo(int $expenseAccountNo) {
-    $this->expenseAccountNo = $expenseAccountNo;
+  public function setExpenseAccount(int $expenseAccount) {
+    $this->expenseAccount = $expenseAccount;
     return $this;
   }  
   /**
    * From Entity number setter.
    */
-  public function setEntityNo(int $entityNo) {
-    $this->entityNo = $entityNo;
+  public function setEntity(int $entity) {
+    $this->entity = $entity;
     return $this;
   }
   /**
@@ -228,13 +228,13 @@ class QuickbooksPurchase{
    * Bank account number getter.
    */
   public function getBankAccountNo() : int {
-    return $this->bankAccountNo;
+    return $this->bankAccount;
   }
   /**
    * Expense account number getter.
    */
   public function getExpenseAccountNo() : int {
-    return $this->expenseAccountNo;
+    return $this->expenseAccount;
   }  
   /**
    * Description getter.
@@ -345,17 +345,17 @@ class QuickbooksPurchase{
       "PaymentType" => self::PAYMENTTYPE,
       "GlobalTaxCalculation" => self::TAXCALCULATIONTYPE,
       "EntityRef" => [
-        "value" => strval($this->entityNo)
+        "value" => strval($this->entity)
       ],
       "AccountRef" => [
-        "value" => strval($this->bankAccountNo)
+        "value" => strval($this->bankAccount)
       ],
       "Line" => [
         "Description" => $this->description,
         "Amount" => $this->amount,
         "DetailType" => "AccountBasedExpenseLineDetail",
         "AccountBasedExpenseLineDetail" => [
-          "AccountRef" => $this->expenseAccountNo,
+          "AccountRef" => $this->expenseAccount,
           "TaxCodeRef" => ["value"=>$this->taxCode['value']], //4 for zero, 2 for 20%
         ]        
         ],

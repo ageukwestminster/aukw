@@ -39,21 +39,21 @@ class QuickbooksTransfer{
    *
    * @var string
    */
-  protected string $TxnDate;  
+  protected string $txnDate;  
 
   /**
    * The number of the 'from' account
    *
    * @var int
    */
-  protected int $fromAccountNo;  
+  protected int $fromAccount;  
 
   /**
    * The number of the 'to' account
    *
    * @var int
    */
-  protected int $toAccountNo;  
+  protected int $toAccount;  
   /**
    * The amount of money to transfer, must be positive and non-zero
    *
@@ -79,7 +79,7 @@ class QuickbooksTransfer{
    * Transaction Date setter.
    */
   public function setTxnDate(string $txnDate) {
-    $this->TxnDate = $txnDate;
+    $this->txnDate = $txnDate;
     return $this;
   }
   /**
@@ -93,16 +93,16 @@ class QuickbooksTransfer{
   /**
    * From Account number setter.
    */
-  public function setFromAccountNo(string $fromAccountNo) {
-      $this->fromAccountNo = $fromAccountNo;
+  public function setFromAccount(string $fromAccount) {
+      $this->fromAccount = $fromAccount;
       return $this;
   }
 
   /**
    * To Account number setter.
    */
-  public function setToAccountNo(string $toAccountNo) {
-    $this->toAccountNo = $toAccountNo;
+  public function setToAccount(string $toAccount) {
+    $this->toAccount = $toAccount;
     return $this;
 }  
 
@@ -125,14 +125,14 @@ class QuickbooksTransfer{
   /**
    * 'To' account number getter.
    */
-  public function getToAccountNo() : int {
-    return $this->toAccountNo;
+  public function getToAccount() : int {
+    return $this->toAccount;
   }
   /**
    * 'From' account number getter.
    */
-  public function getFromAccountNo() : int {
-    return $this->fromAccountNo;
+  public function getFromAccount() : int {
+    return $this->fromAccount;
   }
   /**
    * realmID getter.
@@ -145,7 +145,7 @@ class QuickbooksTransfer{
    * Transaction Date getter.
    */
   public function getTxnDate() : string {
-      return $this->TxnDate;
+      return $this->txnDate;
   }
   /**
    * Private Note getter.
@@ -233,14 +233,14 @@ class QuickbooksTransfer{
     $dataService = $auth->prepare($this->realmid);
 
     $transfer = Transfer::create([
-      "TxnDate" => $this->TxnDate,
+      "TxnDate" => $this->txnDate,
       "Amount" => strval($this->amount),
       "PrivateNote" => $this->privateNote,
       "FromAccountRef" => [
-        "value" => strval($this->fromAccountNo)
+        "value" => strval($this->fromAccount)
       ],
       "ToAccountRef" => [
-        "value" => strval($this->toAccountNo)
+        "value" => strval($this->toAccount)
       ],
     ]);
     /** @var IPPIntuitEntity $result */
