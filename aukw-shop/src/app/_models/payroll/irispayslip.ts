@@ -2,7 +2,7 @@
  * Define the properties of an employee payslip
  */
 
-import { QBTransactionFlags } from './qb-payslip-flags';
+import { QBTransactionFlags } from '../quickbooks/qb-payslip-flags';
 
 /*
     {

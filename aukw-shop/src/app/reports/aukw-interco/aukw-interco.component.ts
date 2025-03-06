@@ -3,7 +3,7 @@ import { CommonModule, NgIf } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
-import { QBAccountListEntry } from '@app/_models/qb-account-list-entry';
+import { QBAccountListEntry } from '@app/_models';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 

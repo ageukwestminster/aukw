@@ -120,7 +120,7 @@ export class IntercoTradeComponent implements OnInit {
           this.existingTrade.type.value,
           this.existingTrade.type.id,
         )
-        .subscribe({ 
+        .subscribe({
           next: (response) => {
             this.attachments = response;
             this.f['attachments'].setValue(this.attachments.length);
