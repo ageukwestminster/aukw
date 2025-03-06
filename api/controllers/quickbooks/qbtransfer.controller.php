@@ -148,7 +148,7 @@ class QBTransferCtl{
     if (!isset($data->txnDate)) {
       throw new InvalidArgumentException("'txnDate' property is missing from POST body.");
     } else if (!\Core\DatesHelper::validateDate($data->txnDate) ) {
-      throw new InvalidArgumentException("'txnDate' property is not in the correct format. Value provided: $data->date, expect yyyy-mm-dd format.");
+      throw new InvalidArgumentException("'txnDate' property is not in the correct format. Value provided: $data->txnDate, expect yyyy-mm-dd format.");
     } else if (!isset($data->amount)) {
       throw new InvalidArgumentException("'amount' property is missing from POST body.");
     } else if ($data->amount == 0) {
