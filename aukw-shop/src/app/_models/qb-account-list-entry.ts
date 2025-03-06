@@ -40,8 +40,8 @@ export class QBAccountListEntry {
    */
   balance: number;
   /**
-  * A transaction in the opposing QBO company that matches this transaction.
-  */
+   * A transaction in the opposing QBO company that matches this transaction.
+   */
   matching_txn: ValueIdPair;
 
   constructor(obj?: any) {
