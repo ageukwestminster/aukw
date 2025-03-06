@@ -1,4 +1,4 @@
-import { SalesByItem } from './sales-by-item';
+import { SalesByItem } from '@app/_models';
 export class RaggingQuarter {
   title: string;
   start: string;

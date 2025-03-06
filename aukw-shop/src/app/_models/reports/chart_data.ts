@@ -1,4 +1,4 @@
-import { Takings } from './takings';
+import { Takings } from '@app/_models';
 
 /**Stores data to display a line graph of most recent sales versus historical averages
  * The chart object is called 'sales-chart'

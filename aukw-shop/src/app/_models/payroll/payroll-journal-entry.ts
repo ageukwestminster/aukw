@@ -1,4 +1,4 @@
-import { LineItemDetail } from './line-item-detail';
+import { LineItemDetail } from '@app/_models';
 import { PayrollIdentifier } from '@app/_interfaces/payroll-identifier';
 
 export class PayrollJournalEntry implements PayrollIdentifier {

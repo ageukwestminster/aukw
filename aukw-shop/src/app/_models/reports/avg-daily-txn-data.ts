@@ -1,4 +1,4 @@
-import { PnlReportLineItem, PnlReportRange } from './profit-and-loss-data';
+import { PnlReportLineItem, PnlReportRange } from '@app/_models';
 
 export class AvgDailyTransactionDataByQuarter {
   shopid: number;

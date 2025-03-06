@@ -1,4 +1,4 @@
-import { DateRange } from './date-range';
+import { DateRange } from '@app/_models';
 
 export class AuditLogFilter {
   daterange?: DateRange;

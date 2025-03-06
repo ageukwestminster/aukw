@@ -1,4 +1,4 @@
-﻿import { Role } from './role';
+﻿import { Role } from '@app/_models';
 
 /**
  * Define the properties of a user.

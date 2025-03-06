@@ -1,4 +1,4 @@
-import { QBAttachment } from './qb-attachment';
+import { QBAttachment } from '@app/_models';
 
 /**
  * Defines the properties of an Expense.
