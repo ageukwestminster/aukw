@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { environment } from '@environments/environment';
-import { ValueIdPair } from '@app/_models';
+import { ValueIdPair, ValueIdType } from '@app/_models';
 import { Observable } from 'rxjs';
 
 const baseUrl = `${environment.apiUrl}/qb`;
@@ -28,8 +28,8 @@ export class QBEntityService {
    * @param realmID The company ID for the QBO company.
    * @returns Array of account ids and names
    */
-    getAllAccounts(realmID: string): Observable<ValueIdPair[]> {
-      return this.http.get<ValueIdPair[]>(`${baseUrl}/${realmID}/entity/account`);
+    getAllAccounts(realmID: string): Observable<ValueIdType[]> {
+      return this.http.get<ValueIdType[]>(`${baseUrl}/${realmID}/entity/account`);
     }
 
     /**

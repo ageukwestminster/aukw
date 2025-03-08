@@ -1,9 +1,9 @@
 import { QBAttachment } from '@app/_models';
 
 /**
- * Defines the properties of an Expense.
+ * Defines the properties of a QBO Purchase (aka an Expense).
  */
-export class QBExpense {
+export class QBPurchase {
   id: number;
   readonly qbType: string = 'Purchase';
   txnDate: string;
@@ -25,7 +25,7 @@ export class QBExpense {
     this.bankAccount = (obj && obj.bankAccount) || null;
     this.expenseAccount = (obj && obj.expenseAccount) || null;
     this.entity = (obj && obj.entity) || null;
-    this.attachments = (obj && obj.attachments) || null;
+    this.attachments = (obj && obj.attachments) || [];
     this.taxAmount = (obj && obj.taxAmount) || null;
   }
 }

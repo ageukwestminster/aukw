@@ -84,3 +84,12 @@ export class ValueIdPair {
     return this.value;
   }
 }
+
+export class ValueIdType extends ValueIdPair{
+  type: string;
+
+  constructor(obj?: any) {
+    super(obj);
+    this.type = (obj && obj.type) || null;
+  }
+}

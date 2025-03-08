@@ -18,9 +18,9 @@ export * from './quickbooks/qb-account-list-entry';
 export * from './quickbooks/qb-attachment';
 export * from './quickbooks/qb-auth-uri';
 export * from './quickbooks/qb-connection-details';
-export * from './quickbooks/qb-expense';
 export * from './quickbooks/qb-flags';
 export * from './quickbooks/qb-payslip-flags';
+export * from './quickbooks/qb-purchase';
 export * from './quickbooks/qb-realm';
 export * from './quickbooks/qb-transfer';
 
