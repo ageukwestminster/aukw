@@ -4,11 +4,11 @@
 The Age UK Westminster Finance System is a financial management platform designed to help Age UK Westminster efficiently handle payroll, transactions, and financial reporting. This system supports the charity in ensuring that finances are managed securely, transparently, and in compliance with financial regulations.
 
 ## Who Is This For?
-This system is primarily for Age UK Westminster staff and volunteers responsible for financial management. It provides tools for tracking income, processing payroll, and generating financial reports, making it easier to manage day-to-day finances.
+This system is primarily for Age UK Westminster staff and volunteers responsible for financial management. It provides tools for tracking shop income, processing payroll, and generating financial reports, making it easier to manage day-to-day finances.
 
 ## Key Features
+- **Transaction Management**: Keeps track of charity income across various product lines.
 - **Payroll Processing**: Automates the handling of employee salaries, deductions, and tax calculations.
-- **Transaction Management**: Keeps track of income and expenses across various departments.
 - **QuickBooks Integration**: Synchronizes financial data with QuickBooks for seamless bookkeeping.
 - **Secure User Access**: Ensures that financial data is protected with user authentication and role-based permissions.
 - **Financial Reports**: Generates reports for auditing and financial oversight.
