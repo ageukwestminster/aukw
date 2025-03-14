@@ -14,7 +14,8 @@ class Headers
      * 
      * @return string The shortened path
      */
-    public static function stripped_path() {
+    public static function stripped_path() 
+    {
         $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         $api_prefix = \Core\Config::read('api.path');
     
@@ -31,7 +32,8 @@ class Headers
      *      
      * @return void Output is echo'd directly to response
      */
-    public static function getHeaders($path_is_auth = false) {
+    public static function getHeaders($path_is_auth = false) 
+    {
         if ($path_is_auth || Headers::path_is_auth()) {
             Headers::cors_headers();
         } else {
@@ -101,7 +103,7 @@ class Headers
             $path = Headers::stripped_path();
         }
 
-        return preg_match('/^user/', $path);
+        return (bool)preg_match('/^user/', $path);
     }
 
     /** 
@@ -112,8 +114,7 @@ class Headers
      * */
     public static function path_is_qbcallback()
     {
-        $test = $_SERVER['REQUEST_URI'];
-        return preg_match('/callback/', $_SERVER['REQUEST_URI']);
+        return (bool)preg_match('/callback/', $_SERVER['REQUEST_URI']);
     }
 
     /**

@@ -20,7 +20,7 @@ abstract class GUID {
   * @param bool $trim If true then have no leading or trailing braces '{}'.
   * @return string The newly generated GUIDv4 string.
   */
-  public static function GUIDv4 ($trim = true)
+  public static function GUIDv4 ($trim = true) : string
   {
       $lbrace = $trim ? "" : chr(123);    // "{"
       $rbrace = $trim ? "" : chr(125);    // "}"
@@ -44,14 +44,16 @@ abstract class GUID {
       // Fallback (PHP 4.2+)
       mt_srand((int)((double)microtime() * 10000));
       $charid = strtolower(md5(uniqid(rand(), true)));
-      $hyphen = chr(45);                  // "-"
-      $guidv4 = $lbrace.
-              substr($charid,  0,  8).$hyphen.
-              substr($charid,  8,  4).$hyphen.
-              substr($charid, 12,  4).$hyphen.
-              substr($charid, 16,  4).$hyphen.
-              substr($charid, 20, 12).
-              $rbrace;
+      $guidv4 = sprintf(
+        '%s%s-%s-%s-%s-%s%s%s%s',
+        $lbrace,
+        substr($charid, 0, 8),
+        substr($charid, 8, 4),
+        substr($charid, 12, 4),
+        substr($charid, 16, 4),
+        substr($charid, 20, 12),
+        $rbrace
+    );
       return $guidv4;
   }
 }

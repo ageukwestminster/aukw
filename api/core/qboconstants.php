@@ -79,12 +79,16 @@ class QuickbooksConstants {
    * payroll in 'YYYY-mm-dd' format.
    * @param string $suffix A string to place at the end of the calculated DocNumber (Optional)
    * @return string A string, limited in length to 21 characters
+   * @throws \InvalidArgumentException If the date format is invalid
    */
   public static function payrollDocNumber(
     string $payrollDate, string $suffix = ''
     ) : string {
 
     $d = DateTime::createFromFormat('Y-m-d', $payrollDate);
+    if ($d === false) {
+      throw new \InvalidArgumentException("Invalid date format: $payrollDate");
+    }
     return substr('Payroll_' . $d->format('Y_m').$suffix
                   , 0, QuickbooksConstants::QBO_DOCNUMBER_MAX_LENGTH);
   }

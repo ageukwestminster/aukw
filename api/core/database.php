@@ -31,15 +31,16 @@ class Database{
 
 
     /**
-     * Singleton pattern derived from code at {@link https://stackoverflow.com/a/2047999/6941165 stackoverflow}
+     * Singleton pattern derived from code at {@link https://stackoverflow.com/a/2047999/6941165 stackoverflow},
+     * then improved with CoPilot suggestions.
      *
      * @return Database 
      * 
      */
-    public static function getInstance() {
-        if (!isset(self::$instance)) {
-            $object = __CLASS__;
-            self::$instance = new $object;
+    public static function getInstance() 
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
         }
         return self::$instance;
     }
@@ -86,18 +87,15 @@ class Database{
      * @param int $port The mysql/mariadb port, usually 3306
      * 
      * @return bool 'true' if connection can be opened
-     * 
      */
     private function testConnection(string $host, int $port) : bool{
         $waitTimeoutInSeconds = 1;
 
-        if ($fp = fsockopen($host,$port,$errCode,$errStr,$waitTimeoutInSeconds)) {
-            // It worked
+        $fp = @fsockopen($host, $port, $errCode, $errStr, $waitTimeoutInSeconds);
+        if ($fp) {
+            fclose($fp);
             return true;
-        } else {
-            // It didn't work
-            return false;
         }
-        fclose($fp);
+        return false;
     }
 }
