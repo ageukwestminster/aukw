@@ -16,9 +16,9 @@ class QBAuthCtl{
 
   /** 
    * Start the OAuth2 process to create a link between QuickBooks and this app
-   * @return array The Uri to follow to make the link plus instructions on what to do
+   * @return void Output is echoed directly to response
    */
-  public static function oauth2_begin(){
+  public static function oauth2_begin():void{
     try {
       $model = new QuickbooksAuth();
 
@@ -36,7 +36,7 @@ class QBAuthCtl{
    * 
    * @return void Output is echo'd directly to response
    */
-  public static function oauth2_callback(){
+  public static function oauth2_callback():void{
     try {
       $code = $_GET['code'];        
       $realmId = $_GET['realmId'];
@@ -103,7 +103,7 @@ class QBAuthCtl{
    * @param string $realmid The id of the QBO company.
    * @return QuickbooksToken[] Containing the access and refresh tokens for QBO
    */
-  public static function connection_details(string $realmid){  
+  public static function connection_details(string $realmid):void{  
     try {
       $model = new \Models\QuickbooksToken();
       
@@ -123,9 +123,9 @@ class QBAuthCtl{
   /**
    * 
    * Show details of all the authenticated connections with QBO.
-   * @return QuickbooksToken[] Containing the access and refresh tokens for QBO
+   * @return void Output is echoed directly to response.
    */
-  public static function all_connection_details(){  
+  public static function all_connection_details():void{  
     try {
       $model = new \Models\QuickbooksToken();
       echo json_encode($model->read_all(), JSON_NUMERIC_CHECK);
