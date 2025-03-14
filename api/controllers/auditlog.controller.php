@@ -7,7 +7,7 @@ use \Core\ErrorResponse as Error;
 use Exception;
 
 /**
- * Controller to acomplish Audit Log related tasks
+ * Controller to accomplish Audit Log related tasks
  *
  * @category  Controller
 */
@@ -18,36 +18,33 @@ class AuditLogCtl{
    * 
    * @return void Output is echo'd directly to response 
    */
-  public static function read(){  
+  public static function read(): void {  
     try {
       $model = new \Models\AuditLog();
 
-      $startdate='';
-      $enddate='';
+      $startDate = '';
+      $endDate = '';
 
       // if parameters are provided use them
-      if(isset($_GET['start']) || isset($_GET['end'])) {
-        list($startdate, $enddate) = \Core\DatesHelper::sanitizeDateValues(
-                                    !isset($_GET['start']) ? '' : $_GET['start'], 
-                                    !isset($_GET['end']) ? '' : $_GET['end']
+      if (isset($_GET['start']) || isset($_GET['end'])) {
+        list($startDate, $endDate) = \Core\DatesHelper::sanitizeDateValues(
+                                    $_GET['start'] ?? '', 
+                                    $_GET['end'] ?? ''
                                 );
       } 
       
       // default values are today and 3 months ago
-      if ($startdate == '') {    
-        if ($enddate == '') {           
-          $enddate = date('Y-m-d');      
+      if ($startDate === '') {    
+        if ($endDate === '') {           
+          $endDate = date('Y-m-d');      
         }
-        $startdate = (new DateTime($enddate))->modify('-3 month')->format('Y-m-d');
-      } else if ($enddate == '') {           
-        $enddate = (new DateTime($startdate))->modify('+3 month')->format('Y-m-d');
+        $startDate = (new DateTime($endDate))->modify('-3 month')->format('Y-m-d');
+      } else if ($endDate === '') {           
+        $endDate = (new DateTime($startDate))->modify('+3 month')->format('Y-m-d');
       } 
 
-      if (isset($_GET['userid']) && !empty($_GET['userid']) && is_numeric($_GET['userid'])) {
-        echo json_encode($model->read((int)$_GET['userid'], $startdate, $enddate), JSON_NUMERIC_CHECK);
-      } else {
-        echo json_encode($model->read(null, $startdate, $enddate), JSON_NUMERIC_CHECK);
-      }
+      $userId = isset($_GET['userid']) && is_numeric($_GET['userid']) ? (int)$_GET['userid'] : null;
+      echo json_encode($model->read($userId, $startDate, $endDate), JSON_NUMERIC_CHECK);
     } catch (Exception $e) {
       Error::response("Unable to return details of all Audit Log entries.", $e);
     }
@@ -59,7 +56,7 @@ class AuditLogCtl{
    * @return void Output is echo'd directly to response
    * 
    */
-  public static function create(){
+  public static function create(): void {
     try {
       $model = new \Models\AuditLog();
       $data = json_decode(file_get_contents("php://input"));
@@ -68,36 +65,35 @@ class AuditLogCtl{
       // user model object to find the id of that user.
       if (isset($data->userid)) {
         $model->userid = $data->userid;
-      }
-      else if(isset($data->username)){
+      } else if (isset($data->username)) {
         // Using user model to find user id
         $user = new \Models\User();
         $user->username = $data->username;
         $user->readOneByUsername();
-        if (empty($user->id) ) {
+        if (empty($user->id)) {
           throw new Exception("No User found with username=$user->username.");
         }
         $model->userid = $user->id;
-      }
-      else {
+      } else {
         // Either userid or username must be supplied.
         throw new Exception("No user details provided. Provide one of userid or username.");
       }
 
       // Transfer property values
       $model->eventtype = $data->eventtype;
-      $model->description = isset($data->description)?$data->description:'';
+      $model->description = $data->description ?? '';
       if (isset($data->objecttype)) $model->objecttype = $data->objecttype;
       if (isset($data->objectid)) $model->objectid = $data->objectid;
 
       // Add to audit log
-      if( $model->create()) {
+      if ($model->create()) {
         echo json_encode(
-          array(
+          [
             "message" => "New audit log entry with id=$model->id was created.",
             "id" => $model->id
-          )
-        , JSON_NUMERIC_CHECK);
+          ],
+          JSON_NUMERIC_CHECK
+        );
       }
     } catch (Exception $e) {
       Error::response("Unable to insert entry into AuditLog.", $e);

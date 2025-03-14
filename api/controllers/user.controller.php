@@ -17,10 +17,9 @@ class UserCtl{
    * 
    * @return void Output is echo'd directly to response 
    */
-  public static function read_all(){  
+  public static function read_all():void{  
     try {
       $model = new \Models\User();
-
       echo json_encode($model->read(), JSON_NUMERIC_CHECK);
     } catch (Exception $e) {
       Error::response("Error retrieving details of all Users.", $e);
@@ -35,7 +34,7 @@ class UserCtl{
    * @return void Output is echo'd directly to response 
    * 
    */
-  public static function read_one(int $id){  
+  public static function read_one(int $id):void{  
     try {
       $model = new \Models\User();
       $model->id = $id;
@@ -72,11 +71,10 @@ class UserCtl{
    * @param string $firstname The given name of the user
    * @param string $surname The family name of the user
    * @param string $email The email address of the user
-   * 
    * @return void Output is echo'd directly to response 
    * 
    */
-  public static function read_one_by_name_and_email(){  
+  public static function read_one_by_name_and_email():void{  
     try {
       $model = new \Models\User();
 
@@ -120,7 +118,7 @@ class UserCtl{
    * @return void Output is echo'd directly to response
    * 
    */
-  public static function create(){
+  public static function create():void{
     try {
       $model = new \Models\User();
 
@@ -134,7 +132,7 @@ class UserCtl{
       $model->shopid = $data->shopid;
       $model->email = $data->email;
       $model->title = $data->title;
-      $model->failedloginattempts = isset($data->failedloginattempts)?$data->failedloginattempts:0;
+      $model->failedloginattempts = $data->failedloginattempts ?? 0;
       $model->password = password_hash($data->password, PASSWORD_DEFAULT);
 
       $model->checkPassword($data->password, $errors);
@@ -162,7 +160,7 @@ class UserCtl{
    * @return void Output is echo'd directly to response
    * 
    */
-  public static function update($id){
+  public static function update($id):void{
     try {
       $model = new \Models\User();
 
@@ -177,6 +175,7 @@ class UserCtl{
       $model->firstname = $data->firstname;
       $model->surname = $data->surname;
       $model->shopid = $data->shopid;
+
       if (isset($data->password) && !empty($data->password)) {
         $model->password = password_hash($data->password, PASSWORD_DEFAULT);
         $model->checkPassword($data->password, $errors);
@@ -185,7 +184,7 @@ class UserCtl{
         }       
         $model->failedloginattempts = 0;
       } else {
-          $model->failedloginattempts = isset($data->failedloginattempts)?$data->failedloginattempts:0;
+          $model->failedloginattempts = $data->failedloginattempts ?? 0;
       }
 
 
@@ -212,7 +211,7 @@ class UserCtl{
    * @return void Output is echo'd directly to response
    * 
    */
-  public static function delete($id){
+  public static function delete($id):void{
     try {
       $model = new \Models\User();
 

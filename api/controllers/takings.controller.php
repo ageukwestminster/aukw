@@ -6,7 +6,7 @@ use \Core\ErrorResponse as Error;
 use Exception;
 
 /**
- * Controller to accomplish Takings related tasks. 
+ * Controller to accomplish Takings related tasks: Creation, Retrieval, Updating and Deleting.
  *
  * @category  Controller
 */
@@ -20,7 +20,7 @@ class TakingsCtl{
    * @return void Output is echo'd directly to response
    * 
    */
-  public static function read_one(int $id){  
+  public static function read_one(int $id):void{  
     try {
       $model = new \Models\Takings();
       $model->id = $id;
@@ -39,7 +39,7 @@ class TakingsCtl{
    * @return void Output is echo'd directly to response
    * 
    */
-  public static function read_by_quickbooks_status(int $quickbooks){  
+  public static function read_by_quickbooks_status(int $quickbooks):void{  
     try {
       $model = new \Models\Takings();
 
@@ -92,7 +92,7 @@ class TakingsCtl{
    * @return void Output is echo'd directly to response
    * 
    */
-  public static function create(){
+  public static function create():void{
     try {
       $model = new \Models\Takings();
       $data = json_decode(file_get_contents("php://input"));
@@ -195,17 +195,11 @@ class TakingsCtl{
               "id" => $model->id)
               , JSON_NUMERIC_CHECK);
         } else {
-          http_response_code(400);  
-          echo json_encode(
-            array(
-              "message" => "Unable to PATCH takings row.",
-              "id" => $model->id,
-              "quickbooks" => $data->quickbooks)
-              , JSON_NUMERIC_CHECK);
+          Error::response("Patching takings with id=$id failed for unknown reason.");
         }            
       }
     } catch (Exception $e) {
-      Error::response("Unable to delete takings with id=$id in database.", $e);
+      Error::response("Unable to patch takings with id=$id in database.", $e);
     }
   }
 

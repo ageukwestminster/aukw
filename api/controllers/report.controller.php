@@ -23,26 +23,21 @@ class ReportCtl{
     try {
       $model = new \Models\Report();
 
-      if(isset($_GET['start']) || isset($_GET['end'])) {
-        $start='';
-        $end='';
-        list($start, $end) = \Core\DatesHelper::sanitizeDateValues(
-                                    !isset($_GET['start']) ? '' : $_GET['start'], 
-                                    !isset($_GET['end']) ? '' : $_GET['end']
-                                );
-    
-        $model->startdate = $start;
-        $model->enddate = $end;
-    } else {
-        $model->startdate = '2000-01-01';
-        $model->enddate = date('Y-m-d');
-    }
+      if (isset($_GET['start']) || isset($_GET['end'])) {
 
-    if (isset($_GET['shopID']) && !empty($_GET['shopID'])) {
-        $model->shopID = $_GET['shopID'];
-    } else {
-        $model->shopID = 1;
-    }
+        list($start, $end) = \Core\DatesHelper::sanitizeDateValues(
+            $_GET['start'] ?? '',
+            $_GET['end'] ?? ''
+        );
+      
+          $model->startdate = $start;
+          $model->enddate = $end;
+      } else {
+          $model->startdate = '2000-01-01';
+          $model->enddate = date('Y-m-d');
+      }
+
+      $model->shopID = $_GET['shopID'] ?? 1; // '1' is the shopID for Harrow Road.
 
       echo json_encode($model->dailySalesHistogram(), JSON_NUMERIC_CHECK);
     } catch (Exception $e) {
@@ -60,16 +55,11 @@ class ReportCtl{
     try {
       $model = new \Models\Report();
 
-      if(isset($_GET['start']) && \Core\DatesHelper::validateDate($_GET['start'])) {
-          $model->startdate = $_GET['start'];
-      } else {
-        $model->startdate = '2000-01-01';
-      }
-      if (isset($_GET['shopID']) && !empty($_GET['shopID'])) {
-        $model->shopID = $_GET['shopID'];
-      } else {
-          $model->shopID = 1;
-      }
+      $model->startdate = isset($_GET['start']) && \Core\DatesHelper::validateDate($_GET['start'])
+        ? $_GET['start']
+        : '2000-01-01';
+
+      $model->shopID = $_GET['shopID'] ?? 1; // '1' is the shopID for Harrow Road.
 
       echo json_encode($model->dailySalesMovingAverage(), JSON_NUMERIC_CHECK);
     } catch (Exception $e) {
@@ -218,22 +208,11 @@ class ReportCtl{
    * @return void Output is echoed directly to response.
    * 
    */
-  public static function salesByMonth($shopid, $year = null, $month = null, $day = null){  
+  public static function salesByMonth($shopid, $year = null, $month = null, $day = null): void 
+  {  
     try {
       $model = new \Models\TakingsSummary();
-      $date = '';
-      if (!$year) {
-        $date = '2021-01-01';
-      }
-      else if (!$month) {
-        $date = $year . '-01-01';
-      }
-      else if (!$day) {
-        $date = $year . '-' . $month .'-01';
-      }
-      else {
-        $date = $year . '-' . $month .'-' . $day;
-      }
+      $date = $year ? ($month ? ($day ? "$year-$month-$day" : "$year-$month-01") : "$year-01-01") : '2021-01-01';
       echo json_encode($model->salesByMonth($shopid, $date), JSON_NUMERIC_CHECK);
     } catch (Exception $e) {
       Error::response("Error retrieving sales by month data.", $e);
@@ -255,13 +234,7 @@ class ReportCtl{
   public static function salesByQuarter($shopid, $year  = null){  
     try {
       $model = new \Models\TakingsSummary();
-      $date = '';
-      if (!$year) {
-        $date = '2021-01-01';
-      }
-      else {
-        $date = $year . '-01-01';
-      }
+      $date = $year ? "$year-01-01" : '2021-01-01';
 
       echo json_encode($model->salesByQuarter($shopid, $date), JSON_NUMERIC_CHECK);
     } catch (Exception $e) {
@@ -316,7 +289,7 @@ class ReportCtl{
    * @return void Output is echoed directly to response 
    * 
    */
-  public static function takingsSummary(int $shopid){  
+  public static function takingsSummary(int $shopid):void{  
     try {
       $model = new \Models\Takings();
 
@@ -324,35 +297,19 @@ class ReportCtl{
       $enddate='';
 
       // if parameters are provided use them
-      if(isset($_GET['start']) || isset($_GET['end'])) {
+      if (isset($_GET['start']) || isset($_GET['end'])) {
         list($startdate, $enddate) = \Core\DatesHelper::sanitizeDateValues(
-                                    !isset($_GET['start']) ? '' : $_GET['start'], 
-                                    !isset($_GET['end']) ? '' : $_GET['end']
-                                );
-      } 
-      
-      // default values are:
-      // enddate: the most recent trading day, or today if none found
-      // startdate: 3 months ago before end date
-      if ($startdate == '') {    
-        if ($enddate == '') {           
-
-          // Check for the most recent shop takings in the database
-          //$most_recent_takings=array();
-          $most_recent_takings=$model->read_most_recent($shopid);
-          if ($most_recent_takings && $most_recent_takings['date']) {
-            $enddate = $most_recent_takings['date'];
-          }
-          else {
-            $enddate = date('Y-m-d');      
-          }
-
-        }
-        
-        $startdate = (new DateTime($enddate))->modify('-3 month')->format('Y-m-d');
-      } else if ($enddate == '') {           
-        $enddate = (new DateTime($startdate))->modify('+3 month')->format('Y-m-d');
-      }    
+            $_GET['start'] ?? '',
+            $_GET['end'] ?? ''
+        );
+      } else {
+          // default values are:
+          // enddate: the most recent trading day, or today if none found
+          // startdate: 3 months ago before end date
+          $most_recent_takings = $model->read_most_recent($shopid);
+          $enddate = $most_recent_takings['date'] ?? date('Y-m-d');
+          $startdate = (new DateTime($enddate))->modify('-3 month')->format('Y-m-d');
+      }  
 
       echo json_encode($model->summary($shopid, $startdate, $enddate), JSON_NUMERIC_CHECK);
     } catch (Exception $e) {
@@ -387,13 +344,11 @@ class ReportCtl{
    */
   private static function GetHttpDateParameters(\Models\Report $model) : void {
 
-    if(isset($_GET['start']) || isset($_GET['end'])) {
-      $start='';
-      $end='';
+    if (isset($_GET['start']) || isset($_GET['end'])) {
       list($start, $end) = \Core\DatesHelper::sanitizeDateValues(
-                                  !isset($_GET['start']) ? '' : $_GET['start'], 
-                                  !isset($_GET['end']) ? '' : $_GET['end']
-                              );
+          $_GET['start'] ?? '',
+          $_GET['end'] ?? ''
+      );
   
       $model->startdate = $start;
       $model->enddate = $end;
@@ -413,16 +368,11 @@ class ReportCtl{
     try {
       $model = new \Models\Report();
 
-      if(isset($_GET['start']) && \Core\DatesHelper::validateDate($_GET['start'])) {
-          $model->startdate = $_GET['start'];
-      } else {
-        $model->startdate = '2018-01-01';
-      }
-      if ($shopid) {
-        $model->shopID = $shopid;
-      } else {
-        $model->shopID = 1;
-      }
+      $model->startdate = isset($_GET['start']) && \Core\DatesHelper::validateDate($_GET['start'])
+      ? $_GET['start']
+      : '2018-01-01';
+
+      $model->shopID = $shopid;
 
       echo json_encode($model->cashRatioMovingAverage(), JSON_NUMERIC_CHECK);
     } catch (Exception $e) {
@@ -441,17 +391,11 @@ class ReportCtl{
     try {
       $model = new \Models\Report();
 
-      if(isset($_GET['start']) && \Core\DatesHelper::validateDate($_GET['start'])) {
-          $model->startdate = $_GET['start'];
-      } else {
-        //  customers_num_total field (in takings table) is only populated from this date.
-        $model->startdate = '2017-03-01'; 
-      }
-      if ($shopid) {
-        $model->shopID = $shopid;
-      } else {
-        $model->shopID = 1; // Harrow Road
-      }
+      $model->startdate = isset($_GET['start']) && \Core\DatesHelper::validateDate($_GET['start'])
+      ? $_GET['start']
+      : '2017-03-01'; //  customers_num_total field (in takings table) is only populated from this date.
+
+      $model->shopID = $shopid;
 
       echo json_encode($model->salesByDepartmentAndCustomerMovingAverage(), JSON_NUMERIC_CHECK);
     } catch (Exception $e) {

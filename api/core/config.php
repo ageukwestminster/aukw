@@ -1,8 +1,5 @@
 <?php
- /**
-  * A list of api-wide constants, made available through the Config class.
-  */
-  
+
 namespace Core;
 
 // development
@@ -15,7 +12,9 @@ error_reporting(E_ALL);
 //error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
 /**
- * A static class that holds application-level constants.
+ * The Config class in config.php is designed to hold application-level constants and configuration 
+ * settings. It uses a static array to store these values and provides methods to read and write them. 
+ * The file also includes some initial configuration settings for development and production environments.
  * 
  * The config pattern that this classs uses is from {@link https://stackoverflow.com/a/2047999/6941165 stackoverflow}
  * 
@@ -31,16 +30,23 @@ class Config
 
     /**
      * Read a constant value
+     *      
+     * @param string $name The name of the constant
+     * @return mixed The value of the constant
      */
-    public static function read($name)
+    public static function read(string $name)
     {
         return self::$confArray[$name];
     }
 
     /**
      * Write a constant value
+     * 
+     * @param string $name The name of the constant
+     * @param mixed $value The value of the constant
+     * @return void
      */
-    public static function write($name, $value)
+    public static function write(string $name, $value): void
     {
         self::$confArray[$name] = $value;
     }
