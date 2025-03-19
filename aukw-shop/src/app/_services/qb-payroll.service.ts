@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin, of, BehaviorSubject, Subject } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { defaultIfEmpty, map, tap } from 'rxjs/operators';
 
 import { environment } from '@environments/environment';
 import {
@@ -171,7 +171,7 @@ export class QBPayrollService {
       qbPayslips: this.getWhatsAlreadyInQBO(
         environment.qboCharityRealmID,
         payrollDate,
-      ),
+      ).pipe(defaultIfEmpty([])),
       payrollPayslips: of(xlsxPayslips),
     }).pipe(
       map((x) => {
@@ -218,7 +218,7 @@ export class QBPayrollService {
       qbPayslips: this.getWhatsAlreadyInQBO(
         environment.qboEnterprisesRealmID,
         payrollDate,
-      ),
+      ).pipe(defaultIfEmpty([])),
       payrollPayslips: of(xlsxPayslips),
     }).pipe(
       map((x) => {
