@@ -185,7 +185,7 @@ export class IntercoTradeComponent implements OnInit {
     forkJoin($obs).subscribe({
       next: (x) => {
         var filteredAccounts = x.accounts.filter((x) => {
-          console.log(x.type);
+          //console.log(x.type);
 
           return (
             x.type.includes('Expense', 0) || x.type == 'Cost of Goods Sold'
