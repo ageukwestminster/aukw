@@ -100,4 +100,13 @@ class AuditLogCtl{
     }
   }
 
+
+  public static function read_eventtypes(): void {
+    try {
+      $model = new \Models\AuditLog();
+      echo json_encode($model->read_eventtypes(), JSON_NUMERIC_CHECK);
+    } catch (Exception $e) {
+      Error::response("Unable to list event types in AuditLog.", $e);    
+    }
+  }
 }

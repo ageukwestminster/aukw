@@ -273,5 +273,15 @@ $router->mount('/auditlog', function () use ($router) {
     $router->post('/', 'AuditLogCtl@create');
     // return all audit log records
     $router->get('/', 'AuditLogCtl@read');
+    // return all audit log event types
+    $router->get('/eventtype', 'AuditLogCtl@read_eventtypes');
+});
+
+/***************/
+/* Rule Routes */
+/***************/
+$router->mount('/rule', function () use ($router) {
+    // return all rule records
+    $router->get('/', 'RuleCtl@read_all');
 });
 

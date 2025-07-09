@@ -175,4 +175,33 @@ class AuditLog{
         }
     }
 
+        /**
+     * Return a list of all Event Types
+     * 
+     * @return array An array of strings
+     */
+    public function read_eventtypes(){
+               
+        $query = "SELECT eventtype FROM auditlog GROUP BY eventtype ORDER BY eventtype"; 
+
+        $stmt = $this->conn->prepare( $query );
+
+        $stmt->execute();
+        $num = $stmt->rowCount();
+
+        $auditlog_arr=array();
+
+        if($num>0){
+        
+            // retrieve our table contents
+            // fetch() is faster than fetchAll()
+            // http://stackoverflow.com/questions/2770630/pdofetchall-vs-pdofetch-in-a-loop
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                array_push ($auditlog_arr, $row['eventtype']);
+            }
+               
+        }
+
+        return $auditlog_arr;
+    }
 }
