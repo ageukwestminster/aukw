@@ -44,7 +44,8 @@ class AuditLogCtl{
       } 
 
       $userId = isset($_GET['userid']) && is_numeric($_GET['userid']) ? (int)$_GET['userid'] : null;
-      echo json_encode($model->read($userId, $startDate, $endDate), JSON_NUMERIC_CHECK);
+      $eventType = isset($_GET['eventtype']) ? $_GET['eventtype'] : null;
+      echo json_encode($model->read($userId, $startDate, $endDate, $eventType), JSON_NUMERIC_CHECK);
     } catch (Exception $e) {
       Error::response("Unable to return details of all Audit Log entries.", $e);
     }

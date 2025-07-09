@@ -67,11 +67,11 @@ class AuditLog{
 
 
     /**
-     * Return details of all Users
+     * Return details of all audit log entries
      * 
-     * @return array An array of Users
+     * @return array An array of audit log entries
      */
-    public function read($userid, $startdate, $enddate){
+    public function read($userid, $startdate, $enddate, $eventtype){
                
         $query = "SELECT
             a.`id`, a.`userid`, u.`username`, CONCAT(u.`firstname`,' ',u.`surname`) as fullname,
@@ -85,12 +85,19 @@ class AuditLog{
             $query .= "AND u.id=:userid";
         }
 
+        if (isset($eventtype)) {
+            $query .= "AND a.eventtype=:eventtype";
+        }
+
         $query .= " ORDER BY timestamp DESC";
 
         $stmt = $this->conn->prepare( $query );
 
         if (isset($userid)) {
             $stmt->bindParam(":userid", $userid, PDO::PARAM_INT);
+        }
+        if (isset($eventtype)) {
+            $stmt->bindParam(":eventtype", $eventtype, PDO::PARAM_STR);
         }
         $stmt->bindParam(":start", $startdate);
         $stmt->bindParam(":end", $enddate);
