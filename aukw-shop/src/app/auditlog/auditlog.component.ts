@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule, Location, NgFor } from '@angular/common';
 import { AuditLogService } from '@app/_services';
-import { AuditLog, AuditLogFilter } from '@app/_models';
+import { AuditLog } from '@app/_models';
 import { AuditLogFilterComponent } from './filter/auditlog-filter.component';
 
 @Component({
@@ -11,8 +11,6 @@ import { AuditLogFilterComponent } from './filter/auditlog-filter.component';
 })
 export class AuditLogComponent implements OnInit {
   auditLog!: AuditLog[];
-  loading: boolean = false;
-  filter!: AuditLogFilter;
 
   private auditLogService = inject(AuditLogService);
   private location = inject(Location);
@@ -27,14 +25,6 @@ export class AuditLogComponent implements OnInit {
     this.auditLogService.getAll().subscribe((result) => {
       this.auditLog = result;
     });
-  }
-
-  filterUpdated(filter: AuditLogFilter) {
-    this.filter = filter;
-  }
-
-  filterIsLoading(value: boolean) {
-    this.loading = value;
   }
 
   auditLogUpdated(auditLog: AuditLog[]) {

@@ -69,9 +69,9 @@
         </div>
       </div>
     </div>
+    <!-- 9/7/25 NOTE: Always show Refresh button to allow correct operation of Audit Log Filter-->
     <div
-      class="col-sm-auto p-0"
-      *ngIf="f['dateRange'].value == DateRange.CUSTOM"
+      class="col-sm-auto p-0"      
     >
       <a class="btn btn-link" (click)="onRefreshPressed()">Refresh</a>
     </div>

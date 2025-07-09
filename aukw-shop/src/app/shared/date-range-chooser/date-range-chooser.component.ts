@@ -17,7 +17,6 @@ import {
 import { DateRangeAdapter } from '@app/_helpers';
 import { DateRange, DateRangeEnum } from '@app/_models';
 import { CustomDateParserFormatter, NgbUTCStringAdapter } from '@app/_helpers';
-import { DateFormatHelper } from '@app/_services';
 
 @Component({
   selector: 'date-range-chooser',
@@ -45,7 +44,6 @@ export class DateRangeChooserComponent implements OnInit {
 
   private dateRangeAdapter = inject(DateRangeAdapter);
   private formBuilder = inject(FormBuilder);
-  private dateFormatHelper = inject(DateFormatHelper);
 
   ngOnInit(): void {
     let dtRng = this.dateRangeAdapter.enumToDateRange(

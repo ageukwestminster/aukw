@@ -82,11 +82,11 @@ class AuditLog{
             "WHERE DATE(a.`timestamp`) >= :start AND DATE(a.`timestamp`) <= :end "; 
 
         if (isset($userid)) {
-            $query .= "AND u.id=:userid";
+            $query .= "AND u.id=:userid ";
         }
 
         if (isset($eventtype)) {
-            $query .= "AND a.eventtype=:eventtype";
+            $query .= "AND a.eventtype=:eventtype ";
         }
 
         $query .= " ORDER BY timestamp DESC";

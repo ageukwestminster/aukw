@@ -15,7 +15,7 @@
             <div class="row">
               <div class="col-sm-2">
                 <div class="input-group">
-                  <span class="input-group-text col-6" id="status-label"
+                  <span class="input-group-text col-6" id="userid-label"
                     >User</span
                   >
                   <select
@@ -24,7 +24,7 @@
                     id="useridSelect"
                     name="useridSelect"
                     class="form-control"
-                    (change)="onUseridChanged(useridSelect.value)"
+                    (change)="onInputChanged(useridSelect.value)"
                   >
                     <option selected [ngValue]="null">Any</option>
                     <option
@@ -32,6 +32,28 @@
                       [ngValue]="user.id"
                     >
                       {{ user.username }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-sm-2">
+                <div class="input-group">
+                  <span class="input-group-text col-6" id="action-label"
+                    >Action</span
+                  >
+                  <select
+                    formControlName="eventtype"
+                    #actionSelect
+                    id="actionSelect"
+                    name="actionSelect"
+                    class="form-control"
+                    (change)="onInputChanged(actionSelect.value)"
+                  >
+                    <option selected [ngValue]="null">Any</option>
+                    <option
+                      *ngFor="let eventtype of eventtypes$ | async"
+                    >
+                      {{ eventtype }}
                     </option>
                   </select>
                 </div>

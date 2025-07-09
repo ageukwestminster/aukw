@@ -15,6 +15,10 @@ export class AuditLogService {
     return this.http.get<AuditLog[]>(this.auditLogUri);
   }
 
+  getAllEventTypes(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.auditLogUri}/eventtype`);
+  }
+
   getFilteredList(urlParameters: string): Observable<AuditLog[]> {
     return this.http.get<AuditLog[]>(`${this.auditLogUri}/?${urlParameters}`);
   }

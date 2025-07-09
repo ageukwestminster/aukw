@@ -3,10 +3,12 @@ import { DateRange } from '@app/_models';
 export class AuditLogFilter {
   daterange?: DateRange;
   userid?: number;
+  eventtype?: string;
 
   constructor(obj?: any) {
     this.daterange = (obj && obj.daterange) || null;
     this.userid = (obj && obj.userid) || null;
+    this.eventtype = (obj && obj.eventtype) || null;
   }
   /**
    * overload toString
@@ -18,6 +20,11 @@ export class AuditLogFilter {
     if (this.userid) {
       if (str.length > 0) str = str.concat('&');
       str = str.concat('userid=', this.userid.toString());
+    }
+
+    if (this.eventtype) {
+      if (str.length > 0) str = str.concat('&');
+      str = str.concat('eventtype=', this.eventtype);
     }
 
     if (this.daterange) {

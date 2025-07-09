@@ -9,9 +9,10 @@ import {
 import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, BehaviorSubject } from 'rxjs';
 
-import { DateRange, AuditLogFilter, AuditLog, User } from '@app/_models';
+import { DateRange, DateRangeEnum, AuditLogFilter, AuditLog, User } from '@app/_models';
 import { AuditLogService, UserService } from '@app/_services';
 import { DateRangeChooserComponent } from '@app/shared';
+import { DateRangeAdapter } from '@app/_helpers';
 
 @Component({
   selector: 'auditlog-filter',
@@ -28,9 +29,6 @@ import { DateRangeChooserComponent } from '@app/shared';
   ],
 })
 export class AuditLogFilterComponent implements OnInit {
-  @Output()
-  filter: EventEmitter<AuditLogFilter> = new EventEmitter<AuditLogFilter>();
-  @Output() loading: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() filteredAuditLog: EventEmitter<AuditLog[]> = new EventEmitter<
     AuditLog[]
   >();
@@ -42,6 +40,8 @@ export class AuditLogFilterComponent implements OnInit {
   working: boolean = false;
   panelOpen: boolean = false;
   users$: Observable<User[]>;
+  eventtypes$: Observable<string[]>;
+
   startAndEndDates!: DateRange;
 
   private formBuilder = inject(FormBuilder);
@@ -50,6 +50,8 @@ export class AuditLogFilterComponent implements OnInit {
 
   constructor() {
     this.users$ = this.userService.getAll();
+    this.eventtypes$ = this.auditLogService.getAllEventTypes();
+    this.startAndEndDates = (new DateRangeAdapter()).enumToDateRange(DateRangeEnum.THIS_YEAR)
   }
 
   get f() {
@@ -59,39 +61,30 @@ export class AuditLogFilterComponent implements OnInit {
   ngOnInit(): void {
     this.form = this.formBuilder.group({
       userid: [null],
+      eventtype: [null],
     });
   }
 
   onDateRangeChanged(dateRange: DateRange) {
     this.startAndEndDates = dateRange;
-    this.refreshSummary(dateRange.startDate, dateRange.endDate);
+    this.onInputChanged(null);
   }
 
-  onUseridChanged(value: string | null) {
-    if (value == null || value.startsWith('0')) {
-      this.refreshSummary(
-        this.startAndEndDates.startDate,
-        this.startAndEndDates.endDate,
-      );
-    } else {
-      this.refreshSummary(
-        this.startAndEndDates.startDate,
-        this.startAndEndDates.endDate,
-        this.f['userid'].value,
-      );
-    }
+  onInputChanged(value: string | null) {
+    let filter = new AuditLogFilter({
+      daterange: this.startAndEndDates,
+      userid: this.f['userid'].value,
+      eventtype: this.f['eventtype'].value,
+    });
+    this.refreshSummary(filter);
   }
 
-  refreshSummary(startDate: string, endDate: string, userid?: string) {
-    var str = `start=${startDate!}`;
-    str = str.concat('&', 'end=', endDate);
-
-    if (userid) {
-      str = str.concat('&', 'userid=', userid);
-    }
-
-    this.auditLogService.getFilteredList(str).subscribe((response: any) => {
+  refreshSummary(filter: AuditLogFilter) {
+    this.working = true;
+    this.auditLogService.getFilteredList(filter.toString()).subscribe((response: any) => {
       this.filteredAuditLog.emit(response);
+      this.filterSubject.next(filter);
+      this.working = false;
     });
   }
 }
