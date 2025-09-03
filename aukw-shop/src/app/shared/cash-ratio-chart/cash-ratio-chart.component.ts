@@ -65,7 +65,7 @@ export class CashRatioChartComponent {
       formatter: function () {
         return `The value for <b>${Highcharts.dateFormat(
           '%e %b %y',
-          Number.parseFloat(this.key!),
+          Number.parseFloat(this.key!.toString()),
         )}</b> is <b>${Math.round(this.y! * 100) / 100}%</b>`;
       },
     },
