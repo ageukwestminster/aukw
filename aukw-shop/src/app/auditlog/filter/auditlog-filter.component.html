@@ -4,7 +4,9 @@
       <h2 ngbAccordionHeader>
         <button ngbAccordionButton>Filter</button>
       </h2>
-      <span *ngIf="working" class="spinner-border spinner-border-sm"></span>
+      @if (working) {
+        <span class="spinner-border spinner-border-sm"></span>
+      }
       <div ngbAccordionCollapse>
         <div ngbAccordionBody>
           <ng-template>
@@ -17,56 +19,60 @@
                 <div class="input-group">
                   <span class="input-group-text col-6" id="userid-label"
                     >User</span
-                  >
-                  <select
-                    formControlName="userid"
-                    #useridSelect
-                    id="useridSelect"
-                    name="useridSelect"
-                    class="form-control"
-                    (change)="onInputChanged(useridSelect.value)"
-                  >
-                    <option selected [ngValue]="null">Any</option>
-                    <option
-                      *ngFor="let user of users$ | async"
-                      [ngValue]="user.id"
                     >
-                      {{ user.username }}
-                    </option>
-                  </select>
+                    <select
+                      formControlName="userid"
+                      #useridSelect
+                      id="useridSelect"
+                      name="useridSelect"
+                      class="form-control"
+                      (change)="onInputChanged(useridSelect.value)"
+                      >
+                      <option selected [ngValue]="null">Any</option>
+                      @for (user of users$ | async; track user) {
+                        <option
+                          [ngValue]="user.id"
+                          >
+                          {{ user.username }}
+                        </option>
+                      }
+                    </select>
+                  </div>
                 </div>
-              </div>
-              <div class="col-sm-2">
-                <div class="input-group">
-                  <span class="input-group-text col-6" id="action-label"
-                    >Action</span
-                  >
-                  <select
-                    formControlName="eventtype"
-                    #actionSelect
-                    id="actionSelect"
-                    name="actionSelect"
-                    class="form-control"
-                    (change)="onInputChanged(actionSelect.value)"
-                  >
-                    <option selected [ngValue]="null">Any</option>
-                    <option
-                      *ngFor="let eventtype of eventtypes$ | async"
-                    >
-                      {{ eventtype }}
-                    </option>
-                  </select>
+                <div class="col-sm-2">
+                  <div class="input-group">
+                    <span class="input-group-text col-6" id="action-label"
+                      >Action</span
+                      >
+                      <select
+                        formControlName="eventtype"
+                        #actionSelect
+                        id="actionSelect"
+                        name="actionSelect"
+                        class="form-control"
+                        (change)="onInputChanged(actionSelect.value)"
+                        >
+                        <option selected [ngValue]="null">Any</option>
+                        @for (eventtype of eventtypes$ | async; track eventtype) {
+                          <option
+                            >
+                            {{ eventtype }}
+                          </option>
+                        }
+                      </select>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </ng-template>
             </div>
-          </ng-template>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-  <div *ngIf="false">
-    <p>Form Value: {{ form.value | json }}</p>
-    <p>Form Status: {{ form.status }}</p>
-    <p>Filter: {{ filter$ | async | json }}</p>
-  </div>
-</form>
+      @if (false) {
+        <div>
+          <p>Form Value: {{ form.value | json }}</p>
+          <p>Form Status: {{ form.status }}</p>
+          <p>Filter: {{ filter$ | async | json }}</p>
+        </div>
+      }
+    </form>

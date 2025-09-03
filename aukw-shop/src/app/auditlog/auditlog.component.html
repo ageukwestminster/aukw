@@ -21,13 +21,15 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let event of auditLog">
-      <td>{{ event.timestamp }}</td>
-      <td>{{ event.fullname }}</td>
-      <td>{{ event.eventtype }}</td>
-      <td class="d-none d-sm-table-cell">{{ event.objecttype }}</td>
-      <td class="d-none d-sm-table-cell">{{ event.objectid }}</td>
-      <td>{{ event.description }}</td>
-    </tr>
+    @for (event of auditLog; track event) {
+      <tr>
+        <td>{{ event.timestamp }}</td>
+        <td>{{ event.fullname }}</td>
+        <td>{{ event.eventtype }}</td>
+        <td class="d-none d-sm-table-cell">{{ event.objecttype }}</td>
+        <td class="d-none d-sm-table-cell">{{ event.objectid }}</td>
+        <td>{{ event.description }}</td>
+      </tr>
+    }
   </tbody>
 </table>

@@ -1,12 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule, Location, NgFor } from '@angular/common';
+import { Location } from '@angular/common';
 import { AuditLogService } from '@app/_services';
 import { AuditLog } from '@app/_models';
 import { AuditLogFilterComponent } from './filter/auditlog-filter.component';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, NgFor, AuditLogFilterComponent],
+  imports: [AuditLogFilterComponent],
   templateUrl: 'auditlog.component.html',
 })
 export class AuditLogComponent implements OnInit {

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
-import { CommonModule, NgFor, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
   FormGroup,
@@ -20,13 +20,11 @@ import { DateRangeAdapter } from '@app/_helpers';
   standalone: true,
   imports: [
     CommonModule,
-    NgFor,
-    NgIf,
     NgbAccordionModule,
     FormsModule,
     ReactiveFormsModule,
-    DateRangeChooserComponent,
-  ],
+    DateRangeChooserComponent
+],
 })
 export class AuditLogFilterComponent implements OnInit {
   @Output() filteredAuditLog: EventEmitter<AuditLog[]> = new EventEmitter<
