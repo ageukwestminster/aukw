@@ -1,5 +1,5 @@
 ﻿import { Component, OnInit, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { QBRealmService } from '@app/_services';
 import { QBConnectionDetails, QBRealm } from '@app/_models';
 import { QBConnectionRowComponent } from './row.component';
@@ -9,7 +9,7 @@ import { QBConnectionRowComponent } from './row.component';
   templateUrl: 'list.component.html',
   styleUrls: ['list.component.css'],
   standalone: true,
-  imports: [CommonModule, QBConnectionRowComponent],
+  imports: [QBConnectionRowComponent],
 })
 export class QBConnectionListComponent implements OnInit {
   @Input() userID: number = 0;

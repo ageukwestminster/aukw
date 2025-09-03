@@ -6,7 +6,7 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { KeyValue, KeyValuePipe, NgIf, NgFor } from '@angular/common';
+import { KeyValue, KeyValuePipe } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
   NgbDateAdapter,
@@ -24,10 +24,8 @@ import { CustomDateParserFormatter, NgbUTCStringAdapter } from '@app/_helpers';
   imports: [
     KeyValuePipe,
     NgbDatepickerModule,
-    NgFor,
-    NgIf,
-    ReactiveFormsModule,
-  ],
+    ReactiveFormsModule
+],
   templateUrl: './date-range-chooser.component.html',
   styleUrl: './date-range-chooser.component.css',
   providers: [

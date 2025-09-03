@@ -1,5 +1,5 @@
 import { Component, inject, Input, OnInit, SimpleChanges } from '@angular/core';
-import { NgFor, NgIf } from '@angular/common';
+
 import {
   FormBuilder,
   FormGroup,
@@ -30,7 +30,7 @@ import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'interco-trade',
-  imports: [NgbDatepickerModule, NgFor, NgIf, ReactiveFormsModule],
+  imports: [NgbDatepickerModule, ReactiveFormsModule],
   templateUrl: './interco-trade.component.html',
   styleUrl: './interco-trade.component.css',
   providers: [

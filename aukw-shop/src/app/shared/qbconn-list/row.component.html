@@ -1,70 +1,86 @@
 <td>{{ realm.name }}</td>
 <td>{{ realm.connection && realm.connection!.linkcreatoremail! }}</td>
 <td class="text-center">
-  <span class="logged-in" *ngIf="isValidConnection">●</span>
-  <span class="logged-out" *ngIf="!isValidConnection">●</span>
+  @if (isValidConnection) {
+    <span class="logged-in">●</span>
+  }
+  @if (!isValidConnection) {
+    <span class="logged-out">●</span>
+  }
 </td>
 <td>
   {{
-    this.realm!.connection && this.realm!.connection!.refreshtokenexpiry | date
+  this.realm!.connection && this.realm!.connection!.refreshtokenexpiry | date
   }}
 </td>
 <td>
-  <div *ngIf="user.isAdmin">
-    <!-- Don't display if user is not an admin-->
-    <button
-      (click)="addConnection($event)"
-      class="btn btn-sm btn-success me-1"
-      *ngIf="!isValidConnection"
-    >
-      <span>Add</span>
-    </button>
-    <button
-      (click)="refreshConnection($event)"
-      class="btn btn-sm btn-primary me-1 mt-1"
+  @if (user.isAdmin) {
+    <div>
+      <!-- Don't display if user is not an admin-->
+      @if (!isValidConnection) {
+        <button
+          (click)="addConnection($event)"
+          class="btn btn-sm btn-success me-1"
+          >
+          <span>Add</span>
+        </button>
+      }
+      @if (isLinkCreatedByCurrentUser) {
+        <button
+          (click)="refreshConnection($event)"
+          class="btn btn-sm btn-primary me-1 mt-1"
       [disabled]="
         !this.realm!.connection || this.realm!.connection!.isRefreshing
       "
-      *ngIf="isLinkCreatedByCurrentUser"
-    >
-      <span
-        *ngIf="this.realm!.connection && this.realm!.connection!.isRefreshing"
-        class="spinner-border spinner-border-sm"
-      ></span>
-      <span
-        *ngIf="!this.realm!.connection || !this.realm!.connection!.isRefreshing"
-        >Refresh</span
-      >
-    </button>
-    <button
-      (click)="revokeConnection($event)"
-      class="btn btn-sm btn-danger mt-1"
-      [disabled]="!this.realm!.connection || this.realm!.connection!.isRevoking"
-      *ngIf="isLinkCreatedByCurrentUser"
-    >
-      <span
-        *ngIf="this.realm!.connection && this.realm!.connection!.isRevoking"
-        class="spinner-border spinner-border-sm"
-      ></span>
-      <span
-        *ngIf="!this.realm!.connection || !this.realm!.connection!.isRevoking"
-        >Delete</span
-      >
-    </button>
-    <button
-      (click)="revokeAndMakeNewConnection($event)"
-      class="btn btn-sm btn-danger mt-1"
-      [disabled]="!this.realm!.connection || this.realm!.connection!.isRevoking"
-      *ngIf="isValidConnection && !isLinkCreatedByCurrentUser"
-    >
-      <span
-        *ngIf="this.realm!.connection && this.realm!.connection!.isRevoking"
-        class="spinner-border spinner-border-sm"
-      ></span>
-      <span
-        *ngIf="!this.realm!.connection || !this.realm!.connection!.isRevoking"
-        >Revoke & Make New Connection</span
-      >
-    </button>
-  </div>
-</td>
+          >
+          @if (this.realm!.connection && this.realm!.connection!.isRefreshing) {
+            <span
+              class="spinner-border spinner-border-sm"
+            ></span>
+          }
+          @if (!this.realm!.connection || !this.realm!.connection!.isRefreshing) {
+            <span
+              >Refresh</span
+              >
+            }
+          </button>
+        }
+        @if (isLinkCreatedByCurrentUser) {
+          <button
+            (click)="revokeConnection($event)"
+            class="btn btn-sm btn-danger mt-1"
+            [disabled]="!this.realm!.connection || this.realm!.connection!.isRevoking"
+            >
+            @if (this.realm!.connection && this.realm!.connection!.isRevoking) {
+              <span
+                class="spinner-border spinner-border-sm"
+              ></span>
+            }
+            @if (!this.realm!.connection || !this.realm!.connection!.isRevoking) {
+              <span
+                >Delete</span
+                >
+              }
+            </button>
+          }
+          @if (isValidConnection && !isLinkCreatedByCurrentUser) {
+            <button
+              (click)="revokeAndMakeNewConnection($event)"
+              class="btn btn-sm btn-danger mt-1"
+              [disabled]="!this.realm!.connection || this.realm!.connection!.isRevoking"
+              >
+              @if (this.realm!.connection && this.realm!.connection!.isRevoking) {
+                <span
+                  class="spinner-border spinner-border-sm"
+                ></span>
+              }
+              @if (!this.realm!.connection || !this.realm!.connection!.isRevoking) {
+                <span
+                  >Revoke & Make New Connection</span
+                  >
+                }
+              </button>
+            }
+          </div>
+        }
+      </td>

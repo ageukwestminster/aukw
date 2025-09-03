@@ -9,7 +9,7 @@
         ngbTooltip="Sales minus expenses, rag, overage/underage and donations"
         placement="top"
         container="body"
-      >
+        >
         Avg Net Sales
       </th>
       <!-- Html in tooltip using ngTemplate from https://stackoverflow.com/a/44276662 -->
@@ -29,46 +29,50 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let item of summary">
-      <ng-template #periodTooltipHtml>
-        "{{ item.type }} sales {{ item.start_date }} - {{ item.end_date }}"
-      </ng-template>
-      <th [ngbTooltip]="periodTooltipHtml" placement="right" container="body">
-        {{ item.period }}
-      </th>
-      <td class="d-none d-sm-table-cell">{{ item.start_date_format }}</td>
-      <td class="d-none d-sm-table-cell">{{ item.end_date_format }}</td>
-      <td class="text-center">
-        {{ item.total_sales | number: "1.2-2" }}
-      </td>
-      <td class="text-center">{{ item.avg_net_sales | number }}</td>
-      <td class="text-center">{{ item.customers_num_total }}</td>
-      <td class="text-center d-none d-sm-table-cell">
-        {{ item.cash_to_bank | number }}
-      </td>
-      <td class="text-center d-none d-sm-table-cell">
-        {{ item.credit_cards | number }}
-      </td>
-      <td class="text-center d-none d-sm-table-cell">
-        {{ item.clothing | number: "1.2-2" }}
-      </td>
-      <td class="text-center d-none d-sm-table-cell">
-        {{ item.brica | number: "1.2-2" }}
-      </td>
-      <td class="text-center d-none d-sm-table-cell">
-        {{ -item.expenses | number: "1.2-2" }}
-      </td>
-      <td class="text-center d-none d-sm-table-cell">
-        {{ item.count }}
-      </td>
-      <td class="text-center d-none d-sm-table-cell">
-        {{ item.number_of_items_sold | number }}
-      </td>
-    </tr>
-    <tr *ngIf="!summary">
-      <td colspan="2" class="text-center">
-        <span class="spinner-border spinner-border-lg align-center"></span>
-      </td>
-    </tr>
+    @for (item of summary; track item) {
+      <tr>
+        <ng-template #periodTooltipHtml>
+          "{{ item.type }} sales {{ item.start_date }} - {{ item.end_date }}"
+        </ng-template>
+        <th [ngbTooltip]="periodTooltipHtml" placement="right" container="body">
+          {{ item.period }}
+        </th>
+        <td class="d-none d-sm-table-cell">{{ item.start_date_format }}</td>
+        <td class="d-none d-sm-table-cell">{{ item.end_date_format }}</td>
+        <td class="text-center">
+          {{ item.total_sales | number: "1.2-2" }}
+        </td>
+        <td class="text-center">{{ item.avg_net_sales | number }}</td>
+        <td class="text-center">{{ item.customers_num_total }}</td>
+        <td class="text-center d-none d-sm-table-cell">
+          {{ item.cash_to_bank | number }}
+        </td>
+        <td class="text-center d-none d-sm-table-cell">
+          {{ item.credit_cards | number }}
+        </td>
+        <td class="text-center d-none d-sm-table-cell">
+          {{ item.clothing | number: "1.2-2" }}
+        </td>
+        <td class="text-center d-none d-sm-table-cell">
+          {{ item.brica | number: "1.2-2" }}
+        </td>
+        <td class="text-center d-none d-sm-table-cell">
+          {{ -item.expenses | number: "1.2-2" }}
+        </td>
+        <td class="text-center d-none d-sm-table-cell">
+          {{ item.count }}
+        </td>
+        <td class="text-center d-none d-sm-table-cell">
+          {{ item.number_of_items_sold | number }}
+        </td>
+      </tr>
+    }
+    @if (!summary) {
+      <tr>
+        <td colspan="2" class="text-center">
+          <span class="spinner-border spinner-border-lg align-center"></span>
+        </td>
+      </tr>
+    }
   </tbody>
 </table>

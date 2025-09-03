@@ -23,17 +23,20 @@
     </tr>
   </thead>
   <tbody>
-    <tr
-      *ngFor="let myRealm of realms"
-      qb-connection-row
-      [realm]="myRealm"
-      (onConnectionRevoked)="connectionWasRevoked($event)"
-    ></tr>
-    <tr *ngIf="!realms">
-      <td colspan="4" class="text-center">
-        <span class="spinner-border spinner-border-lg align-center"></span>
-      </td>
-    </tr>
+    @for (myRealm of realms; track myRealm) {
+      <tr
+        qb-connection-row
+        [realm]="myRealm"
+        (onConnectionRevoked)="connectionWasRevoked($event)"
+      ></tr>
+    }
+    @if (!realms) {
+      <tr>
+        <td colspan="4" class="text-center">
+          <span class="spinner-border spinner-border-lg align-center"></span>
+        </td>
+      </tr>
+    }
   </tbody>
 </table>
 <small>
