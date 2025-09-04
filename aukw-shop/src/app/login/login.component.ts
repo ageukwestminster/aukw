@@ -1,5 +1,5 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { NgIf, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -10,7 +10,7 @@ import { AuthenticationService } from '@app/_services';
   templateUrl: 'login.component.html',
   styles: ['img { max-width:340px; max-height:240px;}'],
   standalone: true,
-  imports: [FormsModule, NgIf, NgClass, ReactiveFormsModule],
+  imports: [FormsModule, NgClass, ReactiveFormsModule],
 })
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;

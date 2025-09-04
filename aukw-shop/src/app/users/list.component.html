@@ -1,13 +1,14 @@
 ﻿<div class="row">
   <div class="col-sm-6"><h1>Users</h1></div>
   <div class="col-sm-2">
-    <button
-      routerLink="/users/add"
-      class="btn btn-success"
-      *ngIf="user.isAdmin"
-    >
-      Add New User
-    </button>
+    @if (user.isAdmin) {
+      <button
+        routerLink="/users/add"
+        class="btn btn-success"
+        >
+        Add New User
+      </button>
+    }
   </div>
   <div class="col-sm-3">
     <button type="button" (click)="goBack()" class="btn btn-outline-dark">
@@ -26,17 +27,20 @@
     </tr>
   </thead>
   <tbody>
-    <tr
-      *ngFor="let myUser of users"
-      user-row
-      [user]="myUser"
-      (onUserDeleted)="userWasDeleted($event)"
-      routerLink="edit/{{ myUser.id }}"
-    ></tr>
-    <tr *ngIf="!users">
-      <td colspan="4" class="text-center">
-        <span class="spinner-border spinner-border-lg align-center"></span>
-      </td>
-    </tr>
+    @for (myUser of users; track myUser) {
+      <tr
+        user-row
+        [user]="myUser"
+        (onUserDeleted)="userWasDeleted($event)"
+        routerLink="edit/{{ myUser.id }}"
+      ></tr>
+    }
+    @if (!users) {
+      <tr>
+        <td colspan="4" class="text-center">
+          <span class="spinner-border spinner-border-lg align-center"></span>
+        </td>
+      </tr>
+    }
   </tbody>
 </table>

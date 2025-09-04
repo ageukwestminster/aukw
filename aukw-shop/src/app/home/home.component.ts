@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NgIf } from '@angular/common';
+
 import { RouterLink } from '@angular/router';
 import {
   DateRangeEnum,
@@ -31,9 +31,8 @@ import {
     MovingAverageChartComponent,
     SalesChartComponent,
     SalesHistogramChartComponent,
-    SummaryTableComponent,
-    NgIf,
-  ],
+    SummaryTableComponent
+],
 })
 export class HomeComponent implements OnInit {
   loading = false;

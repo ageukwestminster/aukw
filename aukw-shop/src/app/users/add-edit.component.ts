@@ -1,5 +1,5 @@
 ﻿import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule, NgClass, NgIf } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { Location } from '@angular/common';
@@ -25,7 +25,7 @@ import { ApiMessage, Shop, User, UserFormMode } from '@app/_models';
 @Component({
   templateUrl: 'add-edit.component.html',
   standalone: true,
-  imports: [CommonModule, NgClass, NgIf, ReactiveFormsModule],
+  imports: [CommonModule, NgClass, ReactiveFormsModule],
 })
 export class UserAddEditComponent implements OnInit {
   form!: FormGroup;
