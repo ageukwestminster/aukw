@@ -4,7 +4,6 @@ import {
   inject,
   Output,
   ViewChild,
-  ElementRef,
 } from '@angular/core';
 import { from, concatMap, of, Observable, catchError } from 'rxjs';
 import {
@@ -12,7 +11,12 @@ import {
   NgbModalModule,
   NgbTooltipModule,
 } from '@ng-bootstrap/ng-bootstrap';
-import { AlertService, FileService, PayslipListService } from '@app/_services';
+import {
+  NgbActiveModal,
+  NgbModalOptions,
+  NgbModalRef,
+} from '@ng-bootstrap/ng-bootstrap';
+import { AlertService, FileService, PayslipListService, ModalService } from '@app/_services';
 import { IrisPayslip, UploadResponse } from '@app/_models';
 import { PasswordInputModalComponent } from './modals/password-input.component';
 import { PayrollDateInputModalComponent } from './modals/payrolldate-input.component';
@@ -39,7 +43,7 @@ export class ExcelParserComponent {
 
   private alertService = inject(AlertService);
   private fileService = inject(FileService);
-  public modalService = inject(NgbModal);
+  public modalService = inject(ModalService); // A wrapper for NgbModal to avoid aria-hidden warnings
   private payslipListService = inject(PayslipListService);
 
   onFileUploaded(file: File) {
@@ -82,12 +86,6 @@ export class ExcelParserComponent {
    * @returns An Observable of an array of employee payslips
    */
   private decrypt_and_parse(filename: string): Observable<IrisPayslip[]> {
-    
-    // Added to remove focus from any button that might have been clicked to start the process
-    // which would otherwise remain focused behind the modal and caused an aria-hidden warning in
-    // modern browsers. From https://stackoverflow.com/a/79210442
-    const buttonElement = document.activeElement as HTMLElement; // Get the currently focused element
-    buttonElement.blur(); // Remove focus from the button
 
     const modalRef = this.modalService.open(PasswordInputModalComponent);
     modalRef.componentInstance.fileName = filename;

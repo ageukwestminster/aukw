@@ -3,12 +3,12 @@ import { Component, Injectable, inject, Input } from '@angular/core';
 import { Observable } from 'rxjs';
 import { defer, tap } from 'rxjs';
 import {
-  NgbModal,
   NgbActiveModal,
   NgbModalOptions,
   NgbModalRef,
 } from '@ng-bootstrap/ng-bootstrap';
 import { MessageFactories } from '@app/_interfaces/message-factories';
+import { ModalService } from '@app/_services'; // A wrapper for NgbModal to avoid aria-hidden warnings
 
 /**
  * The content for the Modal that displays during a long running task
@@ -54,7 +54,7 @@ export class LoadingIndicatorService {
   /**The length of time in ms to retain the exit messsage before closing the loading modal*/
   readonly DEFAULT_DISMISS_MESSAGE_DURATION: number = 500;
 
-  public constructor(private readonly modalService: NgbModal) {}
+  public constructor(private readonly modalService: ModalService) {}
 
   public create(message: string): NgbModalRef {
     // create the loading indicator overlay
@@ -65,12 +65,6 @@ export class LoadingIndicatorService {
       fullscreen: 'md',
       size: 'md',
     } as NgbModalOptions;
-
-    // Added to remove focus from any button that might have been clicked to start the process
-    // which would otherwise remain focused behind the modal and caused an aria-hidden warning in
-    // modern browsers. From https://stackoverflow.com/a/79210442
-    const buttonElement = document.activeElement as HTMLElement; // Get the currently focused element
-    buttonElement.blur(); // Remove focus from the button
     
     // Open the modal
     const modalRef = this.modalService.open(
