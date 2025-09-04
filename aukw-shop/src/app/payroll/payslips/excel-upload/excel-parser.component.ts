@@ -85,7 +85,7 @@ export class ExcelParserComponent {
     
     // Added to remove focus from any button that might have been clicked to start the process
     // which would otherwise remain focused behind the modal and caused an aria-hidden warning in
-    // modern browsers
+    // modern browsers. From https://stackoverflow.com/a/79210442
     const buttonElement = document.activeElement as HTMLElement; // Get the currently focused element
     buttonElement.blur(); // Remove focus from the button
 
