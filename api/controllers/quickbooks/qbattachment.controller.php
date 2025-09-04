@@ -132,8 +132,8 @@ class QBAttachmentCtl{
    * In addition, for each item in the files array, the file will be uploaded to QBO.
    * Format of request body:
    * {
-   *    "entityRefs": object[],
-   *      "attachments": {
+   *    "attachmentRefs": object[],
+   *     "attachments": {
    *         "files": object[],
    *         "notes": string[]
    *     }

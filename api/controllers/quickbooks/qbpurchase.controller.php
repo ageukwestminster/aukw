@@ -82,9 +82,9 @@ class QBPurchaseCtl{
         throw new \InvalidArgumentException("'txnDate' property is not in the correct format. Value provided: $data->date, expect yyyy-mm-dd format.");
       } else if (!isset($data->bankAccount)) {
         throw new \InvalidArgumentException("'bankAccount' property is missing from POST body.");
-      } else if (!isset($data->expenseAccount)) {
-        throw new \InvalidArgumentException("'expenseAccount' property is missing from POST body.");
-      } else if ($data->expenseAccount == $data->bankAccount) {
+      } else if (!isset($data->account)) {
+        throw new \InvalidArgumentException("'account' property is missing from POST body.");
+      } else if ($data->account == $data->bankAccount) {
         throw new \InvalidArgumentException("'expenseAccount' must be different from 'bankAccount'.");
       } else if (!isset($data->amount)) {
         throw new \InvalidArgumentException("'amount' property is missing from POST body.");
@@ -111,7 +111,7 @@ class QBPurchaseCtl{
         ->setTxnDate($data->txnDate)
         ->setEntity($data->entity)
         ->setBankAccount($data->bankAccount)
-        ->setExpenseAccount($data->expenseAccount)
+        ->setExpenseAccount($data->account)
         ->setPrivateNote(isset($data->privateNote)?$data->privateNote:'')
         ->setDescription(isset($data->description)?$data->description:'')
         ->setDocnumber(isset($data->docnumber)?$data->docnumber:'')

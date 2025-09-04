@@ -227,7 +227,7 @@ class QuickbooksAttachment{
   }
 
   /**
-   * Create a 'file' Attachment in QBO, uploading the file in th eprocess.
+   * Create a 'file' Attachment in QBO, uploading the file in the process.
    * 
    * Optionally attach it to the entities given by the property 'attachmentRefs'.
    * 
@@ -298,7 +298,7 @@ class QuickbooksAttachment{
   /** Simplify a IPPAttachable to its minimum properties 
    * @param IPPAttachable $input The attachment to simplify
   */
-  private function simplifyIPPAttachable(IPPAttachable $input) {
+  private function simplifyIPPAttachable(IPPAttachable $input) : array {
 
     $output = array();
     $output['Id'] = $input->Id;
