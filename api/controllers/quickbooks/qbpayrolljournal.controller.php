@@ -244,6 +244,7 @@ class QBPayrollJournalCtl{
               && isset($response->JournalEntry->Line)) {
 
         $returnObj = array();
+        $id = 1;
         
         try {
 
@@ -263,6 +264,7 @@ class QBPayrollJournalCtl{
               $class = $line->JournalEntryLineDetail->ClassRef;
 
               $returnObj[] = (object) [
+                  'id' => $id++,
                   'quickbooksId' => $employee->value,
                   'name' => $employee->name ?? '',
                   'payrollNumber' => 
