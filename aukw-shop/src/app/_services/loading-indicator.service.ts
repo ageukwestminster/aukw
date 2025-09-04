@@ -66,6 +66,13 @@ export class LoadingIndicatorService {
       size: 'md',
     } as NgbModalOptions;
 
+    // Added to remove focus from any button that might have been clicked to start the process
+    // which would otherwise remain focused behind the modal and caused an aria-hidden warning in
+    // modern browsers
+    const buttonElement = document.activeElement as HTMLElement; // Get the currently focused element
+    buttonElement.blur(); // Remove focus from the button
+    
+    // Open the modal
     const modalRef = this.modalService.open(
       LoadingIndicatorContent,
       modalOptions,

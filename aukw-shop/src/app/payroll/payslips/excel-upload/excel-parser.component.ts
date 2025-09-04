@@ -82,6 +82,13 @@ export class ExcelParserComponent {
    * @returns An Observable of an array of employee payslips
    */
   private decrypt_and_parse(filename: string): Observable<IrisPayslip[]> {
+    
+    // Added to remove focus from any button that might have been clicked to start the process
+    // which would otherwise remain focused behind the modal and caused an aria-hidden warning in
+    // modern browsers
+    const buttonElement = document.activeElement as HTMLElement; // Get the currently focused element
+    buttonElement.blur(); // Remove focus from the button
+
     const modalRef = this.modalService.open(PasswordInputModalComponent);
     modalRef.componentInstance.fileName = filename;
 
