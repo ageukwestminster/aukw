@@ -49,13 +49,19 @@
             </tr>
           </thead>
           <tbody>
-            @for (item of data.list; track item) {
-              <tr (click)="onRowSelected(item)">
-                <th>
-                  <span class="text-dark">{{ item[1] }}</span>
-                </th>
-                <td class="text-center">{{ item[2] | number: "1.2-2" }}</td>
-              </tr>
+            @if (data && data.list) {
+              @for (item of data.list; track item) {
+                <tr (click)="onRowSelected(item)">
+                  <th>
+                    <span class="text-dark">{{ item[1] }}</span>
+                  </th>
+                  <td class="text-center">{{ item[2] | number: "1.2-2" }}</td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="2" class="text-center">No data for selected range</td>
+                </tr>
+              }
             }
             <tr>
               <td>Total</td>
