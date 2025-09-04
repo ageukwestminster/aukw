@@ -31,8 +31,8 @@ import {
     MovingAverageChartComponent,
     SalesChartComponent,
     SalesHistogramChartComponent,
-    SummaryTableComponent
-],
+    SummaryTableComponent,
+  ],
 })
 export class HomeComponent implements OnInit {
   loading = false;

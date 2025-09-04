@@ -9,7 +9,13 @@ import {
 import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, BehaviorSubject } from 'rxjs';
 
-import { DateRange, DateRangeEnum, AuditLogFilter, AuditLog, User } from '@app/_models';
+import {
+  DateRange,
+  DateRangeEnum,
+  AuditLogFilter,
+  AuditLog,
+  User,
+} from '@app/_models';
 import { AuditLogService, UserService } from '@app/_services';
 import { DateRangeChooserComponent } from '@app/shared';
 import { DateRangeAdapter } from '@app/_helpers';
@@ -23,8 +29,8 @@ import { DateRangeAdapter } from '@app/_helpers';
     NgbAccordionModule,
     FormsModule,
     ReactiveFormsModule,
-    DateRangeChooserComponent
-],
+    DateRangeChooserComponent,
+  ],
 })
 export class AuditLogFilterComponent implements OnInit {
   @Output() filteredAuditLog: EventEmitter<AuditLog[]> = new EventEmitter<
@@ -49,7 +55,9 @@ export class AuditLogFilterComponent implements OnInit {
   constructor() {
     this.users$ = this.userService.getAll();
     this.eventtypes$ = this.auditLogService.getAllEventTypes();
-    this.startAndEndDates = (new DateRangeAdapter()).enumToDateRange(DateRangeEnum.THIS_YEAR)
+    this.startAndEndDates = new DateRangeAdapter().enumToDateRange(
+      DateRangeEnum.THIS_YEAR,
+    );
   }
 
   get f() {
@@ -79,10 +87,12 @@ export class AuditLogFilterComponent implements OnInit {
 
   refreshSummary(filter: AuditLogFilter) {
     this.working = true;
-    this.auditLogService.getFilteredList(filter.toString()).subscribe((response: any) => {
-      this.filteredAuditLog.emit(response);
-      this.filterSubject.next(filter);
-      this.working = false;
-    });
+    this.auditLogService
+      .getFilteredList(filter.toString())
+      .subscribe((response: any) => {
+        this.filteredAuditLog.emit(response);
+        this.filterSubject.next(filter);
+        this.working = false;
+      });
   }
 }

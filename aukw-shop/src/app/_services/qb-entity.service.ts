@@ -28,16 +28,18 @@ export class QBEntityService {
    * @param realmID The company ID for the QBO company.
    * @returns Array of account ids and names
    */
-    getAllAccounts(realmID: string): Observable<ValueIdType[]> {
-      return this.http.get<ValueIdType[]>(`${baseUrl}/${realmID}/entity/account`);
-    }
+  getAllAccounts(realmID: string): Observable<ValueIdType[]> {
+    return this.http.get<ValueIdType[]>(`${baseUrl}/${realmID}/entity/account`);
+  }
 
-    /**
+  /**
    * Get a list of the names of all customers
    * @param realmID The company ID for the QBO company.
    * @returns Array of customer ids and names
    */
-    getAllCustomers(realmID: string): Observable<ValueIdPair[]> {
-      return this.http.get<ValueIdPair[]>(`${baseUrl}/${realmID}/entity/customer`);
-    }
+  getAllCustomers(realmID: string): Observable<ValueIdPair[]> {
+    return this.http.get<ValueIdPair[]>(
+      `${baseUrl}/${realmID}/entity/customer`,
+    );
+  }
 }

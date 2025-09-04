@@ -22,8 +22,8 @@ import { AlertComponent } from './shared/alert-component';
     NgbNavModule,
     RouterLink,
     RouterLinkActive,
-    RouterOutlet
-],
+    RouterOutlet,
+  ],
 })
 export class AppComponent {
   user?: User;

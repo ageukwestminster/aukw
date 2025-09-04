@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 const baseUrl = `${environment.apiUrl}/qb`;
 
 /**
- * 
+ *
  */
 @Injectable({ providedIn: 'root' })
 export class QBTransferService {
@@ -23,9 +23,7 @@ export class QBTransferService {
     return this.http.get<QBTransfer[]>(`${baseUrl}/${realmID}/employee`);
   }
 
-  createNew() : QBTransfer {
-    return new QBTransfer({
-      
-    });
+  createNew(): QBTransfer {
+    return new QBTransfer({});
   }
 }

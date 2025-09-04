@@ -4,7 +4,7 @@
   [class.error]="uploadError"
   (drop)="onFileDrop($event)"
   (dragover)="onDragOver($event)"
-  >
+>
   <input
     type="file"
     accept=".csv, application/vnd.ms-excel
@@ -14,32 +14,33 @@
     (cancel)="onCancel($event)"
     hidden
     #fileInput
-    />
-    <div class="file-dropper" (click)="fileInput.click()">
-      <i class="fas fa-upload"></i>
-      <p class="fw-bold">Drag and drop or click</p>
-      @if (fileName()) {
-        <div>
-          @if (selectedFile) {
-            <div>
-              <p>
-                @if (fileTypeIsCSV()) {
-                  <i
-                    class="fas fa-file-csv"
-                  ></i>
-                } @else {
-                  <i class="far fa-file-excel"></i>
-                }
-                &nbsp;
-                <span class="file-name">{{ fileName() }}</span> ({{ fileSize() }} KB)
-              </p>
-              <p>
-                <i class="fas fa-trash delete-icon" (click)="removeFile()"></i>
-                &nbsp; Choose different file
-              </p>
-            </div>
-          }
-        </div>
-      }
-    </div>
+  />
+  <div class="file-dropper" (click)="fileInput.click()">
+    <i class="fas fa-upload"></i>
+    <p class="fw-bold">Drag and drop or click</p>
+    @if (fileName()) {
+      <div>
+        @if (selectedFile) {
+          <div>
+            <p>
+              @if (fileTypeIsCSV()) {
+                <i class="fas fa-file-csv"></i>
+              } @else {
+                <i class="far fa-file-excel"></i>
+              }
+              &nbsp;
+              <span class="file-name">{{ fileName() }}</span> ({{
+                fileSize()
+              }}
+              KB)
+            </p>
+            <p>
+              <i class="fas fa-trash delete-icon" (click)="removeFile()"></i>
+              &nbsp; Choose different file
+            </p>
+          </div>
+        }
+      </div>
+    }
   </div>
+</div>

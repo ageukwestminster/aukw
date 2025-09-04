@@ -23,8 +23,8 @@ import { DateRangeChooserComponent, IntercoTradeComponent } from '@app/shared';
     NgbTooltip,
     RouterLink,
     ReactiveFormsModule,
-    DateRangeChooserComponent
-],
+    DateRangeChooserComponent,
+  ],
 })
 export class AukwIntercoComponent
   extends AbstractChartReportComponent<QBAccountListEntry[]>
@@ -58,8 +58,7 @@ export class AukwIntercoComponent
     this.reportService
       .getIntercoAccountLedger(startDate, endDate, this.enterprises)
       .pipe(
-
-        tap(() => this.data = []),
+        tap(() => (this.data = [])),
 
         // Convert from Observable<T[]> to Observable<T>
         fromArrayToElement(),
@@ -71,23 +70,25 @@ export class AukwIntercoComponent
         switchMap((accountListEntry) => {
           this.data.push(accountListEntry);
           return this.reportService.getIntercoAccountLedger(
-            startDate, 
-            endDate, 
-            !this.enterprises);
+            startDate,
+            endDate,
+            !this.enterprises,
+          );
         }),
-        
+
         switchMap((response) => {
           this.otherCompanyTrades = response;
-          this.data.forEach(item => {
-            var findEntries = this.otherCompanyTrades.filter((x)=> x.date == item.date &&
-                                          x.amount == item.amount)
+          this.data.forEach((item) => {
+            var findEntries = this.otherCompanyTrades.filter(
+              (x) => x.date == item.date && x.amount == item.amount,
+            );
             if (findEntries && findEntries.length) {
-              item.matching_txn = findEntries[0].type
+              item.matching_txn = findEntries[0].type;
             }
           });
 
           return of(true);
-        })
+        }),
       )
       .subscribe({
         error: (error: any) => {

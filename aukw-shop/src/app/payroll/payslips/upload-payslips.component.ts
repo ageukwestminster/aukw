@@ -19,12 +19,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 @Component({
   templateUrl: 'upload-payslips.component.html',
   standalone: true,
-  imports: [
-    PayslipListComponent,
-    ExcelParserComponent,
-    DatePipe,
-    DecimalPipe
-],
+  imports: [PayslipListComponent, ExcelParserComponent, DatePipe, DecimalPipe],
   styleUrls: ['../shared.css'],
 })
 export class UploadPayslipsComponent implements OnInit {

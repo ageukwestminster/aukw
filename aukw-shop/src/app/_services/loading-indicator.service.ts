@@ -33,7 +33,7 @@ import { MessageFactories } from '@app/_interfaces/message-factories';
         <p>&nbsp;{{ message }}</p>
       </div>
     </div>
-    `,
+  `,
   styles: ['.red-color { color: red; }'],
   imports: [],
 })

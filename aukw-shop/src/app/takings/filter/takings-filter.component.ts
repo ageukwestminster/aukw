@@ -28,8 +28,8 @@ import { DateRangeChooserComponent } from '@app/shared';
     NgbAccordionModule,
     FormsModule,
     ReactiveFormsModule,
-    DateRangeChooserComponent
-],
+    DateRangeChooserComponent,
+  ],
 })
 export class TakingsFilterComponent implements OnInit {
   @Output()

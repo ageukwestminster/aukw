@@ -21,11 +21,7 @@ import { CustomDateParserFormatter, NgbUTCStringAdapter } from '@app/_helpers';
 @Component({
   selector: 'date-range-chooser',
   standalone: true,
-  imports: [
-    KeyValuePipe,
-    NgbDatepickerModule,
-    ReactiveFormsModule
-],
+  imports: [KeyValuePipe, NgbDatepickerModule, ReactiveFormsModule],
   templateUrl: './date-range-chooser.component.html',
   styleUrl: './date-range-chooser.component.css',
   providers: [

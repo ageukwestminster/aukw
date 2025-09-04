@@ -21,132 +21,124 @@
                   formControlName="txnDate"
                   id="inputTxnDate"
                   placement="bottom"
-                  />
-                </div>
-                <div class="input-group-append col-3 p-0">
-                  <button
-                    class="btn btn-outline-secondary"
-                    (click)="d1.toggle()"
-                    type="button"
-                    >
-                    <i class="far fa-calendar-alt"></i>
-                  </button>
-                </div>
+                />
               </div>
-              <div>
-                <div class="row mt-2">
-                  <select
-                    formControlName="entity"
-                    id="entitySelect"
-                    name="entitySelect"
-                    class="form-control"
-                    >
-                    @for (vendor of vendors; track vendor) {
-                      <option
-                        [ngValue]="vendor.id"
-                        class="text-end"
-                        >
-                        {{ vendor.value }}
-                      </option>
-                    }
-                  </select>
-                </div>
-              </div>
-              <div>
-                <div class="row mt-2">
-                  <select
-                    formControlName="account"
-                    id="accountSelect"
-                    name="accountSelect"
-                    class="form-control"
-                    >
-                    @for (account of accounts; track account) {
-                      <option
-                        [ngValue]="account.id"
-                        class="text-center"
-                        >
-                        {{ account.value }}
-                      </option>
-                    }
-                  </select>
-                </div>
+              <div class="input-group-append col-3 p-0">
+                <button
+                  class="btn btn-outline-secondary"
+                  (click)="d1.toggle()"
+                  type="button"
+                >
+                  <i class="far fa-calendar-alt"></i>
+                </button>
               </div>
             </div>
-            <div class="col-3">
-              <div class="p-2">VAT</div>
-              <div class="p-2">Attachments</div>
-              <div class="p-2">Amount</div>
-              <div></div>
+            <div>
+              <div class="row mt-2">
+                <select
+                  formControlName="entity"
+                  id="entitySelect"
+                  name="entitySelect"
+                  class="form-control"
+                >
+                  @for (vendor of vendors; track vendor) {
+                    <option [ngValue]="vendor.id" class="text-end">
+                      {{ vendor.value }}
+                    </option>
+                  }
+                </select>
+              </div>
             </div>
-            <div class="col-3">
-              <div class="pt-2">
-                <div class="form-check">
-                  <input
-                    type="checkbox"
-                    class="form-check-input"
-                    [checked]="existingTrade ? false : true"
-                    (click)="vatCheckboxClick()"
-                    id="checkboxVAT"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <input
-                    id="txnAttachments"
-                    name="txnAttachments"
-                    type="number"
-                    class="form-control"
-                    formControlName="attachments"
-                    [readonly]="true"
-                    />
-                  </div>
-                  <div>
-                    <input
-                      id="txnAmount"
-                      name="txnAmount"
-                      type="number"
-                      class="form-control"
-                      placeholder="£0.00"
-                      pattern="^\d*(\.\d{0,2})?$"
-                      formControlName="amount"
-                      aria-label="The amount of the expense"
-                      />
-                    </div>
-                    <div></div>
-                  </div>
-                  <div class="col-2">
-                    <div class="mx-auto">
-                      <button
-                        type="submit"
-                        [disabled]="loading || !this.existingTrade"
-                        class="btn btn-primary btn-lg"
-                        aria-label="Create Transaction in Quickbooks"
-                        >
-                        @if (loading) {
-                          <span
-                            class="spinner-border spinner-border-sm me-1"
-                          ></span>
-                        }
+            <div>
+              <div class="row mt-2">
+                <select
+                  formControlName="account"
+                  id="accountSelect"
+                  name="accountSelect"
+                  class="form-control"
+                >
+                  @for (account of accounts; track account) {
+                    <option [ngValue]="account.id" class="text-center">
+                      {{ account.value }}
+                    </option>
+                  }
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="col-3">
+            <div class="p-2">VAT</div>
+            <div class="p-2">Attachments</div>
+            <div class="p-2">Amount</div>
+            <div></div>
+          </div>
+          <div class="col-3">
+            <div class="pt-2">
+              <div class="form-check">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  [checked]="existingTrade ? false : true"
+                  (click)="vatCheckboxClick()"
+                  id="checkboxVAT"
+                />
+              </div>
+            </div>
+            <div>
+              <input
+                id="txnAttachments"
+                name="txnAttachments"
+                type="number"
+                class="form-control"
+                formControlName="attachments"
+                [readonly]="true"
+              />
+            </div>
+            <div>
+              <input
+                id="txnAmount"
+                name="txnAmount"
+                type="number"
+                class="form-control"
+                placeholder="£0.00"
+                pattern="^\d*(\.\d{0,2})?$"
+                formControlName="amount"
+                aria-label="The amount of the expense"
+              />
+            </div>
+            <div></div>
+          </div>
+          <div class="col-2">
+            <div class="mx-auto">
+              <button
+                type="submit"
+                [disabled]="loading || !this.existingTrade"
+                class="btn btn-primary btn-lg"
+                aria-label="Create Transaction in Quickbooks"
+              >
+                @if (loading) {
+                  <span class="spinner-border spinner-border-sm me-1"></span>
+                }
 
-                        Add Trade
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <div class="row mt-4">
-                  <div class="col p-0">
-                    <div>
-                      <textarea
-                        class="form-control pl-1"
-                        id="commentsTextarea"
-                        rows="1"
-                        formControlName="Note"
-                        placeholder="Optional memo describing the transaction."
-                      ></textarea>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                Add Trade
+              </button>
             </div>
-          </form>
+          </div>
         </div>
+        <div class="row mt-4">
+          <div class="col p-0">
+            <div>
+              <textarea
+                class="form-control pl-1"
+                id="commentsTextarea"
+                rows="1"
+                formControlName="Note"
+                placeholder="Optional memo describing the transaction."
+              ></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

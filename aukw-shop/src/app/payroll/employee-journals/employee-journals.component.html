@@ -9,7 +9,7 @@
       (click)="createTransaction()"
       class="btn btn-sm btn-success m-1 mt-1"
       [disabled]="!lines || !lines.length"
-      >
+    >
       Create Salary Journals
     </button>
   </div>
@@ -109,9 +109,9 @@
                     @if (inQBO(line)) {
                       <i
                         class="fas fa-check"
-                  ngbTooltip="Employee journal done for {{
-                    line.employeeName
-                  }}."
+                        ngbTooltip="Employee journal done for {{
+                          line.employeeName
+                        }}."
                       ></i>
                     }
                   </span>
@@ -119,9 +119,9 @@
                     @if (!inQBO(line)) {
                       <i
                         class="fas fa-times"
-                  ngbTooltip="Employee journal missing for {{
-                    line.employeeName
-                  }}."
+                        ngbTooltip="Employee journal missing for {{
+                          line.employeeName
+                        }}."
                       ></i>
                     }
                   </span>

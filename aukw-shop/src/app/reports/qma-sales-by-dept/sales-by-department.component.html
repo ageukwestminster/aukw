@@ -9,21 +9,21 @@
         type="button"
         routerLink="/reports/weekly-sales"
         class="btn btn-success m-2"
-        >
+      >
         &lt; Previous
       </button>
       <button
         type="button"
         routerLink="/reports/daily-transaction-averages"
         class="btn btn-success m-2"
-        >
+      >
         Next &gt;
       </button>
       <button
         type="button"
         routerLink="/reports"
         class="btn btn-outline-dark m-2"
-        >
+      >
         Close &times;
       </button>
     </div>
@@ -38,9 +38,7 @@
     <div class="col-sm-6">
       <div>
         @if (loading) {
-          <span
-            class="spinner-border spinner-border-lg align-center"
-          ></span>
+          <span class="spinner-border spinner-border-lg align-center"></span>
         }
       </div>
     </div>
@@ -107,19 +105,19 @@
       @if (
         data &&
         Math.abs(
-        data.clothing +
-        data.brica +
-        data.books +
-        data.linens +
-        data.other -
-        data.total
+          data.clothing +
+            data.brica +
+            data.books +
+            data.linens +
+            data.other -
+            data.total
         ) > 0.1
-        ) {
-        <p
-          class="text-danger"
-          >
+      ) {
+        <p class="text-danger">
           Possible Error: Clothing+Brica+Books+Linens+Misc = £
-          {{ data.clothing + data.brica + data.books + data.linens + data.other }}
+          {{
+            data.clothing + data.brica + data.books + data.linens + data.other
+          }}
           but total = £{{ data.total }}
         </p>
       }

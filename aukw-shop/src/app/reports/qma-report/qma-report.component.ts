@@ -15,8 +15,8 @@ import { DateRangeChooserComponent } from '@app/shared';
     DateRangeChooserComponent,
     NgbAccordionModule,
     ReactiveFormsModule,
-    RouterLink
-],
+    RouterLink,
+  ],
   templateUrl: './qma-report.component.html',
   styleUrl: './qma-report.component.css',
 })

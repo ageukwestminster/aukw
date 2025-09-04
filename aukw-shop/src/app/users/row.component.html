@@ -5,12 +5,9 @@
   <select
     (change)="onRoleChange($any($event.target).value)"
     (click)="onClickEvent($event)"
-    >
+  >
     @for (role of roles; track role) {
-      <option
-        [ngValue]="role"
-        [selected]="role === user.role"
-        >
+      <option [ngValue]="role" [selected]="role === user.role">
         {{ roles2[role] }}
       </option>
     }
@@ -23,7 +20,7 @@
         (change)="onSuspendedChange($any($event.target).value)"
         (click)="onClickEvent($event)"
         class="form-check"
-        >
+      >
         <input class="form-check-input" type="checkbox" checked />
       </div>
     }
@@ -32,7 +29,7 @@
         (change)="onSuspendedChange($any($event.target).value)"
         (click)="onClickEvent($event)"
         class="form-check"
-        >
+      >
         <input class="form-check-input" type="checkbox" />
       </div>
     }
@@ -43,11 +40,9 @@
     routerLink="edit/{{ user.id }}"
     class="btn btn-sm btn-primary me-1"
     [disabled]="user.isUpdating"
-    >
+  >
     @if (user.isUpdating) {
-      <span
-        class="spinner-border spinner-border-sm"
-      ></span>
+      <span class="spinner-border spinner-border-sm"></span>
     }
     @if (!user.isUpdating) {
       <span>Edit</span>
@@ -57,11 +52,9 @@
     (click)="deleteUser($event)"
     class="btn btn-sm btn-danger btn-delete-user"
     [disabled]="user.isDeleting"
-    >
+  >
     @if (user.isDeleting) {
-      <span
-        class="spinner-border spinner-border-sm"
-      ></span>
+      <span class="spinner-border spinner-border-sm"></span>
     }
     @if (!user.isDeleting) {
       <span>Delete</span>

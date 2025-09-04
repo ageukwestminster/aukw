@@ -16,7 +16,7 @@
       (click)="createTransaction()"
       class="btn btn-sm btn-success m-1 mt-1 #employerNI"
       [disabled]="!lines || !lines.length"
-      >
+    >
       Create Shop Journal Entry
     </button>
   </div>
@@ -63,8 +63,8 @@
             </td>
             <td>
               {{
-              line.totalPay + line.employerPension + line.employerNI
-              | number: "1.2-2"
+                line.totalPay + line.employerPension + line.employerNI
+                  | number: "1.2-2"
               }}
             </td>
             <td class="text-center">
@@ -74,7 +74,9 @@
                     @if (inQBO(line)) {
                       <i
                         class="fas fa-check"
-                        ngbTooltip="Shop journal done for {{ line.employeeName }}."
+                        ngbTooltip="Shop journal done for {{
+                          line.employeeName
+                        }}."
                       ></i>
                     }
                   </span>
@@ -82,7 +84,9 @@
                     @if (!inQBO(line)) {
                       <i
                         class="fas fa-times"
-                        ngbTooltip="Shop journal missing for {{ line.employeeName }}."
+                        ngbTooltip="Shop journal missing for {{
+                          line.employeeName
+                        }}."
                       ></i>
                     }
                   </span>
@@ -106,8 +110,8 @@
             </td>
             <td>
               {{
-              total.totalPay + total.employerPension + total.employerNI
-              | number: "1.2-2"
+                total.totalPay + total.employerPension + total.employerNI
+                  | number: "1.2-2"
               }}
             </td>
             <td></td>
@@ -116,7 +120,9 @@
         @if (!lines || !lines.length) {
           <tr>
             <td colspan="7" class="text-center">
-              <span class="spinner-border spinner-border-lg align-center"></span>
+              <span
+                class="spinner-border spinner-border-lg align-center"
+              ></span>
             </td>
           </tr>
         }

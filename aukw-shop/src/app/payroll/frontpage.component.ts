@@ -9,12 +9,7 @@ import { PayrollProcessState } from '@app/_models';
 @Component({
   templateUrl: 'frontpage.component.html',
   standalone: true,
-  imports: [
-    NgbNavModule,
-    RouterLink,
-    RouterLinkActive,
-    RouterOutlet
-],
+  imports: [NgbNavModule, RouterLink, RouterLinkActive, RouterOutlet],
   styleUrl: './frontpage.component.css',
 })
 export class PayrollFrontPageComponent {

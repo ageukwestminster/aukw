@@ -33,7 +33,7 @@
         <!-- Tooltip must be on element inside header, not header itself-->
         <div
           ngbTooltip="Employee pension contribution including salary sacrifice"
-          >
+        >
           E'ee Pen
         </div>
       </th>
@@ -107,10 +107,7 @@
             </div>
             <div class="col">
               @if (!p.employerPension) {
-                <i
-                  class="fas fa-minus"
-                  ngbTooltip="Not in pension plan."
-                ></i>
+                <i class="fas fa-minus" ngbTooltip="Not in pension plan."></i>
               }
               <span class="in-qbo">
                 @if (p.employerPension && p.qbFlags && p.qbFlags.pensionBill) {
@@ -123,7 +120,7 @@
               <span class="not-in-qbo">
                 @if (
                   p.employerPension && (!p.qbFlags || !p.qbFlags.pensionBill)
-                  ) {
+                ) {
                   <i
                     class="fas fa-times"
                     ngbTooltip="L&G pension bill missing."
@@ -133,10 +130,7 @@
             </div>
             <div class="col">
               @if (!p.employerNI) {
-                <i
-                  class="fas fa-minus"
-                  ngbTooltip="Employer NI is zero."
-                ></i>
+                <i class="fas fa-minus" ngbTooltip="Employer NI is zero."></i>
               }
               <span class="in-qbo">
                 @if (p.employerNI && p.qbFlags && p.qbFlags.employerNI) {
@@ -157,10 +151,7 @@
             </div>
             <div class="col">
               @if (!p.isShopEmployee) {
-                <i
-                  class="fas fa-minus"
-                  ngbTooltip="Not a shop employee."
-                ></i>
+                <i class="fas fa-minus" ngbTooltip="Not a shop employee."></i>
               }
               <span class="in-qbo">
                 @if (p.isShopEmployee && p.qbFlags && p.qbFlags.shopJournal) {
@@ -173,7 +164,7 @@
               <span class="not-in-qbo">
                 @if (
                   p.isShopEmployee && (!p.qbFlags || !p.qbFlags.shopJournal)
-                  ) {
+                ) {
                   <i
                     class="fas fa-times"
                     ngbTooltip="Shop journal entry missing."

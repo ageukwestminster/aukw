@@ -14,8 +14,8 @@ import { DateRangeChooserComponent } from '@app/shared';
     CommonModule,
     DateRangeChooserComponent,
     ReactiveFormsModule,
-    RouterLink
-],
+    RouterLink,
+  ],
   templateUrl: './sales-by-department.component.html',
   styleUrl: './sales-by-department.component.css',
 })

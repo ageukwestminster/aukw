@@ -22,8 +22,8 @@ import { DateRangeChooserComponent, RaggingChartComponent } from '@app/shared';
     DateRangeChooserComponent,
     NgbAccordionModule,
     RaggingChartComponent,
-    RouterLink
-],
+    RouterLink,
+  ],
   templateUrl: './ragging-report.component.html',
   styleUrl: './ragging-report.component.css',
 })

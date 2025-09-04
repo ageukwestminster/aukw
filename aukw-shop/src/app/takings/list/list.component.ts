@@ -35,8 +35,8 @@ import {
     CommonModule,
     RouterLink,
     TakingsRowComponent,
-    TakingsFilterComponent
-],
+    TakingsFilterComponent,
+  ],
 })
 export class TakingsListComponent implements OnInit {
   takingslist!: TakingsSummary[];

@@ -9,14 +9,14 @@
         type="button"
         routerLink="/reports/weekly-sales"
         class="btn btn-success m-2"
-        >
+      >
         Next Report &gt;
       </button>
       <button
         type="button"
         routerLink="/reports"
         class="btn btn-outline-dark m-2"
-        >
+      >
         Close &times;
       </button>
     </div>
@@ -31,9 +31,7 @@
     <div class="col-sm-6">
       <div>
         @if (loading) {
-          <span
-            class="spinner-border spinner-border-lg align-center"
-          ></span>
+          <span class="spinner-border spinner-border-lg align-center"></span>
         }
       </div>
     </div>
@@ -69,22 +67,22 @@
               </th>
               <td class="text-end">
                 {{
-                data.income.previousValue + data.donations.previousValue
-                | number: "1.2-2"
+                  data.income.previousValue + data.donations.previousValue
+                    | number: "1.2-2"
                 }}
               </td>
               <td class="text-end">
                 {{
-                data.income.currentValue + data.donations.currentValue
-                | number: "1.2-2"
+                  data.income.currentValue + data.donations.currentValue
+                    | number: "1.2-2"
                 }}
               </td>
               <td class="d-none d-md-table-cell text-end">
                 {{
-                data.income.currentValue +
-                data.donations.currentValue -
-                data.income.previousValue -
-                data.donations.previousValue | number: "1.2-2"
+                  data.income.currentValue +
+                    data.donations.currentValue -
+                    data.income.previousValue -
+                    data.donations.previousValue | number: "1.2-2"
                 }}
               </td>
             </tr>
@@ -106,8 +104,8 @@
               </td>
               <td class="d-none d-md-table-cell text-end">
                 {{
-                data.instorecustomersales.currentValue -
-                data.instorecustomersales.previousValue | number: "1.2-2"
+                  data.instorecustomersales.currentValue -
+                    data.instorecustomersales.previousValue | number: "1.2-2"
                 }}
               </td>
             </tr>
@@ -133,8 +131,8 @@
               </td>
               <td class="d-none d-md-table-cell text-end">
                 {{
-                data.instorecustomersales.currentValue -
-                data.instorecustomersales.previousValue | number: "1.2-2"
+                  data.instorecustomersales.currentValue -
+                    data.instorecustomersales.previousValue | number: "1.2-2"
                 }}
               </td>
             </tr>
@@ -148,8 +146,8 @@
               </td>
               <td class="d-none d-md-table-cell text-end">
                 {{
-                data.ragging.currentValue - data.ragging.previousValue
-                | number: "1.2-2"
+                  data.ragging.currentValue - data.ragging.previousValue
+                    | number: "1.2-2"
                 }}
               </td>
             </tr>
@@ -163,8 +161,8 @@
               </td>
               <td class="d-none d-md-table-cell text-end">
                 {{
-                data.donations.currentValue - data.donations.previousValue
-                | number: "1.2-2"
+                  data.donations.currentValue - data.donations.previousValue
+                    | number: "1.2-2"
                 }}
               </td>
             </tr>
@@ -178,8 +176,8 @@
               </td>
               <td class="d-none d-md-table-cell text-end">
                 {{
-                data.miscellaneousincome.currentValue -
-                data.miscellaneousincome.previousValue | number: "1.2-2"
+                  data.miscellaneousincome.currentValue -
+                    data.miscellaneousincome.previousValue | number: "1.2-2"
                 }}
               </td>
             </tr>
@@ -189,22 +187,22 @@
               </th>
               <td class="text-end border-tb">
                 {{
-                data.income.previousValue + data.donations.previousValue
-                | number: "1.2-2"
+                  data.income.previousValue + data.donations.previousValue
+                    | number: "1.2-2"
                 }}
               </td>
               <td class="text-end border-tb">
                 {{
-                data.income.currentValue + data.donations.currentValue
-                | number: "1.2-2"
+                  data.income.currentValue + data.donations.currentValue
+                    | number: "1.2-2"
                 }}
               </td>
               <td class="d-none d-md-table-cell text-end border-tb">
                 {{
-                data.income.currentValue +
-                data.donations.currentValue -
-                data.income.previousValue -
-                data.donations.previousValue | number: "1.2-2"
+                  data.income.currentValue +
+                    data.donations.currentValue -
+                    data.income.previousValue -
+                    data.donations.previousValue | number: "1.2-2"
                 }}
               </td>
             </tr>
@@ -218,26 +216,26 @@
         </small>
         <small class="p-2" id="notesList"
           ><ul>
-          <li>Donated goods</li>
-          <li>Charity shop collections (i.e. rag)</li>
-          <li>Bought-in goods excluding VAT</li>
-          <li>Gift Aid tax reclaims</li>
-          <li>Cash donations</li>
-          <li>Misc. income</li>
-        </ul>
-      </small>
-      <small class="p-2" id="notes"
-        >**Total in-store income from customer sales covers income generated
-        by all open shops in your retail chain, including:
-      </small>
-      <small class="p-2" id="notesList"
-        ><ul>
-        <li>Donated goods</li>
-        <li>Bought-in goods excluding VAT</li>
-      </ul>
-    </small>
-    <small class="p-2" id="notes">Both numbers exclude online sales.</small>
-  </p>
-</div>
-</div>
+            <li>Donated goods</li>
+            <li>Charity shop collections (i.e. rag)</li>
+            <li>Bought-in goods excluding VAT</li>
+            <li>Gift Aid tax reclaims</li>
+            <li>Cash donations</li>
+            <li>Misc. income</li>
+          </ul>
+        </small>
+        <small class="p-2" id="notes"
+          >**Total in-store income from customer sales covers income generated
+          by all open shops in your retail chain, including:
+        </small>
+        <small class="p-2" id="notesList"
+          ><ul>
+            <li>Donated goods</li>
+            <li>Bought-in goods excluding VAT</li>
+          </ul>
+        </small>
+        <small class="p-2" id="notes">Both numbers exclude online sales.</small>
+      </p>
+    </div>
+  </div>
 </div>

@@ -14,11 +14,9 @@
         class="btn btn-sm btn-primary mb-1"
         [disabled]="(takings.isUpdating || takings.quickbooks) && !user.isAdmin"
         routerLink="edit/{{ takings.id }}"
-        >
+      >
         @if (takings.isUpdating) {
-          <span
-            class="spinner-border spinner-border-sm"
-          ></span>
+          <span class="spinner-border spinner-border-sm"></span>
         }
         @if (!takings.isUpdating) {
           <span>Edit</span>
@@ -30,11 +28,9 @@
         class="btn btn-sm btn-secondary mb-1"
         [disabled]="takings.isUpdating"
         routerLink="view/{{ takings.id }}"
-        >
+      >
         @if (takings.isUpdating) {
-          <span
-            class="spinner-border spinner-border-sm"
-          ></span>
+          <span class="spinner-border spinner-border-sm"></span>
         }
         @if (!takings.isUpdating) {
           <span>View</span>
@@ -46,11 +42,9 @@
         (click)="deleteTakings($event)"
         class="btn btn-sm btn-danger btn-delete-takings mb-1"
         [disabled]="takings.isDeleting"
-        >
+      >
         @if (takings.isDeleting) {
-          <span
-            class="spinner-border spinner-border-sm"
-          ></span>
+          <span class="spinner-border spinner-border-sm"></span>
         }
         @if (!takings.isDeleting) {
           <span>Delete</span>
@@ -61,12 +55,10 @@
       <button
         (click)="addToQuickbooks($event)"
         class="btn btn-sm btn-warning btn-add-takings-to-qb"
-        >
+      >
         <!-- [disabled]="takings.isDeleting || !isProduction" -->
         @if (takings.isUpdating) {
-          <span
-            class="spinner-border spinner-border-sm"
-          ></span>
+          <span class="spinner-border spinner-border-sm"></span>
         }
         @if (!takings.isUpdating) {
           <span>Add to QB</span>

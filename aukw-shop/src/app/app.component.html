@@ -2,147 +2,150 @@
 @if (user) {
   <div>
     <!--Could not put the ngIf on the Nav div's directly because it was causing errors-->
-    <div ngbNav #nav="ngbNav" class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div
+      ngbNav
+      #nav="ngbNav"
+      class="navbar navbar-expand-lg navbar-dark bg-dark"
+    >
       <!--[(activeId)]="activeId">-->
       <div class="d-flex flex-grow-1">
         <!--<span class="w-100 d-lg-none d-block">
       </span>-->
-      <div class="navbar-header">
-        <a class="navbar-brand p-0" href="/">
-          <img
-            src="/assets/images/logo_50x50.png"
-            alt="Age UK Logo in small square format"
+        <div class="navbar-header">
+          <a class="navbar-brand p-0" href="/">
+            <img
+              src="/assets/images/logo_50x50.png"
+              alt="Age UK Logo in small square format"
             />
             Age UK Westminster</a
-            >
-          </div>
-          <div class="w-100 text-right">
-            <!--
+          >
+        </div>
+        <div class="w-100 text-right">
+          <!--
             Responsive Navbar in ng-bootstrap
             Makes use of a component property (isMenuCollapsed) that must be added manually
             See https://ng-bootstrap.github.io/#/components/collapse/examples
             for information on how to create a responsive Navbar in ng-bootstrap -->
-            <button
-              class="navbar-toggler"
-              type="button"
-              data-toggle="collapse"
-              data-target="#myNavbar7"
-              (click)="isMenuCollapsed = !isMenuCollapsed"
-              >
-              <span class="navbar-toggler-icon"></span>
-            </button>
-          </div>
-        </div>
-        <!-- This NavBar from https://www.codeply.com/go/qhaBrcWp3v -->
-        <div
-          class="collapse navbar-collapse flex-grow-1 text-right"
-          id="myNavbar7"
-          [ngbCollapse]="isMenuCollapsed"
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#myNavbar7"
+            (click)="isMenuCollapsed = !isMenuCollapsed"
           >
-          <ul class="navbar-nav ml-2 flex-nowrap">
-            <li [ngbNavItem]="1">
-              <!--
+            <span class="navbar-toggler-icon"></span>
+          </button>
+        </div>
+      </div>
+      <!-- This NavBar from https://www.codeply.com/go/qhaBrcWp3v -->
+      <div
+        class="collapse navbar-collapse flex-grow-1 text-right"
+        id="myNavbar7"
+        [ngbCollapse]="isMenuCollapsed"
+      >
+        <ul class="navbar-nav ml-2 flex-nowrap">
+          <li [ngbNavItem]="1">
+            <!--
               Using routerLinkActive="active" to highlight the current nav link with the CSS class active.
               The [routerLinkActiveOptions]="{exact: true}" option only highlights the home link when the
               path exactly matches the routerLink (/), otherwise it matches any path that begins with the
               link path (e.g. /users*).
               From: https://jasonwatmore.com/angular-15-free-course-6-user-management-crud-section
               -->
+            <a
+              class="nav-item nav-link"
+              routerLink="/"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              >Home</a
+            >
+          </li>
+          <li [ngbNavItem]="4">
+            <a
+              class="nav-item nav-link"
+              routerLink="/takings"
+              routerLinkActive="active"
+              >Takings</a
+            >
+          </li>
+          <li [ngbNavItem]="2">
+            <a
+              class="nav-item nav-link"
+              routerLink="/reports"
+              routerLinkActive="active"
+              >Reports</a
+            >
+          </li>
+          @if (user.isAdmin) {
+            <li [ngbNavItem]="3">
               <a
                 class="nav-item nav-link"
-                routerLink="/"
+                routerLink="/payroll"
                 routerLinkActive="active"
-                [routerLinkActiveOptions]="{ exact: true }"
-                >Home</a
-                >
-              </li>
-              <li [ngbNavItem]="4">
-                <a
-                  class="nav-item nav-link"
-                  routerLink="/takings"
-                  routerLinkActive="active"
-                  >Takings</a
+                >Payroll</a
+              >
+            </li>
+            <li [ngbNavItem]="4">
+              <a
+                class="nav-item nav-link"
+                routerLink="/auditlog"
+                routerLinkActive="active"
+                >Audit Log</a
+              >
+            </li>
+            <li [ngbNavItem]="5">
+              <a
+                class="nav-item nav-link"
+                routerLink="/users"
+                routerLinkActive="active"
+                >Users</a
+              >
+            </li>
+          }
+          <li [ngbNavItem]="6" ngbDropdown class="nav-item">
+            <a href (click)="(false)" class="nav-link" ngbDropdownToggle>
+              <!-- Find icon names at https://fontawesome.com/icons?d=gallery&p=2  -->
+              <span class="fas fa-user"></span> Account
+            </a>
+            <div ngbDropdownMenu>
+              <button ngbDropdownItem [routerLink]="'/users/edit/' + user!.id">
+                Profile
+              </button>
+              @if (user.isAdmin) {
+                <div>
+                  <button
+                    ngbDropdownItem
+                    [routerLink]="'/quickbooksconnection'"
                   >
-                </li>
-                <li [ngbNavItem]="2">
-                  <a
-                    class="nav-item nav-link"
-                    routerLink="/reports"
-                    routerLinkActive="active"
-                    >Reports</a
-                    >
-                  </li>
-                  @if (user.isAdmin) {
-                    <li [ngbNavItem]="3">
-                      <a
-                        class="nav-item nav-link"
-                        routerLink="/payroll"
-                        routerLinkActive="active"
-                        >Payroll</a
-                        >
-                      </li>
-                    }
-                    @if (user.isAdmin) {
-                      <li [ngbNavItem]="4">
-                        <a
-                          class="nav-item nav-link"
-                          routerLink="/auditlog"
-                          routerLinkActive="active"
-                          >Audit Log</a
-                          >
-                        </li>
-                      }
-                      @if (user.isAdmin) {
-                        <li [ngbNavItem]="5">
-                          <a
-                            class="nav-item nav-link"
-                            routerLink="/users"
-                            routerLinkActive="active"
-                            >Users</a
-                            >
-                          </li>
-                        }
-                        <li [ngbNavItem]="6" ngbDropdown class="nav-item">
-                          <a href (click)="(false)" class="nav-link" ngbDropdownToggle>
-                            <!-- Find icon names at https://fontawesome.com/icons?d=gallery&p=2  -->
-                            <span class="fas fa-user"></span> Account
-                          </a>
-                          <div ngbDropdownMenu>
-                            <button ngbDropdownItem [routerLink]="'/users/edit/' + user!.id">
-                              Profile
-                            </button>
-                            @if (user.isAdmin) {
-                              <div>
-                                <button ngbDropdownItem [routerLink]="'/quickbooksconnection'">
-                                  QuickBooks Connection
-                                </button>
-                              </div>
-                            }
-                            <div class="dropdown-divider"></div>
-                            <button ngbDropdownItem (click)="logout()">Logout</button>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                  <div [ngbNavOutlet]="nav" class="mt-2"></div>
+                    QuickBooks Connection
+                  </button>
                 </div>
               }
-              <!-- main app container -->
-              <div class="container">
-                <alert></alert>
-                <router-outlet></router-outlet>
-              </div>
+              <div class="dropdown-divider"></div>
+              <button ngbDropdownItem (click)="logout()">Logout</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div [ngbNavOutlet]="nav" class="mt-2"></div>
+  </div>
+}
+<!-- main app container -->
+<div class="container">
+  <alert></alert>
+  <router-outlet></router-outlet>
+</div>
 
-              <!-- credits -->
-              <div class="text-center mt-4">
-                <p>
-                  <a href="/" target="_top">Age UK Westminster Charity Shop</a>
-                </p>
-                <p>522 Harrow Road, London, W9 3QF</p>
-                <p>
-                  <a href="https://www.ageuk.org.uk/westminster/our-shops/" target="_top"
-                    >(c) 2025 Age UK Westminster</a
-                    >
-                  </p>
-                </div>
+<!-- credits -->
+<div class="text-center mt-4">
+  <p>
+    <a href="/" target="_top">Age UK Westminster Charity Shop</a>
+  </p>
+  <p>522 Harrow Road, London, W9 3QF</p>
+  <p>
+    <a href="https://www.ageuk.org.uk/westminster/our-shops/" target="_top"
+      >(c) 2025 Age UK Westminster</a
+    >
+  </p>
+</div>

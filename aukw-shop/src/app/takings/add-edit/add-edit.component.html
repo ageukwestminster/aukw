@@ -12,24 +12,14 @@
 <!--'[formGroup]' is a Reactive forms property-->
 <!--The *ngIf is in place to stop errors of 'Expression has changed after it was checked.'-->
 @if (!loading) {
-  <form
-    [formGroup]="form"
-    (ngSubmit)="onSubmit()"
-    novalidate="novalidate"
-    >
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate="novalidate">
     <!-- Buttons -->
     <div class="d-flex flex-row mb-2">
       <div>
         @if (!isReadOnly) {
-          <button
-            type="submit"
-            [disabled]="loading"
-            class="btn btn-primary"
-            >
+          <button type="submit" [disabled]="loading" class="btn btn-primary">
             @if (loading) {
-              <span
-                class="spinner-border spinner-border-sm me-1"
-              ></span>
+              <span class="spinner-border spinner-border-sm me-1"></span>
             }
             Save
           </button>
@@ -58,529 +48,487 @@
             [minDate]="minimumNextDate"
             [footerTemplate]="footerTemplate"
             #d="ngbDatepicker"
-            />
-            <!-- template from
+          />
+          <!-- template from
             https://ng-bootstrap.github.io/#/components/datepicker/examples#footertemplate -->
-            <ng-template #footerTemplate>
-              <label class="p-2" for="allowOldDates">
-                <input
-                  type="checkbox"
-                  id="allowOldDates"
-                  checked="true"
-                  (change)="onDatePickerCheckboxChange($event.target)"
-                  class="me-2"
-                  /><span>No Historic Dates</span>
-                </label>
-              </ng-template>
-              <div class="input-group-append">
-                <button
-                  class="btn btn-outline-secondary"
-                  (click)="d.toggle()"
-                  type="button"
-                  >
-                  <i class="far fa-calendar-alt"></i>
-                </button>
-              </div>
+          <ng-template #footerTemplate>
+            <label class="p-2" for="allowOldDates">
+              <input
+                type="checkbox"
+                id="allowOldDates"
+                checked="true"
+                (change)="onDatePickerCheckboxChange($event.target)"
+                class="me-2"
+              /><span>No Historic Dates</span>
+            </label>
+          </ng-template>
+          <div class="input-group-append">
+            <button
+              class="btn btn-outline-secondary"
+              (click)="d.toggle()"
+              type="button"
+            >
+              <i class="far fa-calendar-alt"></i>
+            </button>
+          </div>
+        </div>
+        <div>
+          <select
+            formControlName="shopid"
+            id="shopSelect"
+            name="shopSelect"
+            class="form-control mb-2"
+          >
+            @for (shop of shops; track shop) {
+              <option [ngValue]="shop.id">
+                {{ shop.name }}
+              </option>
+            }
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="w-100"></div>
+    <!-- Department Sales -->
+    @if (f["quickbooks"].value) {
+      <div>
+        <p class="mb-0" [ngStyle]="{ color: 'red' }">
+          <small>Note: These values have already been uploaded to QB</small>
+        </p>
+      </div>
+    }
+    <div class="form-row mb-1">
+      <div class="input-group mb-1">
+        <span class="input-group-text col-4" id="clothing-label">Clothing</span>
+        <div class="card p-2 col">
+          <div class="row">
+            <div class="col">
+              <label for="clothingNumber" class="form-label"> Number </label>
+              <input
+                id="clothingNumber"
+                name="clothingNumber"
+                type="number"
+                class="form-control"
+                formControlName="clothing_num"
+                [ngClass]="{
+                  'is-invalid': submitted && f['clothing_num'].errors,
+                }"
+              />
+              @if (submitted && f["clothing_num"].errors) {
+                <div class="invalid-feedback" id="clothingNumberError">
+                  @if (f["clothing_num"].errors["mustProvideNumberOfItems"]) {
+                    <div>Number of clothing items is missing.</div>
+                  }
+                </div>
+              }
             </div>
-            <div>
-              <select
-                formControlName="shopid"
-                id="shopSelect"
-                name="shopSelect"
-                class="form-control mb-2"
-                >
-                @for (shop of shops; track shop) {
-                  <option [ngValue]="shop.id">
-                    {{ shop.name }}
-                  </option>
-                }
-              </select>
+            <div class="col">
+              <label for="clothingAmount" class="form-label"> Amount </label>
+              <input
+                id="clothingAmount"
+                name="clothingAmount"
+                type="number"
+                class="form-control"
+                placeholder="0.00"
+                formControlName="clothing"
+                pattern="^\d*(\.\d{0,2})?$"
+              />
             </div>
           </div>
         </div>
-        <div class="w-100"></div>
-        <!-- Department Sales -->
-        @if (f['quickbooks'].value) {
-          <div>
-            <p class="mb-0" [ngStyle]="{ color: 'red' }">
-              <small>Note: These values have already been uploaded to QB</small>
-            </p>
-          </div>
-        }
-        <div class="form-row mb-1">
-          <div class="input-group mb-1">
-            <span class="input-group-text col-4" id="clothing-label">Clothing</span>
-            <div class="card p-2 col">
-              <div class="row">
-                <div class="col">
-                  <label for="clothingNumber" class="form-label"> Number </label>
-                  <input
-                    id="clothingNumber"
-                    name="clothingNumber"
-                    type="number"
-                    class="form-control"
-                    formControlName="clothing_num"
-              [ngClass]="{
-                'is-invalid': submitted && f['clothing_num'].errors,
-              }"
-                    />
-                    @if (submitted && f['clothing_num'].errors) {
-                      <div
-                        class="invalid-feedback"
-                        id="clothingNumberError"
-                        >
-                        @if (f['clothing_num'].errors['mustProvideNumberOfItems']) {
-                          <div>
-                            Number of clothing items is missing.
-                          </div>
-                        }
-                      </div>
-                    }
-                  </div>
-                  <div class="col">
-                    <label for="clothingAmount" class="form-label"> Amount </label>
-                    <input
-                      id="clothingAmount"
-                      name="clothingAmount"
-                      type="number"
-                      class="form-control"
-                      placeholder="0.00"
-                      formControlName="clothing"
-                      pattern="^\d*(\.\d{0,2})?$"
-                      />
-                    </div>
-                  </div>
+      </div>
+    </div>
+    <div class="form-row mb-1">
+      <div class="input-group mb-1">
+        <span class="input-group-text col-4" id="brica-label">Brica</span>
+        <div class="card p-2 col">
+          <div class="row">
+            <div class="col">
+              <label for="bricaNumber" class="form-label"> Number </label>
+              <input
+                id="bricaNumber"
+                name="bricaNumber"
+                type="number"
+                class="form-control"
+                formControlName="brica_num"
+                [ngClass]="{
+                  'is-invalid': submitted && f['brica_num'].errors,
+                }"
+              />
+              @if (submitted && f["brica_num"].errors) {
+                <div class="invalid-feedback" id="bricaNumberError">
+                  @if (f["brica_num"].errors["mustProvideNumberOfItems"]) {
+                    <div>Number of bric-a-brac items is missing.</div>
+                  }
                 </div>
-              </div>
+              }
             </div>
-            <div class="form-row mb-1">
-              <div class="input-group mb-1">
-                <span class="input-group-text col-4" id="brica-label">Brica</span>
-                <div class="card p-2 col">
-                  <div class="row">
-                    <div class="col">
-                      <label for="bricaNumber" class="form-label"> Number </label>
-                      <input
-                        id="bricaNumber"
-                        name="bricaNumber"
-                        type="number"
-                        class="form-control"
-                        formControlName="brica_num"
-              [ngClass]="{
-                'is-invalid': submitted && f['brica_num'].errors,
-              }"
-                        />
-                        @if (submitted && f['brica_num'].errors) {
-                          <div
-                            class="invalid-feedback"
-                            id="bricaNumberError"
-                            >
-                            @if (f['brica_num'].errors['mustProvideNumberOfItems']) {
-                              <div>
-                                Number of bric-a-brac items is missing.
-                              </div>
-                            }
-                          </div>
-                        }
-                      </div>
-                      <div class="col">
-                        <label for="bricaAmount" class="form-label"> Amount </label>
-                        <input
-                          id="bricaAmount"
-                          name="bricaAmount"
-                          type="number"
-                          class="form-control"
-                          placeholder="0.00"
-                          formControlName="brica"
-                          pattern="^\d*(\.\d{0,2})?$"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+            <div class="col">
+              <label for="bricaAmount" class="form-label"> Amount </label>
+              <input
+                id="bricaAmount"
+                name="bricaAmount"
+                type="number"
+                class="form-control"
+                placeholder="0.00"
+                formControlName="brica"
+                pattern="^\d*(\.\d{0,2})?$"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-row mb-1">
+      <div class="input-group mb-1">
+        <span class="input-group-text col-4" id="brica-label">Books</span>
+        <div class="card p-2 col">
+          <div class="row">
+            <div class="col">
+              <label for="booksNumber" class="form-label"> Number </label>
+              <input
+                id="booksNumber"
+                name="booksNumber"
+                type="number"
+                class="form-control"
+                formControlName="books_num"
+                [ngClass]="{
+                  'is-invalid': submitted && f['books_num'].errors,
+                }"
+              />
+              @if (submitted && f["books_num"].errors) {
+                <div class="invalid-feedback" id="booksNumberError">
+                  @if (f["books_num"].errors["mustProvideNumberOfItems"]) {
+                    <div>Number of books is missing.</div>
+                  }
                 </div>
-                <div class="form-row mb-1">
-                  <div class="input-group mb-1">
-                    <span class="input-group-text col-4" id="brica-label">Books</span>
-                    <div class="card p-2 col">
-                      <div class="row">
-                        <div class="col">
-                          <label for="booksNumber" class="form-label"> Number </label>
-                          <input
-                            id="booksNumber"
-                            name="booksNumber"
-                            type="number"
-                            class="form-control"
-                            formControlName="books_num"
-              [ngClass]="{
-                'is-invalid': submitted && f['books_num'].errors,
-              }"
-                            />
-                            @if (submitted && f['books_num'].errors) {
-                              <div
-                                class="invalid-feedback"
-                                id="booksNumberError"
-                                >
-                                @if (f['books_num'].errors['mustProvideNumberOfItems']) {
-                                  <div>
-                                    Number of books is missing.
-                                  </div>
-                                }
-                              </div>
-                            }
-                          </div>
-                          <div class="col">
-                            <label for="booksAmount" class="form-label"> Amount </label>
-                            <input
-                              id="booksAmount"
-                              name="booksAmount"
-                              type="number"
-                              class="form-control"
-                              placeholder="0.00"
-                              formControlName="books"
-                              pattern="^\d*(\.\d{0,2})?$"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="form-row mb-1">
-                      <div class="input-group mb-1">
-                        <span class="input-group-text col-4" id="brica-label">Linens</span>
-                        <div class="card p-2 col">
-                          <div class="row">
-                            <div class="col">
-                              <label for="linensNumber" class="form-label"> Number </label>
-                              <input
-                                id="linensNumber"
-                                name="linensNumber"
-                                type="number"
-                                class="form-control"
-                                formControlName="linens_num"
-              [ngClass]="{
-                'is-invalid': submitted && f['linens_num'].errors,
-              }"
-                                />
-                                @if (submitted && f['linens_num'].errors) {
-                                  <div
-                                    class="invalid-feedback"
-                                    id="linensNumberError"
-                                    >
-                                    @if (f['linens_num'].errors['mustProvideNumberOfItems']) {
-                                      <div>
-                                        Number of linen items is missing.
-                                      </div>
-                                    }
-                                  </div>
-                                }
-                              </div>
-                              <div class="col">
-                                <label for="linensAmount" class="form-label"> Amount </label>
-                                <input
-                                  id="linensAmount"
-                                  name="linensAmount"
-                                  type="number"
-                                  class="form-control"
-                                  placeholder="0.00"
-                                  formControlName="linens"
-                                  pattern="^\d*(\.\d{0,2})?$"
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="form-row mb-1">
-                          <div class="input-group mb-1">
-                            <span class="input-group-text col-4" id="brica-label">Donations</span>
-                            <div class="card p-2 col">
-                              <div class="row">
-                                <div class="col">
-                                  <label for="donationsNumber" class="form-label"> Number </label>
-                                  <input
-                                    id="donationsNumber"
-                                    name="donationsNumber"
-                                    type="number"
-                                    class="form-control"
-                                    formControlName="donations_num"
-              [ngClass]="{
-                'is-invalid': submitted && f['donations_num'].errors,
-              }"
-                                    />
-                                    @if (submitted && f['donations_num'].errors) {
-                                      <div
-                                        class="invalid-feedback"
-                                        id="donationsNumberError"
-                                        >
-                                        @if (f['donations_num'].errors['mustProvideNumberOfItems']) {
-                                          <div
-                                            >
-                                            Number of donations is missing.
-                                          </div>
-                                        }
-                                      </div>
-                                    }
-                                  </div>
-                                  <div class="col">
-                                    <label for="donationsAmount" class="form-label"> Amount </label>
-                                    <input
-                                      id="donationsAmount"
-                                      name="donationsAmount"
-                                      type="number"
-                                      class="form-control"
-                                      placeholder="0.00"
-                                      formControlName="donations"
-                                      pattern="^\d*(\.\d{0,2})?$"
-                                      />
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="form-row mb-2">
-                              <div class="input-group mb-1">
-                                <span class="input-group-text col-4" id="brica-label">Other</span>
-                                <div class="card p-2 col">
-                                  <div class="row">
-                                    <div class="col">
-                                      <label for="otherNumber" class="form-label"> Number </label>
-                                      <input
-                                        id="otherNumber"
-                                        name="otherNumber"
-                                        type="number"
-                                        class="form-control"
-                                        formControlName="other_num"
-              [ngClass]="{
-                'is-invalid': submitted && f['other_num'].errors,
-              }"
-                                        />
-                                        @if (submitted && f['other_num'].errors) {
-                                          <div
-                                            class="invalid-feedback"
-                                            id="otherNumberError"
-                                            >
-                                            @if (f['other_num'].errors['mustProvideNumberOfItems']) {
-                                              <div>
-                                                Number of 'other' items is missing.
-                                              </div>
-                                            }
-                                          </div>
-                                        }
-                                      </div>
-                                      <div class="col">
-                                        <label for="otherAmount" class="form-label"> Amount </label>
-                                        <input
-                                          id="otherAmount"
-                                          name="otherAmount"
-                                          type="number"
-                                          class="form-control"
-                                          placeholder="0.00"
-                                          formControlName="other"
-                                          pattern="^\d*(\.\d{0,2})?$"
-                                          />
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div class="form-row mb-2">
-                                  <div class="input-group mb-1">
-                                    <span class="input-group-text col-4" id="brica-label">Gross</span>
-                                    <div class="card p-2 col">
-                                      <div class="row">
-                                        <div class="col">
-                                          <input
-                                            id="totalNumber"
-                                            name="totalNumber"
-                                            type="number"
-                                            class="form-control"
-                                            [(ngModel)]="sumOfNumber"
-                                            [ngModelOptions]="{ standalone: true }"
-                                            />
-                                          </div>
-                                          <div class="col">
-                                            <input
-                                              id="totalAmount"
-                                              name="totalAmount"
-                                              type="number"
-                                              class="form-control"
-                                              placeholder="£0.00"
-                                              pattern="^\d*(\.\d{0,2})?$"
-                                              [(ngModel)]="sumOfAmount"
-                                              [ngModelOptions]="{ standalone: true }"
-                                              />
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div class="form-row mb-2">
-                                      <div class="input-group mb-1">
-                                        <span class="input-group-text col-4" id="brica-label">Net</span>
-                                        <div class="card p-2 col">
-                                          <div class="row">
-                                            <div class="col-6">
-                                              <label for="inputCustomers_Num" class="form-label"> Number </label>
-                                              <input
-                                                type="number"
-                                                id="inputCustomers_Num"
-                                                class="form-control"
-                                                formControlName="customers_num_total"
-              [ngClass]="{
-                'is-invalid': submitted && f['customers_num_total'].errors,
-              }"
-                                                />
-                                                @if (submitted && f['customers_num_total'].errors) {
-                                                  <div
-                                                    class="invalid-feedback"
-                                                    id="inputGroupPrepend2"
-                                                    >
-                                                    @if (f['customers_num_total'].errors['required']) {
-                                                      <div>
-                                                        Number of Transactions (NET number) is required
-                                                      </div>
-                                                    }
-                                                  </div>
-                                                }
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div class="form-row mb-2">
-                                        <div class="input-group mb-1">
-                                          <span class="input-group-text col-4" id="clothing-label">Expenses</span>
-                                          <div class="card p-2 col">
-                                            <div class="row">
-                                              <div class="col">
-                                                <label for="volunteerExpenses" class="form-label">Volunteer</label>
-                                                <input
-                                                  id="volunteerExpenses"
-                                                  name="volunteerExpenses"
-                                                  type="number"
-                                                  class="form-control"
-                                                  placeholder="£0.00"
-                                                  pattern="^\d*(\.\d{0,2})?$"
-                                                  formControlName="volunteer_expenses"
-                                                  />
-                                                </div>
-                                                <div class="col">
-                                                  <label for="operatingExpenses" class="form-label">
-                                                    Operating
-                                                  </label>
-                                                  <input
-                                                    id="operatingExpenses"
-                                                    name="operatingExpenses"
-                                                    type="number"
-                                                    class="form-control"
-                                                    placeholder="£0.00"
-                                                    pattern="^\d*(\.\d{0,2})?$"
-                                                    formControlName="operating_expenses"
-                                                    />
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <div class="form-row mb-2">
-                                            <div class="input-group mb-1">
-                                              <span class="input-group-text col-4" id="clothing-label">Money</span>
-                                              <div class="card p-2 col">
-                                                <div class="row">
-                                                  <div class="col">
-                                                    <label for="cashReceived" class="form-label">Cash to Bank</label>
-                                                    <input
-                                                      id="cashReceived"
-                                                      name="cashReceived"
-                                                      type="number"
-                                                      class="form-control"
-                                                      placeholder="£0.00"
-                                                      pattern="^\d*(\.\d{0,2})?$"
-                                                      formControlName="cash_to_bank"
-              [ngClass]="{
-                'is-invalid': submitted && f['cash_to_bank'].errors,
-              }"
-                                                      />
-                                                      @if (submitted && f['cash_to_bank'].errors) {
-                                                        <div
-                                                          class="invalid-feedback"
-                                                          >
-                                                          @if (f['cash_to_bank'].errors['required']) {
-                                                            <div>
-                                                              Cash amount is required
-                                                            </div>
-                                                          }
-                                                        </div>
-                                                      }
-                                                    </div>
-                                                    <div class="col">
-                                                      <label for="creditcardsReceived" class="form-label"
-                                                        >Credit Cards</label
-                                                        >
-                                                        <input
-                                                          id="creditcardsReceived"
-                                                          name="creditcardsReceived"
-                                                          type="number"
-                                                          class="form-control"
-                                                          placeholder="£0.00"
-                                                          pattern="^\d*(\.\d{0,2})?$"
-                                                          formControlName="credit_cards"
-                                                          />
-                                                        </div>
-                                                      </div>
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                                <div>
-                                                  <p>
-                                                    <small id="cashDifference"
-                                                      >(Cash Difference £{{ cashDifference | number: "1.2-2" }})</small
-                                                      >
-                                                    </p>
-                                                  </div>
-                                                  <div class="form-group mb-2">
-                                                    <label for="commentsTextarea">Comments</label>
-                                                    <textarea
-                                                      class="form-control"
-                                                      id="commentsTextarea"
-                                                      rows="2"
-                                                      formControlName="comments"
-                                                    ></textarea>
-                                                  </div>
-                                                  <!-- Buttons -->
-                                                  <div class="row d-flex justify-content-between mb-2">
-                                                    <div class="col-auto">
-                                                      @if (!isReadOnly) {
-                                                        <button
-                                                          type="submit"
-                                                          [disabled]="loading"
-                                                          class="btn btn-primary"
-                                                          >
-                                                          @if (loading) {
-                                                            <span
-                                                              class="spinner-border spinner-border-sm me-1"
-                                                            ></span>
-                                                          }
-                                                          Save
-                                                        </button>
-                                                      }
-                                                      <!-- All button in a form are treated as 'submit' buttons' unless you specify type='button'-->
-                                                      <!-- See https://stackoverflow.com/a/55685230/6941165 -->
-                                                      <button type="button" (click)="goBack()" class="btn btn-outline-dark">
-                                                        Close &times;
-                                                      </button>
-                                                    </div>
-                                                  </div>
-                                                  @if (false) {
-                                                    <div>
-                                                      <!--Debug Information for Testing -->
-                                                      <hr />
-                                                      <p>Form Value: {{ form.value | json }}</p>
-                                                      <p>Form Status: {{ form.status | json }}</p>
-                                                      <p>Submitted: {{ submitted }}</p>
-                                                      <p>Donations Errors: {{ f["donations_num"].errors | json }}</p>
-                                                    </div>
-                                                  }
-                                                </form>
-                                              }
+              }
+            </div>
+            <div class="col">
+              <label for="booksAmount" class="form-label"> Amount </label>
+              <input
+                id="booksAmount"
+                name="booksAmount"
+                type="number"
+                class="form-control"
+                placeholder="0.00"
+                formControlName="books"
+                pattern="^\d*(\.\d{0,2})?$"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-row mb-1">
+      <div class="input-group mb-1">
+        <span class="input-group-text col-4" id="brica-label">Linens</span>
+        <div class="card p-2 col">
+          <div class="row">
+            <div class="col">
+              <label for="linensNumber" class="form-label"> Number </label>
+              <input
+                id="linensNumber"
+                name="linensNumber"
+                type="number"
+                class="form-control"
+                formControlName="linens_num"
+                [ngClass]="{
+                  'is-invalid': submitted && f['linens_num'].errors,
+                }"
+              />
+              @if (submitted && f["linens_num"].errors) {
+                <div class="invalid-feedback" id="linensNumberError">
+                  @if (f["linens_num"].errors["mustProvideNumberOfItems"]) {
+                    <div>Number of linen items is missing.</div>
+                  }
+                </div>
+              }
+            </div>
+            <div class="col">
+              <label for="linensAmount" class="form-label"> Amount </label>
+              <input
+                id="linensAmount"
+                name="linensAmount"
+                type="number"
+                class="form-control"
+                placeholder="0.00"
+                formControlName="linens"
+                pattern="^\d*(\.\d{0,2})?$"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-row mb-1">
+      <div class="input-group mb-1">
+        <span class="input-group-text col-4" id="brica-label">Donations</span>
+        <div class="card p-2 col">
+          <div class="row">
+            <div class="col">
+              <label for="donationsNumber" class="form-label"> Number </label>
+              <input
+                id="donationsNumber"
+                name="donationsNumber"
+                type="number"
+                class="form-control"
+                formControlName="donations_num"
+                [ngClass]="{
+                  'is-invalid': submitted && f['donations_num'].errors,
+                }"
+              />
+              @if (submitted && f["donations_num"].errors) {
+                <div class="invalid-feedback" id="donationsNumberError">
+                  @if (f["donations_num"].errors["mustProvideNumberOfItems"]) {
+                    <div>Number of donations is missing.</div>
+                  }
+                </div>
+              }
+            </div>
+            <div class="col">
+              <label for="donationsAmount" class="form-label"> Amount </label>
+              <input
+                id="donationsAmount"
+                name="donationsAmount"
+                type="number"
+                class="form-control"
+                placeholder="0.00"
+                formControlName="donations"
+                pattern="^\d*(\.\d{0,2})?$"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-row mb-2">
+      <div class="input-group mb-1">
+        <span class="input-group-text col-4" id="brica-label">Other</span>
+        <div class="card p-2 col">
+          <div class="row">
+            <div class="col">
+              <label for="otherNumber" class="form-label"> Number </label>
+              <input
+                id="otherNumber"
+                name="otherNumber"
+                type="number"
+                class="form-control"
+                formControlName="other_num"
+                [ngClass]="{
+                  'is-invalid': submitted && f['other_num'].errors,
+                }"
+              />
+              @if (submitted && f["other_num"].errors) {
+                <div class="invalid-feedback" id="otherNumberError">
+                  @if (f["other_num"].errors["mustProvideNumberOfItems"]) {
+                    <div>Number of 'other' items is missing.</div>
+                  }
+                </div>
+              }
+            </div>
+            <div class="col">
+              <label for="otherAmount" class="form-label"> Amount </label>
+              <input
+                id="otherAmount"
+                name="otherAmount"
+                type="number"
+                class="form-control"
+                placeholder="0.00"
+                formControlName="other"
+                pattern="^\d*(\.\d{0,2})?$"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-row mb-2">
+      <div class="input-group mb-1">
+        <span class="input-group-text col-4" id="brica-label">Gross</span>
+        <div class="card p-2 col">
+          <div class="row">
+            <div class="col">
+              <input
+                id="totalNumber"
+                name="totalNumber"
+                type="number"
+                class="form-control"
+                [(ngModel)]="sumOfNumber"
+                [ngModelOptions]="{ standalone: true }"
+              />
+            </div>
+            <div class="col">
+              <input
+                id="totalAmount"
+                name="totalAmount"
+                type="number"
+                class="form-control"
+                placeholder="£0.00"
+                pattern="^\d*(\.\d{0,2})?$"
+                [(ngModel)]="sumOfAmount"
+                [ngModelOptions]="{ standalone: true }"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-row mb-2">
+      <div class="input-group mb-1">
+        <span class="input-group-text col-4" id="brica-label">Net</span>
+        <div class="card p-2 col">
+          <div class="row">
+            <div class="col-6">
+              <label for="inputCustomers_Num" class="form-label">
+                Number
+              </label>
+              <input
+                type="number"
+                id="inputCustomers_Num"
+                class="form-control"
+                formControlName="customers_num_total"
+                [ngClass]="{
+                  'is-invalid': submitted && f['customers_num_total'].errors,
+                }"
+              />
+              @if (submitted && f["customers_num_total"].errors) {
+                <div class="invalid-feedback" id="inputGroupPrepend2">
+                  @if (f["customers_num_total"].errors["required"]) {
+                    <div>Number of Transactions (NET number) is required</div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-row mb-2">
+      <div class="input-group mb-1">
+        <span class="input-group-text col-4" id="clothing-label">Expenses</span>
+        <div class="card p-2 col">
+          <div class="row">
+            <div class="col">
+              <label for="volunteerExpenses" class="form-label"
+                >Volunteer</label
+              >
+              <input
+                id="volunteerExpenses"
+                name="volunteerExpenses"
+                type="number"
+                class="form-control"
+                placeholder="£0.00"
+                pattern="^\d*(\.\d{0,2})?$"
+                formControlName="volunteer_expenses"
+              />
+            </div>
+            <div class="col">
+              <label for="operatingExpenses" class="form-label">
+                Operating
+              </label>
+              <input
+                id="operatingExpenses"
+                name="operatingExpenses"
+                type="number"
+                class="form-control"
+                placeholder="£0.00"
+                pattern="^\d*(\.\d{0,2})?$"
+                formControlName="operating_expenses"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-row mb-2">
+      <div class="input-group mb-1">
+        <span class="input-group-text col-4" id="clothing-label">Money</span>
+        <div class="card p-2 col">
+          <div class="row">
+            <div class="col">
+              <label for="cashReceived" class="form-label">Cash to Bank</label>
+              <input
+                id="cashReceived"
+                name="cashReceived"
+                type="number"
+                class="form-control"
+                placeholder="£0.00"
+                pattern="^\d*(\.\d{0,2})?$"
+                formControlName="cash_to_bank"
+                [ngClass]="{
+                  'is-invalid': submitted && f['cash_to_bank'].errors,
+                }"
+              />
+              @if (submitted && f["cash_to_bank"].errors) {
+                <div class="invalid-feedback">
+                  @if (f["cash_to_bank"].errors["required"]) {
+                    <div>Cash amount is required</div>
+                  }
+                </div>
+              }
+            </div>
+            <div class="col">
+              <label for="creditcardsReceived" class="form-label"
+                >Credit Cards</label
+              >
+              <input
+                id="creditcardsReceived"
+                name="creditcardsReceived"
+                type="number"
+                class="form-control"
+                placeholder="£0.00"
+                pattern="^\d*(\.\d{0,2})?$"
+                formControlName="credit_cards"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <p>
+        <small id="cashDifference"
+          >(Cash Difference £{{ cashDifference | number: "1.2-2" }})</small
+        >
+      </p>
+    </div>
+    <div class="form-group mb-2">
+      <label for="commentsTextarea">Comments</label>
+      <textarea
+        class="form-control"
+        id="commentsTextarea"
+        rows="2"
+        formControlName="comments"
+      ></textarea>
+    </div>
+    <!-- Buttons -->
+    <div class="row d-flex justify-content-between mb-2">
+      <div class="col-auto">
+        @if (!isReadOnly) {
+          <button type="submit" [disabled]="loading" class="btn btn-primary">
+            @if (loading) {
+              <span class="spinner-border spinner-border-sm me-1"></span>
+            }
+            Save
+          </button>
+        }
+        <!-- All button in a form are treated as 'submit' buttons' unless you specify type='button'-->
+        <!-- See https://stackoverflow.com/a/55685230/6941165 -->
+        <button type="button" (click)="goBack()" class="btn btn-outline-dark">
+          Close &times;
+        </button>
+      </div>
+    </div>
+    @if (false) {
+      <div>
+        <!--Debug Information for Testing -->
+        <hr />
+        <p>Form Value: {{ form.value | json }}</p>
+        <p>Form Status: {{ form.status | json }}</p>
+        <p>Submitted: {{ submitted }}</p>
+        <p>Donations Errors: {{ f["donations_num"].errors | json }}</p>
+      </div>
+    }
+  </form>
+}

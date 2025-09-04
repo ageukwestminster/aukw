@@ -85,7 +85,7 @@ export class ValueIdPair {
   }
 }
 
-export class ValueIdType extends ValueIdPair{
+export class ValueIdType extends ValueIdPair {
   type: string;
 
   constructor(obj?: any) {

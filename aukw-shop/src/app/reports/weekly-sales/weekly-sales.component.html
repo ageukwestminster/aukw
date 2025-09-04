@@ -9,21 +9,21 @@
         type="button"
         routerLink="/reports/qma-report"
         class="btn btn-success m-2"
-        >
+      >
         &lt; Previous
       </button>
       <button
         type="button"
         routerLink="/reports/sales-by-department"
         class="btn btn-success m-2"
-        >
+      >
         Next &gt;
       </button>
       <button
         type="button"
         routerLink="/reports"
         class="btn btn-outline-dark m-2"
-        >
+      >
         Close &times;
       </button>
     </div>
@@ -81,8 +81,8 @@
             </td>
             <td class="d-none d-md-table-cell text-end">
               {{
-              data.avg_weekly_sales.currentValue -
-              data.avg_weekly_sales.previousValue | number: "1.2-2"
+                data.avg_weekly_sales.currentValue -
+                  data.avg_weekly_sales.previousValue | number: "1.2-2"
               }}
             </td>
           </tr>
@@ -102,8 +102,8 @@
             </td>
             <td class="d-none d-md-table-cell text-end">
               {{
-              data.week_count.currentValue - data.week_count.previousValue
-              | number: "1.2-2"
+                data.week_count.currentValue - data.week_count.previousValue
+                  | number: "1.2-2"
               }}
             </td>
           </tr>
@@ -143,7 +143,7 @@
               }
               <table
                 class="table table-striped table-hover table-responsive w-auto"
-                >
+              >
                 <thead>
                   <tr>
                     <th>Quarter</th>
@@ -156,45 +156,42 @@
                     <tr>
                       <th>
                         @if (chartData) {
-                          <span
-                            class="text-dark d-none d-md-table-cell"
-                            >{{
+                          <span class="text-dark d-none d-md-table-cell">{{
                             chartData[i].year + "-Q" + chartData[i].quarter
-                            }}</span
-                            >
-                          }
-                          @if (chartData) {
-                            <span
-                              class="text-dark d-md-none d-md-table-cell"
-                              >{{
-                              chartData[i].year - 2000 + "-Q" + chartData[i].quarter
-                              }}</span
-                              >
-                            }
-                          </th>
-                          <td class="text-center">
-                            {{ chartData[i].weeks_in_quarter }}
-                          </td>
-                          <td class="text-center">
-                            {{ chartData[i].avg_weekly_income | number: "1.2-2" }}
-                          </td>
-                        </tr>
-                      }
-                      @if (!data) {
-                        <tr>
-                          <td colspan="4" class="text-center">
-                            <span
-                              class="spinner-border spinner-border-lg align-center"
-                            ></span>
-                          </td>
-                        </tr>
-                      }
-                    </tbody>
-                  </table>
-                </ng-template>
-              </div>
-            </div>
+                          }}</span>
+                        }
+                        @if (chartData) {
+                          <span class="text-dark d-md-none d-md-table-cell">{{
+                            chartData[i].year -
+                              2000 +
+                              "-Q" +
+                              chartData[i].quarter
+                          }}</span>
+                        }
+                      </th>
+                      <td class="text-center">
+                        {{ chartData[i].weeks_in_quarter }}
+                      </td>
+                      <td class="text-center">
+                        {{ chartData[i].avg_weekly_income | number: "1.2-2" }}
+                      </td>
+                    </tr>
+                  }
+                  @if (!data) {
+                    <tr>
+                      <td colspan="4" class="text-center">
+                        <span
+                          class="spinner-border spinner-border-lg align-center"
+                        ></span>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </ng-template>
           </div>
         </div>
       </div>
     </div>
+  </div>
+</div>

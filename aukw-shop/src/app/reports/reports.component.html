@@ -74,38 +74,38 @@
               <li>
                 <a routerLink="daily-transaction-averages"
                   >Daily Transaction Averages</a
-                  >
+                >
+              </li>
+              <li>
+                <a routerLink="ragging">Ragging</a>
+              </li>
+            </ul>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+    @if (user.isAdmin) {
+      <div ngbAccordionItem>
+        <h2 ngbAccordionHeader>
+          <button ngbAccordionButton>Security & Audit</button>
+        </h2>
+        <div ngbAccordionCollapse>
+          <div ngbAccordionBody>
+            <ng-template>
+              <ul>
+                <li>
+                  <a routerLink="/auditlog">Audit Log</a>
                 </li>
                 <li>
-                  <a routerLink="ragging">Ragging</a>
+                  <a routerLink="/users/suspended/true"
+                    >List of suspended users</a
+                  >
                 </li>
               </ul>
             </ng-template>
           </div>
         </div>
       </div>
-      @if (user.isAdmin) {
-        <div ngbAccordionItem>
-          <h2 ngbAccordionHeader>
-            <button ngbAccordionButton>Security & Audit</button>
-          </h2>
-          <div ngbAccordionCollapse>
-            <div ngbAccordionBody>
-              <ng-template>
-                <ul>
-                  <li>
-                    <a routerLink="/auditlog">Audit Log</a>
-                  </li>
-                  <li>
-                    <a routerLink="/users/suspended/true"
-                      >List of suspended users</a
-                      >
-                    </li>
-                  </ul>
-                </ng-template>
-              </div>
-            </div>
-          </div>
-        }
-      </div>
-    </div>
+    }
+  </div>
+</div>

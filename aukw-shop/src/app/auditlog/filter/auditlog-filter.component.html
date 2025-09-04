@@ -19,60 +19,57 @@
                 <div class="input-group">
                   <span class="input-group-text col-6" id="userid-label"
                     >User</span
-                    >
-                    <select
-                      formControlName="userid"
-                      #useridSelect
-                      id="useridSelect"
-                      name="useridSelect"
-                      class="form-control"
-                      (change)="onInputChanged(useridSelect.value)"
-                      >
-                      <option selected [ngValue]="null">Any</option>
-                      @for (user of users$ | async; track user) {
-                        <option
-                          [ngValue]="user.id"
-                          >
-                          {{ user.username }}
-                        </option>
-                      }
-                    </select>
-                  </div>
+                  >
+                  <select
+                    formControlName="userid"
+                    #useridSelect
+                    id="useridSelect"
+                    name="useridSelect"
+                    class="form-control"
+                    (change)="onInputChanged(useridSelect.value)"
+                  >
+                    <option selected [ngValue]="null">Any</option>
+                    @for (user of users$ | async; track user) {
+                      <option [ngValue]="user.id">
+                        {{ user.username }}
+                      </option>
+                    }
+                  </select>
                 </div>
-                <div class="col-sm-2">
-                  <div class="input-group">
-                    <span class="input-group-text col-6" id="action-label"
-                      >Action</span
-                      >
-                      <select
-                        formControlName="eventtype"
-                        #actionSelect
-                        id="actionSelect"
-                        name="actionSelect"
-                        class="form-control"
-                        (change)="onInputChanged(actionSelect.value)"
-                        >
-                        <option selected [ngValue]="null">Any</option>
-                        @for (eventtype of eventtypes$ | async; track eventtype) {
-                          <option
-                            >
-                            {{ eventtype }}
-                          </option>
-                        }
-                      </select>
-                    </div>
-                  </div>
+              </div>
+              <div class="col-sm-2">
+                <div class="input-group">
+                  <span class="input-group-text col-6" id="action-label"
+                    >Action</span
+                  >
+                  <select
+                    formControlName="eventtype"
+                    #actionSelect
+                    id="actionSelect"
+                    name="actionSelect"
+                    class="form-control"
+                    (change)="onInputChanged(actionSelect.value)"
+                  >
+                    <option selected [ngValue]="null">Any</option>
+                    @for (eventtype of eventtypes$ | async; track eventtype) {
+                      <option>
+                        {{ eventtype }}
+                      </option>
+                    }
+                  </select>
                 </div>
-              </ng-template>
+              </div>
             </div>
-          </div>
+          </ng-template>
         </div>
       </div>
-      @if (false) {
-        <div>
-          <p>Form Value: {{ form.value | json }}</p>
-          <p>Form Status: {{ form.status }}</p>
-          <p>Filter: {{ filter$ | async | json }}</p>
-        </div>
-      }
-    </form>
+    </div>
+  </div>
+  @if (false) {
+    <div>
+      <p>Form Value: {{ form.value | json }}</p>
+      <p>Form Status: {{ form.status }}</p>
+      <p>Filter: {{ filter$ | async | json }}</p>
+    </div>
+  }
+</form>

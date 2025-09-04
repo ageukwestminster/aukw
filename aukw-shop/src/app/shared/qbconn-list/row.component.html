@@ -10,7 +10,7 @@
 </td>
 <td>
   {{
-  this.realm!.connection && this.realm!.connection!.refreshtokenexpiry | date
+    this.realm!.connection && this.realm!.connection!.refreshtokenexpiry | date
   }}
 </td>
 <td>
@@ -21,7 +21,7 @@
         <button
           (click)="addConnection($event)"
           class="btn btn-sm btn-success me-1"
-          >
+        >
           <span>Add</span>
         </button>
       }
@@ -29,58 +29,52 @@
         <button
           (click)="refreshConnection($event)"
           class="btn btn-sm btn-primary me-1 mt-1"
-      [disabled]="
-        !this.realm!.connection || this.realm!.connection!.isRefreshing
-      "
-          >
+          [disabled]="
+            !this.realm!.connection || this.realm!.connection!.isRefreshing
+          "
+        >
           @if (this.realm!.connection && this.realm!.connection!.isRefreshing) {
-            <span
-              class="spinner-border spinner-border-sm"
-            ></span>
+            <span class="spinner-border spinner-border-sm"></span>
           }
-          @if (!this.realm!.connection || !this.realm!.connection!.isRefreshing) {
-            <span
-              >Refresh</span
-              >
-            }
-          </button>
-        }
-        @if (isLinkCreatedByCurrentUser) {
-          <button
-            (click)="revokeConnection($event)"
-            class="btn btn-sm btn-danger mt-1"
-            [disabled]="!this.realm!.connection || this.realm!.connection!.isRevoking"
-            >
-            @if (this.realm!.connection && this.realm!.connection!.isRevoking) {
-              <span
-                class="spinner-border spinner-border-sm"
-              ></span>
-            }
-            @if (!this.realm!.connection || !this.realm!.connection!.isRevoking) {
-              <span
-                >Delete</span
-                >
-              }
-            </button>
+          @if (
+            !this.realm!.connection || !this.realm!.connection!.isRefreshing
+          ) {
+            <span>Refresh</span>
           }
-          @if (isValidConnection && !isLinkCreatedByCurrentUser) {
-            <button
-              (click)="revokeAndMakeNewConnection($event)"
-              class="btn btn-sm btn-danger mt-1"
-              [disabled]="!this.realm!.connection || this.realm!.connection!.isRevoking"
-              >
-              @if (this.realm!.connection && this.realm!.connection!.isRevoking) {
-                <span
-                  class="spinner-border spinner-border-sm"
-                ></span>
-              }
-              @if (!this.realm!.connection || !this.realm!.connection!.isRevoking) {
-                <span
-                  >Revoke & Make New Connection</span
-                  >
-                }
-              </button>
-            }
-          </div>
-        }
-      </td>
+        </button>
+      }
+      @if (isLinkCreatedByCurrentUser) {
+        <button
+          (click)="revokeConnection($event)"
+          class="btn btn-sm btn-danger mt-1"
+          [disabled]="
+            !this.realm!.connection || this.realm!.connection!.isRevoking
+          "
+        >
+          @if (this.realm!.connection && this.realm!.connection!.isRevoking) {
+            <span class="spinner-border spinner-border-sm"></span>
+          }
+          @if (!this.realm!.connection || !this.realm!.connection!.isRevoking) {
+            <span>Delete</span>
+          }
+        </button>
+      }
+      @if (isValidConnection && !isLinkCreatedByCurrentUser) {
+        <button
+          (click)="revokeAndMakeNewConnection($event)"
+          class="btn btn-sm btn-danger mt-1"
+          [disabled]="
+            !this.realm!.connection || this.realm!.connection!.isRevoking
+          "
+        >
+          @if (this.realm!.connection && this.realm!.connection!.isRevoking) {
+            <span class="spinner-border spinner-border-sm"></span>
+          }
+          @if (!this.realm!.connection || !this.realm!.connection!.isRevoking) {
+            <span>Revoke & Make New Connection</span>
+          }
+        </button>
+      }
+    </div>
+  }
+</td>

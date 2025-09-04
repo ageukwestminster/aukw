@@ -21,9 +21,7 @@
       <div>
         <button type="submit" [disabled]="loading" class="btn btn-primary">
           @if (loading) {
-            <span
-              class="spinner-border spinner-border-sm me-1"
-            ></span>
+            <span class="spinner-border spinner-border-sm me-1"></span>
           }
           Save
         </button>
@@ -50,56 +48,52 @@
             aria-label="Username"
             aria-describedby="username-addon1"
             placement="bottom"
-            />
-            @if (submitted && f['username'].errors) {
-              <div class="invalid-feedback">
-                @if (f['username'].errors['required']) {
-                  <div>
-                    Username is required
-                  </div>
-                }
-              </div>
-            }
-          </div>
-          <div class="input-group mb-1">
-            <span class="input-group-text col-4" id="email-addon1">Email </span>
-            <input
-              type="text"
-              class="form-control"
-              id="emailInput"
-              formControlName="email"
-              aria-label="Email"
-              aria-describedby="email-addon1"
-              placement="bottom"
-              ngbTooltip="A valid email address. May be blank."
-              container="body"
-              [ngClass]="{ 'is-invalid': submitted && f['email'].errors }"
-              />
-              @if (submitted && f['email'].errors) {
-                <div class="invalid-feedback">
-                  @if (f['email'].errors['email']) {
-                    <div>
-                      Enter a valid email address
-                    </div>
-                  }
-                </div>
+          />
+          @if (submitted && f["username"].errors) {
+            <div class="invalid-feedback">
+              @if (f["username"].errors["required"]) {
+                <div>Username is required</div>
               }
             </div>
-            <div class="input-group mb-1">
-              <span class="input-group-text col-4" id="title-addon1">Title </span>
-              <input
-                type="text"
-                class="form-control"
-                id="titleInput"
-                formControlName="title"
-                aria-label="Title"
-                aria-describedby="title-addon1"
-                placement="bottom"
-                ngbTooltip="Job title. May be blank."
-                container="body"
-                />
-              </div>
-              <!--<div class="input-group mb-1">
+          }
+        </div>
+        <div class="input-group mb-1">
+          <span class="input-group-text col-4" id="email-addon1">Email </span>
+          <input
+            type="text"
+            class="form-control"
+            id="emailInput"
+            formControlName="email"
+            aria-label="Email"
+            aria-describedby="email-addon1"
+            placement="bottom"
+            ngbTooltip="A valid email address. May be blank."
+            container="body"
+            [ngClass]="{ 'is-invalid': submitted && f['email'].errors }"
+          />
+          @if (submitted && f["email"].errors) {
+            <div class="invalid-feedback">
+              @if (f["email"].errors["email"]) {
+                <div>Enter a valid email address</div>
+              }
+            </div>
+          }
+        </div>
+        <div class="input-group mb-1">
+          <span class="input-group-text col-4" id="title-addon1">Title </span>
+          <input
+            type="text"
+            class="form-control"
+            id="titleInput"
+            formControlName="title"
+            aria-label="Title"
+            aria-describedby="title-addon1"
+            placement="bottom"
+            ngbTooltip="Job title. May be blank."
+            container="body"
+          />
+        </div>
+        <!--<div class="input-group mb-1">
               <span class="input-group-text col-4" id="shop-label">Shop</span>
               <div class="card p-2 col-8">
                 <select
@@ -114,171 +108,161 @@
                 </select>
               </div>
             </div>-->
-            <div class="input-group mb-1">
-              <span class="input-group-text col-4" id="dates-label">Role*</span>
-              <div class="card p-2 col-8">
-                <select
-                  formControlName="role"
-                  id="roleSelect"
-                  name="roleSelect"
-                  class="form-control"
-                  [ngClass]="{ 'is-invalid': submitted && f['role'].errors }"
-                  >
-                  <option value=""></option>
-                  <option value="User">User</option>
-                  @if (user.isAdmin) {
-                    <option value="Admin">Admin</option>
-                  }
-                </select>
-                @if (submitted && f['role'].errors) {
-                  <div class="invalid-feedback">
-                    @if (f['role'].errors['required']) {
-                      <div>Role is required</div>
-                    }
-                  </div>
+        <div class="input-group mb-1">
+          <span class="input-group-text col-4" id="dates-label">Role*</span>
+          <div class="card p-2 col-8">
+            <select
+              formControlName="role"
+              id="roleSelect"
+              name="roleSelect"
+              class="form-control"
+              [ngClass]="{ 'is-invalid': submitted && f['role'].errors }"
+            >
+              <option value=""></option>
+              <option value="User">User</option>
+              @if (user.isAdmin) {
+                <option value="Admin">Admin</option>
+              }
+            </select>
+            @if (submitted && f["role"].errors) {
+              <div class="invalid-feedback">
+                @if (f["role"].errors["required"]) {
+                  <div>Role is required</div>
                 }
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 mb-1">
+        <div class="input-group mb-1">
+          <span class="input-group-text col-4" id="firstname-addon1"
+            >First Name*
+          </span>
+          <input
+            type="text"
+            class="form-control"
+            id="firstnameInput"
+            [ngClass]="{ 'is-invalid': submitted && f['firstname'].errors }"
+            formControlName="firstname"
+            aria-label="FirstName"
+            aria-describedby="firstname-addon1"
+            placement="bottom"
+            ngbTooltip="The user's first or given name."
+            container="body"
+          />
+          @if (submitted && f["firstname"].errors) {
+            <div class="invalid-feedback">
+              @if (f["firstname"].errors["required"]) {
+                <div>First Name is required</div>
+              }
+            </div>
+          }
+        </div>
+        <div class="input-group mb-1">
+          <span class="input-group-text col-4" id="surname-addon1"
+            >Surname*</span
+          >
+          <input
+            type="text"
+            class="form-control"
+            [ngClass]="{ 'is-invalid': submitted && f['surname'].errors }"
+            id="surnameInput"
+            formControlName="surname"
+            aria-label="Surname"
+            aria-describedby="surname-addon1"
+            placement="bottom"
+            ngbTooltip="The family name of the user."
+            container="body"
+          />
+          @if (submitted && f["surname"].errors) {
+            <div class="invalid-feedback">
+              @if (f["surname"].errors["required"]) {
+                <div>Surname is required</div>
+              }
+            </div>
+          }
+        </div>
+        @if (user.isAdmin) {
+          <div class="input-group">
+            <span class="input-group-text col-4" id="status-label">Status</span>
+            <div class="card p-3 col-8">
+              <div class="form-check">
+                <input
+                  type="checkbox"
+                  formControlName="suspended"
+                  class="form-check-input"
+                  placement="bottom"
+                  ngbTooltip="When checked the user will not be able to log in."
+                  container="body"
+                  id="suspendedUserCheckbox"
+                />
+                <label class="form-check-label" for="suspendedUserCheckbox">
+                  Suspended User
+                </label>
               </div>
             </div>
           </div>
-          <div class="col-sm-6 mb-1">
-            <div class="input-group mb-1">
-              <span class="input-group-text col-4" id="firstname-addon1"
-                >First Name*
-              </span>
-              <input
-                type="text"
-                class="form-control"
-                id="firstnameInput"
-                [ngClass]="{ 'is-invalid': submitted && f['firstname'].errors }"
-                formControlName="firstname"
-                aria-label="FirstName"
-                aria-describedby="firstname-addon1"
-                placement="bottom"
-                ngbTooltip="The user's first or given name."
-                container="body"
-                />
-                @if (submitted && f['firstname'].errors) {
-                  <div
-                    class="invalid-feedback"
-                    >
-                    @if (f['firstname'].errors['required']) {
-                      <div>
-                        First Name is required
-                      </div>
-                    }
-                  </div>
-                }
-              </div>
-              <div class="input-group mb-1">
-                <span class="input-group-text col-4" id="surname-addon1">Surname*</span>
-                <input
-                  type="text"
-                  class="form-control"
-                  [ngClass]="{ 'is-invalid': submitted && f['surname'].errors }"
-                  id="surnameInput"
-                  formControlName="surname"
-                  aria-label="Surname"
-                  aria-describedby="surname-addon1"
-                  placement="bottom"
-                  ngbTooltip="The family name of the user."
-                  container="body"
-                  />
-                  @if (submitted && f['surname'].errors) {
-                    <div class="invalid-feedback">
-                      @if (f['surname'].errors['required']) {
-                        <div>Surname is required</div>
-                      }
-                    </div>
-                  }
-                </div>
-                @if (user.isAdmin) {
-                  <div class="input-group">
-                    <span class="input-group-text col-4" id="status-label">Status</span>
-                    <div class="card p-3 col-8">
-                      <div class="form-check">
-                        <input
-                          type="checkbox"
-                          formControlName="suspended"
-                          class="form-check-input"
-                          placement="bottom"
-                          ngbTooltip="When checked the user will not be able to log in."
-                          container="body"
-                          id="suspendedUserCheckbox"
-                          />
-                          <label class="form-check-label" for="suspendedUserCheckbox">
-                            Suspended User
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                  }
-                </div>
-              </div>
-              @if (!isUserAdd) {
-                <div>
-                  <h3 class="pt-3">Change Password</h3>
-                  <p>Leave blank to keep the same password</p>
-                </div>
-              }
-              <div class="form-row">
-                <div class="col-sm-6 mb-1">
-                  <span>Password*</span>
-                  <input
-                    type="password"
-                    id="passwordInput"
-                    formControlName="password"
-                    class="form-control"
-                    [ngClass]="{ 'is-invalid': submitted && f['password'].errors }"
-                    autocomplete="new-password"
-                    />
-                    <div id="passwordHelpBlock" class="form-text">
-                      Your password must be 8-20 characters long, contain letters and numbers,
-                      and must not contain spaces or emoji.
-                    </div>
-                    @if (submitted && f['password'].errors) {
-                      <div class="invalid-feedback">
-                        @if (f['password'].errors['required']) {
-                          <div>Password is required</div>
-                        }
-                        @if (f['password'].errors['minlength']) {
-                          <div>
-                            Password must be at least 8 characters
-                          </div>
-                        }
-                      </div>
-                    }
-                  </div>
-                  <div class="col-sm-6 mb-4">
-                    <span>Confirm Password</span>
-                    <input
-                      type="password"
-                      id="confirmPasswordInput"
-                      formControlName="confirmPassword"
-                      class="form-control"
-                      [ngClass]="{ 'is-invalid': submitted && f['confirmPassword'].errors }"
-                      autocomplete="new-password"
-                      />
-                      @if (submitted && f['confirmPassword'].errors) {
-                        <div
-                          class="invalid-feedback"
-                          >
-                          @if (f['confirmPassword'].errors['required']) {
-                            <div>
-                              Confirm Password is required
-                            </div>
-                          }
-                          @if (f['confirmPassword'].errors['mustMatch']) {
-                            <div>
-                              Passwords must match
-                            </div>
-                          }
-                        </div>
-                      }
-                    </div>
-                  </div>
-                  <div>
-                    <small>* Required</small>
-                  </div>
-                  <div class="row mb-2"></div>
-                </form>
-              }
+        }
+      </div>
+    </div>
+    @if (!isUserAdd) {
+      <div>
+        <h3 class="pt-3">Change Password</h3>
+        <p>Leave blank to keep the same password</p>
+      </div>
+    }
+    <div class="form-row">
+      <div class="col-sm-6 mb-1">
+        <span>Password*</span>
+        <input
+          type="password"
+          id="passwordInput"
+          formControlName="password"
+          class="form-control"
+          [ngClass]="{ 'is-invalid': submitted && f['password'].errors }"
+          autocomplete="new-password"
+        />
+        <div id="passwordHelpBlock" class="form-text">
+          Your password must be 8-20 characters long, contain letters and
+          numbers, and must not contain spaces or emoji.
+        </div>
+        @if (submitted && f["password"].errors) {
+          <div class="invalid-feedback">
+            @if (f["password"].errors["required"]) {
+              <div>Password is required</div>
+            }
+            @if (f["password"].errors["minlength"]) {
+              <div>Password must be at least 8 characters</div>
+            }
+          </div>
+        }
+      </div>
+      <div class="col-sm-6 mb-4">
+        <span>Confirm Password</span>
+        <input
+          type="password"
+          id="confirmPasswordInput"
+          formControlName="confirmPassword"
+          class="form-control"
+          [ngClass]="{ 'is-invalid': submitted && f['confirmPassword'].errors }"
+          autocomplete="new-password"
+        />
+        @if (submitted && f["confirmPassword"].errors) {
+          <div class="invalid-feedback">
+            @if (f["confirmPassword"].errors["required"]) {
+              <div>Confirm Password is required</div>
+            }
+            @if (f["confirmPassword"].errors["mustMatch"]) {
+              <div>Passwords must match</div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+    <div>
+      <small>* Required</small>
+    </div>
+    <div class="row mb-2"></div>
+  </form>
+}

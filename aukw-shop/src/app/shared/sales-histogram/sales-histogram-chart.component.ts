@@ -96,7 +96,7 @@ export class SalesHistogramChartComponent implements OnInit, OnChanges {
         marker: {
           radius: 1.5,
         },
-        showInLegend: false
+        showInLegend: false,
       },
       {
         name: "Today's Sales",

@@ -8,17 +8,21 @@ import { Observable } from 'rxjs';
 const baseUrl = `${environment.apiUrl}/qb`;
 
 /**
- * 
+ *
  */
 @Injectable({ providedIn: 'root' })
 export class QBPurchaseService {
   private http = inject(HttpClient);
 
   create(realmID: string, params: any): Observable<ApiMessage> {
-    return this.http.post<ApiMessage>(`${baseUrl}/${realmID}/qb/purchase`, params);
+    return this.http.post<ApiMessage>(
+      `${baseUrl}/${realmID}/qb/purchase`,
+      params,
+    );
   }
 
-  createNew(txnDate: string,
+  createNew(
+    txnDate: string,
     bankAccount: [number, string],
     expenseAccount: [number, string],
     entity: [number, string],
@@ -26,7 +30,7 @@ export class QBPurchaseService {
     taxAmount: number = 0,
     description: string = '',
     privateNote: string = '',
-  ) : QBPurchase {
+  ): QBPurchase {
     return new QBPurchase({
       txnDate: txnDate,
       bankAccount: bankAccount,

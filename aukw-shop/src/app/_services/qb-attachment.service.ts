@@ -10,9 +10,9 @@ const baseUrl = `${environment.apiUrl}/qb`;
 /**
  * This class is used for managing QBO attachments. It can inspect QB
  * transactions and download their associated attachments. It can also
- * add attachments to existing transactions. 
- * It can also copy attachemtns from a transaction in one QBO company 
- * file to a transaction or transactions in another QBO company file. 
+ * add attachments to existing transactions.
+ * It can also copy attachemtns from a transaction in one QBO company
+ * file to a transaction or transactions in another QBO company file.
  */
 @Injectable({ providedIn: 'root' })
 export class QBAttachmentService {
@@ -23,7 +23,13 @@ export class QBAttachmentService {
    * @param realmID The company ID for the QBO company.
    * @returns Array of employee ids and names
    */
-  downloadAttachments(realmID: string, type: string, id: number): Observable<QBAttachment[]> {
-    return this.http.get<QBAttachment[]>(`${baseUrl}/${realmID}/download-attachments?entity_type=${type}&txn_id=${id}`);
+  downloadAttachments(
+    realmID: string,
+    type: string,
+    id: number,
+  ): Observable<QBAttachment[]> {
+    return this.http.get<QBAttachment[]>(
+      `${baseUrl}/${realmID}/download-attachments?entity_type=${type}&txn_id=${id}`,
+    );
   }
 }

@@ -24,8 +24,8 @@ import { DateRangeChooserComponent } from '@app/shared';
     DateRangeChooserComponent,
     NgbAccordionModule,
     ReactiveFormsModule,
-    RouterLink
-],
+    RouterLink,
+  ],
 })
 export class WeeklySalesComponent extends AbstractChartReportComponent<AvgWeeklySalesData> {
   chartData: AvgWeeklySalesDataByQuarter[] = [];
