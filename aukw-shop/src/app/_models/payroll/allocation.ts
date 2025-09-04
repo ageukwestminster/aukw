@@ -4,6 +4,8 @@
  * resulting QBO bookings.
  */
 export class EmployeeAllocation {
+  /** Database ID of the allocation record */
+  id: number;
   /** Iris payroll number for employee */
   payrollNumber: number;
   /** QuickBooks employee id */
@@ -25,6 +27,7 @@ export class EmployeeAllocation {
 
   /**Create a new EmployeeAllocation */
   constructor(obj?: any) {
+    this.id = (obj && obj.id) || null;
     this.payrollNumber = (obj && obj.payrollNumber) || null;
     this.quickbooksId = (obj && obj.quickbooksId) || 0;
     this.isShopEmployee = (obj && obj.isShopEmployee) || false;
