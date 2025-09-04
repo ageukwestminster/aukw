@@ -43,6 +43,10 @@ export class QBAccountListEntry {
    * A transaction in the opposing QBO company that matches this transaction.
    */
   matching_txn: ValueIdPair;
+  /**
+   * 'True' if this transaction is taxable (i.e. VATable), false otherwise
+   */
+  taxable: boolean;
 
   constructor(obj?: any) {
     this.date = (obj && obj.date) || null;
@@ -55,6 +59,7 @@ export class QBAccountListEntry {
     this.balance = (obj && obj.balance) || null;
     this.is_cleared = (obj && obj.is_cleared) || null;
     this.matching_txn = (obj && obj.matching_txn) || null;
+    this.taxable = (obj && obj.taxable) || false;
   }
 
   public stringRepresentation() {
@@ -67,6 +72,7 @@ export class QBAccountListEntry {
       account: this.account.value,
       amount: this.amount,
       is_cleared: this.is_cleared,
+      taxable: this.taxable ? 'Yes' : 'No',
       balance: this.balance,
     };
   }

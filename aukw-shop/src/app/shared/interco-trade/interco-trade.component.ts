@@ -1,5 +1,5 @@
 import { Component, inject, Input, OnInit, SimpleChanges } from '@angular/core';
-
+import { JsonPipe } from '@angular/common';
 import {
   FormBuilder,
   FormGroup,
@@ -30,7 +30,7 @@ import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'interco-trade',
-  imports: [NgbDatepickerModule, ReactiveFormsModule],
+  imports: [NgbDatepickerModule, ReactiveFormsModule, JsonPipe],
   templateUrl: './interco-trade.component.html',
   styleUrl: './interco-trade.component.css',
   providers: [
@@ -39,6 +39,8 @@ import { forkJoin } from 'rxjs';
   ],
 })
 export class IntercoTradeComponent implements OnInit {
+
+  // This is the trade that is already in QBO, for which we will create a matching trade in the other company
   @Input() existingTrade: QBAccountListEntry | null = null;
   @Input() enterprises: boolean = true; // When 'true' existingTrade is in Enterprises, in Charity otherwise
 
@@ -62,16 +64,20 @@ export class IntercoTradeComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({
-      txnDate: [null],
-      entity: [null],
+      txnDate: [null, Validators.required],
+      entity: [null, Validators.required],
       amount: [
         null,
-        [Validators.required, Validators.pattern('^[0-9]+(.[0-9]{0,1})?$')],
+        [Validators.required, Validators.pattern('^-?[0-9]\\d*(\\.\\d{1,2})?$')],
       ],
       IsVAT: [false],
-      Note: [null],
+      privateNote: [null],
       attachments: [null],
-      account: [null],
+      account: [null, Validators.required],
+      taxAmount: [null, Validators.required],
+      bankAccount: [102, Validators.required],
+      description: [null],
+      docnumber: [null]
     });
   }
 
@@ -138,7 +144,11 @@ export class IntercoTradeComponent implements OnInit {
       // Set values we know already
       this.f['amount'].setValue(this.existingTrade.amount);
       this.f['txnDate'].setValue(this.existingTrade.date);
-      this.f['Note'].setValue(this.existingTrade.memo);
+      this.f['privateNote'].setValue(this.existingTrade.memo);
+      this.f['IsVAT'].setValue(true);
+      let vat = Math.round(this.f['amount'].value * 100 / 6) / 100
+      this.f['taxAmount'].setValue(vat);
+      this.f['docnumber'].setValue(this.existingTrade.docnumber);
 
       // Download attachemnts (if any)
       this.downloadAttachments(this.realmid, this.existingTrade);
@@ -146,7 +156,7 @@ export class IntercoTradeComponent implements OnInit {
   }
 
   /**
-   * Downlaod all the attachmnents (if any) for a QBO trade.
+   * Download all the attachments (if any) for a QBO trade.
    * @param realmid The QBO id of the company file.
    * @param trade The currently selected trade that is already in QBO.
    */
@@ -185,8 +195,6 @@ export class IntercoTradeComponent implements OnInit {
     forkJoin($obs).subscribe({
       next: (x) => {
         var filteredAccounts = x.accounts.filter((x) => {
-          //console.log(x.type);
-
           return (
             x.type.includes('Expense', 0) || x.type == 'Cost of Goods Sold'
           );
@@ -211,5 +219,91 @@ export class IntercoTradeComponent implements OnInit {
     return this.form.controls;
   }
 
-  vatCheckboxClick() {}
+  onVatCheckboxClick() {
+    this.f['IsVAT'].setValue(!this.f['IsVAT'].value);
+    if (this.f['IsVAT'].value) {
+      // VAT is being turned on
+      let vat = Math.round(this.f['amount'].value * 100 / 6) / 100
+      this.f['taxAmount'].setValue(vat);
+    } else {
+      // VAT is being turned off
+      this.f['taxAmount'].setValue(0);
+    }
+  }
+
+  onSubmit() {
+        this.submitted = true;
+    
+        // reset alerts on submit
+        this.alertService.clear();
+    
+        // stop here if form is invalid
+        if (this.form.invalid) {
+          return;
+        }
+    
+        this.createPurchaseTrade();
+        
+  }
+
+  createPurchaseTrade() {
+    this.loading = true;
+
+    // Create the new trade in the other company
+    /*this.newTrade.txnDate = this.f['txnDate'].value;
+    this.newTrade.description = this.f['Note'].value;
+    this.newTrade.amount = this.f['amount'].value;
+    this.newTrade.taxAmount = this.f['taxAmount'].value;
+    this.newTrade.bankAccount = [102, "Paid by Parent"];
+    this.newTrade.expenseAccount = [this.f['account'].value.Id, this.f['account'].value.Value];
+    this.newTrade.entity= [this.f['entity'].value.Id, this.f['entity'].value.Value];*/
+
+    this.purchaseService
+      .create(this.otherRealmid, this.form.value )
+      .subscribe({
+        next: (response) => {
+          // If there are attachments, upload them now
+          if (this.attachments && this.attachments.length) {
+            var $obs: any[] = [];
+            this.attachments.forEach((attachment) => {
+              $obs.push(
+                this.attachmentService.uploadAttachments(
+                  this.otherRealmid,
+                  [ { value: response.id,
+                    type: 'purchase'}],                  
+                  [{ FileName: attachment.FileName,
+                    ContentType: attachment.ContentType                    
+                  }],
+                ),
+              );
+            });
+
+            forkJoin($obs).subscribe({
+              next: (x) => {
+                this.alertService.success(
+                  `Created trade ${response.id} with ${x.length} attachment(s).`,
+                  { autoClose: true },
+                );
+              },
+              error: (error: any) => {
+                this.loading = false;
+                this.alertService.error(error, { autoClose: false });
+              },
+              complete: () => (this.loading = false),
+            });
+          } else {
+            this.alertService.success(
+              `Created trade ${response.id}.`,
+              { autoClose: true },
+            );
+          }
+        },
+        error: (error: any) => {
+          this.loading = false;
+          this.alertService.error(error, { autoClose: false });
+        },
+        complete: () => (this.loading = false),
+      });
+  }
+
 }

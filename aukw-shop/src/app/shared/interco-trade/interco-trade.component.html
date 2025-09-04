@@ -1,5 +1,5 @@
 <div class="card-body">
-  <form [formGroup]="form">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="row">
       <div class="col-2">
         <div class="p-2">Date</div>
@@ -78,9 +78,9 @@
                 <input
                   type="checkbox"
                   class="form-check-input"
-                  [checked]="existingTrade ? false : true"
-                  (click)="vatCheckboxClick()"
+                  (click)="onVatCheckboxClick()"
                   id="checkboxVAT"
+                  formControlName="IsVAT"
                 />
               </div>
             </div>
@@ -112,7 +112,7 @@
             <div class="mx-auto">
               <button
                 type="submit"
-                [disabled]="loading || !this.existingTrade"
+                [disabled]="loading || !this.existingTrade || this.form.invalid"
                 class="btn btn-primary btn-lg"
                 aria-label="Create Transaction in Quickbooks"
               >
@@ -132,7 +132,7 @@
                 class="form-control pl-1"
                 id="commentsTextarea"
                 rows="1"
-                formControlName="Note"
+                formControlName="privateNote"
                 placeholder="Optional memo describing the transaction."
               ></textarea>
             </div>
@@ -140,5 +140,6 @@
         </div>
       </div>
     </div>
+    <pre>{{form.value | json}}</pre>
   </form>
 </div>

@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { environment } from '@environments/environment';
-import { QBAttachment } from '@app/_models';
+import { QBAttachment, ValueIdType } from '@app/_models';
 import { Observable } from 'rxjs';
 
 const baseUrl = `${environment.apiUrl}/qb`;
@@ -21,7 +21,7 @@ export class QBAttachmentService {
   /**
    * Download QBO attachments to the downloads folder, for a given entity
    * @param realmID The company ID for the QBO company.
-   * @returns Array of employee ids and names
+   * @returns Array of attachment names and content types
    */
   downloadAttachments(
     realmID: string,
@@ -31,5 +31,24 @@ export class QBAttachmentService {
     return this.http.get<QBAttachment[]>(
       `${baseUrl}/${realmID}/download-attachments?entity_type=${type}&txn_id=${id}`,
     );
+  }
+
+    /**
+   * Upload QBO attachments from the downloads folder and attach to a given entity
+   * @param realmID The company ID for the QBO company.
+    * @param attachmentRefs The references to the attachments to be uploaded
+    * @param filenames An array of filenames (with path) to be uploaded
+   */
+  uploadAttachments(
+    realmID: string,
+    attachmentRefs: {value: number, type: string}[],
+    filenames: {FileName: string, ContentType: string}[],
+  ): Observable<any> {
+
+    const params = {
+      attachmentRefs: attachmentRefs,
+      attachments: { files: filenames },
+    };
+    return this.http.post<any>(`${baseUrl}/${realmID}/attachments`, params);
   }
 }

@@ -28,4 +28,17 @@ export class QBPurchase {
     this.attachments = (obj && obj.attachments) || [];
     this.taxAmount = (obj && obj.taxAmount) || null;
   }
+
+  public toJson() {
+    return {
+      txnDate: this.txnDate,
+      entity: this.entity[0],
+      bankAccount: this.bankAccount[0],
+      expenseAccount: this.expenseAccount[0],
+      privateNote: this.privateNote,
+      description: this.description,
+      amount: this.amount,
+      taxAmount: this.taxAmount,      
+    };
+  }
 }

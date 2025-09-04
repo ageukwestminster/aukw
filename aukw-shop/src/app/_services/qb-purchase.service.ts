@@ -16,7 +16,7 @@ export class QBPurchaseService {
 
   create(realmID: string, params: any): Observable<ApiMessage> {
     return this.http.post<ApiMessage>(
-      `${baseUrl}/${realmID}/qb/purchase`,
+      `${baseUrl}/${realmID}/purchase`,
       params,
     );
   }

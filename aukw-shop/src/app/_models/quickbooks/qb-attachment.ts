@@ -5,14 +5,14 @@ export class QBAttachment {
   /**
    * The location of the file
    */
-  filename: string;
+  FileName: string;
   /**
    * The type of QB attachment
    */
-  contentType: string;
+  ContentType: string;
 
   constructor(obj?: any) {
-    this.filename = (obj && obj.filename) || null;
-    this.contentType = (obj && obj.contentType) || null;
+    this.FileName = (obj && obj.FileName) || null;
+    this.ContentType = (obj && obj.ContentType) || null;
   }
 }

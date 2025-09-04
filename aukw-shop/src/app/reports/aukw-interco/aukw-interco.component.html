@@ -120,6 +120,8 @@
                 <td class="text-center">
                   @if (item.matching_txn) {
                     <i class="fas fa-check"></i>
+                  } @else if (loading) {
+                    <span class="spinner-border spinner-border-sm"></span>
                   } @else {
                     <span class="fa-stack" style="color: limegreen;">
                       <i class="fa-solid fa-circle fa-stack-2x"></i>
