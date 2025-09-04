@@ -7,13 +7,13 @@ import {
   ViewChild,
   ElementRef,
 } from '@angular/core';
-import { NgIf } from '@angular/common';
+
 import { AlertService } from '@app/_services';
 
 @Component({
   selector: 'excel-upload',
   standalone: true,
-  imports: [NgIf],
+  imports: [],
   templateUrl: './excel-upload.component.html',
   styleUrl: './excel-upload.component.css',
 })

@@ -1,5 +1,5 @@
 ﻿import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule, NgFor, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { environment } from '@environments/environment';
 
@@ -33,12 +33,10 @@ import {
   standalone: true,
   imports: [
     CommonModule,
-    NgFor,
-    NgIf,
     RouterLink,
     TakingsRowComponent,
-    TakingsFilterComponent,
-  ],
+    TakingsFilterComponent
+],
 })
 export class TakingsListComponent implements OnInit {
   takingslist!: TakingsSummary[];

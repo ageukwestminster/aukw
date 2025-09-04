@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule, NgFor, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { concatMap } from 'rxjs/operators';
@@ -23,11 +23,9 @@ import { DateRangeChooserComponent } from '@app/shared';
     CommonModule,
     DateRangeChooserComponent,
     NgbAccordionModule,
-    NgFor,
-    NgIf,
     ReactiveFormsModule,
-    RouterLink,
-  ],
+    RouterLink
+],
 })
 export class WeeklySalesComponent extends AbstractChartReportComponent<AvgWeeklySalesData> {
   chartData: AvgWeeklySalesDataByQuarter[] = [];

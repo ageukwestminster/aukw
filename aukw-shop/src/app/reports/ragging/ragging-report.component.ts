@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { reduce, tap } from 'rxjs';
 import { concatMap, map } from 'rxjs/operators';
@@ -21,10 +21,9 @@ import { DateRangeChooserComponent, RaggingChartComponent } from '@app/shared';
     CommonModule,
     DateRangeChooserComponent,
     NgbAccordionModule,
-    NgIf,
     RaggingChartComponent,
-    RouterLink,
-  ],
+    RouterLink
+],
   templateUrl: './ragging-report.component.html',
   styleUrl: './ragging-report.component.css',
 })

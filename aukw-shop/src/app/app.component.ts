@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { NgIf } from '@angular/common';
+
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import {
   NgbDropdownModule,
@@ -19,12 +19,11 @@ import { AlertComponent } from './shared/alert-component';
     AlertComponent,
     NgbCollapseModule,
     NgbDropdownModule,
-    NgIf,
     NgbNavModule,
     RouterLink,
     RouterLinkActive,
-    RouterOutlet,
-  ],
+    RouterOutlet
+],
 })
 export class AppComponent {
   user?: User;

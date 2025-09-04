@@ -9,53 +9,69 @@
 </td>
 <td>
   <div class="row">
-    <button
-      class="btn btn-sm btn-primary mb-1"
-      [disabled]="(takings.isUpdating || takings.quickbooks) && !user.isAdmin"
-      routerLink="edit/{{ takings.id }}"
-      *ngIf="!takings.quickbooks || user.isAdmin"
-    >
-      <span
-        *ngIf="takings.isUpdating"
-        class="spinner-border spinner-border-sm"
-      ></span>
-      <span *ngIf="!takings.isUpdating">Edit</span>
-    </button>
-    <button
-      class="btn btn-sm btn-secondary mb-1"
-      [disabled]="takings.isUpdating"
-      routerLink="view/{{ takings.id }}"
-      *ngIf="takings.quickbooks"
-    >
-      <span
-        *ngIf="takings.isUpdating"
-        class="spinner-border spinner-border-sm"
-      ></span>
-      <span *ngIf="!takings.isUpdating">View</span>
-    </button>
-    <button
-      *ngIf="user.isAdmin"
-      (click)="deleteTakings($event)"
-      class="btn btn-sm btn-danger btn-delete-takings mb-1"
-      [disabled]="takings.isDeleting"
-    >
-      <span
-        *ngIf="takings.isDeleting"
-        class="spinner-border spinner-border-sm"
-      ></span>
-      <span *ngIf="!takings.isDeleting">Delete</span>
-    </button>
-    <button
-      *ngIf="user.isAdmin && !takings.quickbooks"
-      (click)="addToQuickbooks($event)"
-      class="btn btn-sm btn-warning btn-add-takings-to-qb"
-    >
-      <!-- [disabled]="takings.isDeleting || !isProduction" -->
-      <span
-        *ngIf="takings.isUpdating"
-        class="spinner-border spinner-border-sm"
-      ></span>
-      <span *ngIf="!takings.isUpdating">Add to QB</span>
-    </button>
+    @if (!takings.quickbooks || user.isAdmin) {
+      <button
+        class="btn btn-sm btn-primary mb-1"
+        [disabled]="(takings.isUpdating || takings.quickbooks) && !user.isAdmin"
+        routerLink="edit/{{ takings.id }}"
+        >
+        @if (takings.isUpdating) {
+          <span
+            class="spinner-border spinner-border-sm"
+          ></span>
+        }
+        @if (!takings.isUpdating) {
+          <span>Edit</span>
+        }
+      </button>
+    }
+    @if (takings.quickbooks) {
+      <button
+        class="btn btn-sm btn-secondary mb-1"
+        [disabled]="takings.isUpdating"
+        routerLink="view/{{ takings.id }}"
+        >
+        @if (takings.isUpdating) {
+          <span
+            class="spinner-border spinner-border-sm"
+          ></span>
+        }
+        @if (!takings.isUpdating) {
+          <span>View</span>
+        }
+      </button>
+    }
+    @if (user.isAdmin) {
+      <button
+        (click)="deleteTakings($event)"
+        class="btn btn-sm btn-danger btn-delete-takings mb-1"
+        [disabled]="takings.isDeleting"
+        >
+        @if (takings.isDeleting) {
+          <span
+            class="spinner-border spinner-border-sm"
+          ></span>
+        }
+        @if (!takings.isDeleting) {
+          <span>Delete</span>
+        }
+      </button>
+    }
+    @if (user.isAdmin && !takings.quickbooks) {
+      <button
+        (click)="addToQuickbooks($event)"
+        class="btn btn-sm btn-warning btn-add-takings-to-qb"
+        >
+        <!-- [disabled]="takings.isDeleting || !isProduction" -->
+        @if (takings.isUpdating) {
+          <span
+            class="spinner-border spinner-border-sm"
+          ></span>
+        }
+        @if (!takings.isUpdating) {
+          <span>Add to QB</span>
+        }
+      </button>
+    }
   </div>
 </td>

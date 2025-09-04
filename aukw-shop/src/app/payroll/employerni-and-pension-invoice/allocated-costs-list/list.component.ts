@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { CommonModule, NgFor, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { IrisPayslip, LineItemDetail } from '@app/_models';
 import { from, scan } from 'rxjs';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
@@ -7,7 +7,7 @@ import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'allocated-costs-list',
   standalone: true,
-  imports: [CommonModule, NgbTooltip, NgFor, NgIf],
+  imports: [CommonModule, NgbTooltip],
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.css', '../../shared.css'],
 })

@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Location, NgIf, NgClass } from '@angular/common';
+import { Location, NgClass } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { BehaviorSubject } from 'rxjs';
@@ -11,12 +11,10 @@ import { PayrollProcessState } from '@app/_models';
   standalone: true,
   imports: [
     NgbNavModule,
-    //NgClass,
-    NgIf,
     RouterLink,
     RouterLinkActive,
-    RouterOutlet,
-  ],
+    RouterOutlet
+],
   styleUrl: './frontpage.component.css',
 })
 export class PayrollFrontPageComponent {

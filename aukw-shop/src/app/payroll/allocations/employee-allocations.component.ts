@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { PayrollProcessState } from '@app/_models';
 import {
   AlertService,
@@ -12,7 +12,7 @@ import { shareReplay } from 'rxjs';
 @Component({
   selector: 'employee-allocations',
   standalone: true,
-  imports: [AsyncPipe, NgFor],
+  imports: [AsyncPipe],
   templateUrl: './employee-allocations.component.html',
   styleUrls: ['./employee-allocations.component.css', '../shared.css'],
 })

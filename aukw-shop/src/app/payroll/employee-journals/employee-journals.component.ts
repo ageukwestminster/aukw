@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule, NgFor, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import {
   IrisPayslip,
   PayrollJournalEntry,
@@ -12,7 +12,7 @@ import { BasePayrollTransactionComponent } from '../parent.component';
 @Component({
   selector: 'employee-journals',
   standalone: true,
-  imports: [CommonModule, NgbTooltip, NgFor, NgIf],
+  imports: [CommonModule, NgbTooltip],
   templateUrl: './employee-journals.component.html',
   styleUrls: ['./employee-journals.component.css', '../shared.css'],
 })

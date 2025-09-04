@@ -9,21 +9,21 @@
         type="button"
         routerLink="/reports/weekly-sales"
         class="btn btn-success m-2"
-      >
+        >
         &lt; Previous
       </button>
       <button
         type="button"
         routerLink="/reports/daily-transaction-averages"
         class="btn btn-success m-2"
-      >
+        >
         Next &gt;
       </button>
       <button
         type="button"
         routerLink="/reports"
         class="btn btn-outline-dark m-2"
-      >
+        >
         Close &times;
       </button>
     </div>
@@ -37,10 +37,11 @@
   <div class="row justify-content-between p-2">
     <div class="col-sm-6">
       <div>
-        <span
-          *ngIf="loading"
-          class="spinner-border spinner-border-lg align-center"
-        ></span>
+        @if (loading) {
+          <span
+            class="spinner-border spinner-border-lg align-center"
+          ></span>
+        }
       </div>
     </div>
   </div>
@@ -49,74 +50,79 @@
     <div class="col-sm">
       <table class="table table-striped table-hover table-responsive w-auto">
         <thead>
-          <tr *ngIf="data && data.start">
-            <th></th>
-            <td>
-              {{ data.start | date: "dd/MM/yy" }} -
-              {{ data.end | date: "dd/MM/yy" }}
-            </td>
-          </tr>
+          @if (data && data.start) {
+            <tr>
+              <th></th>
+              <td>
+                {{ data.start | date: "dd/MM/yy" }} -
+                {{ data.end | date: "dd/MM/yy" }}
+              </td>
+            </tr>
+          }
         </thead>
-        <tbody *ngIf="data">
-          <tr></tr>
-          <tr>
-            <td>Clothing</td>
-            <td class="text-end">
-              {{ data.clothing | number: "1.2-2" }}
-            </td>
-          </tr>
-          <tr>
-            <td>Brica</td>
-            <td class="text-end">
-              {{ data.brica | number: "1.2-2" }}
-            </td>
-          </tr>
-          <tr>
-            <td>Books</td>
-            <td class="text-end">
-              {{ data.books | number: "1.2-2" }}
-            </td>
-          </tr>
-          <tr>
-            <td>Linens</td>
-            <td class="text-end">
-              {{ data.linens | number: "1.2-2" }}
-            </td>
-          </tr>
-          <tr>
-            <td>Miscellaneous Income</td>
-            <td class="text-end">
-              {{ data.other | number: "1.2-2" }}
-            </td>
-          </tr>
-          <tr>
-            <th>
-              <span class="text-dark">Total in-store Income</span>
-            </th>
-            <td class="text-end border-tb">
-              {{ data.total | number: "1.2-2" }}
-            </td>
-          </tr>
-        </tbody>
+        @if (data) {
+          <tbody>
+            <tr></tr>
+            <tr>
+              <td>Clothing</td>
+              <td class="text-end">
+                {{ data.clothing | number: "1.2-2" }}
+              </td>
+            </tr>
+            <tr>
+              <td>Brica</td>
+              <td class="text-end">
+                {{ data.brica | number: "1.2-2" }}
+              </td>
+            </tr>
+            <tr>
+              <td>Books</td>
+              <td class="text-end">
+                {{ data.books | number: "1.2-2" }}
+              </td>
+            </tr>
+            <tr>
+              <td>Linens</td>
+              <td class="text-end">
+                {{ data.linens | number: "1.2-2" }}
+              </td>
+            </tr>
+            <tr>
+              <td>Miscellaneous Income</td>
+              <td class="text-end">
+                {{ data.other | number: "1.2-2" }}
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <span class="text-dark">Total in-store Income</span>
+              </th>
+              <td class="text-end border-tb">
+                {{ data.total | number: "1.2-2" }}
+              </td>
+            </tr>
+          </tbody>
+        }
       </table>
-      <p
-        class="text-danger"
-        *ngIf="
-          data &&
-          Math.abs(
-            data.clothing +
-              data.brica +
-              data.books +
-              data.linens +
-              data.other -
-              data.total
-          ) > 0.1
-        "
-      >
-        Possible Error: Clothing+Brica+Books+Linens+Misc = £
-        {{ data.clothing + data.brica + data.books + data.linens + data.other }}
-        but total = £{{ data.total }}
-      </p>
+      @if (
+        data &&
+        Math.abs(
+        data.clothing +
+        data.brica +
+        data.books +
+        data.linens +
+        data.other -
+        data.total
+        ) > 0.1
+        ) {
+        <p
+          class="text-danger"
+          >
+          Possible Error: Clothing+Brica+Books+Linens+Misc = £
+          {{ data.clothing + data.brica + data.books + data.linens + data.other }}
+          but total = £{{ data.total }}
+        </p>
+      }
     </div>
   </div>
 </div>

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { CommonModule, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
   FormGroup,
@@ -25,12 +25,11 @@ import { DateRangeChooserComponent } from '@app/shared';
   standalone: true,
   imports: [
     CommonModule,
-    NgIf,
     NgbAccordionModule,
     FormsModule,
     ReactiveFormsModule,
-    DateRangeChooserComponent,
-  ],
+    DateRangeChooserComponent
+],
 })
 export class TakingsFilterComponent implements OnInit {
   @Output()

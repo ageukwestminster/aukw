@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule, NgFor, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { IrisPayslip, PayrollProcessState } from '@app/_models';
 import { QBEmployeeService } from '@app/_services';
 import { forkJoin, map, of, shareReplay, tap } from 'rxjs';
@@ -10,7 +10,7 @@ import { BasePayrollTransactionComponent } from '../parent.component';
 @Component({
   selector: 'shop-journal',
   standalone: true,
-  imports: [CommonModule, NgbTooltip, NgFor, NgIf],
+  imports: [CommonModule, NgbTooltip],
   templateUrl: './shop-journal.component.html',
   styleUrls: ['./shop-journal.component.css', '../shared.css'],
 })

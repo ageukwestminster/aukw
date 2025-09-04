@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { environment } from '@environments/environment';
@@ -13,10 +13,9 @@ import { DateRangeChooserComponent } from '@app/shared';
   imports: [
     CommonModule,
     DateRangeChooserComponent,
-    NgIf,
     ReactiveFormsModule,
-    RouterLink,
-  ],
+    RouterLink
+],
   templateUrl: './sales-by-department.component.html',
   styleUrl: './sales-by-department.component.css',
 })

@@ -16,7 +16,7 @@
       (click)="createTransaction()"
       class="btn btn-sm btn-success m-1 mt-1 #employerNI"
       [disabled]="!lines || !lines.length"
-    >
+      >
       Create Shop Journal Entry
     </button>
   </div>
@@ -46,70 +46,80 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let line of lines">
-          <td>
-            {{ line.payrollNumber }}
-          </td>
-          <td>{{ line.employeeName }}</td>
-          <td class="d-none d-sm-table-cell">
-            {{ line.totalPay | number: "1.2-2" }}
-          </td>
-          <td class="d-none d-sm-table-cell">
-            {{ line.employerPension | number: "1.2-2" }}
-          </td>
-          <td class="d-none d-sm-table-cell">
-            {{ line.employerNI | number: "1.2-2" }}
-          </td>
-          <td>
-            {{
+        @for (line of lines; track line) {
+          <tr>
+            <td>
+              {{ line.payrollNumber }}
+            </td>
+            <td>{{ line.employeeName }}</td>
+            <td class="d-none d-sm-table-cell">
+              {{ line.totalPay | number: "1.2-2" }}
+            </td>
+            <td class="d-none d-sm-table-cell">
+              {{ line.employerPension | number: "1.2-2" }}
+            </td>
+            <td class="d-none d-sm-table-cell">
+              {{ line.employerNI | number: "1.2-2" }}
+            </td>
+            <td>
+              {{
               line.totalPay + line.employerPension + line.employerNI
-                | number: "1.2-2"
-            }}
-          </td>
-          <td class="text-center">
-            <div *ngIf="line.payrollNumber">
-              <span class="in-qbo">
-                <i
-                  class="fas fa-check"
-                  *ngIf="inQBO(line)"
-                  ngbTooltip="Shop journal done for {{ line.employeeName }}."
-                ></i>
-              </span>
-              <span class="not-in-qbo">
-                <i
-                  class="fas fa-times"
-                  *ngIf="!inQBO(line)"
-                  ngbTooltip="Shop journal missing for {{ line.employeeName }}."
-                ></i>
-              </span>
-            </div>
-          </td>
-        </tr>
-        <tr *ngIf="total && total.totalPay" class="total-line">
-          <td></td>
-          <td>Total for {{ this.lines.length }} employees:</td>
-          <td class="d-none d-sm-table-cell">
-            {{ total.totalPay | number: "1.2-2" }}
-          </td>
-          <td class="d-none d-sm-table-cell">
-            {{ total.employerPension | number: "1.2-2" }}
-          </td>
-          <td class="d-none d-sm-table-cell">
-            {{ total.employerNI | number: "1.2-2" }}
-          </td>
-          <td>
-            {{
+              | number: "1.2-2"
+              }}
+            </td>
+            <td class="text-center">
+              @if (line.payrollNumber) {
+                <div>
+                  <span class="in-qbo">
+                    @if (inQBO(line)) {
+                      <i
+                        class="fas fa-check"
+                        ngbTooltip="Shop journal done for {{ line.employeeName }}."
+                      ></i>
+                    }
+                  </span>
+                  <span class="not-in-qbo">
+                    @if (!inQBO(line)) {
+                      <i
+                        class="fas fa-times"
+                        ngbTooltip="Shop journal missing for {{ line.employeeName }}."
+                      ></i>
+                    }
+                  </span>
+                </div>
+              }
+            </td>
+          </tr>
+        }
+        @if (total && total.totalPay) {
+          <tr class="total-line">
+            <td></td>
+            <td>Total for {{ this.lines.length }} employees:</td>
+            <td class="d-none d-sm-table-cell">
+              {{ total.totalPay | number: "1.2-2" }}
+            </td>
+            <td class="d-none d-sm-table-cell">
+              {{ total.employerPension | number: "1.2-2" }}
+            </td>
+            <td class="d-none d-sm-table-cell">
+              {{ total.employerNI | number: "1.2-2" }}
+            </td>
+            <td>
+              {{
               total.totalPay + total.employerPension + total.employerNI
-                | number: "1.2-2"
-            }}
-          </td>
-          <td></td>
-        </tr>
-        <tr *ngIf="!lines || !lines.length">
-          <td colspan="7" class="text-center">
-            <span class="spinner-border spinner-border-lg align-center"></span>
-          </td>
-        </tr>
+              | number: "1.2-2"
+              }}
+            </td>
+            <td></td>
+          </tr>
+        }
+        @if (!lines || !lines.length) {
+          <tr>
+            <td colspan="7" class="text-center">
+              <span class="spinner-border spinner-border-lg align-center"></span>
+            </td>
+          </tr>
+        }
       </tbody>
     </table>
   </div>

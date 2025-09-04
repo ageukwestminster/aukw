@@ -8,21 +8,21 @@
         type="button"
         routerLink="/reports/sales-list"
         class="btn btn-success m-2"
-      >
+        >
         &lt; Previous
       </button>
       <button
         type="button"
         routerLink="/reports/cash-ratio"
         class="btn btn-success m-2"
-      >
+        >
         Next &gt;
       </button>
       <button
         type="button"
         routerLink="/reports"
         class="btn btn-outline-dark m-2"
-      >
+        >
         Close &times;
       </button>
     </div>
@@ -38,7 +38,9 @@
 
     <div class="row">
       <div class="col-sm">
-        <p class="p-2" *ngIf="data">Click on a row to see sales detail.</p>
+        @if (data) {
+          <p class="p-2">Click on a row to see sales detail.</p>
+        }
         <table class="table table-striped table-hover table-responsive w-auto">
           <thead>
             <tr>
@@ -47,27 +49,33 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of data?.list" (click)="onRowSelected(item)">
-              <th>
-                <span class="text-dark">{{ item[1] }}</span>
-              </th>
-              <td class="text-center">{{ item[2] | number: "1.2-2" }}</td>
-            </tr>
+            @for (item of data?.list; track item) {
+              <tr (click)="onRowSelected(item)">
+                <th>
+                  <span class="text-dark">{{ item[1] }}</span>
+                </th>
+                <td class="text-center">{{ item[2] | number: "1.2-2" }}</td>
+              </tr>
+            }
             <tr>
               <td>Total</td>
               <td class="text-center">
-                <strong *ngIf="data">{{
-                  data!.count * data!.average | number: "1.2-2"
-                }}</strong>
+                @if (data) {
+                  <strong>{{
+                    data!.count * data!.average | number: "1.2-2"
+                  }}</strong>
+                }
               </td>
             </tr>
-            <tr *ngIf="!data">
-              <td colspan="4" class="text-center">
-                <span
-                  class="spinner-border spinner-border-lg align-center"
-                ></span>
-              </td>
-            </tr>
+            @if (!data) {
+              <tr>
+                <td colspan="4" class="text-center">
+                  <span
+                    class="spinner-border spinner-border-lg align-center"
+                  ></span>
+                </td>
+              </tr>
+            }
           </tbody>
         </table>
       </div>

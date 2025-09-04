@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { NgFor, NgIf, DecimalPipe } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { IrisPayslip } from '@app/_models';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 
@@ -7,7 +7,7 @@ import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
   selector: 'payslip-list',
   templateUrl: 'list.component.html',
   standalone: true,
-  imports: [NgbTooltip, NgFor, NgIf, DecimalPipe],
+  imports: [NgbTooltip, DecimalPipe],
   styleUrls: ['../shared.css'],
 })
 export class PayslipListComponent {

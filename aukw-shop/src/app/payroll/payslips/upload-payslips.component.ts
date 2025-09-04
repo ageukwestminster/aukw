@@ -1,5 +1,5 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { NgIf, DatePipe, DecimalPipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import {
   EmployeeAllocation,
   IrisPayslip,
@@ -22,10 +22,9 @@ import { ActivatedRoute, Router } from '@angular/router';
   imports: [
     PayslipListComponent,
     ExcelParserComponent,
-    NgIf,
     DatePipe,
-    DecimalPipe,
-  ],
+    DecimalPipe
+],
   styleUrls: ['../shared.css'],
 })
 export class UploadPayslipsComponent implements OnInit {

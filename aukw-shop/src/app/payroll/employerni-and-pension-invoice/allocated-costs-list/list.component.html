@@ -14,39 +14,47 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let line of lines">
-          <td>
-            {{ line.payrollNumber }}
-          </td>
-          <td>{{ line.name }}</td>
-          <td>{{ line.amount | number: "1.2-2" }}</td>
-          <td class="d-none d-sm-table-cell">
-            {{ className(line.className) }}
-          </td>
-          <td class="text-center">
-            <div *ngIf="line.payrollNumber">
-              <span class="in-qbo">
-                <i
-                  class="fas fa-check"
-                  *ngIf="inQBO(line)"
-                  ngbTooltip="{{ title }} {{ transactionType }} done."
-                ></i>
-              </span>
-              <span class="not-in-qbo">
-                <i
-                  class="fas fa-times"
-                  *ngIf="!inQBO(line)"
-                  ngbTooltip="{{ title }} {{ transactionType }} missing."
-                ></i>
-              </span>
-            </div>
-          </td>
-        </tr>
-        <tr *ngIf="!lines">
-          <td colspan="5" class="text-center">
-            <span class="spinner-border spinner-border-lg align-center"></span>
-          </td>
-        </tr>
+        @for (line of lines; track line) {
+          <tr>
+            <td>
+              {{ line.payrollNumber }}
+            </td>
+            <td>{{ line.name }}</td>
+            <td>{{ line.amount | number: "1.2-2" }}</td>
+            <td class="d-none d-sm-table-cell">
+              {{ className(line.className) }}
+            </td>
+            <td class="text-center">
+              @if (line.payrollNumber) {
+                <div>
+                  <span class="in-qbo">
+                    @if (inQBO(line)) {
+                      <i
+                        class="fas fa-check"
+                        ngbTooltip="{{ title }} {{ transactionType }} done."
+                      ></i>
+                    }
+                  </span>
+                  <span class="not-in-qbo">
+                    @if (!inQBO(line)) {
+                      <i
+                        class="fas fa-times"
+                        ngbTooltip="{{ title }} {{ transactionType }} missing."
+                      ></i>
+                    }
+                  </span>
+                </div>
+              }
+            </td>
+          </tr>
+        }
+        @if (!lines) {
+          <tr>
+            <td colspan="5" class="text-center">
+              <span class="spinner-border spinner-border-lg align-center"></span>
+            </td>
+          </tr>
+        }
       </tbody>
     </table>
   </div>

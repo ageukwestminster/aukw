@@ -29,25 +29,27 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let alloc of qbPayrollService.allocations$ | async">
-            <td class="text-center">
-              {{ alloc.payrollNumber }}
-            </td>
-            <td>{{ alloc.name }}</td>
-            <td class="text-center">{{ alloc.percentage + "%" }}</td>
-            <td>
-              {{ alloc.isShopEmployee ? "Charity Shop" : alloc.className }}
-            </td>
-          </tr>
+          @for (alloc of qbPayrollService.allocations$ | async; track alloc) {
+            <tr>
+              <td class="text-center">
+                {{ alloc.payrollNumber }}
+              </td>
+              <td>{{ alloc.name }}</td>
+              <td class="text-center">{{ alloc.percentage + "%" }}</td>
+              <td>
+                {{ alloc.isShopEmployee ? "Charity Shop" : alloc.className }}
+              </td>
+            </tr>
+          }
           <!--<tr *ngIf="!(qbPayrollService.allocations$ | async)!.length">
-            <td colspan="5" class="text-center">
-              <span
-                class="spinner-border spinner-border-lg align-center"
-              ></span>
-            </td>
-          </tr>-->
-        </tbody>
-      </table>
-    </div>
+          <td colspan="5" class="text-center">
+            <span
+              class="spinner-border spinner-border-lg align-center"
+            ></span>
+          </td>
+        </tr>-->
+      </tbody>
+    </table>
   </div>
+</div>
 </div>

@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
@@ -21,11 +21,10 @@ import { DateRangeChooserComponent, IntercoTradeComponent } from '@app/shared';
     CommonModule,
     IntercoTradeComponent,
     NgbTooltip,
-    NgIf,
     RouterLink,
     ReactiveFormsModule,
-    DateRangeChooserComponent,
-  ],
+    DateRangeChooserComponent
+],
 })
 export class AukwIntercoComponent
   extends AbstractChartReportComponent<QBAccountListEntry[]>

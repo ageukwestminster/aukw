@@ -9,7 +9,7 @@
       (click)="createTransaction()"
       class="btn btn-sm btn-success m-1 mt-1"
       [disabled]="!lines || !lines.length"
-    >
+      >
       Create Salary Journals
     </button>
   </div>
@@ -61,65 +61,75 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let line of lines">
-          <td>
-            {{ line.payrollNumber }}
-          </td>
-          <td>{{ line.employeeName }}</td>
-          <td>
-            <div class="align-middle" *ngFor="let item of line.totalPay">
-              {{ item.className }}
-            </div>
-          </td>
-          <td>
-            <div class="align-middle" *ngFor="let item of line.totalPay">
-              {{ item.amount }}
-            </div>
-          </td>
-          <td class="d-none d-sm-table-cell">
-            {{ line.paye | number: "1.2-2" }}
-          </td>
-          <td class="d-none d-sm-table-cell">
-            {{ line.employeeNI | number: "1.2-2" }}
-          </td>
-          <td class="d-none d-sm-table-cell">
-            {{ line.otherDeductions | number: "1.2-2" }}
-          </td>
-          <td class="d-none d-sm-table-cell">
-            {{ -line.salarySacrifice | number: "1.2-2" }}
-          </td>
-          <td class="d-none d-sm-table-cell">
-            {{ -line.employeePension | number: "1.2-2" }}
-          </td>
-          <td class="d-none d-sm-table-cell">
-            {{ line.studentLoan | number: "1.2-2" }}
-          </td>
-          <td class="d-none d-sm-table-cell">
-            {{ -line.netPay | number: "1.2-2" }}
-          </td>
-          <td class="text-center">
-            <div *ngIf="line.payrollNumber">
-              <span class="in-qbo">
-                <i
-                  class="fas fa-check"
-                  *ngIf="inQBO(line)"
+        @for (line of lines; track line) {
+          <tr>
+            <td>
+              {{ line.payrollNumber }}
+            </td>
+            <td>{{ line.employeeName }}</td>
+            <td>
+              @for (item of line.totalPay; track item) {
+                <div class="align-middle">
+                  {{ item.className }}
+                </div>
+              }
+            </td>
+            <td>
+              @for (item of line.totalPay; track item) {
+                <div class="align-middle">
+                  {{ item.amount }}
+                </div>
+              }
+            </td>
+            <td class="d-none d-sm-table-cell">
+              {{ line.paye | number: "1.2-2" }}
+            </td>
+            <td class="d-none d-sm-table-cell">
+              {{ line.employeeNI | number: "1.2-2" }}
+            </td>
+            <td class="d-none d-sm-table-cell">
+              {{ line.otherDeductions | number: "1.2-2" }}
+            </td>
+            <td class="d-none d-sm-table-cell">
+              {{ -line.salarySacrifice | number: "1.2-2" }}
+            </td>
+            <td class="d-none d-sm-table-cell">
+              {{ -line.employeePension | number: "1.2-2" }}
+            </td>
+            <td class="d-none d-sm-table-cell">
+              {{ line.studentLoan | number: "1.2-2" }}
+            </td>
+            <td class="d-none d-sm-table-cell">
+              {{ -line.netPay | number: "1.2-2" }}
+            </td>
+            <td class="text-center">
+              @if (line.payrollNumber) {
+                <div>
+                  <span class="in-qbo">
+                    @if (inQBO(line)) {
+                      <i
+                        class="fas fa-check"
                   ngbTooltip="Employee journal done for {{
                     line.employeeName
                   }}."
-                ></i>
-              </span>
-              <span class="not-in-qbo">
-                <i
-                  class="fas fa-times"
-                  *ngIf="!inQBO(line)"
+                      ></i>
+                    }
+                  </span>
+                  <span class="not-in-qbo">
+                    @if (!inQBO(line)) {
+                      <i
+                        class="fas fa-times"
                   ngbTooltip="Employee journal missing for {{
                     line.employeeName
                   }}."
-                ></i>
-              </span>
-            </div>
-          </td>
-        </tr>
+                      ></i>
+                    }
+                  </span>
+                </div>
+              }
+            </td>
+          </tr>
+        }
       </tbody>
     </table>
   </div>

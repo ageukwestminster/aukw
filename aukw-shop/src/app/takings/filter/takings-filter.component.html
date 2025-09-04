@@ -4,7 +4,9 @@
       <h2 ngbAccordionHeader>
         <button ngbAccordionButton>Filter</button>
       </h2>
-      <span *ngIf="working" class="spinner-border spinner-border-sm"></span>
+      @if (working) {
+        <span class="spinner-border spinner-border-sm"></span>
+      }
       <div ngbAccordionCollapse>
         <div ngbAccordionBody>
           <ng-template>
@@ -18,9 +20,11 @@
       </div>
     </div>
   </div>
-  <div *ngIf="false">
-    <p>Form Value: {{ form.value | json }}</p>
-    <p>Form Status: {{ form.status }}</p>
-    <p>Filter: {{ filter$ | async | json }}</p>
-  </div>
+  @if (false) {
+    <div>
+      <p>Form Value: {{ form.value | json }}</p>
+      <p>Form Status: {{ form.status }}</p>
+      <p>Filter: {{ filter$ | async | json }}</p>
+    </div>
+  }
 </form>

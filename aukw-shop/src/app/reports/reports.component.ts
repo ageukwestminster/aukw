@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Location, NgIf } from '@angular/common';
+import { Location } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthenticationService } from '@app/_services';
@@ -8,7 +8,7 @@ import { User } from '@app/_models';
 @Component({
   templateUrl: './reports.component.html',
   standalone: true,
-  imports: [NgbAccordionModule, NgIf, RouterLink],
+  imports: [NgbAccordionModule, RouterLink],
 })
 export class ReportsComponent {
   user: User;

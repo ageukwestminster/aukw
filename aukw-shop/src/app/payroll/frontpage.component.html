@@ -12,228 +12,246 @@
           <div class="card-body">
             <a class="link-unstyled" routerLink="allocations"
               ><i class="fas fa-user-tag fa-6x"></i>
-              <div *ngIf="processState >= PayrollProcessState.ALLOCATIONS">
-                <i
-                  class="fa fa-check-circle-o status-icon fa-3x allocationsDone"
-                  ><span class="visually-hidden"
+              @if (processState >= PayrollProcessState.ALLOCATIONS) {
+                <div>
+                  <i
+                    class="fa fa-check-circle-o status-icon fa-3x allocationsDone"
+                    ><span class="visually-hidden"
                     >Allocation retrieval complete</span
-                  ></i
-                >
-              </div></a
-            >
-          </div>
-          <hr
-            class="mx-3 border-top border-5 border-primary solid"
-            *ngIf="
-              locationString == 'PAYROLL' || locationString == 'ALLOCATIONS';
-              else inactiveBorder
-            "
-          />
-        </div>
-      </div>
+                    ></i
+                    >
+                  </div>
+                  }</a
+                  >
+                </div>
+                @if (
+                  locationString == 'PAYROLL' || locationString == 'ALLOCATIONS') {
+                  <hr
+                    class="mx-3 border-top border-5 border-primary solid"
+                    />
+                } @else {
+                  <hr class="mx-3 border-top border-5 border-secondary" />
+                }
+              </div>
+            </div>
 
-      <div class="col-sm-auto">
-        <div class="card box-shadow">
-          <div class="card-header pb-2">
-            <h4 class="my-0 font-weight-normal">Upload File</h4>
-          </div>
-          <div class="card-body">
-            <a
-              class="link-unstyled"
-              routerLinkActive="active"
+            <div class="col-sm-auto">
+              <div class="card box-shadow">
+                <div class="card-header pb-2">
+                  <h4 class="my-0 font-weight-normal">Upload File</h4>
+                </div>
+                <div class="card-body">
+                  <a
+                    class="link-unstyled"
+                    routerLinkActive="active"
               [routerLink]="
                 processState >= PayrollProcessState.ALLOCATIONS
                   ? 'payslips'
                   : null
               "
-              ><div>
-                <i
-                  class="fas fa-upload fa-6x"
-                  *ngIf="
-                    processState >= PayrollProcessState.ALLOCATIONS;
-                    else inactiveUpload
-                  "
-                ></i>
-              </div>
-              <div *ngIf="processState >= PayrollProcessState.PAYSLIPS">
-                <i class="fa fa-check-circle-o status-icon fa-3x complete"
-                  ><span class="visually-hidden">Upload complete</span></i
-                >
-              </div></a
-            >
-          </div>
-          <hr
-            class="mx-3 border-top border-5 border-primary solid"
-            *ngIf="locationString == 'PAYSLIPS'; else inactiveBorder"
-          />
-        </div>
-      </div>
+                    ><div>
+                    @if (
+                      processState >= PayrollProcessState.ALLOCATIONS) {
+                      <i
+                        class="fas fa-upload fa-6x"
+                      ></i>
+                    } @else {
+                      <i class="fas fa-upload fa-6x inactive"></i>
+                    }
+                  </div>
+                  @if (processState >= PayrollProcessState.PAYSLIPS) {
+                    <div>
+                      <i class="fa fa-check-circle-o status-icon fa-3x complete"
+                        ><span class="visually-hidden">Upload complete</span></i
+                        >
+                      </div>
+                      }</a
+                      >
+                    </div>
+                    @if (locationString == 'PAYSLIPS') {
+                      <hr
+                        class="mx-3 border-top border-5 border-primary solid"
+                        />
+                    } @else {
+                      <hr class="mx-3 border-top border-5 border-secondary" />
+                    }
+                  </div>
+                </div>
 
-      <div class="col-sm-auto">
-        <div class="card box-shadow">
-          <div class="card-header pb-2">
-            <h4 class="my-0 font-weight-normal">Employer NI</h4>
-          </div>
-          <div class="card-body">
-            <a
-              class="link-unstyled"
-              routerLinkActive="active"
+                <div class="col-sm-auto">
+                  <div class="card box-shadow">
+                    <div class="card-header pb-2">
+                      <h4 class="my-0 font-weight-normal">Employer NI</h4>
+                    </div>
+                    <div class="card-body">
+                      <a
+                        class="link-unstyled"
+                        routerLinkActive="active"
               [routerLink]="
                 processState >= PayrollProcessState.PAYSLIPS
                   ? 'employerni'
                   : null
               "
-              ><div>
-                <i
-                  class="fas fa-book-open fa-6x"
-                  *ngIf="
-                    processState >= PayrollProcessState.PAYSLIPS;
-                    else inactiveJournal
-                  "
-                ></i>
-              </div>
-              <div *ngIf="processState >= PayrollProcessState.EMPLOYERNI">
-                <i class="fa fa-check-circle-o status-icon fa-3x complete"
-                  ><span class="visually-hidden">Journals complete</span></i
-                >
-              </div></a
-            >
-          </div>
-          <hr
-            class="mx-3 border-top border-5 border-primary solid"
-            *ngIf="locationString == 'EMPLOYERNI'; else inactiveBorder"
-          />
-        </div>
-      </div>
+                        ><div>
+                        @if (
+                          processState >= PayrollProcessState.PAYSLIPS) {
+                          <i
+                            class="fas fa-book-open fa-6x"
+                          ></i>
+                        } @else {
+                          <i class="fas fa-book-open fa-6x inactive"></i>
+                        }
+                      </div>
+                      @if (processState >= PayrollProcessState.EMPLOYERNI) {
+                        <div>
+                          <i class="fa fa-check-circle-o status-icon fa-3x complete"
+                            ><span class="visually-hidden">Journals complete</span></i
+                            >
+                          </div>
+                          }</a
+                          >
+                        </div>
+                        @if (locationString == 'EMPLOYERNI') {
+                          <hr
+                            class="mx-3 border-top border-5 border-primary solid"
+                            />
+                        } @else {
+                          <hr class="mx-3 border-top border-5 border-secondary" />
+                        }
+                      </div>
+                    </div>
 
-      <div class="col-sm-auto">
-        <div class="card box-shadow">
-          <div class="card-header pb-2">
-            <h4 class="my-0 font-weight-normal">Employee GJs</h4>
-          </div>
-          <div class="card-body">
-            <a
-              class="link-unstyled"
-              routerLinkActive="active"
+                    <div class="col-sm-auto">
+                      <div class="card box-shadow">
+                        <div class="card-header pb-2">
+                          <h4 class="my-0 font-weight-normal">Employee GJs</h4>
+                        </div>
+                        <div class="card-body">
+                          <a
+                            class="link-unstyled"
+                            routerLinkActive="active"
               [routerLink]="
                 processState >= PayrollProcessState.EMPLOYERNI
                   ? 'journals'
                   : null
               "
-              ><div>
-                <i
-                  class="fas fa-book-open fa-6x"
-                  *ngIf="
-                    processState >= PayrollProcessState.EMPLOYERNI;
-                    else inactiveJournal
-                  "
-                ></i>
-              </div>
-              <div *ngIf="processState >= PayrollProcessState.JOURNALS">
-                <i class="fa fa-check-circle-o status-icon fa-3x complete"
-                  ><span class="visually-hidden">Journals complete</span></i
-                >
-              </div></a
-            >
-          </div>
-          <hr
-            class="mx-3 border-top border-5 border-primary solid"
-            *ngIf="locationString == 'JOURNALS'; else inactiveBorder"
-          />
-        </div>
-      </div>
+                            ><div>
+                            @if (
+                              processState >= PayrollProcessState.EMPLOYERNI) {
+                              <i
+                                class="fas fa-book-open fa-6x"
+                              ></i>
+                            } @else {
+                              <i class="fas fa-book-open fa-6x inactive"></i>
+                            }
+                          </div>
+                          @if (processState >= PayrollProcessState.JOURNALS) {
+                            <div>
+                              <i class="fa fa-check-circle-o status-icon fa-3x complete"
+                                ><span class="visually-hidden">Journals complete</span></i
+                                >
+                              </div>
+                              }</a
+                              >
+                            </div>
+                            @if (locationString == 'JOURNALS') {
+                              <hr
+                                class="mx-3 border-top border-5 border-primary solid"
+                                />
+                            } @else {
+                              <hr class="mx-3 border-top border-5 border-secondary" />
+                            }
+                          </div>
+                        </div>
 
-      <div class="col-sm-auto">
-        <div class="card mb-2 box-shadow">
-          <div class="card-header pb-2">
-            <h4 class="my-0 font-weight-normal">Pensions</h4>
-          </div>
-          <div class="card-body">
-            <a
-              class="link-unstyled"
-              routerLinkActive="active"
+                        <div class="col-sm-auto">
+                          <div class="card mb-2 box-shadow">
+                            <div class="card-header pb-2">
+                              <h4 class="my-0 font-weight-normal">Pensions</h4>
+                            </div>
+                            <div class="card-body">
+                              <a
+                                class="link-unstyled"
+                                routerLinkActive="active"
               [routerLink]="
                 processState >= PayrollProcessState.JOURNALS ? 'pensions' : null
               "
-              ><div>
-                <i
-                  class="fas fa-piggy-bank fa-6x"
-                  *ngIf="
-                    processState >= PayrollProcessState.JOURNALS;
-                    else inactivePensions
-                  "
-                ></i>
-              </div>
-              <div *ngIf="processState >= PayrollProcessState.PENSIONS">
-                <i class="fa fa-check-circle-o status-icon fa-3x complete"
-                  ><span class="visually-hidden">Pensions complete</span></i
-                >
-              </div></a
-            >
-          </div>
-          <hr
-            class="mx-3 border-top border-5 border-primary solid"
-            *ngIf="locationString == 'PENSIONS'; else inactiveBorder"
-          />
-        </div>
-      </div>
+                                ><div>
+                                @if (
+                                  processState >= PayrollProcessState.JOURNALS) {
+                                  <i
+                                    class="fas fa-piggy-bank fa-6x"
+                                  ></i>
+                                } @else {
+                                  <i class="fas fa-piggy-bank fa-6x inactive"></i>
+                                }
+                              </div>
+                              @if (processState >= PayrollProcessState.PENSIONS) {
+                                <div>
+                                  <i class="fa fa-check-circle-o status-icon fa-3x complete"
+                                    ><span class="visually-hidden">Pensions complete</span></i
+                                    >
+                                  </div>
+                                  }</a
+                                  >
+                                </div>
+                                @if (locationString == 'PENSIONS') {
+                                  <hr
+                                    class="mx-3 border-top border-5 border-primary solid"
+                                    />
+                                } @else {
+                                  <hr class="mx-3 border-top border-5 border-secondary" />
+                                }
+                              </div>
+                            </div>
 
-      <div class="col-sm-auto">
-        <div class="card mb-2 box-shadow">
-          <div class="card-header pb-2">
-            <h4 class="my-0 font-weight-normal">Enterprises</h4>
-          </div>
-          <div class="card-body">
-            <div></div>
-            <a
-              class="link-unstyled"
-              routerLinkActive="active"
+                            <div class="col-sm-auto">
+                              <div class="card mb-2 box-shadow">
+                                <div class="card-header pb-2">
+                                  <h4 class="my-0 font-weight-normal">Enterprises</h4>
+                                </div>
+                                <div class="card-body">
+                                  <div></div>
+                                  <a
+                                    class="link-unstyled"
+                                    routerLinkActive="active"
               [routerLink]="
                 processState >= PayrollProcessState.PENSIONS
                   ? 'enterprises'
                   : null
               "
-              ><div>
-                <i
-                  class="fas fa-store fa-6x"
-                  *ngIf="
-                    processState >= PayrollProcessState.PENSIONS;
-                    else inactiveShop
-                  "
-                ></i>
-              </div>
-              <div *ngIf="processState >= PayrollProcessState.ENTERPRISES">
-                <i class="fa fa-check-circle-o status-icon fa-3x complete"
-                  ><span class="visually-hidden">Enterprises complete</span></i
-                >
-              </div></a
-            >
-          </div>
-          <hr
-            class="mx-3 border-top border-5 border-primary solid"
-            *ngIf="locationString == 'ENTERPRISES'; else inactiveBorder"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+                                    ><div>
+                                    @if (
+                                      processState >= PayrollProcessState.PENSIONS) {
+                                      <i
+                                        class="fas fa-store fa-6x"
+                                      ></i>
+                                    } @else {
+                                      <i class="fas fa-store fa-6x inactive"></i>
+                                    }
+                                  </div>
+                                  @if (processState >= PayrollProcessState.ENTERPRISES) {
+                                    <div>
+                                      <i class="fa fa-check-circle-o status-icon fa-3x complete"
+                                        ><span class="visually-hidden">Enterprises complete</span></i
+                                        >
+                                      </div>
+                                      }</a
+                                      >
+                                    </div>
+                                    @if (locationString == 'ENTERPRISES') {
+                                      <hr
+                                        class="mx-3 border-top border-5 border-primary solid"
+                                        />
+                                    } @else {
+                                      <hr class="mx-3 border-top border-5 border-secondary" />
+                                    }
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
 
-<router-outlet></router-outlet>
+                          <router-outlet></router-outlet>
 
-<!-- Used if the ngif test is 'false'-->
-<ng-template #inactiveUpload>
-  <i class="fas fa-upload fa-6x inactive"></i>
-</ng-template>
-<ng-template #inactiveJournal>
-  <i class="fas fa-book-open fa-6x inactive"></i>
-</ng-template>
-<ng-template #inactivePensions>
-  <i class="fas fa-piggy-bank fa-6x inactive"></i>
-</ng-template>
-<ng-template #inactiveShop>
-  <i class="fas fa-store fa-6x inactive"></i>
-</ng-template>
-<ng-template #inactiveBorder>
-  <hr class="mx-3 border-top border-5 border-secondary" />
-</ng-template>
+                          <!-- Used if the ngif test is 'false'-->

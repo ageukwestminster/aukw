@@ -1,12 +1,5 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import {
-  CommonModule,
-  DatePipe,
-  Location,
-  NgClass,
-  NgIf,
-  NgStyle,
-} from '@angular/common';
+import { CommonModule, DatePipe, Location, NgClass, NgStyle } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   AbstractControlOptions,
@@ -56,10 +49,9 @@ import {
     FormsModule,
     NgbDatepickerModule,
     NgClass,
-    NgIf,
     NgStyle,
-    ReactiveFormsModule,
-  ],
+    ReactiveFormsModule
+],
 })
 export class TakingsAddEditComponent implements OnInit {
   form!: FormGroup;

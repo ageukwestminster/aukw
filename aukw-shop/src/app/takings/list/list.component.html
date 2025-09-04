@@ -4,14 +4,15 @@
     <button routerLink="add" class="btn btn-success m-1 mt-1">
       <i class="fas fa-plus fa-lg"></i>&nbsp;Add New Takings
     </button>
-    <button
-      *ngIf="showAddToQuickbooksButton"
-      class="btn btn-warning m-1 mt-1"
-      (click)="addAllToQuickbooks()"
-      [disabled]="!isProduction"
-    >
-      Add All to QuickBooks
-    </button>
+    @if (showAddToQuickbooksButton) {
+      <button
+        class="btn btn-warning m-1 mt-1"
+        (click)="addAllToQuickbooks()"
+        [disabled]="!isProduction"
+        >
+        Add All to QuickBooks
+      </button>
+    }
   </div>
 </div>
 <takings-filter
@@ -19,7 +20,9 @@
   (loading)="filterIsLoading($event)"
   (filter)="takingsFilterUpdated($event)"
 ></takings-filter>
-<div *ngIf="average">Average Sales £{{ average | number: "1.2-2" }}</div>
+@if (average) {
+  <div>Average Sales £{{ average | number: "1.2-2" }}</div>
+}
 <table class="table table-striped table-responsive">
   <thead>
     <tr>
@@ -30,19 +33,22 @@
     </tr>
   </thead>
   <tbody>
-    <tr
-      *ngFor="let myTakings of takingslist"
-      takings-row
-      [takings]="myTakings"
-      [user]="user"
-      (onTakingsDeleted)="takingsWasDeleted($event)"
-      (onTakingsAddedToQB)="takingsWasAddedToQB($event)"
-      routerLink="edit/{{ myTakings.id }}"
-    ></tr>
-    <tr *ngIf="!takingslist">
-      <td colspan="4" class="text-center">
-        <span class="spinner-border spinner-border-lg align-center"></span>
-      </td>
-    </tr>
+    @for (myTakings of takingslist; track myTakings) {
+      <tr
+        takings-row
+        [takings]="myTakings"
+        [user]="user"
+        (onTakingsDeleted)="takingsWasDeleted($event)"
+        (onTakingsAddedToQB)="takingsWasAddedToQB($event)"
+        routerLink="edit/{{ myTakings.id }}"
+      ></tr>
+    }
+    @if (!takingslist) {
+      <tr>
+        <td colspan="4" class="text-center">
+          <span class="spinner-border spinner-border-lg align-center"></span>
+        </td>
+      </tr>
+    }
   </tbody>
 </table>

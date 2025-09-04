@@ -1,5 +1,5 @@
 import { Component, Injectable, inject, Input } from '@angular/core';
-import { NgIf } from '@angular/common';
+
 import { Observable } from 'rxjs';
 import { defer, tap } from 'rxjs';
 import {
@@ -20,18 +20,22 @@ import { MessageFactories } from '@app/_interfaces/message-factories';
   template: `
     <div class="modal-body">
       <div class="d-flex justify-content-center">
-        <div *ngIf="status == 'loading'">
-          <span class="spinner-border spinner-border-sm"></span>
-        </div>
-        <div *ngIf="status == 'error'">
-          <i class="fas fa-circle-exclamation" class="red-color"></i>
-        </div>
+        @if (status == 'loading') {
+          <div>
+            <span class="spinner-border spinner-border-sm"></span>
+          </div>
+        }
+        @if (status == 'error') {
+          <div>
+            <i class="fas fa-circle-exclamation" class="red-color"></i>
+          </div>
+        }
         <p>&nbsp;{{ message }}</p>
       </div>
     </div>
-  `,
+    `,
   styles: ['.red-color { color: red; }'],
-  imports: [NgIf],
+  imports: [],
 })
 export class LoadingIndicatorContent {
   activeModal = inject(NgbActiveModal);

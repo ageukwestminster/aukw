@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
@@ -13,11 +13,10 @@ import { DateRangeChooserComponent } from '@app/shared';
   imports: [
     CommonModule,
     DateRangeChooserComponent,
-    NgIf,
     NgbCollapseModule,
     ReactiveFormsModule,
-    RouterLink,
-  ],
+    RouterLink
+],
   templateUrl: './pnl-report.component.html',
   styleUrl: './pnl-report.component.css',
 })
