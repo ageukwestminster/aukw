@@ -24,6 +24,7 @@ import {
   QBAttachmentService,
   QBEntityService,
   QBPurchaseService,
+  QBTransferService,
 } from '@app/_services';
 import { CustomDateParserFormatter, NgbUTCStringAdapter } from '@app/_helpers';
 import { forkJoin } from 'rxjs';
@@ -51,7 +52,6 @@ export class IntercoTradeComponent implements OnInit {
   vendors: ValueIdPair[] = [];
   accounts: ValueIdType[] = [];
   customers: ValueIdPair[] = [];
-  newTrade!: QBPurchase;
 
   private realmid: string = environment.qboEnterprisesRealmID;
   private otherRealmid: string = environment.qboCharityRealmID;
@@ -61,6 +61,7 @@ export class IntercoTradeComponent implements OnInit {
   private entityService = inject(QBEntityService);
   private alertService = inject(AlertService);
   private purchaseService = inject(QBPurchaseService);
+  private transferService = inject(QBTransferService);
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({
@@ -100,11 +101,7 @@ export class IntercoTradeComponent implements OnInit {
       switch (this.existingTrade.type.value) {
         case 'Bill':
         case 'Expense':
-          this.newTrade = new QBPurchase({
-            amount: this.existingTrade.amount,
-            txnDate: this.existingTrade.date,
-            privateNote: this.existingTrade.memo,
-          });
+
           if (this.existingTrade.account.id == 429) {
             // Pleo
             //extract name from description
@@ -121,7 +118,6 @@ export class IntercoTradeComponent implements OnInit {
               filteredEntity.id,
               filteredEntity.value,
             ];
-            this.newTrade.entity = entity;
             this.f['entity'].setValue(filteredEntity.id);
 
             //Choose account
@@ -249,39 +245,44 @@ export class IntercoTradeComponent implements OnInit {
   createPurchaseTrade() {
     this.loading = true;
 
-    // Create the new trade in the other company
-    /*this.newTrade.txnDate = this.f['txnDate'].value;
-    this.newTrade.description = this.f['Note'].value;
-    this.newTrade.amount = this.f['amount'].value;
-    this.newTrade.taxAmount = this.f['taxAmount'].value;
-    this.newTrade.bankAccount = [102, "Paid by Parent"];
-    this.newTrade.expenseAccount = [this.f['account'].value.Id, this.f['account'].value.Value];
-    this.newTrade.entity= [this.f['entity'].value.Id, this.f['entity'].value.Value];*/
-
     this.purchaseService
       .create(this.otherRealmid, this.form.value )
       .subscribe({
         next: (response) => {
+
+          var $obs: any[] = [];
+
+          // Add the transfer to the list of tasks
+          $obs.push(
+            this.transferService.create(this.otherRealmid, {
+              txnDate: this.form.value.txnDate,
+              amount: this.form.value.amount,
+              privateNote: this.form.value.privateNote,
+            })
+          );
+
           // If there are attachments, upload them now
-          if (this.attachments && this.attachments.length) {
-            var $obs: any[] = [];
+          if (this.attachments && this.attachments.length) {            
             this.attachments.forEach((attachment) => {
               $obs.push(
                 this.attachmentService.uploadAttachments(
                   this.otherRealmid,
                   [ { value: response.id,
-                    type: 'purchase'}],                  
+                    type: 'Purchase'}],                  
                   [{ FileName: attachment.FileName,
                     ContentType: attachment.ContentType                    
                   }],
                 ),
               );
             });
+          }
+
+
 
             forkJoin($obs).subscribe({
               next: (x) => {
                 this.alertService.success(
-                  `Created trade ${response.id} with ${x.length} attachment(s).`,
+                  `Created trade with txnId=${response.id} with ${x.length-1} attachment(s).`,
                   { autoClose: true },
                 );
               },
@@ -291,12 +292,7 @@ export class IntercoTradeComponent implements OnInit {
               },
               complete: () => (this.loading = false),
             });
-          } else {
-            this.alertService.success(
-              `Created trade ${response.id}.`,
-              { autoClose: true },
-            );
-          }
+
         },
         error: (error: any) => {
           this.loading = false;

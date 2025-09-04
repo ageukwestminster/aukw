@@ -64,7 +64,8 @@ class QBPurchaseCtl{
   }  
 
   /**
-   * Create a QBO purchase from data supplied via http POST
+   * Create a QBO purchase from data supplied via http POST. This is a single line
+   * Purchase, not a multi-line Bill. The 'amount' provided is the total amount including tax.
    *
    * @param string $realmid The company ID for the QBO company.
    * @return void Output is echoed directly to response 
@@ -115,7 +116,7 @@ class QBPurchaseCtl{
         ->setPrivateNote(isset($data->privateNote)?$data->privateNote:'')
         ->setDescription(isset($data->description)?$data->description:'')
         ->setDocnumber(isset($data->docnumber)?$data->docnumber:'')
-        ->setAmount($data->amount)
+        ->setAmount($data->amount - $data->taxAmount) 
         ->setTaxAmount($data->taxAmount)
         ->setTaxCode($taxcode)
         ->setTaxRate($taxRateRef)
