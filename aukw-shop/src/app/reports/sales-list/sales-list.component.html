@@ -43,7 +43,7 @@
               </tr>
             </thead>
             <tbody>
-              @for (item of data?.sales; track item; let i = $index) {
+              @for (item of data.sales; track item; let i = $index) {
                 <tr (click)="onRowSelected(data.takingsids[i])">
                   <th>
                     @if (data) {

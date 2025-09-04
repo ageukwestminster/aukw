@@ -49,7 +49,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (item of data?.list; track item) {
+            @for (item of data.list; track item) {
               <tr (click)="onRowSelected(item)">
                 <th>
                   <span class="text-dark">{{ item[1] }}</span>
