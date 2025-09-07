@@ -65,7 +65,7 @@ export class LoadingIndicatorService {
       fullscreen: 'md',
       size: 'md',
     } as NgbModalOptions;
-    
+
     // Open the modal
     const modalRef = this.modalService.open(
       LoadingIndicatorContent,

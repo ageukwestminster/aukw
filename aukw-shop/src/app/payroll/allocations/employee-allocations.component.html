@@ -29,7 +29,10 @@
           </tr>
         </thead>
         <tbody>
-          @for (alloc of qbPayrollService.allocations$ | async; track alloc.id) {
+          @for (
+            alloc of qbPayrollService.allocations$ | async;
+            track alloc.id
+          ) {
             <tr>
               <td class="text-center">
                 {{ alloc.payrollNumber }}

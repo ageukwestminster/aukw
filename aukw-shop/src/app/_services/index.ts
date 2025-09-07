@@ -7,7 +7,7 @@ export * from './department.service';
 export * from './export-to-csv.service';
 export * from './file.service';
 export * from './loading-indicator.service';
-export * from './modal.service'
+export * from './modal.service';
 export * from './payroll-process-state.service';
 export * from './payroll.service';
 export * from './payslip-list.service';

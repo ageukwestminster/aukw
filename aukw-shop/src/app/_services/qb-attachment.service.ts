@@ -33,18 +33,17 @@ export class QBAttachmentService {
     );
   }
 
-    /**
+  /**
    * Upload QBO attachments from the downloads folder and attach to a given entity
    * @param realmID The company ID for the QBO company.
-    * @param attachmentRefs The references to the attachments to be uploaded
-    * @param filenames An array of filenames (with path) to be uploaded
+   * @param attachmentRefs The references to the attachments to be uploaded
+   * @param filenames An array of filenames (with path) to be uploaded
    */
   uploadAttachments(
     realmID: string,
-    attachmentRefs: {value: number, type: string}[],
-    filenames: {FileName: string, ContentType: string}[],
+    attachmentRefs: { value: number; type: string }[],
+    filenames: { FileName: string; ContentType: string }[],
   ): Observable<any> {
-
     const params = {
       attachmentRefs: attachmentRefs,
       attachments: { files: filenames },

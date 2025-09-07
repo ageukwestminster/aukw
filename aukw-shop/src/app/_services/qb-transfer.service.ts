@@ -35,6 +35,9 @@ export class QBTransferService {
    * @returns The response from the API, including the ID of the created transfer
    */
   create(realmID: string, params: any): Observable<ApiMessage> {
-    return this.http.post<ApiMessage>(`${baseUrl}/${realmID}/enterprises-interco`, params);
+    return this.http.post<ApiMessage>(
+      `${baseUrl}/${realmID}/enterprises-interco`,
+      params,
+    );
   }
 }

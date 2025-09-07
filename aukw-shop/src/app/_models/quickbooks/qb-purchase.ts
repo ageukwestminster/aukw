@@ -38,7 +38,7 @@ export class QBPurchase {
       privateNote: this.privateNote,
       description: this.description,
       amount: this.amount,
-      taxAmount: this.taxAmount,      
+      taxAmount: this.taxAmount,
     };
   }
 }

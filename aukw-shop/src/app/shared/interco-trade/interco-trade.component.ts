@@ -40,7 +40,6 @@ import { forkJoin } from 'rxjs';
   ],
 })
 export class IntercoTradeComponent implements OnInit {
-
   // This is the trade that is already in QBO, for which we will create a matching trade in the other company
   @Input() existingTrade: QBAccountListEntry | null = null;
   @Input() enterprises: boolean = true; // When 'true' existingTrade is in Enterprises, in Charity otherwise
@@ -69,7 +68,10 @@ export class IntercoTradeComponent implements OnInit {
       entity: [null, Validators.required],
       amount: [
         null,
-        [Validators.required, Validators.pattern('^-?[0-9]\\d*(\\.\\d{1,2})?$')],
+        [
+          Validators.required,
+          Validators.pattern('^-?[0-9]\\d*(\\.\\d{1,2})?$'),
+        ],
       ],
       IsVAT: [false],
       privateNote: [null],
@@ -78,7 +80,7 @@ export class IntercoTradeComponent implements OnInit {
       taxAmount: [null, Validators.required],
       bankAccount: [102, Validators.required],
       description: [null],
-      docnumber: [null]
+      docnumber: [null],
     });
   }
 
@@ -101,7 +103,6 @@ export class IntercoTradeComponent implements OnInit {
       switch (this.existingTrade.type.value) {
         case 'Bill':
         case 'Expense':
-
           if (this.existingTrade.account.id == 429) {
             // Pleo
             //extract name from description
@@ -116,10 +117,8 @@ export class IntercoTradeComponent implements OnInit {
             if (filterEntities && filterEntities[0] && filterEntities[0].id) {
               this.f['entity'].setValue(filterEntities[0].id);
             }
-
-            
           }
-          
+
           break;
         case 'Transfer':
           break;
@@ -133,7 +132,9 @@ export class IntercoTradeComponent implements OnInit {
       this.f['txnDate'].setValue(this.existingTrade.date);
       this.f['description'].setValue(this.existingTrade.memo);
       this.f['IsVAT'].setValue(!this.enterprises);
-      let vat = this.enterprises?0:Math.round(this.f['amount'].value * 100 / 6) / 100
+      let vat = this.enterprises
+        ? 0
+        : Math.round((this.f['amount'].value * 100) / 6) / 100;
       this.f['taxAmount'].setValue(vat);
       this.f['docnumber'].setValue(this.existingTrade.docnumber);
 
@@ -210,7 +211,7 @@ export class IntercoTradeComponent implements OnInit {
     this.f['IsVAT'].setValue(!this.f['IsVAT'].value);
     if (this.f['IsVAT'].value) {
       // VAT is being turned on
-      let vat = Math.round(this.f['amount'].value * 100 / 6) / 100
+      let vat = Math.round((this.f['amount'].value * 100) / 6) / 100;
       this.f['taxAmount'].setValue(vat);
     } else {
       // VAT is being turned off
@@ -219,78 +220,72 @@ export class IntercoTradeComponent implements OnInit {
   }
 
   onSubmit() {
-        this.submitted = true;
-    
-        // reset alerts on submit
-        this.alertService.clear();
-    
-        // stop here if form is invalid
-        if (this.form.invalid) {
-          return;
-        }
-    
-        this.createPurchaseTrade();
-        
+    this.submitted = true;
+
+    // reset alerts on submit
+    this.alertService.clear();
+
+    // stop here if form is invalid
+    if (this.form.invalid) {
+      return;
+    }
+
+    this.createPurchaseTrade();
   }
 
   createPurchaseTrade() {
     this.loading = true;
 
-    this.purchaseService
-      .create(this.otherRealmid, this.form.value )
-      .subscribe({
-        next: (response) => {
+    this.purchaseService.create(this.otherRealmid, this.form.value).subscribe({
+      next: (response) => {
+        var $obs: any[] = [];
 
-          var $obs: any[] = [];
+        // Add the transfer to the list of tasks
+        $obs.push(
+          this.transferService.create(this.otherRealmid, {
+            txnDate: this.form.value.txnDate,
+            amount: this.form.value.amount,
+            privateNote: this.form.value.privateNote,
+          }),
+        );
 
-          // Add the transfer to the list of tasks
-          $obs.push(
-            this.transferService.create(this.otherRealmid, {
-              txnDate: this.form.value.txnDate,
-              amount: this.form.value.amount,
-              privateNote: this.form.value.privateNote,
-            })
-          );
+        // If there are attachments, upload them now
+        if (this.attachments && this.attachments.length) {
+          this.attachments.forEach((attachment) => {
+            $obs.push(
+              this.attachmentService.uploadAttachments(
+                this.otherRealmid,
+                [{ value: response.id, type: 'Purchase' }],
+                [
+                  {
+                    FileName: attachment.FileName,
+                    ContentType: attachment.ContentType,
+                  },
+                ],
+              ),
+            );
+          });
+        }
 
-          // If there are attachments, upload them now
-          if (this.attachments && this.attachments.length) {            
-            this.attachments.forEach((attachment) => {
-              $obs.push(
-                this.attachmentService.uploadAttachments(
-                  this.otherRealmid,
-                  [ { value: response.id,
-                    type: 'Purchase'}],                  
-                  [{ FileName: attachment.FileName,
-                    ContentType: attachment.ContentType                    
-                  }],
-                ),
-              );
-            });
-          }
-
-
-
-            forkJoin($obs).subscribe({
-              next: (x) => {
-                this.alertService.success(
-                  `Created trade with txnId=${response.id} with ${x.length-1} attachment(s).`,
-                  { autoClose: true },
-                );
-              },
-              error: (error: any) => {
-                this.loading = false;
-                this.alertService.error(error, { autoClose: false });
-              },
-              complete: () => (this.loading = false),
-            });
-
-        },
-        error: (error: any) => {
-          this.loading = false;
-          this.alertService.error(error, { autoClose: false });
-        },
-        complete: () => (this.loading = false),
-      });
+        forkJoin($obs).subscribe({
+          next: (x) => {
+            this.alertService.success(
+              `Created trade with txnId=${response.id} with ${x.length - 1} attachment(s).`,
+              { autoClose: true },
+            );
+          },
+          error: (error: any) => {
+            this.loading = false;
+            this.alertService.error(error, { autoClose: false });
+          },
+          complete: () => (this.loading = false),
+        });
+      },
+      error: (error: any) => {
+        this.loading = false;
+        this.alertService.error(error, { autoClose: false });
+      },
+      complete: () => (this.loading = false),
+    });
   }
-
 }

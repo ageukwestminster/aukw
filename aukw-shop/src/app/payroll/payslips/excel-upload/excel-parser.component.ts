@@ -16,7 +16,12 @@ import {
   NgbModalOptions,
   NgbModalRef,
 } from '@ng-bootstrap/ng-bootstrap';
-import { AlertService, FileService, PayslipListService, ModalService } from '@app/_services';
+import {
+  AlertService,
+  FileService,
+  PayslipListService,
+  ModalService,
+} from '@app/_services';
 import { IrisPayslip, UploadResponse } from '@app/_models';
 import { PasswordInputModalComponent } from './modals/password-input.component';
 import { PayrollDateInputModalComponent } from './modals/payrolldate-input.component';
@@ -86,7 +91,6 @@ export class ExcelParserComponent {
    * @returns An Observable of an array of employee payslips
    */
   private decrypt_and_parse(filename: string): Observable<IrisPayslip[]> {
-
     const modalRef = this.modalService.open(PasswordInputModalComponent);
     modalRef.componentInstance.fileName = filename;
 

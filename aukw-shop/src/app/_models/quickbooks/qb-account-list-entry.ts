@@ -6,7 +6,7 @@ export class QBAccountListEntry {
    * Unique row id
    */
   id: number;
-    /**
+  /**
    * The transaction date
    */
   date: string;

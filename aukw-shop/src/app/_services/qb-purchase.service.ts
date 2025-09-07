@@ -15,10 +15,7 @@ export class QBPurchaseService {
   private http = inject(HttpClient);
 
   create(realmID: string, params: any): Observable<ApiMessage> {
-    return this.http.post<ApiMessage>(
-      `${baseUrl}/${realmID}/purchase`,
-      params,
-    );
+    return this.http.post<ApiMessage>(`${baseUrl}/${realmID}/purchase`, params);
   }
 
   createNew(
