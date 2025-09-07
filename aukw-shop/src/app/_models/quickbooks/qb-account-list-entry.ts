@@ -3,6 +3,10 @@
  */
 export class QBAccountListEntry {
   /**
+   * Unique row id
+   */
+  id: number;
+    /**
    * The transaction date
    */
   date: string;
@@ -49,6 +53,7 @@ export class QBAccountListEntry {
   taxable: boolean;
 
   constructor(obj?: any) {
+    this.id = (obj && obj.id) || null;
     this.date = (obj && obj.date) || null;
     this.type = (obj && obj.type) || null;
     this.docnumber = (obj && obj.docnumber) || null;
@@ -64,6 +69,7 @@ export class QBAccountListEntry {
 
   public stringRepresentation() {
     return {
+      id: this.id,
       date: this.date,
       type: this.type.value,
       docnumber: this.docnumber,

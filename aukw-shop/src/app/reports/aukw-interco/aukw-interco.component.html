@@ -102,7 +102,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (item of data; track item) {
+            @for (item of data; track item.id) {
               <tr (click)="onRowClick(item)">
                 <th>
                   <span class="text-dark">{{ item.date }}</span>

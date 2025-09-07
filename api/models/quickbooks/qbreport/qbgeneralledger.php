@@ -51,10 +51,14 @@ class QBGeneralLedgerReport extends QuickbooksReport{
         $data = $data[0]->Rows->Row;
     }
 
+    $i=0;
+
     //Convert the report object to something readable
     foreach ($data as $value) {
         $line=array();
         
+        $line['id'] = $i++;
+
         $line['date'] = $value->ColData[0]->value;
 
         $txn=array();
