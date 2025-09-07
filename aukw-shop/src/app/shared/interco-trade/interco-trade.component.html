@@ -5,7 +5,8 @@
         <div class="p-2">Date</div>
         <div class="p-2 mt-2">Entity</div>
         <div class="p-2 mt-2">Expense Account</div>
-        <div class="p-2 mt-2">Memo</div>
+        <div class="p-2 mt-1">Description</div>
+        <div class="p-2">Memo</div>
       </div>
       <div class="col-10">
         <div class="row">
@@ -70,6 +71,7 @@
             <div class="p-2">VAT</div>
             <div class="p-2">Attachments</div>
             <div class="p-2">Amount</div>
+            <div class="p-2">Reference</div>
             <div></div>
           </div>
           <div class="col-3">
@@ -84,7 +86,7 @@
                 />
               </div>
             </div>
-            <div>
+            <div class="pt-2">
               <input
                 id="txnAttachments"
                 name="txnAttachments"
@@ -106,7 +108,15 @@
                 aria-label="The amount of the expense"
               />
             </div>
-            <div></div>
+            <div>
+                            <input
+                id="docnumberInput"
+                name="docnumberInput"
+                type="text"
+                class="form-control"
+                formControlName="docnumber"
+              />
+            </div>
           </div>
           <div class="col-2">
             <div class="mx-auto">
@@ -125,7 +135,20 @@
             </div>
           </div>
         </div>
-        <div class="row mt-4">
+        <div class="row mt-1">
+          <div class="col p-0">
+            <div>
+              <textarea
+                class="form-control pl-1"
+                id="descriptionTextarea"
+                rows="1"
+                formControlName="description"
+                placeholder="Information about the transaction."
+              ></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-1">
           <div class="col p-0">
             <div>
               <textarea

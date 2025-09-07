@@ -113,23 +113,13 @@ export class IntercoTradeComponent implements OnInit {
                 x.value.toLowerCase().substring(0, 4) ==
                 entityName.toLowerCase().substring(0, 4),
             );
-            var filteredEntity = filterEntities[0];
-            var entity: [number, string] = [
-              filteredEntity.id,
-              filteredEntity.value,
-            ];
-            this.f['entity'].setValue(filteredEntity.id);
-
-            //Choose account
-            switch (filteredEntity.value.substring(0, 4).toLowerCase()) {
-              case 'morp':
-                break;
-
-              default:
-                break;
+            if (filterEntities && filterEntities[0] && filterEntities[0].id) {
+              this.f['entity'].setValue(filterEntities[0].id);
             }
+
+            
           }
-          //this.newTrade = this.purchaseService.createNew();
+          
           break;
         case 'Transfer':
           break;
@@ -138,11 +128,12 @@ export class IntercoTradeComponent implements OnInit {
       }
 
       // Set values we know already
+      this.f['account'].setValue(null);
       this.f['amount'].setValue(this.existingTrade.amount);
       this.f['txnDate'].setValue(this.existingTrade.date);
-      this.f['privateNote'].setValue(this.existingTrade.memo);
-      this.f['IsVAT'].setValue(true);
-      let vat = Math.round(this.f['amount'].value * 100 / 6) / 100
+      this.f['description'].setValue(this.existingTrade.memo);
+      this.f['IsVAT'].setValue(!this.enterprises);
+      let vat = this.enterprises?0:Math.round(this.f['amount'].value * 100 / 6) / 100
       this.f['taxAmount'].setValue(vat);
       this.f['docnumber'].setValue(this.existingTrade.docnumber);
 
