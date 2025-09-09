@@ -91,7 +91,7 @@ class QBPurchaseCtl{
         throw new \InvalidArgumentException("'amount' property is missing from POST body.");
       } else if ($data->amount <= 0) {
         throw new \InvalidArgumentException("'amount' property must be greater than zero.");
-      } else if (is_null($data->taxAmount) || $data->taxAmount < 0) {
+      } else if (!isset($data->taxAmount) || is_null($data->taxAmount) || $data->taxAmount < 0) {
         throw new \InvalidArgumentException("'taxAmount' property must exist and be greater than or equal to zero.");
       } 
       if (!isset($data->entity)) {
