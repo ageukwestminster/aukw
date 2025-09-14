@@ -20,9 +20,13 @@ export class QBAccountListEntry {
    */
   docnumber: string;
   /**
-   * The type of QB transaction
+   * The name of the employee associated with the transaction. Not the person who entered it.
    */
   emp_name: ValueIdPair;
+  /**
+   * The name of the entity who is the counterparty to the transaction.
+   */
+  name: ValueIdPair;
   /**
    * Description of the QB transaction
    */
@@ -57,6 +61,7 @@ export class QBAccountListEntry {
     this.date = (obj && obj.date) || null;
     this.type = (obj && obj.type) || null;
     this.docnumber = (obj && obj.docnumber) || null;
+    this.name = (obj && obj.name) || null;
     this.emp_name = (obj && obj.emp_name) || null;
     this.memo = (obj && obj.memo) || null;
     this.account = (obj && obj.account) || null;
@@ -73,6 +78,7 @@ export class QBAccountListEntry {
       date: this.date,
       type: this.type.value,
       docnumber: this.docnumber,
+      name: this.name.value,
       emp_name: this.emp_name.value,
       memo: this.memo,
       account: this.account.value,

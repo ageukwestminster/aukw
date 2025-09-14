@@ -58,7 +58,7 @@ export class AukwIntercoComponent
     this.reportService
       .getIntercoAccountLedger(startDate, endDate, this.enterprises)
       .pipe(
-        tap(() => (this.data = [])),
+        tap(() => (this.data = [])), // reset class-level data store
 
         // Convert from Observable<T[]> to Observable<T>
         fromArrayToElement(),
@@ -67,6 +67,7 @@ export class AukwIntercoComponent
           return new QBAccountListEntry(accountListEntry);
         }),
 
+        // Now download the interco transactions from the other company
         switchMap((accountListEntry) => {
           this.data.push(accountListEntry);
           return this.reportService.getIntercoAccountLedger(
@@ -76,6 +77,7 @@ export class AukwIntercoComponent
           );
         }),
 
+        // Check if there are matching transactions in the other company
         switchMap((response) => {
           this.otherCompanyTrades = response;
           this.data.forEach((item) => {

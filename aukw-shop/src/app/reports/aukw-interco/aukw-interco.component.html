@@ -111,7 +111,7 @@
                   {{ item.type.value }}
                 </td>
                 <td class="d-none d-md-table-cell text-start">
-                  {{ item.emp_name.value }}
+                  {{ item.emp_name.value == '' ? item.name.value:item.emp_name.value}}
                 </td>
                 <td class="d-none d-sm-table-cell text-start">
                   {{ item.memo }}

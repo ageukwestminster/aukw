@@ -163,7 +163,7 @@ class QBReportCtl{
     QBReportCtl::GetHttpDateParameters($model);
 
     if (isset($_GET['summarizeColumn']) && !empty($_GET['summarizeColumn'])) {
-        // must be 'Quarter', not 'quarter' or 'Month' not 'month'
+        // must be 'Quarter', not 'quarter' ... 'Month' not 'month' etc.
         $model->summarizeColumn = ucwords(strtolower($_GET['summarizeColumn']));
     } else {
         $model->summarizeColumn = '';
@@ -178,7 +178,14 @@ class QBReportCtl{
       $model->sortAscending = false;
     } 
 
-    $model->columns = "tx_date,txn_type,doc_num,emp_name,memo," . 
+    // List retrieved from https://help.developer.intuit.com/s/question/0D54R0000A4zBjJSQU/qb-online-api-general-ledger-transactions
+    // and https://developer.intuit.com/app/developer/qbo/docs/api/accounting/report-entities/generalledger
+    //
+    // The order of the columns provided does not matter, QBO will return the columns in its own order
+    // The available columns are: account_name, chk_print_state, create_by, create_date, cust_name, 
+    //      doc_num, emp_name, inv_date, is_adj, is_ap_paid, is_ar_paid, is_cleared, item_name, 
+    //      last_mod_by, last_mod_date, memo, name, quantity, rate, split_acc, tx_date, txn_type, vend_name.
+    $model->columns = "tx_date,txn_type,doc_num,name,emp_name,memo," . 
               "split_acc,is_cleared,subt_nat_amount,rbal_nat_amount";
     $model->sortBy = "tx_date";
 

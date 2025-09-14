@@ -221,6 +221,9 @@ $router->mount('/qb', function () use ($router) {
     $router->get('/(\d+)/entity/vendor', 'QBEntityCtl@read_all_vendors');
     $router->get('/(\d+)/entity/customer', 'QBEntityCtl@read_all_customers');
     $router->get('/(\d+)/entity/account', 'QBEntityCtl@read_all_accounts');
+
+    // interco transaction matching
+    $router->post('/(\d+)/transaction-match', 'QBEntityCtl@interco_trade_from_rules');
 });
 
 /***************/
@@ -280,8 +283,9 @@ $router->mount('/auditlog', function () use ($router) {
 /***************/
 /* Rule Routes */
 /***************/
-$router->mount('/rule', function () use ($router) {
+$router->mount('/transaction-match', function () use ($router) {
     // return all rule records
-    $router->get('/', 'RuleCtl@read_all');
+    $router->get('/rule', 'RuleCtl@read_all');
+    $router->post('/(\d+)/match', 'RuleCtl@interco_trade_from_rules');
 });
 

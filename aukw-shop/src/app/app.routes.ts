@@ -21,8 +21,7 @@ const reportsRoutes = () =>
 export const APP_ROUTES: Routes = [
   {
     path: '',
-    //component: AukwIntercoComponent,
-    component: AuditLogComponent,
+    component: AukwIntercoComponent,
     canActivate: [authGuard],
   },
   {

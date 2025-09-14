@@ -25,6 +25,7 @@ import {
   QBEntityService,
   QBPurchaseService,
   QBTransferService,
+  TradeMatchService
 } from '@app/_services';
 import { CustomDateParserFormatter, NgbUTCStringAdapter } from '@app/_helpers';
 import { forkJoin } from 'rxjs';
@@ -61,6 +62,7 @@ export class IntercoTradeComponent implements OnInit {
   private alertService = inject(AlertService);
   private purchaseService = inject(QBPurchaseService);
   private transferService = inject(QBTransferService);
+  private matchService = inject(TradeMatchService);
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({
@@ -100,7 +102,42 @@ export class IntercoTradeComponent implements OnInit {
     if (changes['existingTrade']) {
       if (!this.existingTrade) return;
 
-      switch (this.existingTrade.type.value) {
+      this.matchService
+        .match(this.realmid, {date: this.existingTrade.date, type: this.existingTrade.type,
+          docnumber: this.existingTrade.docnumber, amount: this.existingTrade.amount,
+          memo: this.existingTrade.memo, account: this.existingTrade.account.id,
+          name: this.existingTrade.name ? this.existingTrade.name.id : null,
+          emp_name: this.existingTrade.emp_name ? this.existingTrade.emp_name.id : null          
+        } )
+        .subscribe({
+          next: (response) => { console.log(response); 
+            if (response) {
+              this.f['entity'].setValue(response.name? response.name : null);
+              this.f['account'].setValue(response.account);
+              this.f['amount'].setValue(response.amount);
+              this.f['txnDate'].setValue(response.date);
+              this.f['description'].setValue(response.description);
+              this.f['IsVAT'].setValue(response.taxable);
+              let vat = response.taxable ? this.vatCalculate() : 0;
+              this.f['taxAmount'].setValue(vat);
+              this.f['docnumber'].setValue(response.docnumber);
+
+              if (response.memo) {
+                this.f['privateNote'].setValue(response.memo);
+              } 
+            } else { 
+              this.alertService.info('No matching transaction found in other company.');
+            }
+          },
+          error: (error: any) => {
+            this.alertService.error(error, { autoClose: false });
+          },
+          complete: () => {},
+        });
+            
+            
+      /*
+            switch (this.existingTrade.type.value) {
         case 'Bill':
         case 'Expense':
           if (this.existingTrade.account.id == 429) {
@@ -136,7 +173,7 @@ export class IntercoTradeComponent implements OnInit {
         ? 0
         : Math.round((this.f['amount'].value * 100) / 6) / 100;
       this.f['taxAmount'].setValue(vat);
-      this.f['docnumber'].setValue(this.existingTrade.docnumber);
+      this.f['docnumber'].setValue(this.existingTrade.docnumber);*/
 
       // Download attachemnts (if any)
       this.downloadAttachments(this.realmid, this.existingTrade);
@@ -210,13 +247,16 @@ export class IntercoTradeComponent implements OnInit {
   onVatCheckboxClick() {
     this.f['IsVAT'].setValue(!this.f['IsVAT'].value);
     if (this.f['IsVAT'].value) {
-      // VAT is being turned on
-      let vat = Math.round((this.f['amount'].value * 100) / 6) / 100;
-      this.f['taxAmount'].setValue(vat);
+
+      this.f['taxAmount'].setValue(this.vatCalculate());
     } else {
       // VAT is being turned off
       this.f['taxAmount'].setValue(0);
     }
+  }
+
+  vatCalculate() {
+    return Math.round((this.f['amount'].value * 100) / 6) / 100;
   }
 
   onSubmit() {
@@ -288,4 +328,23 @@ export class IntercoTradeComponent implements OnInit {
       complete: () => (this.loading = false),
     });
   }
+
+  /*
+  resetForm() {
+    if (this.form.controls) {
+      this.f['account'].setValue(null);
+      this.f['entity'].setValue(null);
+      this.f['amount'].setValue(null);
+      this.f['txnDate'].setValue(null);
+      this.f['description'].setValue(null);
+      this.f['IsVAT'].setValue(!this.enterprises);
+      this.f['taxAmount'].setValue(0);
+      this.f['docnumber'].setValue(null);
+      this.f['privateNote'].setValue(null);
+      this.f['attachments'].setValue(null);
+      this.f['bankAccount'].setValue(102);
+      this.submitted = false;
+      this.attachments = [];
+    }
+  }*/
 }
