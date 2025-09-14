@@ -74,36 +74,50 @@ class QBGeneralLedgerReport extends QuickbooksReport{
         $line['type'] = $txn;
 
         $line['docnumber'] = $value->ColData[2]->value;
-
-        $employee=array();
-        $employee['value'] = $value->ColData[3]->value;
+        
+        $name=array();
+        $name['value'] = $value->ColData[3]->value;
         if (
             isset($value->ColData[3]->id) && 
             trim($value->ColData[3]->id) != ''
         ) {
-            $employee['id'] = $value->ColData[3]->id; 
+            $name['id'] = $value->ColData[3]->id; 
+        } else {
+            $name['id'] = null;
+        }
+        $line['name'] = $name;
+
+        $employee=array();
+        $employee['value'] = $value->ColData[4]->value;
+        if (
+            isset($value->ColData[4]->id) && 
+            trim($value->ColData[4]->id) != ''
+        ) {
+            $employee['id'] = $value->ColData[4]->id; 
         } else {
             $employee['id'] = null;
         }
         $line['emp_name'] = $employee;
 
-        $line['memo'] = $value->ColData[4]->value;
+        $line['memo'] = $value->ColData[5]->value;
 
         $account=array();
-        $account['value'] = $value->ColData[5]->value;
+        $account['value'] = $value->ColData[6]->value;
         if (
-            isset($value->ColData[5]->id) && 
-            trim($value->ColData[5]->id) != ''
+            isset($value->ColData[6]->id) && 
+            trim($value->ColData[6]->id) != ''
         ) {
-            $account['id'] = $value->ColData[5]->id; 
+            $account['id'] = $value->ColData[6]->id; 
         } else {
             $account['id'] = null;
         }
         $line['account'] = $account;
 
-        $line['is_cleared'] = $value->ColData[6]->value;
-        $line['amount'] = $value->ColData[7]->value;
-        $line['balance'] = $value->ColData[8]->value;
+        $line['is_cleared'] = $value->ColData[7]->value;
+        $line['amount'] = $value->ColData[8]->value;
+        $line['balance'] = $value->ColData[9]->value;
+
+
         array_push($report_arr, $line);
     }
 
