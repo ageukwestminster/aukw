@@ -80,15 +80,13 @@ class QBPurchaseCtl{
       if (!isset($data->txnDate)) {
         throw new \InvalidArgumentException("'txnDate' property is missing from POST body.");
       } else if (!\Core\DatesHelper::validateDate($data->txnDate) ) {
-        throw new \InvalidArgumentException("'txnDate' property is not in the correct format. Value provided: $data->date, expect yyyy-mm-dd format.");
-      } else if (!isset($data->bankAccount)) {
-        throw new \InvalidArgumentException("'bankAccount' property is missing from POST body.");
+        throw new \InvalidArgumentException("'txnDate' property is not in the correct format. Value provided: $data->txnDate, expect yyyy-mm-dd format.");
       } else if (!isset($data->account)) {
         throw new \InvalidArgumentException("'account' property is missing from POST body.");
       } else if ($data->account == $data->bankAccount) {
         throw new \InvalidArgumentException("'expenseAccount' must be different from 'bankAccount'.");
-      } else if (!isset($data->amount)) {
-        throw new \InvalidArgumentException("'amount' property is missing from POST body.");
+      } else if (!isset($data->amount) || is_null($data->amount)) {
+        throw new \InvalidArgumentException("'amount' property is missing from POST body or is set to NULL.");
       } else if ($data->amount <= 0) {
         throw new \InvalidArgumentException("'amount' property must be greater than zero.");
       } else if (!isset($data->taxAmount) || is_null($data->taxAmount) || $data->taxAmount < 0) {
@@ -98,6 +96,15 @@ class QBPurchaseCtl{
         throw new \InvalidArgumentException("'entity' property is missing from POST body.");
       } 
 
+      if (!isset($data->bankAccount)) {
+        if($realmid == QBO::ENTERPRISES_REALMID)
+          $bankaccount = QBO::AUEW_PAIDBYPARENT_ACCOUNT;
+        else if ($realmid == QBO::CHARITY_REALMID) {
+          throw new \InvalidArgumentException("'Bank Account' value is unknown for this realm.");
+        }
+      } else {
+        $bankaccount = $data->bankAccount;
+      }
       
       if ($data->taxAmount == 0 ) {
         $taxcode = QBO::$zero_rated_taxcode;
@@ -111,7 +118,7 @@ class QBPurchaseCtl{
         ->setRealmID($realmid)
         ->setTxnDate($data->txnDate)
         ->setEntity($data->entity)
-        ->setBankAccount($data->bankAccount)
+        ->setBankAccount($bankaccount)
         ->setExpenseAccount($data->account)
         ->setPrivateNote(isset($data->privateNote)?$data->privateNote:'')
         ->setDescription(isset($data->description)?$data->description:'')
