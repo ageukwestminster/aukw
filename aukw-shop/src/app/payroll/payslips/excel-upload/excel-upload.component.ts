@@ -24,7 +24,13 @@ export class ExcelUploadComponent {
   fileName = signal('');
   fileSize = signal(0);
   fileTypeIsCSV = signal(false);
+
+  /**
+   * Reference to the file input element in the template
+   * @ViewChild makes it possible to access native DOM elements that have a template reference variable.
+   */
   @ViewChild('fileInput') fileInput: ElementRef | undefined;
+  
   selectedFile: File | null = null;
   uploadSuccess: boolean = false;
   uploadError: boolean = false;
