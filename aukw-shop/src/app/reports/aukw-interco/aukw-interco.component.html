@@ -102,7 +102,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (item of data; track item.id) {
+            @for (item of data; track item.id; let  i = $index) {
               <tr (click)="onRowClick(item)">
                 <th>
                   <span class="text-dark">{{ item.date }}</span>
@@ -111,14 +111,14 @@
                   {{ item.type.value }}
                 </td>
                 <td class="d-none d-md-table-cell text-start">
-                  {{ item.emp_name.value == '' ? item.name.value:item.emp_name.value}}
+                  {{ item.employee.value == '' ? item.name.value:item.employee.value}}
                 </td>
                 <td class="d-none d-sm-table-cell text-start">
                   {{ item.memo }}
                 </td>
                 <td class="text-center">{{ item.is_cleared }}</td>
                 <td class="text-center">
-                  @if (item.matching_txn) {
+                  @if (matchExists[i]) {
                     <i class="fas fa-check"></i>
                   } @else if (loading) {
                     <span class="spinner-border spinner-border-sm"></span>

@@ -30,11 +30,14 @@ export class AukwIntercoComponent
   extends AbstractChartReportComponent<QBAccountListEntry[]>
   implements OnInit
 {
+  /* when the user clicks ona  row in the table the selected trade is assigned to this variable */
   selectedTrade: QBAccountListEntry | null = null;
-  otherCompanyTrades: QBAccountListEntry[] = [];
+  /* 'true' if there is a matching trade in the other QBO company */
+  matchExists: boolean[] = [];
 
   private reportService = inject(QBReportService);
 
+  /* Default initial date range for the report */
   readonly INITIALDATERANGE: DateRangeEnum = DateRangeEnum.LAST_SIX_MONTHS;
 
   /**
@@ -79,13 +82,15 @@ export class AukwIntercoComponent
 
         // Check if there are matching transactions in the other company
         switchMap((response) => {
-          this.otherCompanyTrades = response;
-          this.data.forEach((item) => {
-            var findEntries = this.otherCompanyTrades.filter(
+          //this.otherCompanyTrades = response;
+          this.matchExists = new Array<boolean>(this.data.length);
+          let index = 0;
+          this.data.forEach((item) => {            
+            var findEntries = response.filter(
               (x) => x.date == item.date && x.amount == item.amount,
             );
             if (findEntries && findEntries.length) {
-              item.matching_txn = findEntries[0].type;
+              this.matchExists[index] = true;
             }
           });
 

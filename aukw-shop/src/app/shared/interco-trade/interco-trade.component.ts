@@ -107,7 +107,7 @@ export class IntercoTradeComponent implements OnInit {
           docnumber: this.existingTrade.docnumber, amount: this.existingTrade.amount,
           memo: this.existingTrade.memo, account: this.existingTrade.account.id,
           name: this.existingTrade.name ? this.existingTrade.name.id : null,
-          emp_name: this.existingTrade.emp_name ? this.existingTrade.emp_name.id : null          
+          employee: this.existingTrade.employee ? this.existingTrade.employee.id : null          
         } )
         .subscribe({
           next: (response) => { console.log(response); 

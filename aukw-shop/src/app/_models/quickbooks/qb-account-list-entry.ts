@@ -22,7 +22,7 @@ export class QBAccountListEntry {
   /**
    * The name of the employee associated with the transaction. Not the person who entered it.
    */
-  emp_name: ValueIdPair;
+  employee: ValueIdPair;
   /**
    * The name of the entity who is the counterparty to the transaction.
    */
@@ -48,10 +48,6 @@ export class QBAccountListEntry {
    */
   balance: number;
   /**
-   * A transaction in the opposing QBO company that matches this transaction.
-   */
-  matching_txn: ValueIdPair;
-  /**
    * 'True' if this transaction is taxable (i.e. VATable), false otherwise
    */
   taxable: boolean;
@@ -62,13 +58,12 @@ export class QBAccountListEntry {
     this.type = (obj && obj.type) || null;
     this.docnumber = (obj && obj.docnumber) || null;
     this.name = (obj && obj.name) || null;
-    this.emp_name = (obj && obj.emp_name) || null;
+    this.employee = (obj && obj.emp_name) || null;
     this.memo = (obj && obj.memo) || null;
     this.account = (obj && obj.account) || null;
     this.amount = (obj && obj.amount) || null;
     this.balance = (obj && obj.balance) || null;
     this.is_cleared = (obj && obj.is_cleared) || null;
-    this.matching_txn = (obj && obj.matching_txn) || null;
     this.taxable = (obj && obj.taxable) || false;
   }
 
@@ -79,7 +74,7 @@ export class QBAccountListEntry {
       type: this.type.value,
       docnumber: this.docnumber,
       name: this.name.value,
-      emp_name: this.emp_name.value,
+      employee: this.employee.value,
       memo: this.memo,
       account: this.account.value,
       amount: this.amount,

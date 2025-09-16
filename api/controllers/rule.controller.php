@@ -82,7 +82,7 @@ class RuleCtl{
         ->read();
 
       $memo = strtolower(($data->memo) ?? '');
-      
+
       foreach ($rules as $rule) {
         
         if (($data->account == $rule['search_account'] || is_null($rule['search_account']))
@@ -96,7 +96,7 @@ class RuleCtl{
                   "date" => $data->date,
                   "docnumber" => $data->docnumber,
                   "name" => $rule['entity'],
-                  "emp_name" => $data->emp_name,
+                  "employee" => $data->employee,
                   "memo" => $rule['memo'],
                   "account" => $rule['account'],
                   "amount" => $data->amount,
