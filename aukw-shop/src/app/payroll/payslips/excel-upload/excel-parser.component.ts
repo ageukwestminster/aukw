@@ -30,6 +30,10 @@ export class ExcelParserComponent {
   /** The file that the user has selected, or null */
   file: File | null = null;
 
+  /**
+   * Reference to the excel-upload component in the template
+   * @ViewChild makes it possible to access native DOM elements that have a template reference variable.
+   */
   @ViewChild('uploadComponent') uploadComponent:
     | ExcelUploadComponent
     | undefined;
