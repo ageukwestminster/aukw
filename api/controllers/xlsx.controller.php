@@ -5,7 +5,7 @@ namespace Controllers;
 use Models\EncryptedXlsx;
 use Models\PayrollCsv;
 use Models\PayrollXlsx;
-use \Core\ErrorResponse as Error;
+use Core\ErrorResponse as Error;
 use Exception;
 
 /**

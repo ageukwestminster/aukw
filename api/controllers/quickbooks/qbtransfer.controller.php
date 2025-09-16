@@ -4,7 +4,7 @@ namespace Controllers;
 
 use \Models\QuickbooksTransfer;
 use Core\QuickbooksConstants as QBO;
-use \Core\ErrorResponse as Error;
+use Core\ErrorResponse as Error;
 use Exception;
 use InvalidArgumentException;
 use QuickBooksOnline\API\Exception\SdkException;

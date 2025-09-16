@@ -6,7 +6,7 @@ use DateMalformedStringException;
 use DateTime;
 use \Models\QbDateMacro;
 use \Models\RowItem;
-use \Core\ErrorResponse as Error;
+use Core\ErrorResponse as Error;
 use Exception;
 
 /**

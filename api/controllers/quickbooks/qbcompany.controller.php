@@ -3,7 +3,7 @@
 namespace Controllers;
 
 use Models\QuickbooksAuth;
-use \Core\ErrorResponse as Error;
+use Core\ErrorResponse as Error;
 use Exception;
 
 /**

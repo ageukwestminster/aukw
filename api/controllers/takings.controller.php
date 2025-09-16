@@ -2,7 +2,7 @@
 
 namespace Controllers;
 
-use \Core\ErrorResponse as Error;
+use Core\ErrorResponse as Error;
 use Exception;
 
 /**

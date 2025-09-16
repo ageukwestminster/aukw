@@ -4,7 +4,7 @@ namespace Controllers;
 
 use Models\QuickbooksAuth;
 use Exception;
-use \Core\ErrorResponse as Error;
+use Core\ErrorResponse as Error;
 
 /**
  * Controller that provides methods to create and manage a 

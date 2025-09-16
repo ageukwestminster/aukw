@@ -4,7 +4,7 @@ namespace Core;
 
 use \PDO;
 use Exception;
-use \Core\ErrorResponse as Error;
+use Core\ErrorResponse as Error;
 
 /**
  * Provide open PDO database connection via $conn property.  

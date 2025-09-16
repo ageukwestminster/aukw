@@ -2,7 +2,8 @@
 
 namespace Controllers;
 
-use \Core\ErrorResponse as Error;
+use Core\QuickbooksConstants as QBO;
+use Core\ErrorResponse as Error;
 use \Models\Rules;
 use Exception;
 /**
@@ -62,21 +63,10 @@ class RuleCtl{
         throw new \InvalidArgumentException("'amount' property is missing from POST body or is set to NULL.");
       }
 
-
-      /*
-      id: this.id,
-      date: this.date,
-      type: this.type.value,
-      docnumber: this.docnumber,
-      name: this.name.value,
-      emp_name: this.emp_name.value,
-      memo: this.memo,
-      account: this.account.value,
-      amount: this.amount,
-      taxable: this.taxable ? 'Yes' : 'No',
-      */
-
-      // TODO use $realmid
+      $account = !isset($data->account)?null:$data->account->id;
+      $entity = !isset($data->name)?null:$data->name->id;
+      $employee = !isset($data->employee)?null:$data->employee;
+      $charity = ($realmid == QBO::CHARITY_REALMID)?1:0;
 
       $rules = Rules::getInstance()
         ->read();
@@ -85,8 +75,9 @@ class RuleCtl{
 
       foreach ($rules as $rule) {
         
-        if (($data->account == $rule['search_account'] || is_null($rule['search_account']))
-            && ($data->name == $rule['search_entity'] || $rule['search_entity'] == NULL)
+        if (($charity == $rule['charity'])
+            && ($account == $rule['search_account'] || is_null($rule['search_account']))
+            && ($entity == $rule['search_entity'] || $rule['search_entity'] == NULL)
             && ($data->docnumber == $rule['search_docnumber'] || $rule['search_docnumber'] == NULL)
             && (is_null($rule['search_memo']) || str_contains($memo, $rule['search_memo']))  
             ) {
@@ -95,10 +86,10 @@ class RuleCtl{
               echo json_encode(array(
                   "date" => $data->date,
                   "docnumber" => $data->docnumber,
-                  "name" => $rule['entity'],
-                  "employee" => $data->employee,
+                  "name" => is_null($rule['entity'])?null:array("id"=>$rule['entity']),
+                  "employee" => $employee,
                   "memo" => $rule['memo'],
-                  "account" => $rule['account'],
+                  "account" => is_null($rule['account'])?null:array("id"=>$rule['account']),
                   "amount" => $data->amount,
                   "taxable" => $rule['taxable'],
                   "description" => $data->memo?$data->memo:$rule['description']                
@@ -107,9 +98,11 @@ class RuleCtl{
             }
       }
       
+      // If no rule matched then return an empty object
+      echo json_encode((object)array(), JSON_NUMERIC_CHECK);
 
     } catch (Exception $e) {
-      Error::response("Error retrieving details of the new interco trade.", $e);
+      Error::response("Error retrieving details of the new interco trade at line " .$e->getLine().".", $e);
     }
   }
 

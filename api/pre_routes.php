@@ -19,7 +19,7 @@
  * Router logic supplied by {@link https://github.com/bramus/router bramus\router}.
  */
 
-use \Core\Headers;
+use Core\Headers;
 
 /**************************************************************/
 /* Just return headers when OPTIONS call                      */

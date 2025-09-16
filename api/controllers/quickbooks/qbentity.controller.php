@@ -3,7 +3,7 @@
 namespace Controllers;
 
 use \Models\QuickbooksQuery;
-use \Core\ErrorResponse as Error;
+use Core\ErrorResponse as Error;
 
 /**
  * Controller to accomplish QBO Employee related tasks. 

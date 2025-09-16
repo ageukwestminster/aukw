@@ -2,11 +2,11 @@
 
 namespace Controllers;
 
-use \Core\QuickbooksConstants as QBO;
+use Core\QuickbooksConstants as QBO;
 use \Models\Payslip;
 use \Models\QuickbooksQuery;
 use \Models\QuickbooksEmployee;
-use \Core\ErrorResponse as Error;
+use Core\ErrorResponse as Error;
 use Exception;
 
 /**
