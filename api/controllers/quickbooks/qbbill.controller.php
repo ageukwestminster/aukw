@@ -2,9 +2,9 @@
 
 namespace Controllers;
 
-use \Models\QuickbooksBill;
-use \Models\QuickbooksPensionBill;
-use \Models\QuickbooksQuery;
+use Models\QuickbooksBill;
+use Models\QuickbooksPensionBill;
+use Models\QuickbooksQuery;
 use Core\QuickbooksConstants as QBO;
 use Core\ErrorResponse as Error;
 use Exception;

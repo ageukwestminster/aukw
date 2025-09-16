@@ -2,7 +2,7 @@
 
 namespace Controllers;
 
-use \Models\QuickbooksQuery;
+use Models\QuickbooksQuery;
 use Core\QuickbooksConstants as QBO;
 use Core\ErrorResponse as Error;
 use Exception;

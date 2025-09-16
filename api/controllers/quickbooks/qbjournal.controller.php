@@ -2,8 +2,8 @@
 
 namespace Controllers;
 
-use \Models\QuickbooksJournal;
-use \Models\QuickbooksQuery;
+use Models\QuickbooksJournal;
+use Models\QuickbooksQuery;
 use Core\ErrorResponse as Error;
 use Exception;
 

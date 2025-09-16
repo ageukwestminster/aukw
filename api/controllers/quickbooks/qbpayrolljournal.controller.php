@@ -3,10 +3,10 @@
 namespace Controllers;
 
 use Core\QuickbooksConstants as QBO;
-use \Models\QuickbooksEmployee;
-use \Models\QuickbooksEmployerNIJournal;
-use \Models\QuickbooksEnterprisesJournal;
-use \Models\QuickbooksPayrollJournal;
+use Models\QuickbooksEmployee;
+use Models\QuickbooksEmployerNIJournal;
+use Models\QuickbooksEnterprisesJournal;
+use Models\QuickbooksPayrollJournal;
 
 /**
  * Controller to accomplish QBO Payroll Journal related tasks. 

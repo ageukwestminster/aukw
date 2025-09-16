@@ -4,7 +4,7 @@ namespace Controllers;
 
 use Core\QuickbooksConstants as QBO;
 use Core\ErrorResponse as Error;
-use \Models\Rules;
+use Models\Rules;
 use Exception;
 /**
  * Controller to accomplish trading Rule based tasks. 

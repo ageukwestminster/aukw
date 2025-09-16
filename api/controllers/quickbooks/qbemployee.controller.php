@@ -2,7 +2,7 @@
 
 namespace Controllers;
 
-use \Models\QuickbooksEmployee;
+use Models\QuickbooksEmployee;
 use Core\ErrorResponse as Error;
 
 /**

@@ -2,7 +2,7 @@
 
 namespace Controllers;
 
-use \Models\QuickbooksTransfer;
+use Models\QuickbooksTransfer;
 use Core\QuickbooksConstants as QBO;
 use Core\ErrorResponse as Error;
 use Exception;

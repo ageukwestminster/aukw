@@ -2,8 +2,8 @@
 
 namespace Controllers;
 
-use \Models\QuickbooksSalesReceipt;
-use \Models\Takings;
+use Models\QuickbooksSalesReceipt;
+use Models\Takings;
 use Core\ErrorResponse as Error;
 use Exception;
 

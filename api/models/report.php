@@ -7,7 +7,7 @@ use \PDO;
 /**Used to convert between Unix timestamp and London dates */
 use DateTime;
 use DateTimeZone;
-use \Models\RowItem;
+use Models\RowItem;
 
 /**
  * Build and execute the queries to retrive report data.
