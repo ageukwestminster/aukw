@@ -7,16 +7,6 @@ import {
 } from '@angular/core';
 import { from, concatMap, of, Observable, catchError } from 'rxjs';
 import {
-  NgbModal,
-  NgbModalModule,
-  NgbTooltipModule,
-} from '@ng-bootstrap/ng-bootstrap';
-import {
-  NgbActiveModal,
-  NgbModalOptions,
-  NgbModalRef,
-} from '@ng-bootstrap/ng-bootstrap';
-import {
   AlertService,
   FileService,
   PayslipListService,
