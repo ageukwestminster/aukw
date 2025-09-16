@@ -8,12 +8,12 @@ import { QBAccountListEntry } from '@app/_models';
 const baseUrl = `${environment.apiUrl}/transaction-match`;
 
 /**
- * This class has a single method which takes an existing transaction
- * (in the form of a QBAccountListEntry object) and finds creates a
- * matching transaction, as it would look in the other QBO company file.
- *  
+ * This class has a single method which takes an existing intercopmpany 
+ * transaction (in the form of a QBAccountListEntry object) and, using the
+ * rules stored in the database, attempts to create what a matching transaction
+ * would look like in the other QBO company.
  *
- * It uses matching rules stored in the database to make the match and to
+ * The rules stored in the database are used to make the match and to
  * populate the fields of the new transaction.
  */
 @Injectable({ providedIn: 'root' })
@@ -21,11 +21,13 @@ export class TradeMatchService {
   private http = inject(HttpClient);
 
   /**
-   * Given an existing transaction, return a matching transaction
+   * Given an existing transaction, using the
+   * rules stored in the database, attempts to create what a matching transaction
+   * would look like in the other QBO company.
    * @param params An object containing the details of the existing transaction
    * @returns QBAccountListEntry
    */
-  match(realmID: string, params: any): Observable<any> {
+  match(realmID: string, params: QBAccountListEntry): Observable<any> {
     return this.http.post<any>(`${baseUrl}/${realmID}/match`, params);
   }
 }

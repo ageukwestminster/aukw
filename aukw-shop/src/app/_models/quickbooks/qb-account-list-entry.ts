@@ -58,7 +58,7 @@ export class QBAccountListEntry {
     this.type = (obj && obj.type) || null;
     this.docnumber = (obj && obj.docnumber) || null;
     this.name = (obj && obj.name) || null;
-    this.employee = (obj && obj.emp_name) || null;
+    this.employee = (obj && obj.employee) || null;
     this.memo = (obj && obj.memo) || null;
     this.account = (obj && obj.account) || null;
     this.amount = (obj && obj.amount) || null;

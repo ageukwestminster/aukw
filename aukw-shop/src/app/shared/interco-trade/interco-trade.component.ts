@@ -103,17 +103,13 @@ export class IntercoTradeComponent implements OnInit {
       if (!this.existingTrade) return;
 
       this.matchService
-        .match(this.realmid, {date: this.existingTrade.date, type: this.existingTrade.type,
-          docnumber: this.existingTrade.docnumber, amount: this.existingTrade.amount,
-          memo: this.existingTrade.memo, account: this.existingTrade.account.id,
-          name: this.existingTrade.name ? this.existingTrade.name.id : null,
-          employee: this.existingTrade.employee ? this.existingTrade.employee.id : null          
-        } )
+        .match(this.realmid, this.existingTrade)
         .subscribe({
-          next: (response) => { console.log(response); 
-            if (response) {
-              this.f['entity'].setValue(response.name? response.name : null);
-              this.f['account'].setValue(response.account);
+          next: (response) => {
+            // Check for non-empty response
+            if (response && Object.keys(response).length) { 
+              this.f['entity'].setValue(response.name? response.name.id : null);
+              this.f['account'].setValue(response.account.id);
               this.f['amount'].setValue(response.amount);
               this.f['txnDate'].setValue(response.date);
               this.f['description'].setValue(response.description);
@@ -126,7 +122,15 @@ export class IntercoTradeComponent implements OnInit {
                 this.f['privateNote'].setValue(response.memo);
               } 
             } else { 
-              this.alertService.info('No matching transaction found in other company.');
+              this.f['entity'].setValue(null);
+              this.f['account'].setValue(null);
+              this.f['amount'].setValue(this.existingTrade!.amount);
+              this.f['txnDate'].setValue(this.existingTrade!.date);
+              this.f['privateNote'].setValue(this.existingTrade!.memo);
+              this.f['docnumber'].setValue(this.existingTrade!.docnumber);
+              this.f['IsVAT'].setValue(false);
+              this.f['taxAmount'].setValue(0);  
+              this.f['description'].setValue('');            
             }
           },
           error: (error: any) => {
@@ -134,46 +138,6 @@ export class IntercoTradeComponent implements OnInit {
           },
           complete: () => {},
         });
-            
-            
-      /*
-            switch (this.existingTrade.type.value) {
-        case 'Bill':
-        case 'Expense':
-          if (this.existingTrade.account.id == 429) {
-            // Pleo
-            //extract name from description
-            var entityName = this.existingTrade.memo.split('|')[1].trim();
-
-            //find entity in Vendors
-            var filterEntities = this.vendors.filter(
-              (x) =>
-                x.value.toLowerCase().substring(0, 4) ==
-                entityName.toLowerCase().substring(0, 4),
-            );
-            if (filterEntities && filterEntities[0] && filterEntities[0].id) {
-              this.f['entity'].setValue(filterEntities[0].id);
-            }
-          }
-
-          break;
-        case 'Transfer':
-          break;
-        default:
-          break;
-      }
-
-      // Set values we know already
-      this.f['account'].setValue(null);
-      this.f['amount'].setValue(this.existingTrade.amount);
-      this.f['txnDate'].setValue(this.existingTrade.date);
-      this.f['description'].setValue(this.existingTrade.memo);
-      this.f['IsVAT'].setValue(!this.enterprises);
-      let vat = this.enterprises
-        ? 0
-        : Math.round((this.f['amount'].value * 100) / 6) / 100;
-      this.f['taxAmount'].setValue(vat);
-      this.f['docnumber'].setValue(this.existingTrade.docnumber);*/
 
       // Download attachemnts (if any)
       this.downloadAttachments(this.realmid, this.existingTrade);
@@ -329,22 +293,4 @@ export class IntercoTradeComponent implements OnInit {
     });
   }
 
-  /*
-  resetForm() {
-    if (this.form.controls) {
-      this.f['account'].setValue(null);
-      this.f['entity'].setValue(null);
-      this.f['amount'].setValue(null);
-      this.f['txnDate'].setValue(null);
-      this.f['description'].setValue(null);
-      this.f['IsVAT'].setValue(!this.enterprises);
-      this.f['taxAmount'].setValue(0);
-      this.f['docnumber'].setValue(null);
-      this.f['privateNote'].setValue(null);
-      this.f['attachments'].setValue(null);
-      this.f['bankAccount'].setValue(102);
-      this.submitted = false;
-      this.attachments = [];
-    }
-  }*/
 }

@@ -92,6 +92,7 @@ export class AukwIntercoComponent
             if (findEntries && findEntries.length) {
               this.matchExists[index] = true;
             }
+            index++;
           });
 
           return of(true);
