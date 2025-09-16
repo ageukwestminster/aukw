@@ -2,7 +2,7 @@
 
 namespace Models;
 
-use \PDO;
+use PDO;
 
 /**
  * Defines a user's usertoken. Can be an access or refresh token.

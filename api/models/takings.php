@@ -2,7 +2,7 @@
 
 namespace Models;
 
-use \PDO;
+use PDO;
 use Exception;
 use PDOException;
 

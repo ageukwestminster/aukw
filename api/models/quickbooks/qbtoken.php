@@ -2,7 +2,7 @@
 
 namespace Models;
 
-use \PDO;
+use PDO;
 
 /**
  * Holds QB token information and has data persistance capability.

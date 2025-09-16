@@ -1,6 +1,6 @@
 <?php
 namespace Models;
-use \PDO;
+use PDO;
 /**
  * Defines a QBRealm and has data persistance capbility.
  * 

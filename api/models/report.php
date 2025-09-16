@@ -2,7 +2,7 @@
 
 namespace Models;
 
-use \PDO;
+use PDO;
 
 /**Used to convert between Unix timestamp and London dates */
 use DateTime;

@@ -3,7 +3,7 @@
 namespace Models;
 
 use Exception;
-use \PDO;
+use PDO;
 
 /**
  * Defines an entry in the Audit Log and has data persistance capbility.

@@ -2,7 +2,7 @@
 
 namespace Core;
 
-use \PDO;
+use PDO;
 use Exception;
 use Core\ErrorResponse as Error;
 

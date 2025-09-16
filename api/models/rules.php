@@ -1,7 +1,7 @@
 <?php
 
 namespace Models;
-use \PDO;
+use PDO;
 
 /**
  * Factory class that provides a method to query Rules
