@@ -8,7 +8,7 @@ import { QBAccountListEntry } from '@app/_models';
 const baseUrl = `${environment.apiUrl}/transaction-match`;
 
 /**
- * This class has a single method which takes an existing intercopmpany 
+ * This class has a single method which takes an existing intercopmpany
  * transaction (in the form of a QBAccountListEntry object) and, using the
  * rules stored in the database, attempts to create what a matching transaction
  * would look like in the other QBO company.

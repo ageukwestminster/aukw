@@ -35,7 +35,7 @@ export class AukwIntercoComponent
 
   private reportService = inject(QBReportService);
   /** A wrapper for NgbModal to avoid aria-hidden warnings */
-  public modalService = inject(ModalService); 
+  public modalService = inject(ModalService);
 
   /* Default initial date range for the report */
   readonly INITIALDATERANGE: DateRangeEnum = DateRangeEnum.LAST_SIX_MONTHS;
@@ -85,7 +85,7 @@ export class AukwIntercoComponent
           //this.otherCompanyTrades = response;
           this.matchExists = new Array<boolean>(this.data.length);
           let index = 0;
-          this.data.forEach((item) => {            
+          this.data.forEach((item) => {
             var findEntries = response.filter(
               (x) => x.date == item.date && x.amount == item.amount,
             );
@@ -135,7 +135,7 @@ export class AukwIntercoComponent
 
   /* when the user clicks on a row in the table a add trade modal appears*/
   onRowClick(item: QBAccountListEntry) {
-    if (Number.parseFloat(item.amount.toString())<0) return; // only allow expense trades to be entered
+    if (Number.parseFloat(item.amount.toString()) < 0) return; // only allow expense trades to be entered
     const modalOptions = {
       backdrop: 'static',
       backdropClass: 'loading-indicator-backdrop',
@@ -143,16 +143,17 @@ export class AukwIntercoComponent
       fullscreen: 'md',
       size: 'lg',
     } as NgbModalOptions;
-    const modalRef = this.modalService.open(IntercoTradeComponent, modalOptions);
+    const modalRef = this.modalService.open(
+      IntercoTradeComponent,
+      modalOptions,
+    );
     modalRef.componentInstance.existingTrade = item;
     modalRef.componentInstance.enterprises = this.enterprises;
 
-     return from(modalRef.result).pipe(
-                
-          catchError((err) => {
-            
-            return of();
-          }),
-        );
+    return from(modalRef.result).pipe(
+      catchError((err) => {
+        return of();
+      }),
+    );
   }
 }

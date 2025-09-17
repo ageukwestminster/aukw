@@ -64,8 +64,8 @@
 
     <div class="row">
       <div class="col-sm">
-        <table 
-          class="table table-striped table-hover table-responsive w-auto" 
+        <table
+          class="table table-striped table-hover table-responsive w-auto"
           [ngClass]="enterprises ? 'table-success' : 'table-secondary'"
         >
           <thead>
@@ -95,7 +95,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (item of data; track item.id; let  i = $index) {
+            @for (item of data; track item.id; let i = $index) {
               <tr (click)="onRowClick(item)">
                 <th>
                   <span class="text-dark">{{ item.date }}</span>
@@ -104,7 +104,11 @@
                   {{ item.type.value }}
                 </td>
                 <td class="d-none d-md-table-cell text-start">
-                  {{ item.employee.value == '' ? item.name.value:item.employee.value}}
+                  {{
+                    item.employee.value == ""
+                      ? item.name.value
+                      : item.employee.value
+                  }}
                 </td>
                 <td class="d-none d-sm-table-cell text-start">
                   {{ item.memo }}
@@ -118,7 +122,9 @@
                   } @else if (item.amount) {
                     <span class="fa-stack" style="color: lightsteelblue">
                       <i class="fa-solid fa-circle fa-stack-2x"></i>
-                      <i class="fa-solid fa-question fa-stack-1x fa-inverse"></i>
+                      <i
+                        class="fa-solid fa-question fa-stack-1x fa-inverse"
+                      ></i>
                     </span>
                   }
                 </td>

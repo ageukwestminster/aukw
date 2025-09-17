@@ -30,7 +30,7 @@ export class ExcelUploadComponent {
    * @ViewChild makes it possible to access native DOM elements that have a template reference variable.
    */
   @ViewChild('fileInput') fileInput: ElementRef | undefined;
-  
+
   selectedFile: File | null = null;
   uploadSuccess: boolean = false;
   uploadError: boolean = false;
