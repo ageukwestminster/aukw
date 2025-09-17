@@ -1,11 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule, NgClass } from '@angular/common';
+import { CommonModule, Location, NgClass } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { NgbTooltip, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { QBAccountListEntry } from '@app/_models';
 import { map, switchMap, tap } from 'rxjs/operators';
-import { from, of, catchError } from 'rxjs';
+import { of } from 'rxjs';
 
 import { AbstractChartReportComponent } from '../chart-report.component';
 import { fromArrayToElement } from '@app/_helpers';
@@ -21,7 +20,6 @@ import { DateRangeChooserComponent, IntercoTradeComponent } from '@app/shared';
     CommonModule,
     NgClass,
     NgbTooltip,
-    RouterLink,
     ReactiveFormsModule,
     DateRangeChooserComponent,
   ],
@@ -33,6 +31,7 @@ export class AukwIntercoComponent
   /* 'true' if there is a matching trade in the other QBO company */
   matchExists: boolean[] = [];
 
+  private location = inject(Location);
   private reportService = inject(QBReportService);
   /** A wrapper for NgbModal to avoid aria-hidden warnings */
   public modalService = inject(ModalService);
@@ -141,7 +140,13 @@ export class AukwIntercoComponent
 
   /* when the user clicks on a row in the table a add trade modal appears*/
   onRowClick(item: QBAccountListEntry) {
-    if (Number.parseFloat(item.amount.toString()) < 0) return; // only allow expense trades to be entered
+    if (Number.parseFloat(item.amount.toString()) < 0) {
+      this.alertService.info(
+        'Only expense trades can be entered via this screen.',
+      );
+      return;
+    }
+
     if (this.enterprises) return; // only allow trades to be entered from the Enterprises company
 
     /**
@@ -164,12 +169,11 @@ export class AukwIntercoComponent
     /** Communicate with the modal component. From {@link https://stackoverflow.com/a/48698760} */
     modalRef.componentInstance.existingTrade = item;
     modalRef.componentInstance.enterprises = this.enterprises;
+  }
 
-    return from(modalRef.result).pipe(
-      catchError((err) => {
-        console.log(err);
-        return of();
-      }),
-    );
+  /** Return to previous page */
+  goBack() {
+    this.location.back();
+    return false; // don't propagate event
   }
 }

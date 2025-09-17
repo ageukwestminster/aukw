@@ -26,22 +26,15 @@
       <button class="btn btn-secondary mx-2" (click)="exportToCSV()">
         Export To CSV
       </button>
-      <button type="button" routerLink="/reports" class="btn btn-outline-dark">
+      <button type="button" (click)="goBack()" class="btn btn-outline-dark">
         Close &times;
       </button>
     </div>
   </div>
   <div class="col-sm-2 mt-2">
-    <div>
-      <div>
-        @if (loading) {
-          <span class="spinner-border spinner-border-lg align-center"></span>
-        }
-      </div>
-      @if (data && data.length) {
-        <div class="ms-3">Found {{ data && data.length }} entries</div>
-      }
-    </div>
+    @if (data && data.length) {
+      <div class="ms-3">Found {{ data && data.length }} entries</div>
+    }
   </div>
   <div class="p-2">
     <date-range-chooser
@@ -130,7 +123,7 @@
             }
             @if (!data) {
               <tr>
-                <td colspan="7" class="text-center">
+                <td colspan="9" class="text-center">
                   <span
                     class="spinner-border spinner-border-lg align-center"
                   ></span>

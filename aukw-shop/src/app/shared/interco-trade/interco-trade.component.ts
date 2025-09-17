@@ -1,5 +1,5 @@
 import { Component, inject, Input, OnInit, SimpleChanges } from '@angular/core';
-import { JsonPipe } from '@angular/common';
+import { JsonPipe, NgClass } from '@angular/common';
 import {
   FormBuilder,
   FormGroup,
@@ -11,6 +11,7 @@ import {
   NgbDateParserFormatter,
   NgbDatepickerModule,
   NgbActiveModal,
+  NgbTooltipModule,
 } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '@environments/environment';
 import {
@@ -34,7 +35,13 @@ import { Observable, forkJoin, of, concatMap, tap } from 'rxjs';
 
 @Component({
   selector: 'interco-trade',
-  imports: [NgbDatepickerModule, ReactiveFormsModule, JsonPipe],
+  imports: [
+    NgbDatepickerModule,
+    ReactiveFormsModule,
+    JsonPipe,
+    NgbTooltipModule,
+    NgClass,
+  ],
   templateUrl: './interco-trade.component.html',
   styleUrl: './interco-trade.component.css',
   providers: [
@@ -86,7 +93,6 @@ export class IntercoTradeComponent implements OnInit {
       attachments: [null],
       account: [null, Validators.required],
       taxAmount: [null, Validators.required],
-      bankAccount: [102, Validators.required],
       description: [null],
       docnumber: [null],
     });

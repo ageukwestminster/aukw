@@ -1,7 +1,5 @@
 <div class="modal-header d-flex justify-content-between">
-  <h4 class="modal-title" id="modal-title">
-    Add New Intercompany Transaction
-  </h4>
+  <h4 class="modal-title" id="modal-title">Add New Intercompany Transaction</h4>
   <button
     type="button"
     class="close"
@@ -32,6 +30,7 @@
         formControlName="txnDate"
         id="inputTxnDate"
         placement="bottom"
+        [ngClass]="{ 'is-invalid': submitted && f['txnDate'].errors }"
       />
       <div class="input-group-append">
         <button
@@ -42,6 +41,13 @@
           <i class="fa-regular fa-calendar-days"></i>
         </button>
       </div>
+      @if (submitted && f["txnDate"].errors) {
+        <div class="invalid-feedback text-end">
+          @if (f["txnDate"].errors) {
+            <div>Select a valid date</div>
+          }
+        </div>
+      }
     </div>
     <div class="input-group mb-1">
       <span class="input-group-text col-4" id="trade-entity-addon1"
@@ -52,6 +58,7 @@
         id="entitySelect"
         name="entitySelect"
         class="form-control"
+        [ngClass]="{ 'is-invalid': submitted && f['entity'].errors }"
       >
         @for (vendor of vendors; track vendor) {
           <option [ngValue]="vendor.id" class="text-center">
@@ -59,6 +66,13 @@
           </option>
         }
       </select>
+      @if (submitted && f["entity"].errors) {
+        <div class="invalid-feedback text-end">
+          @if (f["entity"].errors) {
+            <div>Select a supplier from the list</div>
+          }
+        </div>
+      }
     </div>
     <div class="input-group mb-1">
       <span class="input-group-text col-4" id="trade-account-addon1"
@@ -69,6 +83,7 @@
         id="accountSelect"
         name="accountSelect"
         class="form-control"
+        [ngClass]="{ 'is-invalid': submitted && f['account'].errors }"
       >
         @for (account of accounts; track account) {
           <option [ngValue]="account.id" class="text-center">
@@ -76,6 +91,13 @@
           </option>
         }
       </select>
+      @if (submitted && f["account"].errors) {
+        <div class="invalid-feedback text-end">
+          @if (f["account"].errors) {
+            <div>Select an account from the list</div>
+          }
+        </div>
+      }
     </div>
     <div class="input-group mb-1">
       <span class="input-group-text col-4" id="trade-amount-addon1"
@@ -90,6 +112,7 @@
         pattern="^\d*(\.\d{0,2})?$"
         formControlName="amount"
         aria-label="The amount of the expense"
+        [ngClass]="{ 'is-invalid': submitted && f['amount'].errors }"
       />
       <span class="input-group-text" id="trade-vat-addon">VAT: </span>
       <div class="input-group-text">
@@ -100,9 +123,16 @@
           id="checkboxVAT"
           formControlName="IsVAT"
           aria-describedby="trade-vat-addon"
-          aria-label="Checkbox for following text input"
+          aria-label="Checkbox for making transaction Vatable"
         />
       </div>
+      @if (submitted && f["amount"].errors) {
+        <div class="invalid-feedback text-start ms-3">
+          @if (f["amount"].errors) {
+            <div>Please enter the amount of the transaction.</div>
+          }
+        </div>
+      }
     </div>
     <div class="input-group mb-1">
       <span class="input-group-text col-4" id="trade-reference-addon"
@@ -128,6 +158,7 @@
         formControlName="description"
         placeholder="Information about the transaction."
         aria-describedby="trade-description-addon"
+        ngbTooltip="The description that will appear on the line item in QBO."
       ></textarea>
     </div>
     <div class="input-group mb-1">
@@ -139,6 +170,7 @@
         formControlName="privateNote"
         placeholder="Optional memo describing the transaction."
         aria-describedby="trade-memo-addon"
+        ngbTooltip="A memo that will appear on the transaction in QuickBooks."
       ></textarea>
     </div>
   </div>
@@ -152,7 +184,7 @@
     </button>
     <button
       type="submit"
-      [disabled]="loading || !this.existingTrade || this.form.invalid"
+      [disabled]="loading || !this.existingTrade"
       class="btn btn-primary btn-lg"
       aria-label="Create Transaction in Quickbooks"
     >
