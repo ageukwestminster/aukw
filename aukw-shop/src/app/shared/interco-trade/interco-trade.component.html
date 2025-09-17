@@ -1,170 +1,167 @@
-<div class="card-body">
-  <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <div class="row">
-      <div class="col-2">
-        <div class="p-2">Date</div>
-        <div class="p-2 mt-2">Entity</div>
-        <div class="p-2 mt-2">Expense Account</div>
-        <div class="p-2 mt-1">Description</div>
-        <div class="p-2">Memo</div>
-      </div>
-      <div class="col-10">
-        <div class="row">
-          <div class="col-4">
-            <div class="row mt-2">
-              <div class="col-9 p-0">
-                <input
-                  class="form-control text-end"
-                  placeholder="Txn Date"
-                  name="dp1"
-                  ngbDatepicker
-                  #d1="ngbDatepicker"
-                  formControlName="txnDate"
-                  id="inputTxnDate"
-                  placement="bottom"
-                />
-              </div>
-              <div class="input-group-append col-3 p-0">
-                <button
-                  class="btn btn-outline-secondary"
-                  (click)="d1.toggle()"
-                  type="button"
-                >
-                  <i class="far fa-calendar-alt"></i>
-                </button>
-              </div>
-            </div>
-            <div>
-              <div class="row mt-2">
-                <select
-                  formControlName="entity"
-                  id="entitySelect"
-                  name="entitySelect"
-                  class="form-control"
-                >
-                  @for (vendor of vendors; track vendor) {
-                    <option [ngValue]="vendor.id" class="text-center">
-                      {{ vendor.value }}
-                    </option>
-                  }
-                </select>
-              </div>
-            </div>
-            <div>
-              <div class="row mt-2">
-                <select
-                  formControlName="account"
-                  id="accountSelect"
-                  name="accountSelect"
-                  class="form-control"
-                >
-                  @for (account of accounts; track account) {
-                    <option [ngValue]="account.id" class="text-center">
-                      {{ account.value }}
-                    </option>
-                  }
-                </select>
-              </div>
-            </div>
-          </div>
-          <div class="col-3">
-            <div class="p-2">VAT</div>
-            <div class="p-2">Attachments</div>
-            <div class="p-2">Amount</div>
-            <div class="p-2">Reference</div>
-            <div></div>
-          </div>
-          <div class="col-3">
-            <div class="pt-2">
-              <div class="form-check">
-                <input
-                  type="checkbox"
-                  class="form-check-input"
-                  (click)="onVatCheckboxClick()"
-                  id="checkboxVAT"
-                  formControlName="IsVAT"
-                />
-              </div>
-            </div>
-            <div class="pt-2">
-              <input
-                id="txnAttachments"
-                name="txnAttachments"
-                type="number"
-                class="form-control"
-                formControlName="attachments"
-                [readonly]="true"
-              />
-            </div>
-            <div>
-              <input
-                id="txnAmount"
-                name="txnAmount"
-                type="number"
-                class="form-control"
-                placeholder="£0.00"
-                pattern="^\d*(\.\d{0,2})?$"
-                formControlName="amount"
-                aria-label="The amount of the expense"
-              />
-            </div>
-            <div>
-              <input
-                id="docnumberInput"
-                name="docnumberInput"
-                type="text"
-                class="form-control"
-                formControlName="docnumber"
-              />
-            </div>
-          </div>
-          <div class="col-2">
-            <div class="mx-auto">
-              <button
-                type="submit"
-                [disabled]="loading || !this.existingTrade || this.form.invalid"
-                class="btn btn-primary btn-lg"
-                aria-label="Create Transaction in Quickbooks"
-              >
-                @if (loading) {
-                  <span class="spinner-border spinner-border-sm me-1"></span>
-                }
+<div class="modal-header d-flex justify-content-between">
+  <h4 class="modal-title" id="modal-title">Add New Intercompany Transaction</h4>
+  <button
+    type="button"
+    class="close"
+    aria-describedby="modal-title"
+    (click)="modal.dismiss('cancel click')"
+  >
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="modal-body">
+    <p>
+      This will be a new transaction in QuickBooks that matches an offsets the
+      selected transaction.
+    </p>
 
-                Add Trade
-              </button>
-            </div>
-          </div>
-        </div>
-        <div class="row mt-1">
-          <div class="col p-0">
-            <div>
-              <textarea
-                class="form-control pl-1"
-                id="descriptionTextarea"
-                rows="1"
-                formControlName="description"
-                placeholder="Information about the transaction."
-              ></textarea>
-            </div>
-          </div>
-        </div>
-        <div class="row mt-1">
-          <div class="col p-0">
-            <div>
-              <textarea
-                class="form-control pl-1"
-                id="commentsTextarea"
-                rows="1"
-                formControlName="privateNote"
-                placeholder="Optional memo describing the transaction."
-              ></textarea>
-            </div>
-          </div>
-        </div>
+    <div class="input-group mb-1">
+      <span class="input-group-text col-4" id="trade-date-addon1"
+        >Trade Date:
+      </span>
+      <!-- If using MySql dates don't forget to import NgbUTCStringAdapter-->
+      <input
+        class="form-control text-end"
+        placeholder="Txn Date"
+        name="dp1"
+        ngbDatepicker
+        #d1="ngbDatepicker"
+        formControlName="txnDate"
+        id="inputTxnDate"
+        placement="bottom"
+      />
+      <div class="input-group-append">
+        <button
+          class="btn btn-outline-secondary"
+          (click)="d1.toggle()"
+          type="button"
+        >
+          <i class="fa-regular fa-calendar-days"></i>
+        </button>
       </div>
     </div>
-    @if (false) {
-      <pre>{{ form.value | json }}</pre>
-    }
-  </form>
-</div>
+    <div class="input-group mb-1">
+      <span class="input-group-text col-4" id="trade-entity-addon1"
+        >Name of Supplier:
+      </span>
+      <select
+        formControlName="entity"
+        id="entitySelect"
+        name="entitySelect"
+        class="form-control"
+      >
+        @for (vendor of vendors; track vendor) {
+          <option [ngValue]="vendor.id" class="text-center">
+            {{ vendor.value }}
+          </option>
+        }
+      </select>
+    </div>
+    <div class="input-group mb-1">
+      <span class="input-group-text col-4" id="trade-account-addon1"
+        >Expense Account:
+      </span>
+      <select
+        formControlName="account"
+        id="accountSelect"
+        name="accountSelect"
+        class="form-control"
+      >
+        @for (account of accounts; track account) {
+          <option [ngValue]="account.id" class="text-center">
+            {{ account.value }}
+          </option>
+        }
+      </select>
+    </div>
+    <div class="input-group mb-1">
+      <span class="input-group-text col-4" id="trade-amount-addon1"
+        >Amount:
+      </span>
+      <input
+        id="txnAmount"
+        name="txnAmount"
+        type="number"
+        class="form-control"
+        placeholder="£0.00"
+        pattern="^\d*(\.\d{0,2})?$"
+        formControlName="amount"
+        aria-label="The amount of the expense"
+      />
+      <span class="input-group-text" id="trade-vat-addon">VAT: </span>
+      <div class="input-group-text">
+        <input
+          class="form-check-input mt-0"
+          type="checkbox"
+          (click)="onVatCheckboxClick()"
+          id="checkboxVAT"
+          formControlName="IsVAT"
+          aria-describedby="trade-vat-addon"
+          aria-label="Checkbox for following text input"
+        />
+      </div>
+    </div>
+    <div class="input-group mb-1">
+      <span class="input-group-text col-4" id="trade-reference-addon"
+        >Reference:
+      </span>
+      <input
+        id="docnumberInput"
+        name="docnumberInput"
+        type="text"
+        class="form-control"
+        formControlName="docnumber"
+        aria-describedby="trade-reference-addon"
+      />
+    </div>
+    <div class="input-group mb-1">
+      <span class="input-group-text col-4" id="trade-description-addon"
+        >Line Item Description:
+      </span>
+      <textarea
+        class="form-control col-4 pl-1"
+        id="descriptionTextarea"
+        rows="1"
+        formControlName="description"
+        placeholder="Information about the transaction."
+        aria-describedby="trade-description-addon"
+      ></textarea>
+    </div>
+    <div class="input-group mb-1">
+      <span class="input-group-text col-4" id="trade-memo-addon">Memo: </span>
+      <textarea
+        class="form-control pl-1"
+        id="commentsTextarea"
+        rows="1"
+        formControlName="privateNote"
+        placeholder="Optional memo describing the transaction."
+        aria-describedby="trade-memo-addon"
+      ></textarea>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline-secondary btn-lg"
+      (click)="modal.dismiss('cancel click')"
+    >
+      Cancel
+    </button>
+    <button
+      type="submit"
+      [disabled]="loading || !this.existingTrade || this.form.invalid"
+      class="btn btn-primary btn-lg"
+      aria-label="Create Transaction in Quickbooks"
+    >
+      @if (loading) {
+        <span class="spinner-border spinner-border-sm me-1"></span>
+      }
+
+      Add Trade
+    </button>
+  </div>
+  @if (false) {
+    <pre>{{ form.value | json }}</pre>
+  }
+</form>

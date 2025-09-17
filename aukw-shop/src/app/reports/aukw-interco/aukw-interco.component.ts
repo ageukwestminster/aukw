@@ -1,15 +1,15 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
+import { NgbTooltip, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { QBAccountListEntry } from '@app/_models';
 import { map, switchMap, tap } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { from, concatMap, of, catchError } from 'rxjs';
 
 import { AbstractChartReportComponent } from '../chart-report.component';
 import { fromArrayToElement } from '@app/_helpers';
-import { QBReportService } from '@app/_services';
+import { ModalService, QBReportService } from '@app/_services';
 import { DateRangeEnum } from '@app/_models';
 import { DateRangeChooserComponent, IntercoTradeComponent } from '@app/shared';
 
@@ -19,7 +19,7 @@ import { DateRangeChooserComponent, IntercoTradeComponent } from '@app/shared';
   standalone: true,
   imports: [
     CommonModule,
-    IntercoTradeComponent,
+    NgClass,
     NgbTooltip,
     RouterLink,
     ReactiveFormsModule,
@@ -30,12 +30,12 @@ export class AukwIntercoComponent
   extends AbstractChartReportComponent<QBAccountListEntry[]>
   implements OnInit
 {
-  /* when the user clicks ona  row in the table the selected trade is assigned to this variable */
-  selectedTrade: QBAccountListEntry | null = null;
   /* 'true' if there is a matching trade in the other QBO company */
   matchExists: boolean[] = [];
 
   private reportService = inject(QBReportService);
+  /** A wrapper for NgbModal to avoid aria-hidden warnings */
+  public modalService = inject(ModalService); 
 
   /* Default initial date range for the report */
   readonly INITIALDATERANGE: DateRangeEnum = DateRangeEnum.LAST_SIX_MONTHS;
@@ -133,7 +133,26 @@ export class AukwIntercoComponent
     this.exportToCsvService.exportToCSV(output);
   }
 
+  /* when the user clicks on a row in the table a add trade modal appears*/
   onRowClick(item: QBAccountListEntry) {
-    this.selectedTrade = item;
+    if (Number.parseFloat(item.amount.toString())<0) return; // only allow expense trades to be entered
+    const modalOptions = {
+      backdrop: 'static',
+      backdropClass: 'loading-indicator-backdrop',
+      centered: true,
+      fullscreen: 'md',
+      size: 'lg',
+    } as NgbModalOptions;
+    const modalRef = this.modalService.open(IntercoTradeComponent, modalOptions);
+    modalRef.componentInstance.existingTrade = item;
+    modalRef.componentInstance.enterprises = this.enterprises;
+
+     return from(modalRef.result).pipe(
+                
+          catchError((err) => {
+            
+            return of();
+          }),
+        );
   }
 }

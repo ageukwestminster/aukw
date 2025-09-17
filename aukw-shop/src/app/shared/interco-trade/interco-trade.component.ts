@@ -10,12 +10,13 @@ import {
   NgbDateAdapter,
   NgbDateParserFormatter,
   NgbDatepickerModule,
+  NgbActiveModal,
 } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '@environments/environment';
 import {
   QBAccountListEntry,
   QBAttachment,
-  QBPurchase,
+  ApiMessage,
   ValueIdPair,
   ValueIdType,
 } from '@app/_models';
@@ -25,10 +26,10 @@ import {
   QBEntityService,
   QBPurchaseService,
   QBTransferService,
-  TradeMatchService
+  TradeMatchService,
 } from '@app/_services';
 import { CustomDateParserFormatter, NgbUTCStringAdapter } from '@app/_helpers';
-import { forkJoin } from 'rxjs';
+import { Observable, forkJoin, of, concatMap } from 'rxjs';
 
 @Component({
   selector: 'interco-trade',
@@ -55,6 +56,8 @@ export class IntercoTradeComponent implements OnInit {
 
   private realmid: string = environment.qboEnterprisesRealmID;
   private otherRealmid: string = environment.qboCharityRealmID;
+
+  public modal: NgbActiveModal = inject(NgbActiveModal);
 
   private formBuilder = inject(FormBuilder);
   private attachmentService = inject(QBAttachmentService);
@@ -84,64 +87,56 @@ export class IntercoTradeComponent implements OnInit {
       description: [null],
       docnumber: [null],
     });
-  }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['enterprises']) {
-      if (this.enterprises) {
-        this.realmid = environment.qboEnterprisesRealmID;
-        this.otherRealmid = environment.qboCharityRealmID;
-      } else {
-        this.realmid = environment.qboCharityRealmID;
-        this.otherRealmid = environment.qboEnterprisesRealmID;
-      }
-
-      this.getVendorsCustomersAccounts(this.otherRealmid);
+    if (this.enterprises) {
+      this.realmid = environment.qboEnterprisesRealmID;
+      this.otherRealmid = environment.qboCharityRealmID;
+    } else {
+      this.realmid = environment.qboCharityRealmID;
+      this.otherRealmid = environment.qboEnterprisesRealmID;
     }
 
-    if (changes['existingTrade']) {
-      if (!this.existingTrade) return;
+    this.getVendorsCustomersAccounts(this.otherRealmid);
 
-      this.matchService
-        .match(this.realmid, this.existingTrade)
-        .subscribe({
-          next: (response) => {
-            // Check for non-empty response
-            if (response && Object.keys(response).length) { 
-              this.f['entity'].setValue(response.name? response.name.id : null);
-              this.f['account'].setValue(response.account.id);
-              this.f['amount'].setValue(response.amount);
-              this.f['txnDate'].setValue(response.date);
-              this.f['description'].setValue(response.description);
-              this.f['IsVAT'].setValue(response.taxable);
-              let vat = response.taxable ? this.vatCalculate() : 0;
-              this.f['taxAmount'].setValue(vat);
-              this.f['docnumber'].setValue(response.docnumber);
+    if (!this.existingTrade) return;
 
-              if (response.memo) {
-                this.f['privateNote'].setValue(response.memo);
-              } 
-            } else { 
-              this.f['entity'].setValue(null);
-              this.f['account'].setValue(null);
-              this.f['amount'].setValue(this.existingTrade!.amount);
-              this.f['txnDate'].setValue(this.existingTrade!.date);
-              this.f['privateNote'].setValue(this.existingTrade!.memo);
-              this.f['docnumber'].setValue(this.existingTrade!.docnumber);
-              this.f['IsVAT'].setValue(false);
-              this.f['taxAmount'].setValue(0);  
-              this.f['description'].setValue('');            
-            }
-          },
-          error: (error: any) => {
-            this.alertService.error(error, { autoClose: false });
-          },
-          complete: () => {},
-        });
+    this.matchService.match(this.realmid, this.existingTrade).subscribe({
+      next: (response) => {
+        // Check for non-empty response
+        if (response && Object.keys(response).length) {
+          this.f['entity'].setValue(response.name ? response.name.id : null);
+          this.f['account'].setValue(response.account.id);
+          this.f['amount'].setValue(response.amount);
+          this.f['txnDate'].setValue(response.date);
+          this.f['description'].setValue(response.description);
+          this.f['IsVAT'].setValue(response.taxable);
+          let vat = response.taxable ? this.vatCalculate() : 0;
+          this.f['taxAmount'].setValue(vat);
+          this.f['docnumber'].setValue(response.docnumber);
 
-      // Download attachemnts (if any)
-      this.downloadAttachments(this.realmid, this.existingTrade);
-    }
+          if (response.memo) {
+            this.f['privateNote'].setValue(response.memo);
+          }
+        } else {
+          this.f['entity'].setValue(null);
+          this.f['account'].setValue(null);
+          this.f['amount'].setValue(this.existingTrade!.amount);
+          this.f['txnDate'].setValue(this.existingTrade!.date);
+          this.f['privateNote'].setValue(this.existingTrade!.memo);
+          this.f['docnumber'].setValue(this.existingTrade!.docnumber);
+          this.f['IsVAT'].setValue(false);
+          this.f['taxAmount'].setValue(0);
+          this.f['description'].setValue('');
+        }
+      },
+      error: (error: any) => {
+        this.alertService.error(error, { autoClose: false });
+      },
+      complete: () => {},
+    });
+
+    // Download attachemnts (if any)
+    this.downloadAttachments(this.realmid, this.existingTrade);
   }
 
   /**
@@ -211,7 +206,6 @@ export class IntercoTradeComponent implements OnInit {
   onVatCheckboxClick() {
     this.f['IsVAT'].setValue(!this.f['IsVAT'].value);
     if (this.f['IsVAT'].value) {
-
       this.f['taxAmount'].setValue(this.vatCalculate());
     } else {
       // VAT is being turned off
@@ -239,58 +233,57 @@ export class IntercoTradeComponent implements OnInit {
 
   createPurchaseTrade() {
     this.loading = true;
-
-    this.purchaseService.create(this.otherRealmid, this.form.value).subscribe({
-      next: (response) => {
-        var $obs: any[] = [];
-
-        // Add the transfer to the list of tasks
-        $obs.push(
-          this.transferService.create(this.otherRealmid, {
-            txnDate: this.form.value.txnDate,
-            amount: this.form.value.amount,
-            privateNote: this.form.value.privateNote,
-          }),
-        );
-
-        // If there are attachments, upload them now
-        if (this.attachments && this.attachments.length) {
-          this.attachments.forEach((attachment) => {
-            $obs.push(
-              this.attachmentService.uploadAttachments(
-                this.otherRealmid,
-                [{ value: response.id, type: 'Purchase' }],
-                [
-                  {
-                    FileName: attachment.FileName,
-                    ContentType: attachment.ContentType,
-                  },
-                ],
-              ),
-            );
-          });
-        }
-
-        forkJoin($obs).subscribe({
-          next: (x) => {
-            this.alertService.success(
-              `Created trade with txnId=${response.id} with ${x.length - 1} attachment(s).`,
-              { autoClose: true },
-            );
-          },
-          error: (error: any) => {
-            this.loading = false;
-            this.alertService.error(error, { autoClose: false });
-          },
-          complete: () => (this.loading = false),
-        });
-      },
-      error: (error: any) => {
-        this.loading = false;
-        this.alertService.error(error, { autoClose: false });
-      },
-      complete: () => (this.loading = false),
-    });
+    var $obs: Observable<any>[] = [];
+    forkJoin({
+      purchase: this.purchaseService.create(this.otherRealmid, this.form.value),
+      transfer: this.transferService.create(this.otherRealmid, {
+        txnDate: this.form.value.txnDate,
+        amount: this.form.value.amount,
+        privateNote: this.form.value.privateNote,
+      }),
+    })
+      .pipe(
+        concatMap((response) => {
+          if (this.attachments && this.attachments.length) {
+            this.attachments.forEach((attachment) => {
+              $obs.push(
+                this.attachmentService.uploadAttachments(
+                  this.otherRealmid,
+                  [
+                    { value: response.purchase.id, type: 'Purchase' },
+                    { value: response.transfer.id, type: 'Transfer' },
+                  ],
+                  [
+                    {
+                      FileName: attachment.FileName,
+                      ContentType: attachment.ContentType,
+                    },
+                  ],
+                ),
+              );
+            });
+            return forkJoin($obs);
+          } else {
+            return of([response.purchase]);
+          }
+        }),
+      )
+      .subscribe({
+        next: (x) => {
+          this.alertService.success(
+            `Created trade with txnId=${x[0].id} with ${x.length - 1} attachment(s).`,
+            { autoClose: true },
+          );
+        },
+        error: (error: any) => {
+          this.loading = false;
+          this.alertService.error(error, { autoClose: false });
+        },
+        complete: () => {
+          this.loading = false;
+          this.modal.close();
+        },
+      });
+    return;
   }
-
 }
