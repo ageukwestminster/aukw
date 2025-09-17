@@ -7,7 +7,6 @@ import { HomeComponent } from './home';
 import { LoginComponent } from './login';
 import { authGuard } from './_helpers';
 import { Role } from './_models';
-import { AukwIntercoComponent } from './reports/aukw-interco';
 
 const usersRoutes = () =>
   import('./users/users.routes').then((x) => x.USERS_ROUTES);
@@ -21,7 +20,7 @@ const reportsRoutes = () =>
 export const APP_ROUTES: Routes = [
   {
     path: '',
-    component: AukwIntercoComponent,
+    component: HomeComponent,
     canActivate: [authGuard],
   },
   {
