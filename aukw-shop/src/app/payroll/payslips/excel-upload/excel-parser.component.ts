@@ -42,7 +42,8 @@ export class ExcelParserComponent {
 
   private alertService = inject(AlertService);
   private fileService = inject(FileService);
-  public modalService = inject(ModalService); // A wrapper for NgbModal to avoid aria-hidden warnings
+  /** A wrapper for NgbModal to avoid aria-hidden warnings */
+  public modalService = inject(ModalService);
   private payslipListService = inject(PayslipListService);
 
   onFileUploaded(file: File) {
