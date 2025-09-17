@@ -1,5 +1,7 @@
 <div class="modal-header d-flex justify-content-between">
-  <h4 class="modal-title" id="modal-title">Add New Intercompany Transaction</h4>
+  <h4 class="modal-title" id="modal-title">
+    Add New Intercompany Transaction
+  </h4>
   <button
     type="button"
     class="close"
@@ -12,8 +14,8 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <div class="modal-body">
     <p>
-      This will be a new transaction in QuickBooks that matches an offsets the
-      selected transaction.
+      Complete the form below to add a new intercompany transaction to the
+      Enterprises QuickBooks file.
     </p>
 
     <div class="input-group mb-1">
@@ -117,12 +119,12 @@
     </div>
     <div class="input-group mb-1">
       <span class="input-group-text col-4" id="trade-description-addon"
-        >Line Item Description:
+        >Line Item Text:
       </span>
       <textarea
         class="form-control col-4 pl-1"
         id="descriptionTextarea"
-        rows="1"
+        rows="2"
         formControlName="description"
         placeholder="Information about the transaction."
         aria-describedby="trade-description-addon"
@@ -133,7 +135,7 @@
       <textarea
         class="form-control pl-1"
         id="commentsTextarea"
-        rows="1"
+        rows="2"
         formControlName="privateNote"
         placeholder="Optional memo describing the transaction."
         aria-describedby="trade-memo-addon"

@@ -4,60 +4,48 @@
       @if (enterprises) {
         <div>
           <h4>AUKW Intercompany Account - Shop</h4>
-          <small>From Enterprises QuickBooks file</small>
+          <small>Read Only</small>
         </div>
       }
       @if (!enterprises) {
         <div>
           <h4>AUEW Intercompany Account - Charity</h4>
-          <small>From Charity QuickBooks file</small>
+          <small
+            >Select a row to add a mirror transaction to the shop QBO
+            file.</small
+          >
         </div>
       }
     </div>
     <div>
+      @if (user.isAdmin) {
+        <button type="button" class="btn btn-primary" (click)="switchCompany()">
+          Switch company
+        </button>
+      }
+      <button class="btn btn-secondary mx-2" (click)="exportToCSV()">
+        Export To CSV
+      </button>
       <button type="button" routerLink="/reports" class="btn btn-outline-dark">
         Close &times;
       </button>
     </div>
   </div>
-  <div class="row justify-content-between mt-2">
-    <div class="col-sm-2">
+  <div class="col-sm-2 mt-2">
+    <div>
       <div>
-        <div>
-          @if (loading) {
-            <span class="spinner-border spinner-border-lg align-center"></span>
-          }
-        </div>
-        @if (data && data.length) {
-          <div class="m-2">Found {{ data && data.length }} entries</div>
+        @if (loading) {
+          <span class="spinner-border spinner-border-lg align-center"></span>
         }
       </div>
-      @if (user.isAdmin) {
-        <div>
-          <div class="form-check m-2">
-            <input
-              type="checkbox"
-              class="form-check-input"
-              [checked]="enterprises"
-              (click)="checkboxClick()"
-              id="checkboxEnterprises"
-            />
-            <label class="form-check-label" for="checkboxEnterprises">
-              Enterprises
-            </label>
-          </div>
-        </div>
+      @if (data && data.length) {
+        <div class="ms-3">Found {{ data && data.length }} entries</div>
       }
-      <div>
-        <button class="btn btn-primary mx-2" (click)="exportToCSV()">
-          Export To CSV
-        </button>
-      </div>
     </div>
   </div>
-  <div class="card-body">
+  <div class="p-2">
     <date-range-chooser
-      class="p-2 col-sm-9"
+      class="col-sm-9"
       [initialDateRangeEnum]="INITIALDATERANGE"
       (dateDangeChosen)="onDateRangeChanged($event)"
     ></date-range-chooser>

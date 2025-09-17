@@ -16,12 +16,13 @@ import { environment } from '@environments/environment';
 import {
   QBAccountListEntry,
   QBAttachment,
-  ApiMessage,
   ValueIdPair,
   ValueIdType,
 } from '@app/_models';
 import {
   AlertService,
+  AuthenticationService,
+  AuditLogService,
   QBAttachmentService,
   QBEntityService,
   QBPurchaseService,
@@ -29,7 +30,7 @@ import {
   TradeMatchService,
 } from '@app/_services';
 import { CustomDateParserFormatter, NgbUTCStringAdapter } from '@app/_helpers';
-import { Observable, forkJoin, of, concatMap } from 'rxjs';
+import { Observable, forkJoin, of, concatMap, tap } from 'rxjs';
 
 @Component({
   selector: 'interco-trade',
@@ -66,6 +67,8 @@ export class IntercoTradeComponent implements OnInit {
   private purchaseService = inject(QBPurchaseService);
   private transferService = inject(QBTransferService);
   private matchService = inject(TradeMatchService);
+  private auditLogService = inject(AuditLogService);
+  private authenticationService = inject(AuthenticationService);
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({
@@ -243,6 +246,25 @@ export class IntercoTradeComponent implements OnInit {
       }),
     })
       .pipe(
+        // Add entry to audit log
+        tap((result) => {
+          this.auditLogService.log(
+            this.authenticationService.userValue,
+            'INSERT',
+            `Added expense with id=${result.purchase.id} to QuickBooks`,
+            'Expense',
+            result.purchase.id,
+          );
+        }),
+        tap((result) => {
+          this.auditLogService.log(
+            this.authenticationService.userValue,
+            'INSERT',
+            `Added transfer with id=${result.transfer.id} to QuickBooks`,
+            'Transfer',
+            result.transfer.id,
+          );
+        }),
         concatMap((response) => {
           if (this.attachments && this.attachments.length) {
             this.attachments.forEach((attachment) => {

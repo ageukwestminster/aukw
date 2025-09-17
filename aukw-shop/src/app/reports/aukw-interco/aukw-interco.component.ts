@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
 import { NgbTooltip, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { QBAccountListEntry } from '@app/_models';
 import { map, switchMap, tap } from 'rxjs/operators';
-import { from, concatMap, of, catchError } from 'rxjs';
+import { from, of, catchError } from 'rxjs';
 
 import { AbstractChartReportComponent } from '../chart-report.component';
 import { fromArrayToElement } from '@app/_helpers';
@@ -123,6 +123,12 @@ export class AukwIntercoComponent
     }
   }
 
+  /** Show the intercompany account from the other QuickBooks company. */
+  switchCompany() {
+    this.enterprises = !this.enterprises;
+    this.refreshSummary(this.form.value.startDate, this.form.value.endDate);
+  }
+
   override exportToCSV(): void {
     const output = new Array<any>();
     this.data.map((item) => {
@@ -136,22 +142,32 @@ export class AukwIntercoComponent
   /* when the user clicks on a row in the table a add trade modal appears*/
   onRowClick(item: QBAccountListEntry) {
     if (Number.parseFloat(item.amount.toString()) < 0) return; // only allow expense trades to be entered
+    if (this.enterprises) return; // only allow trades to be entered from the Enterprises company
+
+    /**
+     * Set up the modal options
+     * From {@link https://ng-bootstrap.github.io/#/components/modal/api}
+     */
     const modalOptions = {
       backdrop: 'static',
       backdropClass: 'loading-indicator-backdrop',
       centered: true,
       fullscreen: 'md',
-      size: 'lg',
+      size: 'md',
     } as NgbModalOptions;
+
+    // Open the modal
     const modalRef = this.modalService.open(
       IntercoTradeComponent,
       modalOptions,
     );
+    /** Communicate with the modal component. From {@link https://stackoverflow.com/a/48698760} */
     modalRef.componentInstance.existingTrade = item;
     modalRef.componentInstance.enterprises = this.enterprises;
 
     return from(modalRef.result).pipe(
       catchError((err) => {
+        console.log(err);
         return of();
       }),
     );
