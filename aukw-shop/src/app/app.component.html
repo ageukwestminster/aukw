@@ -60,7 +60,7 @@
               >Home</a
             >
           </li>
-          <li [ngbNavItem]="4">
+          <li [ngbNavItem]="2">
             <a
               class="nav-item nav-link"
               routerLink="/takings"
@@ -68,7 +68,7 @@
               >Takings</a
             >
           </li>
-          <li [ngbNavItem]="2">
+          <li [ngbNavItem]="3">
             <a
               class="nav-item nav-link"
               routerLink="/reports"
@@ -77,7 +77,7 @@
             >
           </li>
           @if (user.isAdmin) {
-            <li [ngbNavItem]="3">
+            <li [ngbNavItem]="4">
               <a
                 class="nav-item nav-link"
                 routerLink="/payroll"
@@ -85,21 +85,19 @@
                 >Payroll</a
               >
             </li>
-            <li [ngbNavItem]="4">
-              <a
-                class="nav-item nav-link"
-                routerLink="/auditlog"
-                routerLinkActive="active"
-                >Audit Log</a
-              >
-            </li>
-            <li [ngbNavItem]="5">
-              <a
-                class="nav-item nav-link"
-                routerLink="/users"
-                routerLinkActive="active"
-                >Users</a
-              >
+            <li [ngbNavItem]="5" ngbDropdown class="nav-item">
+              <a href (click)="(false)" class="nav-link" ngbDropdownToggle>
+                Admin
+              </a>
+              <div ngbDropdownMenu>
+                <button ngbDropdownItem routerLink="/users">Users</button>
+                <button ngbDropdownItem routerLink="/auditlog">
+                  Audit Log
+                </button>
+                <button ngbDropdownItem routerLink="/reports/aukw-interco">
+                  Interco Trades
+                </button>
+              </div>
             </li>
           }
           <li [ngbNavItem]="6" ngbDropdown class="nav-item">
