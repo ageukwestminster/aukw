@@ -81,7 +81,7 @@ class JWTWrapper{
         $this->cookiepath = \Core\Config::read('token.cookiepath');
         $this->cookiesecure = \Core\Config::read('token.cookiesecure');
 
-        $this->config->setValidationConstraints(
+        $this->config->withValidationConstraints(
             new SignedWith($this->config->signer(), $this->config->verificationKey()),
             new PermittedFor($this->audience),
             new IssuedBy($this->issuer),
