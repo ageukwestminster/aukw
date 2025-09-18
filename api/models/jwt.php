@@ -66,13 +66,6 @@ class JWTWrapper{
 
         $this->usertoken = new UserToken();
 
-        $this->config = Configuration::forSymmetricSigner(
-            // You may use any HMAC variations (256, 384, and 512)
-            new Sha256(),
-            // Provide a secret key that is used to validate tokens
-            InMemory::plainText( getenv(\Core\Config::read('token.envkeyname')) )            
-        );
-
         $clock = new FrozenClock(new DateTimeImmutable());
 
         $this->issuer = \Core\Config::read('token.iss');
@@ -81,7 +74,13 @@ class JWTWrapper{
         $this->cookiepath = \Core\Config::read('token.cookiepath');
         $this->cookiesecure = \Core\Config::read('token.cookiesecure');
 
-        $this->config->withValidationConstraints(
+        $this->config = Configuration::forSymmetricSigner(
+            // You may use any HMAC variations (256, 384, and 512)
+            new Sha256(),
+            // Provide a secret key that is used to validate tokens
+            InMemory::plainText( getenv(\Core\Config::read('token.envkeyname')) )            
+        );
+        $this->config = $this->config->withValidationConstraints(
             new SignedWith($this->config->signer(), $this->config->verificationKey()),
             new PermittedFor($this->audience),
             new IssuedBy($this->issuer),
