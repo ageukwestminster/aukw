@@ -49,7 +49,7 @@ class PayrollBase{
    * Payment date setter
    */
   public function setPaymentDate(string $paymentDate) {
-    $this->paymentDate = $paymentDate;
+    $this->paymentDate = new DateTime($paymentDate);
     return $this;
   }
   /**

@@ -9,6 +9,9 @@ use Models\Payslip;
 /**
  * The Payroll CSV file, as provided by our payroll software company, Iris FMP.
  * 
+ * This class includes the business logic required to extract the relevant payroll 
+ * data (net pay, tax etc.) per employee from the CSV file, aka parsing the file.
+ * 
  * @category Model
  */
 class PayrollCsv extends PayrollBase{
@@ -68,6 +71,12 @@ class PayrollCsv extends PayrollBase{
     return $worksheets;
   }
 
+  /**
+   * Parse the Gross to Net worksheet, creating payslips for each employee.
+   * @param string $payrollDate 
+   * @return bool 
+   * @throws Exception 
+   */
   private function parseGrosstoNet(string $payrollDate = ''): bool {
 
     if ($payrollDate != '') {
@@ -89,6 +98,19 @@ class PayrollCsv extends PayrollBase{
     $this->payslips = array();
     for ($i=1; $i < count($salaryData); $i++) { 
       $payrollNumber = (int) trim($salaryData[$i][0]); // '0' = column A
+
+      // Calculate Salary Sacrtifice by determining how net pay compares to the expected amount.
+      $salarySacrifice = ( (float) trim($salaryData[$i][4]) + // total pay
+                           (float) trim($salaryData[$i][10])) - // employee pension
+                        ( (float) trim($salaryData[$i][6]) + // net pay
+                          (float) trim($salaryData[$i][7]) + // PAYE
+                          (float) trim($salaryData[$i][8]) + // Employee NI
+                          (float) trim($salaryData[$i][12]) + // Student Loan
+                          (float) trim($salaryData[$i][13]) + // Statuatory Payments
+                          (float) trim($salaryData[$i][14]) + // Attachments
+                          (float) trim($salaryData[$i][15])   // Other Deductions
+                        );
+
       $payslip = Payslip::getInstance()
         ->setPayrollNumber($payrollNumber) 
         ->setEmployeeName(trim($salaryData[$i][1])) // '1' = column B
@@ -96,13 +118,13 @@ class PayrollCsv extends PayrollBase{
         ->setTotalPay(round( ( (float)$salaryData[$i][4] ) - ((float)$salaryData[$i][15]),2))
         ->setPAYE(-round(((float)$salaryData[$i][7]),2))
         ->setEmployeeNI(-round(((float)$salaryData[$i][8]),2))
-        ->setOtherDeductions(-round(((float)$salaryData[$i][14]),2))
+        ->setOtherDeductions(-round(((float)$salaryData[$i][13]+(float)$salaryData[$i][14]),2))
         ->setStudentLoan(-round(((float)$salaryData[$i][12]),2))
         ->setNetPay(round(((float)$salaryData[$i][6]),2))
         ->setEmployerNI(round(((float)$salaryData[$i][9]),2))
-        ->setEmployeePension(round(((float)$salaryData[$i][10])+((float)$salaryData[$i][15]),2))
+        ->setEmployeePension(round((float)$salaryData[$i][10]+$salarySacrifice,2))
         ->setEmployerPension(round(((float)$salaryData[$i][11]),2))
-        ->setSalarySacrifice(-round(((float)$salaryData[$i][15]),2));
+        ->setSalarySacrifice(-round($salarySacrifice,2));
 
         $this->payslips[$payrollNumber] = $payslip;
     }    
