@@ -99,32 +99,54 @@ class PayrollCsv extends PayrollBase{
     for ($i=1; $i < count($salaryData); $i++) { 
       $payrollNumber = (int) trim($salaryData[$i][0]); // '0' = column A
 
-      // Calculate Salary Sacrtifice by determining how net pay compares to the expected amount.
-      $salarySacrifice = ( (float) trim($salaryData[$i][4]) + // total pay
-                           (float) trim($salaryData[$i][10])) - // employee pension
-                        ( (float) trim($salaryData[$i][6]) + // net pay
-                          (float) trim($salaryData[$i][7]) + // PAYE
-                          (float) trim($salaryData[$i][8]) + // Employee NI
-                          (float) trim($salaryData[$i][12]) + // Student Loan
-                          (float) trim($salaryData[$i][13]) + // Statuatory Payments
-                          (float) trim($salaryData[$i][14]) + // Attachments
-                          (float) trim($salaryData[$i][15])   // Other Deductions
-                        );
+      // We are always rounding the numbers to 2 decimal places to avoid floating point precision issues
+      $totalPay = round((float) trim($salaryData[$i][4]),2);
+      $netPay = round((float) trim($salaryData[$i][6]),2);
+      $paye = round((float) trim($salaryData[$i][7]),2);
+      $employeeNI = round((float) trim($salaryData[$i][8]),2);
+      $employerNI = round((float) trim($salaryData[$i][9]),2);
+      $employeePension = round((float) trim($salaryData[$i][10]),2);
+      $employerPension = round((float) trim($salaryData[$i][11]),2);
+      $studentLoan = round((float) trim($salaryData[$i][12]),2);
+      $statutoryPayments = round((float) trim($salaryData[$i][13]),2);
+      $attachments = round((float) trim($salaryData[$i][14]),2);
+      $otherDeductions = round((float) trim($salaryData[$i][15]),2);
+
+      // Calculate Salary Sacrifice by determining how net pay compares to the expected amount.
+      $salarySacrifice = round(( $totalPay + $employeePension) - 
+                              ( $netPay +
+                                $paye + 
+                                $employeeNI +
+                                $studentLoan +
+                                $attachments +
+                                $statutoryPayments +
+                                $otherDeductions)
+                              , 2);
+      // the employee pension variable is only for genuine out-of-pay contributions, not salary sacrifice
+      // so reduce it by the salary sacrifice amount.
+      $employeePension -= $salarySacrifice;
 
       $payslip = Payslip::getInstance()
         ->setPayrollNumber($payrollNumber) 
         ->setEmployeeName(trim($salaryData[$i][1])) // '1' = column B
         ->setPayrollDate($this->paymentDate->format('Y-m-d'))
-        ->setTotalPay(round( ( (float)$salaryData[$i][4] ) - ((float)$salaryData[$i][15]),2))
-        ->setPAYE(-round(((float)$salaryData[$i][7]),2))
-        ->setEmployeeNI(-round(((float)$salaryData[$i][8]),2))
-        ->setOtherDeductions(-round(((float)$salaryData[$i][13]+(float)$salaryData[$i][14]),2))
-        ->setStudentLoan(-round(((float)$salaryData[$i][12]),2))
-        ->setNetPay(round(((float)$salaryData[$i][6]),2))
-        ->setEmployerNI(round(((float)$salaryData[$i][9]),2))
-        ->setEmployeePension(round((float)$salaryData[$i][10]+$salarySacrifice,2))
-        ->setEmployerPension(round(((float)$salaryData[$i][11]),2))
-        ->setSalarySacrifice(-round($salarySacrifice,2));
+        ->setTotalPay( $totalPay + $salarySacrifice)
+        ->setPAYE(-$paye)
+        ->setEmployeeNI(-$employeeNI)
+        ->setOtherDeductions(-$statutoryPayments-$attachments-$otherDeductions)
+        ->setStudentLoan(-$studentLoan)
+        ->setNetPay($netPay)
+        ->setEmployerNI($employerNI)
+        ->setEmployeePension($employeePension)
+        ->setEmployerPension($employerPension)
+        ->setSalarySacrifice(-$salarySacrifice);
+
+        // Check that the payslip is in balance
+        if (!$payslip->isBalanced()) {
+          throw new Exception('Payslip for ' . $payslip->getEmployeeName() . 
+                    ' with payroll number '. $payrollNumber .' is not balanced.');
+        }
+
 
         $this->payslips[$payrollNumber] = $payslip;
     }    
