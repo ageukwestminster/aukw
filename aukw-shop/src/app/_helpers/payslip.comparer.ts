@@ -15,15 +15,20 @@ export function isEqualPay(
   xlsxPayslip: IrisPayslip,
   quickbooksPayslip: IrisPayslip,
 ): boolean {
-  return (       
+  return (
     Math.abs(xlsxPayslip.totalPay - quickbooksPayslip.totalPay) < TOLERANCE &&
-    Math.abs(xlsxPayslip.paye - quickbooksPayslip.paye) < TOLERANCE  &&
-    Math.abs(xlsxPayslip.employeeNI - quickbooksPayslip.employeeNI) < TOLERANCE  &&
-    Math.abs(xlsxPayslip.otherDeductions - quickbooksPayslip.otherDeductions) < TOLERANCE  &&
-    Math.abs(xlsxPayslip.employeePension - quickbooksPayslip.employeePension) < TOLERANCE  &&
-    Math.abs(xlsxPayslip.salarySacrifice - quickbooksPayslip.salarySacrifice) < TOLERANCE  &&
-    Math.abs(xlsxPayslip.studentLoan - quickbooksPayslip.studentLoan) < TOLERANCE  &&
-    Math.abs(xlsxPayslip.netPay - quickbooksPayslip.netPay) < TOLERANCE 
+    Math.abs(xlsxPayslip.paye - quickbooksPayslip.paye) < TOLERANCE &&
+    Math.abs(xlsxPayslip.employeeNI - quickbooksPayslip.employeeNI) <
+      TOLERANCE &&
+    Math.abs(xlsxPayslip.otherDeductions - quickbooksPayslip.otherDeductions) <
+      TOLERANCE &&
+    Math.abs(xlsxPayslip.employeePension - quickbooksPayslip.employeePension) <
+      TOLERANCE &&
+    Math.abs(xlsxPayslip.salarySacrifice - quickbooksPayslip.salarySacrifice) <
+      TOLERANCE &&
+    Math.abs(xlsxPayslip.studentLoan - quickbooksPayslip.studentLoan) <
+      TOLERANCE &&
+    Math.abs(xlsxPayslip.netPay - quickbooksPayslip.netPay) < TOLERANCE
   );
 }
 
@@ -40,8 +45,9 @@ export function isEqualPension(
   quickbooksPayslip: IrisPayslip,
 ): boolean {
   return (
-    Math.abs(xlsxPayslip.employerPension) < TOLERANCE  ||
-    Math.abs(xlsxPayslip.employerPension - quickbooksPayslip.employerPension) < TOLERANCE 
+    Math.abs(xlsxPayslip.employerPension) < TOLERANCE ||
+    Math.abs(xlsxPayslip.employerPension - quickbooksPayslip.employerPension) <
+      TOLERANCE
   );
 }
 
@@ -81,7 +87,10 @@ export function isEqualShopPay(
       Math.abs(xlsxPayslip.employerNI) < TOLERANCE &&
       Math.abs(xlsxPayslip.employerPension) < TOLERANCE) ||
     (Math.abs(xlsxPayslip.totalPay - quickbooksPayslip.totalPay) < TOLERANCE &&
-      Math.abs(xlsxPayslip.employerNI - quickbooksPayslip.employerNI) < TOLERANCE &&
-      Math.abs(xlsxPayslip.employerPension - quickbooksPayslip.employerPension) < TOLERANCE)
+      Math.abs(xlsxPayslip.employerNI - quickbooksPayslip.employerNI) <
+        TOLERANCE &&
+      Math.abs(
+        xlsxPayslip.employerPension - quickbooksPayslip.employerPension,
+      ) < TOLERANCE)
   );
 }

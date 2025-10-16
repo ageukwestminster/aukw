@@ -176,7 +176,6 @@ export class QBPayrollService {
     }).pipe(
       map((x) => {
         x.payrollPayslips.forEach((payslip) => {
-
           const qbPayslip =
             x.qbPayslips.find(
               (item) => item.payrollNumber == payslip.payrollNumber,
