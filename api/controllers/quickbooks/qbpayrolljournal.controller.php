@@ -38,8 +38,9 @@ class QBPayrollJournalCtl{
       // The Ref No. that appears on QBO ui. 
       // Format is "Payroll_YYYY_MM-SURNAME" and shortened to 21 characters
       $pieces = explode(' ', $data->employeeName??' Unknown');
-      $familyName = array_pop($pieces);
-      $docNumber = QBO::payrollDocNumber($payrollDate,'-'.$familyName);
+      $familyName = array_pop($pieces); // Get last word in $data->employeeName
+      $familyName = preg_replace("#[[:punct:]]#", "", $familyName); // Strip punctuation
+      $docNumber = QBO::payrollDocNumber($payrollDate,'-'.$familyName); // Max length 21 chars
 
       $model = QuickbooksPayrollJournal::getInstance()
         ->setDocNumber($docNumber)
@@ -99,8 +100,7 @@ class QBPayrollJournalCtl{
     QBPayrollJournalCtl::checkPayrollDate();
 
     $payrollDate = $_GET['payrolldate'];
-    $docNumber = QBO::payrollDocNumber($payrollDate);
-    $docNumber .= '-NI';
+    $docNumber = QBO::payrollDocNumber($payrollDate,'-NI');
 
     $data = json_decode(file_get_contents("php://input"));
 

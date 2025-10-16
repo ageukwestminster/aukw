@@ -1,5 +1,7 @@
 import { IrisPayslip } from '@app/_models';
 
+const TOLERANCE = 0.005; // 0.5 pence
+
 /**
  * Compare the payslip calculated from the Iris spreadsheet with the payslip
  * calculated from QB values and see if they are equal, considering only the properties
@@ -13,15 +15,15 @@ export function isEqualPay(
   xlsxPayslip: IrisPayslip,
   quickbooksPayslip: IrisPayslip,
 ): boolean {
-  return (
-    xlsxPayslip.totalPay == quickbooksPayslip.totalPay &&
-    xlsxPayslip.paye == quickbooksPayslip.paye &&
-    xlsxPayslip.employeeNI == quickbooksPayslip.employeeNI &&
-    xlsxPayslip.otherDeductions == quickbooksPayslip.otherDeductions &&
-    xlsxPayslip.employeePension == quickbooksPayslip.employeePension &&
-    xlsxPayslip.salarySacrifice == quickbooksPayslip.salarySacrifice &&
-    xlsxPayslip.studentLoan == quickbooksPayslip.studentLoan &&
-    xlsxPayslip.netPay == quickbooksPayslip.netPay
+  return (       
+    Math.abs(xlsxPayslip.totalPay - quickbooksPayslip.totalPay) < TOLERANCE &&
+    Math.abs(xlsxPayslip.paye - quickbooksPayslip.paye) < TOLERANCE  &&
+    Math.abs(xlsxPayslip.employeeNI - quickbooksPayslip.employeeNI) < TOLERANCE  &&
+    Math.abs(xlsxPayslip.otherDeductions - quickbooksPayslip.otherDeductions) < TOLERANCE  &&
+    Math.abs(xlsxPayslip.employeePension - quickbooksPayslip.employeePension) < TOLERANCE  &&
+    Math.abs(xlsxPayslip.salarySacrifice - quickbooksPayslip.salarySacrifice) < TOLERANCE  &&
+    Math.abs(xlsxPayslip.studentLoan - quickbooksPayslip.studentLoan) < TOLERANCE  &&
+    Math.abs(xlsxPayslip.netPay - quickbooksPayslip.netPay) < TOLERANCE 
   );
 }
 
@@ -38,8 +40,8 @@ export function isEqualPension(
   quickbooksPayslip: IrisPayslip,
 ): boolean {
   return (
-    xlsxPayslip.employerPension == 0 ||
-    xlsxPayslip.employerPension == quickbooksPayslip.employerPension
+    Math.abs(xlsxPayslip.employerPension) < TOLERANCE  ||
+    Math.abs(xlsxPayslip.employerPension - quickbooksPayslip.employerPension) < TOLERANCE 
   );
 }
 
@@ -56,8 +58,8 @@ export function isEqualEmployerNI(
   quickbooksPayslip: IrisPayslip,
 ): boolean {
   return (
-    xlsxPayslip.employerNI == 0 ||
-    xlsxPayslip.employerNI == quickbooksPayslip.employerNI
+    Math.abs(xlsxPayslip.employerNI) < TOLERANCE ||
+    Math.abs(xlsxPayslip.employerNI - quickbooksPayslip.employerNI) < TOLERANCE
   );
 }
 
@@ -75,11 +77,11 @@ export function isEqualShopPay(
   quickbooksPayslip: IrisPayslip,
 ): boolean {
   return (
-    (xlsxPayslip.totalPay == 0 &&
-      xlsxPayslip.employerNI == 0 &&
-      xlsxPayslip.employerPension == 0) ||
-    (xlsxPayslip.totalPay == quickbooksPayslip.totalPay &&
-      xlsxPayslip.employerNI == quickbooksPayslip.employerNI &&
-      xlsxPayslip.employerPension == quickbooksPayslip.employerPension)
+    (Math.abs(xlsxPayslip.totalPay) < TOLERANCE &&
+      Math.abs(xlsxPayslip.employerNI) < TOLERANCE &&
+      Math.abs(xlsxPayslip.employerPension) < TOLERANCE) ||
+    (Math.abs(xlsxPayslip.totalPay - quickbooksPayslip.totalPay) < TOLERANCE &&
+      Math.abs(xlsxPayslip.employerNI - quickbooksPayslip.employerNI) < TOLERANCE &&
+      Math.abs(xlsxPayslip.employerPension - quickbooksPayslip.employerPension) < TOLERANCE)
   );
 }

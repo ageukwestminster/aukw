@@ -108,8 +108,8 @@ class PayrollCsv extends PayrollBase{
       $employeePension = round((float) trim($salaryData[$i][10]),2);
       $employerPension = round((float) trim($salaryData[$i][11]),2);
       $studentLoan = round((float) trim($salaryData[$i][12]),2);
-      $statutoryPayments = round((float) trim($salaryData[$i][13]),2);
-      $attachments = round((float) trim($salaryData[$i][14]),2);
+      $statutoryPayments = round((float) trim($salaryData[$i][13]),2); // e.g. SSP, SMP
+      $attachments = round((float) trim($salaryData[$i][14]),2); // e.g. court orders
       $otherDeductions = round((float) trim($salaryData[$i][15]),2);
 
       // Calculate Salary Sacrifice by determining how net pay compares to the expected amount.
@@ -130,10 +130,10 @@ class PayrollCsv extends PayrollBase{
         ->setPayrollNumber($payrollNumber) 
         ->setEmployeeName(trim($salaryData[$i][1])) // '1' = column B
         ->setPayrollDate($this->paymentDate->format('Y-m-d'))
-        ->setTotalPay( $totalPay + $salarySacrifice)
+        ->setTotalPay(round($totalPay + $salarySacrifice,2))
         ->setPAYE(-$paye)
         ->setEmployeeNI(-$employeeNI)
-        ->setOtherDeductions(-$statutoryPayments-$attachments-$otherDeductions)
+        ->setOtherDeductions(round(-$statutoryPayments-$attachments-$otherDeductions,2))
         ->setStudentLoan(-$studentLoan)
         ->setNetPay($netPay)
         ->setEmployerNI($employerNI)
