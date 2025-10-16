@@ -139,7 +139,7 @@ class PayrollCsv extends PayrollBase{
         ->setEmployerNI($employerNI)
         ->setEmployeePension($employeePension)
         ->setEmployerPension($employerPension)
-        ->setSalarySacrifice(-$salarySacrifice);
+        ->setSalarySacrifice($salarySacrifice);
 
         // Check that the payslip is in balance
         if (!$payslip->isBalanced()) {

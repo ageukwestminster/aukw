@@ -380,7 +380,7 @@ class Payslip implements \JsonSerializable{
   public function isBalanced():bool {
     $debits = round( $this->netPay -$this->paye -$this->employeeNI 
                       -$this->otherDeductions -$this->studentLoan
-                      +$this->employeePension - $this->salarySacrifice
+                      +$this->employeePension +$this->salarySacrifice
                       +$this->employerNI, 2);
     $credits = round( $this->totalPay + $this->employerNI, 2);
 
