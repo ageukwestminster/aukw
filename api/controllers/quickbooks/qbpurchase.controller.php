@@ -83,7 +83,19 @@ class QBPurchaseCtl{
         throw new \InvalidArgumentException("'txnDate' property is not in the correct format. Value provided: $data->txnDate, expect yyyy-mm-dd format.");
       } else if (!isset($data->account)) {
         throw new \InvalidArgumentException("'account' property is missing from POST body.");
-      } else if ($data->account == $data->bankAccount) {
+      }
+      
+      if (!isset($data->bankAccount)) {
+        if($realmid == QBO::ENTERPRISES_REALMID)
+          $bankaccount = QBO::AUEW_PAIDBYPARENT_ACCOUNT;
+        else if ($realmid == QBO::CHARITY_REALMID) {
+          throw new \InvalidArgumentException("'Bank Account' value is unknown for the charity realm.");
+        }
+      } else {
+        $bankaccount = $data->bankAccount;
+      }
+      
+      if ($data->account == $bankaccount) {
         throw new \InvalidArgumentException("'expenseAccount' must be different from 'bankAccount'.");
       } else if (!isset($data->amount) || is_null($data->amount)) {
         throw new \InvalidArgumentException("'amount' property is missing from POST body or is set to NULL.");
@@ -96,15 +108,7 @@ class QBPurchaseCtl{
         throw new \InvalidArgumentException("'entity' property is missing from POST body.");
       } 
 
-      if (!isset($data->bankAccount)) {
-        if($realmid == QBO::ENTERPRISES_REALMID)
-          $bankaccount = QBO::AUEW_PAIDBYPARENT_ACCOUNT;
-        else if ($realmid == QBO::CHARITY_REALMID) {
-          throw new \InvalidArgumentException("'Bank Account' value is unknown for this realm.");
-        }
-      } else {
-        $bankaccount = $data->bankAccount;
-      }
+
       
       if ($data->taxAmount == 0 ) {
         $taxcode = QBO::$zero_rated_taxcode;
