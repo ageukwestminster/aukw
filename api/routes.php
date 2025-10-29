@@ -179,6 +179,7 @@ $router->mount('/qb', function () use ($router) {
     $router->get('/(\d+)/employee/(\d+)', 'QBEmployeeCtl@read_one');
     $router->get('/(\d+)/employee', 'QBEmployeeCtl@read_all');
     $router->get('/(\d+)/employee/allocations', 'QBPayrollJournalCtl@read_employee_allocations');
+    $router->post('/(\d+)/employee', 'QBEmployeeCtl@create');
 
     // QB Recurring Transactions
     $router->get('/(\d+)/recurringtransaction/(\w+)', 'QBRecurringTransactionCtl@read_one');

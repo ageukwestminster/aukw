@@ -2,6 +2,10 @@
 
 namespace Models;
 
+use QuickBooksOnline\API\Facades\Employee;
+use QuickBooksOnline\API\Exception\SdkException;
+use QuickBooksOnline\API\Data\IPPIntuitEntity;
+
 /**
  * Factory class that provides data about QBO Employees.
  * 
@@ -21,7 +25,24 @@ class QuickbooksEmployee{
    * @var string
    */
   protected string $realmid;
-
+  /**
+   * The number of the employee. This is used in Payroll, to link the Iris salary calcualtions to the employee.
+   *
+   * @var string
+   */
+  protected string $employeenumber;
+  /**
+   * The employee's first name
+   *
+   * @var string
+   */
+  protected string $givenname;
+  /**
+   * The employee's surname
+   *
+   * @var string
+   */
+  protected string $familyname;
   /**
    * ID setter
    */
@@ -29,12 +50,32 @@ class QuickbooksEmployee{
     $this->id = $id;
     return $this;
   }
-
   /**
-   * Private realmID setter.
+   * realmID setter.
    */
   public function setRealmID(string $realmid) {
     $this->realmid = $realmid;
+    return $this;
+  }
+  /**
+   * EmployeeNumber setter.
+   */
+  public function setEmployeeNumber(string $employeenumber) {
+    $this->employeenumber = $employeenumber;
+    return $this;
+  }
+  /**
+   * Given Name setter.
+   */
+  public function setGivenName(string $givenname) {
+    $this->givenname = $givenname;
+    return $this;
+  }
+  /**
+   * Family name setter.
+   */
+  public function setFamilyName(string $familyname) {
+    $this->familyname = $familyname;
     return $this;
   }
 
@@ -50,6 +91,25 @@ class QuickbooksEmployee{
    */
   public function getId() : int {
     return $this->id;
+  }  
+
+  /**
+   * Family name getter.
+   */
+  public function getFamilyName() : string {
+    return $this->familyname;
+  }
+  /**
+   * GivenName getter.
+   */
+  public function getGivenName() : string {
+    return $this->givenname;
+  }  
+  /**
+   * Employee Number getter.
+   */
+  public function getEmployeeNumber() : string {
+    return $this->employeenumber;
   }  
 
   /**
@@ -151,5 +211,30 @@ class QuickbooksEmployee{
     }
   }
 
+  /**
+   * Create this employee in QBO
+   * 
+   * @return IPPIntuitEntity On success return an array with details of the new object. On failure return 'false'.
+   */
+  public function create() {
+
+    $auth = new QuickbooksAuth();
+    $dataService = $auth->prepare($this->realmid);
+
+    $employee = Employee::create([
+      "GivenName" => $this->givenname,
+      "FamilyName" => $this->familyname,
+      "EmployeeNumber" => $this->employeenumber,
+    ]);
+
+    /** @var IPPIntuitEntity $result */
+    $result = $dataService->Add($employee);
+    $error = $dataService->getLastError();
+    if ($error) {
+      throw new SdkException("The QBO Response message is: " . $error->getResponseBody());
+    } else {            
+      return $result;
+    }
+  }
 
 }

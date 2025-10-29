@@ -3,7 +3,9 @@
 namespace Controllers;
 
 use Models\QuickbooksEmployee;
+use Core\QuickbooksConstants as QBO;
 use Core\ErrorResponse as Error;
+use Exception;
 
 /**
  * Controller to accomplish QBO Employee related tasks. 
@@ -49,4 +51,51 @@ class QBEmployeeCtl{
     }
   }
 
+
+  /**
+   * Create a QBO employee from data supplied via http POST. The POST body must
+   * be a JSON object with the following properties:
+   * - givenName: The employee's first name
+   * - familyName: The employee's surname
+   * - employeeNumber: The employee number used in Payroll to link to Iris
+   * 
+   * Note: QB Employees cannot be deleted. They can only be made inactive, and that
+   * only through the QBO web interface.
+   *
+   * @param string $realmid The company ID for the QBO company.
+   * @return void Output is echoed directly to response 
+   * 
+   */
+  public static function create(string $realmid){  
+    
+    try{
+
+      $data = json_decode(file_get_contents("php://input"));
+
+      if (!isset($data->givenName)) {
+        throw new \InvalidArgumentException("'givenName' property is missing from POST body.");
+      } else if (!isset($data->familyName)) {
+        throw new \InvalidArgumentException("'familyName' property is missing from POST body.");
+      } else if (!isset($data->employeeNumber)) {
+        throw new \InvalidArgumentException("'employeeNumber' property is missing from POST body.");
+      }
+      /** @var IPPIntuitEntity $result */
+      $result = QuickbooksEmployee::getInstance()
+        ->setRealmID($realmid)
+        ->setGivenName($data->givenName)
+        ->setFamilyName($data->familyName)
+        ->setEmployeeNumber($data->employeeNumber)
+        ->create();
+
+      if ($result) {
+          echo json_encode(
+              array("message" => "Employee has been added with Payroll Number " . $data->employeeNumber . ".",
+                  "id" => $result->Id)
+            );
+      }
+
+    } catch (\Exception $e) {
+      Error::response("Unable to create QB Employee.", $e);
+    }    
+  }
 }
