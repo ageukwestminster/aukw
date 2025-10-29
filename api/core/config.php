@@ -58,7 +58,7 @@ Config::write('server', 'http://localhost:4200'); // Must change when deploying 
 Config::write('api.path', '/api/');
 
 // db
-Config::write('db.host', '192.168.1.214');      // Database IP or hostname. Usually 'localhost' on produciton
+Config::write('db.host', 'themis');             // Database IP or hostname. Usually 'localhost' on produciton
 Config::write('db.port', '3306');               // standard MySql / MariaDB port
 Config::write('db.name', 'aukworgu_dailytakings'); // Database name
 Config::write('db.user', 'aukworgu_shop');      // Database user. All database actions are performed by this single user.
