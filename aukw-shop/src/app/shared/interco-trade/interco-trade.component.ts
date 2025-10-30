@@ -299,7 +299,7 @@ export class IntercoTradeComponent implements OnInit {
       .subscribe({
         next: (x) => {
           this.alertService.success(
-            `Created trade with txnId=${x[0].id} with ${x.length - 1} attachment(s).`,
+            `Created expense and associated transfer with attachment(s).`,
             { autoClose: true },
           );
         },
