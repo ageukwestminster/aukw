@@ -108,3 +108,8 @@ Config::write('qb.redirecturl', Config::read('qb.redirectdomain') . '/callback')
 
 // QBO id of recurring txn that defines employee salary allocations.
 Config::write('qb.allocationsid', '15654'); 
+
+// Staffology API settings
+Config::write('staffology.apiurl', 'https://api.staffology.co.uk/employers/');
+Config::write('staffology.apikey', 'STAFFOLOGY_API_KEY'); // environment variable name
+Config::write('staffology.payperiod', 'Monthly');
