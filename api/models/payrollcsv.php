@@ -123,6 +123,7 @@ class PayrollCsv extends PayrollBase{
                                 $statutoryPayments +
                                 $otherDeductions)
                               , 2);
+                              
       // the employee pension variable is only for genuine out-of-pay contributions, not salary sacrifice
       // so reduce it by the salary sacrifice amount.
       $employeePension -= $salarySacrifice;
@@ -144,10 +145,23 @@ class PayrollCsv extends PayrollBase{
 
         // Check that the payslip is in balance
         if (!$payslip->isBalanced()) {
-          throw new Exception('Payslip for ' . $payslip->getEmployeeName() . 
-                    ' with payroll number '. $payrollNumber .' is not balanced.');
+          $imbalance = $payslip->getImbalanceAmount() ? $payslip->getImbalanceAmount() : 'N/A';
+          throw new Exception(
+            'Payslip for ' . $payslip->getEmployeeName() .
+            ' with payroll number ' . $payrollNumber . ' is not balanced. ' .
+            'Imbalance: ' . $imbalance . '. ' .
+            'Values: TotalPay=' . $payslip->getTotalPay() .
+            ', PAYE=' . $payslip->getPAYE() .
+            ', EmployeeNI=' . $payslip->getEmployeeNI() .
+            ', OtherDeductions=' . $payslip->getOtherDeductions() .
+            ', StudentLoan=' . $payslip->getStudentLoan() .
+            ', NetPay=' . $payslip->getNetPay() .
+            ', EmployerNI=' . $payslip->getEmployerNI() .
+            ', EmployeePension=' . $payslip->getEmployeePension() .
+            ', EmployerPension=' . $payslip->getEmployerPension() .
+            ', SalarySacrifice=' . $payslip->getSalarySacrifice()
+          );
         }
-
 
         $this->payslips[$payrollNumber] = $payslip;
     }    
