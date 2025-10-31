@@ -79,6 +79,7 @@ class PayrollCsv extends PayrollBase{
    */
   private function parseGrosstoNet(string $payrollDate = ''): bool {
 
+    // Set payment date using supplied parameter, or default to today
     if ($payrollDate != '') {
       if (DateTime::createFromFormat('Y-m-d', $payrollDate) !== false) {
         $this->paymentDate = DateTime::createFromFormat('Y-m-d', $payrollDate);
@@ -86,7 +87,7 @@ class PayrollCsv extends PayrollBase{
         $this->paymentDate = DateTime::createFromFormat('d/m/y', $payrollDate);
       } else {
         throw new Exception('Unable to set date from supplied http parameter value: "'. $payrollDate . '." .
-          " Try entering the date in the format day/month/year or day-month-year.');
+          " Try entering the date in the format year-month-day or day/month/year.');
       }  
     } else {
       $this->paymentDate = DateTime::createFromFormat('Y-m-d', date('Y-m-d'));
