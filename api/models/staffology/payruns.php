@@ -1,7 +1,7 @@
 <?php
 namespace Models\Staffology;
 use Core\Config;
-use Core\PayrollApiService;
+use Services\PayrollApiService;
 /**
  * Factory class that provides a method to query PayRuns
  * 
@@ -76,7 +76,7 @@ class PayRuns{
   public function read():array{
 
     // Build endpoint
-    $endpoint = $this->employerId . 
+    $endpoint = 'employers/' . $this->employerId . 
                   '/payrun/' . 
                   $this->taxYear . 
                   '/' . 

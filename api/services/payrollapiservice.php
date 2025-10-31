@@ -1,6 +1,6 @@
 <?php
 
-namespace Core;
+namespace Services;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
