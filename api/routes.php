@@ -23,7 +23,6 @@ $router->set404(function() {
   );
 });
 
-
 /***************/
 /* Auth Routes */
 /***************/
@@ -290,3 +289,10 @@ $router->mount('/transaction-match', function () use ($router) {
     $router->post('/(\d+)/match', 'RuleCtl@interco_trade_from_rules');
 });
 
+/*************************/
+/* Staffology API Routes */
+/*************************/
+$router->mount('/payroll', function () use ($router) {
+    $router->get('/([a-fA-F0-9._-]+)/payrun/(\w+)', 'PayRunCtl@read_all');
+    $router->get('/taxyear', 'TaxYearCtl@read_names');
+});

@@ -26,6 +26,7 @@ require 'core/errorresponse.php';
 require 'core/headers.php';
 require 'core/GUID.php';
 require 'core/dateshelper.php';
+require 'core/payrollapiservice.php';
 require 'core/qboconstants.php';
 
 // Define controllers
@@ -48,6 +49,8 @@ require 'controllers/quickbooks/qbreport.controller.php';
 require 'controllers/quickbooks/qbtax.controller.php';
 require 'controllers/quickbooks/qbtransfer.controller.php';
 require 'controllers/quickbooks/qbsalesreceipt.controller.php';
+require 'controllers/staffology/payrun.controller.php';
+require 'controllers/staffology/taxyear.controller.php';
 require 'controllers/report.controller.php';
 require 'controllers/rule.controller.php';
 require 'controllers/shop.controller.php';
@@ -83,6 +86,8 @@ require 'models/quickbooks/qbrecurringtxn.php';
 require 'models/quickbooks/qbreport.php';
 require 'models/quickbooks/qbtoken.php';
 require 'models/quickbooks/qbtransfer.php';
+require 'models/staffology/payruns.php';
+require 'models/staffology/taxyear.php';
 require 'models/report.php';
 require 'models/rowitem.php';
 require 'models/rules.php';
