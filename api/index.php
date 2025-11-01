@@ -90,6 +90,7 @@ require 'models/quickbooks/qbreport.php';
 require 'models/quickbooks/qbtoken.php';
 require 'models/quickbooks/qbtransfer.php';
 require 'models/staffology/grosstonet.php';
+require 'models/staffology/parsegrosstonet.php';
 require 'models/staffology/payruns.php';
 require 'models/staffology/taxyear.php';
 require 'models/report.php';

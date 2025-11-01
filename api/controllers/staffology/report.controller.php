@@ -5,6 +5,7 @@ namespace Controllers;
 use Core\ErrorResponse as Error;
 use Exception;
 use Models\Staffology\GrossToNetReport;
+use \Models\Staffology\ParseGrosstoNetReport;
 
 /**
  * Controller to accomplish PayRun related tasks. 
@@ -26,18 +27,17 @@ class PayrollReportCtl{
 
       $payrollDate = sprintf('%04d-%02d-25', intval(substr($taxYear, 4)), $month);
 
-      $report = GrossToNetReport::getInstance()
+      $salaryData = GrossToNetReport::getInstance()
         ->setEmployerId($employerId)
         ->setTaxYear($taxYear)
         ->setFromPeriod($month)
         ->setToPeriod($month)
         ->setSortDescending(false)
-        ->setPaymentDate($payrollDate)
-        ->read()
-        ->parse();
+        ->generate();
         
+      $payslips = ParseGrosstoNetReport::parse($salaryData, $payrollDate);
 
-      echo json_encode($report, JSON_NUMERIC_CHECK);
+      echo json_encode($payslips, JSON_NUMERIC_CHECK);
     } catch (Exception $e) {
       Error::response("Error retrieving details of all Rules.", $e);
     }
