@@ -293,8 +293,8 @@ $router->mount('/transaction-match', function () use ($router) {
 /* Staffology API Routes */
 /*************************/
 $router->mount('/payroll', function () use ($router) {
-    $router->get('/([a-fA-F0-9._-]+)/payrun/(\w+)', 'PayRunCtl@read_all');
-    $router->get('/taxyear', 'TaxYearCtl@read_names');
+    $router->get('/([a-fA-F0-9._-]+)/payrun/(\w+)', 'Staffology\PayRunCtl@read_all');
+    $router->get('/taxyear', 'Staffology\TaxYearCtl@read_names');
     $router->get('/([a-fA-F0-9._-]+)/reports/gross-to-net/(\w+)/month/(\d+)'
-                            , 'PayrollReportCtl@gross_to_net');
+                            , 'Staffology\PayrollReportCtl@gross_to_net');
 });

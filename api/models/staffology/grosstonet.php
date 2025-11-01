@@ -8,7 +8,7 @@ use Core\Config;
 use Models\Payslip;
 use Services\PayrollApiService;
 /**
- * 
+ * Model to retrieve Gross-To-Net report from Staffology Payroll API
  * 
  * @category Model
  */

@@ -2,10 +2,9 @@
 
 namespace Models;
 
-
 /**
- * Store and manipulate payroll data for a single employee
- * 
+ * A data class that holds payroll data for a single employee.
+ * Also includes methods to check that the payslip is balanced.
  * 
  * @category Model
  */
@@ -382,13 +381,11 @@ class Payslip implements \JsonSerializable{
    * @return bool 
    */
   public function isBalanced():bool {
-    $debits = round( $this->netPay -$this->paye -$this->employeeNI 
-                      -$this->otherDeductions -$this->studentLoan
-                      +$this->employeePension +$this->salarySacrifice
-                      +$this->employerNI, 2);
-    $credits = round( $this->totalPay + $this->employerNI, 2);
-
-    return ($debits == $credits);
+    if ( $this->getImbalanceAmount() === null ) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /**
