@@ -72,12 +72,6 @@ Config::write('db.password', 'DB_PASSWORD');    // Database user's password is s
 // number of allowed password attempts. user is suspended if fails to login 6 times in a row
 Config::write('password_attempts', 5);
 
-// file upload/download settings
-Config::write('file.uploaddir', './uploads/');
-Config::write('file.decryptedfilename', 'payroll.xlsx');
-Config::write('file.encryptedfilename', 'payroll_encrypted.xlsx');
-Config::write('file.downloaddir', './downloads/');
-
 // token settings
 Config::write('token.accessExpiry', '+15 minute');
 Config::write('token.refreshExpiry', '+7 day');

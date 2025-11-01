@@ -59,15 +59,10 @@ require 'controllers/rule.controller.php';
 require 'controllers/shop.controller.php';
 require 'controllers/takings.controller.php';
 require 'controllers/user.controller.php';
-require 'controllers/xlsx.controller.php';
 
 // Define models
 require 'models/auditlog.php';
-require 'models/encryptedxlsx.php';
 require 'models/jwt.php';
-require 'models/payrollbase.php'; // This must be included before the files that depend on it.
-require 'models/payrollcsv.php'; // Depends on payrollbase.php
-require 'models/payrollxlsx.php'; // Depends on payrollbase.php
 require 'models/payslip.php';
 require 'models/quickbooks/qbauth.php';
 require 'models/quickbooks/qbattachment.php';
