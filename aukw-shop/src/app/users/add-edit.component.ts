@@ -24,6 +24,7 @@ import { ApiMessage, Shop, User, UserFormMode } from '@app/_models';
 
 @Component({
   templateUrl: 'add-edit.component.html',
+  styleUrls: ['./users.css'],
   standalone: true,
   imports: [CommonModule, NgClass, ReactiveFormsModule],
 })

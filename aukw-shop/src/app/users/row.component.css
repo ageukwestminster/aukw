@@ -5,3 +5,8 @@
 .text-center {
   text-align: center;
 }
+
+/* A 1 pixel wide single border around a checkbox */
+.checkbox-outline {
+  outline: 1px solid #000000;
+}
