@@ -23,6 +23,7 @@ import { DateRangeAdapter } from '@app/_helpers';
 @Component({
   selector: 'auditlog-filter',
   templateUrl: './auditlog-filter.component.html',
+  styleUrls: ['./auditlog-filter.component.css'],
   standalone: true,
   imports: [
     CommonModule,

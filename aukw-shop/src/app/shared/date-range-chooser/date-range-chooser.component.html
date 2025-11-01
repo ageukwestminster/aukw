@@ -2,9 +2,9 @@
   <div class="row">
     <div class="col-sm">
       <div class="input-group">
-        <span class="input-group-text col-4" id="period-label">Date</span>
+        <span class="input-group-text col-4 box-outline" id="period-label">Date</span>
         <select
-          class="form-control text-center"
+          class="form-control text-center box-outline"
           id="selectList"
           #selectList
           (change)="onDateRangeChanged(selectList.value)"
@@ -24,7 +24,7 @@
       <div class="input-group col p-0 mb-1">
         <!-- If using MySql dates don't forget to import NgbUTCStringAdapter-->
         <input
-          class="form-control text-end"
+          class="form-control text-end box-outline"
           placeholder="Start"
           name="dp1"
           ngbDatepicker
@@ -33,9 +33,9 @@
           id="inputStartDate"
           placement="bottom"
         />
-        <div class="input-group-append">
+        <div class="input-group-append box-outline">
           <button
-            class="btn btn-outline-secondary"
+            class="btn"
             (click)="d1.toggle()"
             type="button"
           >
@@ -48,7 +48,7 @@
     <div class="col-sm-3">
       <div class="input-group col p-0 mb-1">
         <input
-          class="form-control text-end"
+          class="form-control text-end box-outline"
           placeholder="End"
           name="dp2"
           ngbDatepicker
@@ -57,9 +57,9 @@
           id="inputEndDate"
           placement="bottom"
         />
-        <div class="input-group-append">
+        <div class="input-group-append box-outline">
           <button
-            class="btn btn-outline-secondary"
+            class="btn"
             (click)="d2.toggle()"
             type="button"
           >
