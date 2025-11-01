@@ -7,7 +7,7 @@ use Core\ErrorResponse as Error;
 use Exception;
 
 /**
- * Controller to accomplish Report related tasks. 
+ * Controller to execute various reports on sales values and statistics.
  *
  * @category  Controller
 */

@@ -5,7 +5,7 @@ namespace Controllers;
 use Core\ErrorResponse as Error;
 use Exception;
 /**
- * Controller to accomplish Shop related tasks. 
+ * Controller to accomplish Shop related CRUD tasks. 
  *
  * @category  Controller
 */

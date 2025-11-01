@@ -7,7 +7,8 @@ use Core\ErrorResponse as Error;
 use Models\Rules;
 use Exception;
 /**
- * Controller to accomplish trading Rule based tasks. 
+ * Controller to accomplish trading Rule based CRUD tasks.
+ * A trading rule is a set of criteria to match a transaction to create an intercompany trade.
  *
  * @category  Controller
 */

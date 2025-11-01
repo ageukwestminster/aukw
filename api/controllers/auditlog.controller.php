@@ -7,7 +7,8 @@ use Core\ErrorResponse as Error;
 use Exception;
 
 /**
- * Controller to accomplish Audit Log related tasks
+ * Controller to accomplish Audit Log related tasks. Audit logs record user actions in the system.
+ * Audit log entries can be read and new entries can be created. Delete and update are not supported.
  *
  * @category  Controller
 */

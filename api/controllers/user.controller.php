@@ -6,7 +6,7 @@ use Core\ErrorResponse as Error;
 use Exception;
 
 /**
- * Controller to acomplish User related tasks
+ * Controller to acomplish User related CRUD tasks
  *
  * @category  Controller
 */
