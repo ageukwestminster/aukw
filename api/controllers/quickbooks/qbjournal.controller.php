@@ -1,6 +1,6 @@
 <?php
 
-namespace Controllers;
+namespace Controllers\QuickBooks;
 
 use Models\QuickbooksJournal;
 use Models\QuickbooksQuery;

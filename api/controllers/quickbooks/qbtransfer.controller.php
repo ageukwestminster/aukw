@@ -1,6 +1,6 @@
 <?php
 
-namespace Controllers;
+namespace Controllers\QuickBooks;
 
 use Models\QuickbooksTransfer;
 use Core\QuickbooksConstants as QBO;

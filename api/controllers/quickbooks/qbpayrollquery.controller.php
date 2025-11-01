@@ -1,6 +1,6 @@
 <?php
 
-namespace Controllers;
+namespace Controllers\QuickBooks;
 
 use Core\QuickbooksConstants as QBO;
 use Models\Payslip;

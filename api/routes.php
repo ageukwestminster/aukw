@@ -113,117 +113,117 @@ $router->mount('/qb', function () use ($router) {
     // The second param is the QuickBooks Journal Id. This number is not easily 
     // seen on the normal QB website but it can been seen in Audit Log.
     // It is not the DocNumber which can be seen when adding/editing on QBO.
-    $router->get('/(\d+)/journal/(\d+)', 'QBJournalCtl@read_one');
+    $router->get('/(\d+)/journal/(\d+)', 'QuickBooks\QBJournalCtl@read_one');
     // Get a list of journals whose DocNumber starts with the given string                                    
-    $router->get('/(\d+)/journal/docnumber/(\w+)', 'QBJournalCtl@query_by_docnumber');
+    $router->get('/(\d+)/journal/docnumber/(\w+)', 'QuickBooks\QBJournalCtl@query_by_docnumber');
     // QB Payroll Journal for individual employee
-    $router->post('/(\d+)/journal/employee', 'QBPayrollJournalCtl@create_employee_payslip_journal');
+    $router->post('/(\d+)/journal/employee', 'QuickBooks\QBPayrollJournalCtl@create_employee_payslip_journal');
     // QB Payroll Journal for Employer NI 
-    $router->post('/(\d+)/journal/employerni', 'QBPayrollJournalCtl@create_employer_ni_journal');
+    $router->post('/(\d+)/journal/employerni', 'QuickBooks\QBPayrollJournalCtl@create_employer_ni_journal');
     // QB Payroll Journal for shop (aka 'Enterprises')
-    $router->post('/(\d+)/journal/enterprises', 'QBPayrollJournalCtl@create_enterprises_journal');
+    $router->post('/(\d+)/journal/enterprises', 'QuickBooks\QBPayrollJournalCtl@create_enterprises_journal');
 
     // The 2nd param is the QuickBooks Journal Id. This number is not easily seen on 
     // the normal QB website but it can been seen in the QBO Audit Log.
     // It is not the DocNumber which can be seen when adding/editing on QBO website.
-    $router->get('/(\d+)/salesreceipt/(\w+)', 'QBSalesReceiptCtl@read_one');
+    $router->get('/(\d+)/salesreceipt/(\w+)', 'QuickBooks\QBSalesReceiptCtl@read_one');
 
     // Create a new sales receipt in QB
-    $router->post('/(\d+)/salesreceipt', 'QBSalesReceiptCtl@create');
+    $router->post('/(\d+)/salesreceipt', 'QuickBooks\QBSalesReceiptCtl@create');
     // Delete a sales receipt in QB
-    $router->delete('/(\d+)/salesreceipt/(\w+)', 'QBSalesReceiptCtl@delete');
+    $router->delete('/(\d+)/salesreceipt/(\w+)', 'QuickBooks\QBSalesReceiptCtl@delete');
 
     // The param is the takingsid value in the takings table in MySQL dB
-    $router->post('/(\d+)/salesreceipt/takings/(\d+)', 'QBSalesReceiptCtl@create_from_takings');
+    $router->post('/(\d+)/salesreceipt/takings/(\d+)', 'QuickBooks\QBSalesReceiptCtl@create_from_takings');
     // take action on takings journal; Only 'create_all' implemented so far.
     // Create All adds to QB any takings which has Quickbooks=0 in the mariaDB
-    $router->patch('/(\d+)/salesreceipt/takings/', 'QBSalesReceiptCtl@create_all_from_takings');
+    $router->patch('/(\d+)/salesreceipt/takings/', 'QuickBooks\QBSalesReceiptCtl@create_all_from_takings');
 
     // Returns the uri needed to start the QBO authorisation process
-    $router->get('/auth', 'QBAuthCtl@oauth2_begin');    
+    $router->get('/auth', 'QuickBooks\QBAuthCtl@oauth2_begin');    
     // Exchange a refresh token for a new access token
-    $router->get('/(\d+)/refresh/(\d+)', 'QBAuthCtl@oauth2_refresh');
+    $router->get('/(\d+)/refresh/(\d+)', 'QuickBooks\QBAuthCtl@oauth2_refresh');
     // Delete QBO authorisation
-    $router->delete('/(\d+)/connection', 'QBAuthCtl@oauth2_revoke');
+    $router->delete('/(\d+)/connection', 'QuickBooks\QBAuthCtl@oauth2_revoke');
     // Retrieve details of one of the connections to QB (if any)
-    $router->get('/(\d+)/connection', 'QBAuthCtl@connection_details');
+    $router->get('/(\d+)/connection', 'QuickBooks\QBAuthCtl@connection_details');
     // Retrieve details of the connections to QB (if any)
-    $router->get('/connections', 'QBAuthCtl@all_connection_details');
+    $router->get('/connections', 'QuickBooks\QBAuthCtl@all_connection_details');
     
     // Retrieve details of the QBO company
-    $router->get('/(\d+)/companyinfo', 'QBCompanyCtl@companyInfo');
+    $router->get('/(\d+)/companyinfo', 'QuickBooks\QBCompanyCtl@companyInfo');
     // return list of all QB realms in database
-    $router->get('/realm', 'QBRealmCtl@read_all');
+    $router->get('/realm', 'QuickBooks\QBRealmCtl@read_all');
     // return single user that has the given realm id
-    $router->get('/realm/(\w+)', 'QBRealmCtl@read_one');
+    $router->get('/realm/(\w+)', 'QuickBooks\QBRealmCtl@read_one');
 
     // QB item is for Products/Services
-    $router->get('/(\d+)/item/(\w+)', 'QBItemCtl@read_one');
-    $router->get('/(\d+)/items', 'QBItemCtl@read_all');
+    $router->get('/(\d+)/item/(\w+)', 'QuickBooks\QBItemCtl@read_one');
+    $router->get('/(\d+)/items', 'QuickBooks\QBItemCtl@read_all');
 
     // Return details of a QB bill (aka invoice)
-    $router->get('/(\d+)/bill/(\w+)', 'QBBillCtl@read_one');
+    $router->get('/(\d+)/bill/(\w+)', 'QuickBooks\QBBillCtl@read_one');
     // QB Bill for Pension payments
-    $router->post('/(\d+)/bill/pensions', 'QBBillCtl@create_pensions_bill');
+    $router->post('/(\d+)/bill/pensions', 'QuickBooks\QBBillCtl@create_pensions_bill');
     // Get a list of bills whose DocNumber starts with the given string                                    
-    $router->get('/(\d+)/bill/docnumber/(\w+)', 'QBBillCtl@query_by_docnumber');
+    $router->get('/(\d+)/bill/docnumber/(\w+)', 'QuickBooks\QBBillCtl@query_by_docnumber');
     // Delete a bill in QB
-    $router->delete('/(\d+)/bill/(\w+)', 'QBBillCtl@delete');
+    $router->delete('/(\d+)/bill/(\w+)', 'QuickBooks\QBBillCtl@delete');
 
     // QB Class
-    $router->get('/(\d+)/class/(\w+)', 'QBClassCtl@read_one');
-    $router->get('/(\d+)/classes', 'QBClassCtl@read_all');
+    $router->get('/(\d+)/class/(\w+)', 'QuickBooks\QBClassCtl@read_one');
+    $router->get('/(\d+)/classes', 'QuickBooks\QBClassCtl@read_all');
     
     // QB Employee
-    $router->get('/(\d+)/employee/(\d+)', 'QBEmployeeCtl@read_one');
-    $router->get('/(\d+)/employee', 'QBEmployeeCtl@read_all');
-    $router->get('/(\d+)/employee/allocations', 'QBPayrollJournalCtl@read_employee_allocations');
-    $router->post('/(\d+)/employee', 'QBEmployeeCtl@create');
+    $router->get('/(\d+)/employee/(\d+)', 'QuickBooks\QBEmployeeCtl@read_one');
+    $router->get('/(\d+)/employee', 'QuickBooks\QBEmployeeCtl@read_all');
+    $router->get('/(\d+)/employee/allocations', 'QuickBooks\QBPayrollJournalCtl@read_employee_allocations');
+    $router->post('/(\d+)/employee', 'QuickBooks\QBEmployeeCtl@create');
 
     // QB Recurring Transactions
-    $router->get('/(\d+)/recurringtransaction/(\w+)', 'QBRecurringTransactionCtl@read_one');
-    $router->get('/(\d+)/recurringtransactions', 'QBRecurringTransactionCtl@read_all');
+    $router->get('/(\d+)/recurringtransaction/(\w+)', 'QuickBooks\QBRecurringTransactionCtl@read_one');
+    $router->get('/(\d+)/recurringtransactions', 'QuickBooks\QBRecurringTransactionCtl@read_all');
 
     // QB Payroll Query
-    $router->get('/(\d+)/query/payroll/(\d{4})/(\d{2})', 'QBPayrollQueryCtl@query');
+    $router->get('/(\d+)/query/payroll/(\d{4})/(\d{2})', 'QuickBooks\QBPayrollQueryCtl@query');
 
     // QB Report
-    $router->get('/(\d+)/report/generalledger', 'QBReportCtl@general_ledger');
-    $router->get('/(\d+)/report/profitandlossraw', 'QBReportCtl@profit_and_loss_raw');
-    $router->get('/(\d+)/report/profitandloss', 'QBReportCtl@profit_and_loss');
-    $router->get('/(\d+)/report/salesbyitem', 'QBReportCtl@sales_by_item');
-    $router->get('/(\d+)/report/salesbyitemraw', 'QBReportCtl@sales_by_item_raw');
-    $router->get('/(\d+)/report/qma', 'QBReportCtl@quarterly_market_report');
-    $router->get('/(\d+)/report/ragging-by-quarter', 'QBReportCtl@ragging_by_quarter');
+    $router->get('/(\d+)/report/generalledger', 'QuickBooks\QBReportCtl@general_ledger');
+    $router->get('/(\d+)/report/profitandlossraw', 'QuickBooks\QBReportCtl@profit_and_loss_raw');
+    $router->get('/(\d+)/report/profitandloss', 'QuickBooks\QBReportCtl@profit_and_loss');
+    $router->get('/(\d+)/report/salesbyitem', 'QuickBooks\QBReportCtl@sales_by_item');
+    $router->get('/(\d+)/report/salesbyitemraw', 'QuickBooks\QBReportCtl@sales_by_item_raw');
+    $router->get('/(\d+)/report/qma', 'QuickBooks\QBReportCtl@quarterly_market_report');
+    $router->get('/(\d+)/report/ragging-by-quarter', 'QuickBooks\QBReportCtl@ragging_by_quarter');
 
     //QB Attachments
-    $router->get('/(\d+)/attachments', 'QBAttachmentCtl@read_by_entity');
-    $router->get('/(\d+)/attachment/(\w+)', 'QBAttachmentCtl@read_by_id');
-    $router->get('/(\d+)/download-attachments', 'QBAttachmentCtl@download');
-    $router->post('/(\d+)/attachments', 'QBAttachmentCtl@create');
+    $router->get('/(\d+)/attachments', 'QuickBooks\QBAttachmentCtl@read_by_entity');
+    $router->get('/(\d+)/attachment/(\w+)', 'QuickBooks\QBAttachmentCtl@read_by_id');
+    $router->get('/(\d+)/download-attachments', 'QuickBooks\QBAttachmentCtl@download');
+    $router->post('/(\d+)/attachments', 'QuickBooks\QBAttachmentCtl@create');
 
     // QB Transfer
-    $router->get('/(\d+)/transfer/(\w+)', 'QBTransferCtl@read_one');
-    $router->post('/(\d+)/transfer', 'QBTransferCtl@create');                                 
-    $router->delete('/(\d+)/transfer/(\w+)', 'QBTransferCtl@delete');
-    $router->post('/(\d+)/enterprises-interco', 'QBTransferCtl@create_enterprises_interco');  
+    $router->get('/(\d+)/transfer/(\w+)', 'QuickBooks\QBTransferCtl@read_one');
+    $router->post('/(\d+)/transfer', 'QuickBooks\QBTransferCtl@create');                                 
+    $router->delete('/(\d+)/transfer/(\w+)', 'QuickBooks\QBTransferCtl@delete');
+    $router->post('/(\d+)/enterprises-interco', 'QuickBooks\QBTransferCtl@create_enterprises_interco');  
 
     // QB Purchase
-    $router->get('/(\d+)/purchase/(\w+)', 'QBPurchaseCtl@read_one');
-    $router->post('/(\d+)/purchase', 'QBPurchaseCtl@create');                                 
-    $router->delete('/(\d+)/purchase/(\d+)', 'QBPurchaseCtl@delete');
+    $router->get('/(\d+)/purchase/(\w+)', 'QuickBooks\QBPurchaseCtl@read_one');
+    $router->post('/(\d+)/purchase', 'QuickBooks\QBPurchaseCtl@create');                                 
+    $router->delete('/(\d+)/purchase/(\d+)', 'QuickBooks\QBPurchaseCtl@delete');
 
     // QB Tax Rates
-    $router->get('/(\d+)/tax-code', 'QBTaxCtl@read_all');
-    $router->get('/(\d+)/tax-code/(\w+)', 'QBTaxCtl@read_one');
+    $router->get('/(\d+)/tax-code', 'QuickBooks\QBTaxCtl@read_all');
+    $router->get('/(\d+)/tax-code/(\w+)', 'QuickBooks\QBTaxCtl@read_one');
 
     // QB Entities
-    $router->get('/(\d+)/entity/vendor', 'QBEntityCtl@read_all_vendors');
-    $router->get('/(\d+)/entity/customer', 'QBEntityCtl@read_all_customers');
-    $router->get('/(\d+)/entity/account', 'QBEntityCtl@read_all_accounts');
+    $router->get('/(\d+)/entity/vendor', 'QuickBooks\QBEntityCtl@read_all_vendors');
+    $router->get('/(\d+)/entity/customer', 'QuickBooks\QBEntityCtl@read_all_customers');
+    $router->get('/(\d+)/entity/account', 'QuickBooks\QBEntityCtl@read_all_accounts');
 
     // interco transaction matching
-    $router->post('/(\d+)/transaction-match', 'QBEntityCtl@interco_trade_from_rules');
+    $router->post('/(\d+)/transaction-match', 'QuickBooks\QBEntityCtl@interco_trade_from_rules');
 });
 
 /***************/

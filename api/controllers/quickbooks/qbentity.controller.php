@@ -1,6 +1,6 @@
 <?php
 
-namespace Controllers;
+namespace Controllers\QuickBooks;
 
 use Models\QuickbooksQuery;
 use Core\ErrorResponse as Error;
