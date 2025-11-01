@@ -205,8 +205,8 @@ class TakingsCtl{
 
   /**
    * Helper function to copy takings property data into Model.
-   * @see #create()
-   * @see #update()
+   * @see TakingsCtl::create()
+   * @see TakingsCtl::update()
    *
    * @param object $data The supplied data of the new/updated takings object
    * @param \Models\Takings $model
