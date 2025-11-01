@@ -1,6 +1,6 @@
 <?php
 
-namespace Controllers;
+namespace Controllers\Staffology;
 
 use Exception;
 use Core\ErrorResponse as Error;
