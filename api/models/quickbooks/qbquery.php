@@ -49,7 +49,7 @@ class QuickbooksQuery{
     /**
    * Return an array of QBO entities whose DocNumber starts with the provided string
    * 
-   * More information: {@link https://developer.intuit.com/app/developer/qbo/docs/learn/explore-the-quickbooks-online-api/data-queries}
+   * More information: {@link https://developer.intuit.com/app/developer/qbo/docs/learn/explore-the-quickbooks-online-api/data-queries developer.intuit.com}
    * @param string $entity_type_name The QBO entity type name e.g. 'Bill' or 'JournalEntry'
    * @param string $doc_number The returned array of entities will have a DocNumber starting with this string
    * @return array Returns an array of entities that match the doc_number criterion
@@ -76,7 +76,7 @@ class QuickbooksQuery{
   /**
    * Return an array of QBO attachments
    * 
-   * More information: {@link https://developer.intuit.com/app/developer/qbo/docs/workflows/attach-images-and-notes}
+   * More information: {@link https://developer.intuit.com/app/developer/qbo/docs/workflows/attach-images-and-notes developer.intuit.com}
    * @param string $entity_type_name The QBO entity type name e.g. 'Bill' or 'JournalEntry'
    * @param int $qb_txn_id The transaction id of the entity that we are querying
    * @return array Returns an array of attachments
@@ -135,7 +135,7 @@ class QuickbooksQuery{
 
   /**
    * Return an array of QBO tax codes, or a single tax code, if 'id' is supplied
-   * More info {@link https://developer.intuit.com/app/developer/qbo/docs/workflows/manage-sales-tax-for-non-us-locales}
+   * More info {@link https://developer.intuit.com/app/developer/qbo/docs/workflows/manage-sales-tax-for-non-us-locales developer.intuit.com}
    * 
    * @param string $id an optional id of the entity that we are querying
    * @return array Returns an array of taxCodes

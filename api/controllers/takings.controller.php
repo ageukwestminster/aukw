@@ -119,7 +119,7 @@ class TakingsCtl{
    * @return void Output is echo'd directly to response
    * 
    */
-  public static function update($id){
+  public static function update($id):void{
     try {
       $model = new \Models\Takings();
       $model->id = $id;
@@ -205,7 +205,8 @@ class TakingsCtl{
 
   /**
    * Helper function to copy takings property data into Model.
-   * Used by {@link create} and {@link update} methods.
+   * @see #create()
+   * @see #update()
    *
    * @param object $data The supplied data of the new/updated takings object
    * @param \Models\Takings $model

@@ -5,7 +5,7 @@ namespace Core;
 /**
  * A static class to provide a GUID generation function
  * 
- * From: {@link https://www.php.net/manual/en/function.com-create-guid.php }
+ * From: {@link https://www.php.net/manual/en/function.com-create-guid.php php.net}
  * 
  * @category Core
  */

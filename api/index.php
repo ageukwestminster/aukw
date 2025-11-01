@@ -109,7 +109,7 @@ require 'routes.php';
 /**
  * This function will be used to convert errors in this PHP code into Exceptions, which can
  * then be handled by try...catch blocks.
- * From {@link https://stackoverflow.com/a/40096085/6941165} and {@link https://www.php.net/manual/en/class.errorexception.php}
+ * From {@link https://stackoverflow.com/a/40096085/6941165 stackoverflow} and {@link https://www.php.net/manual/en/class.errorexception.php php.net}
  * @param int $errno The level of the error raised, an integer
  * @param string $errstr The error message
  * @param string $errfile The filename that the error was raised in
