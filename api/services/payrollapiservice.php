@@ -10,7 +10,7 @@ use Composer\CaBundle\CaBundle;
 use Core\ErrorResponse as Error;
 
 /**
- * A service class to handle Payroll API requests
+ * A service class to handle Staffology Payroll API requests
  * 
  * @category Core
  */
