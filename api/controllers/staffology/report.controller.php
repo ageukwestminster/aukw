@@ -26,7 +26,7 @@ class PayrollReportCtl{
   public static function gross_to_net(string $employerId, string $taxYear, int $month):void{  
     try {
 
-      $payrollDate = sprintf('%04d-%02d-25', intval(substr($taxYear, 4)), ($month>9) ? $month-9 : $month+4);
+      $payrollDate = sprintf('%04d-%02d-25', intval(substr($taxYear, 4)), ($month>9) ? $month-9 : $month+3);
 
       parse_str($_SERVER['QUERY_STRING'], $queries);
       $sortDescending = isset($queries['sortDescending']) && 
