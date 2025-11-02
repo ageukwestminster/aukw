@@ -15,6 +15,11 @@ export class GrossToNetService {
 
   /**
    * Get a array of Payslips for the given employer, tax year and month
+   * @param employerID The Staffology employer ID
+   * @param taxYear The Staffology tax year value, for example 'Year2024'
+   * @param month The month number (1-12). April is month 1, May is month 2 etc.
+   * @param sortBy The field to sort by. If null, defaults to 'PayrollCode'
+   * @param sortDescending Whether to sort in descending order
    * @returns Array of PayRun objects
    */
   getAll(
