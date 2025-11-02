@@ -251,24 +251,6 @@ $router->mount('/user', function () use ($router) {
 });
 
 /***************/
-/* Xlxs Routes */
-/***************/
-$router->mount('/xlsx', function () use ($router) {
-
-    // Upload spreadsheet
-    $router->post('/upload', 'XlsxCtl@upload');
-
-    // Decrypt file
-    $router->post('/decrypt', 'XlsxCtl@decrypt');
-
-    // Parse file
-    $router->get('/parse', 'XlsxCtl@parse');
-
-    // Determine Worksheets of interest
-    $router->get('/listws', 'XlsxCtl@parse_worksheets');
-});
-
-/***************/
 /* Audit Log Routes */
 /***************/
 $router->mount('/auditlog', function () use ($router) {
