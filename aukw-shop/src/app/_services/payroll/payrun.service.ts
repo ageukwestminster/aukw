@@ -18,6 +18,8 @@ export class PayRunService {
    * @returns Array of PayRun objects
    */
   getAll(employerID: string, taxYear: string): any {
-    return this.http.get<PayRun[]>(`${baseUrl}/${employerID}/payrun/${taxYear}`);
+    return this.http.get<PayRun[]>(
+      `${baseUrl}/${employerID}/payrun/${taxYear}`,
+    );
   }
 }
