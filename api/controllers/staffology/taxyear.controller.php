@@ -29,7 +29,11 @@ class TaxYearCtl{
       $currentYear += ($currentMonth < 4) ? -1 : 0;
 
       for ($i = 2024; $i <= $currentYear; $i++) {
-        array_push($taxyears, "Year" . $i);
+        array_push($taxyears, [
+          "name" => $i . "/" . substr($i+1, 2),
+          "value" => "Year" . $i,
+          "year" => $i
+                  ]);
       }
 
       echo json_encode($taxyears, JSON_NUMERIC_CHECK);

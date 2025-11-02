@@ -18,23 +18,28 @@ abstract class ParseGrosstoNetReport{
 
     if ($payrollDate != '') {
       if (DateTime::createFromFormat('Y-m-d', $payrollDate) !== false) {
-        $paymentDate = DateTime::createFromFormat('Y-m-d', $payrollDate);
+        $paymentDate = DateTime::createFromFormat('Y-m-d', $payrollDate)->format('Y-m-d');
       } else if (DateTime::createFromFormat('d/m/Y', $payrollDate) !== false) {
-        $paymentDate = DateTime::createFromFormat('d/m/y', $payrollDate);
+        $paymentDate = DateTime::createFromFormat('d/m/y', $payrollDate)->format('Y-m-d');
       } else {
         throw new Exception('Unable to set date from supplied http parameter value: "'. $payrollDate . '." .
           " Try entering the date in the format day/month/year or day-month-year.');
       }  
     } else {
-      $paymentDate = DateTime::createFromFormat('Y-m-d', date('Y-m-d'));
+      $paymentDate = DateTime::createFromFormat('Y-m-d', date('Y-m-d'))->format('Y-m-d');
     }
 
     // Loop through employees, creating payslips
     $payslips = array();
     foreach($salaryData as $salaryRow) {
-      $payrollNumber = (int) trim($salaryRow['payrollCode']); // '0' = column A
 
+      // Employee identifiers
+      $payrollNumber = (int) trim($salaryRow['payrollCode']);
+      $employeeName = trim($salaryRow['employee']['name']);
+
+      // Payroll figures
       // We are always rounding the numbers to 2 decimal places to avoid floating point precision issues
+      // This can introduce values of '-0' but that is acceptable in this context.
       $totalPay = round((float) trim($salaryRow['totalGross']),2);
       $netPay = round((float) trim($salaryRow['netPay']),2);
       $paye = round((float) trim($salaryRow['tax']),2);
@@ -64,14 +69,21 @@ abstract class ParseGrosstoNetReport{
       // so reduce it by the salary sacrifice amount.
       $employeePension -= $salarySacrifice;
 
+      // Adjust total pay to include salary sacrifice
+      $totalPay = round($totalPay + $salarySacrifice,2);
+
+      // Group other deductions together into a single figure for accounting purposes
+      $subtotalOtherDeductions = round(-$statutoryPayments-$attachments-$otherDeductions,2);
+
+      // Create Payslip object
       $payslip = Payslip::getInstance()
         ->setPayrollNumber($payrollNumber) 
-        ->setEmployeeName(trim($salaryRow['employee']['name'])) // '1' = column B
-        ->setPayrollDate($paymentDate->format('Y-m-d'))
-        ->setTotalPay(round($totalPay + $salarySacrifice,2))
+        ->setEmployeeName($employeeName)
+        ->setPayrollDate($paymentDate)
+        ->setTotalPay($totalPay)
         ->setPAYE(-$paye)
         ->setEmployeeNI(-$employeeNI)
-        ->setOtherDeductions(round(-$statutoryPayments-$attachments-$otherDeductions,2))
+        ->setOtherDeductions($subtotalOtherDeductions)
         ->setStudentLoan(-$studentLoan)
         ->setNetPay($netPay)
         ->setEmployerNI($employerNI)
@@ -130,9 +142,10 @@ abstract class ParseGrosstoNetReport{
     float $statutoryPayments,
     float $otherDeductions
   ): float {
-    return round(
-      ($totalPay + $employeePension) -
-      (
+
+    // Calculate what the employee pension should be to balance the payslip
+    $correctedEmployeePension = round(
+      $totalPay - (
         $netPay +
         $paye +
         $employeeNI +
@@ -140,7 +153,11 @@ abstract class ParseGrosstoNetReport{
         $attachments +
         $statutoryPayments +
         $otherDeductions
-      ),
+      ), 2
+    );
+
+    return round(
+      $employeePension - $correctedEmployeePension,
       2
     );
   }

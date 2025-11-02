@@ -8,14 +8,14 @@ use Models\Staffology\GrossToNetReport;
 use \Models\Staffology\ParseGrosstoNetReport;
 
 /**
- * Controller to accomplish PayRun related tasks. 
+ * Controller to retrieve Payroll report from Staffology API and parse it for use in the system. 
  *
  * @category  Controller
 */
 class PayrollReportCtl{
 
   /**
-   * Return details of all PayRuns, in JSON format
+   * Retrieve Gross-To-Net report from Staffology API and parse it into payslip details
    *
    * @param string $employerId The Staffology Employer ID
    * @param string $taxYear The Staffology Tax Year
@@ -25,7 +25,7 @@ class PayrollReportCtl{
   public static function gross_to_net(string $employerId, string $taxYear, int $month):void{  
     try {
 
-      $payrollDate = sprintf('%04d-%02d-25', intval(substr($taxYear, 4)), $month);
+      $payrollDate = sprintf('%04d-%02d-25', intval(substr($taxYear, 4)), ($month>9) ? $month-9 : $month+4);
 
       $salaryData = GrossToNetReport::getInstance()
         ->setEmployerId($employerId)
@@ -39,7 +39,7 @@ class PayrollReportCtl{
 
       echo json_encode($payslips, JSON_NUMERIC_CHECK);
     } catch (Exception $e) {
-      Error::response("Error retrieving details of all Rules.", $e);
+      Error::response("Error retrieving Gross-To-Net report for " . $taxYear . " Month " . $month, $e);
     }
   }
 
