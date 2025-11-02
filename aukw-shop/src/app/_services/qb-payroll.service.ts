@@ -159,12 +159,12 @@ export class QBPayrollService {
    *  iii) Is the employer pension amount entered in QB?
    * The function takes the given payslips, sets or unsets the boolean flags for each payslip
    * and then returns the amended array of payslips.
-   * @param xlsxPayslips An array of payslips obtained from the Iris payroll spreadsheet (XLSX)
+   * @param irisPayslips An array of payslips obtained from Iris/FMP, our payroll provider
    * @param payrollDate The date of the payroll run. Usually the 25th of the month.
    * @returns An array of payslips, one for each employee, or an empty array.
    */
   payslipFlagsForCharity(
-    xlsxPayslips: IrisPayslip[],
+    irisPayslips: IrisPayslip[],
     payrollDate: string,
   ): Observable<IrisPayslip[]> {
     return forkJoin({
@@ -172,7 +172,7 @@ export class QBPayrollService {
         environment.qboCharityRealmID,
         payrollDate,
       ).pipe(defaultIfEmpty([])),
-      payrollPayslips: of(xlsxPayslips),
+      payrollPayslips: of(irisPayslips),
     }).pipe(
       map((x) => {
         x.payrollPayslips.forEach((payslip) => {
@@ -206,12 +206,12 @@ export class QBPayrollService {
    * set or unset by reference to the employee salary, employer NI and employer pension amounts.
    * The function takes the given payslips, sets or unsets the boolean flags for each payslip
    * and then returns the amended array of payslips.
-   * @param xlsxPayslips An array of payslips obtained from the Iris payroll spreadsheet (XLSX)
+   * @param irisPayslips An array of payslips obtained from Iris/FMP, our payroll provider
    * @param payrollDate The date of the payroll run. Usually the 25th of the month.
    * @returns An array of payslips, one for each employee, or an empty array.
    */
   payslipFlagsForShop(
-    xlsxPayslips: IrisPayslip[],
+    irisPayslips: IrisPayslip[],
     payrollDate: string,
   ): Observable<IrisPayslip[]> {
     return forkJoin({
@@ -219,7 +219,7 @@ export class QBPayrollService {
         environment.qboEnterprisesRealmID,
         payrollDate,
       ).pipe(defaultIfEmpty([])),
-      payrollPayslips: of(xlsxPayslips),
+      payrollPayslips: of(irisPayslips),
     }).pipe(
       map((x) => {
         x.payrollPayslips.forEach((payslip) => {
