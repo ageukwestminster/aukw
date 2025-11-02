@@ -7,6 +7,13 @@ use Exception;
 use Core\Config;
 use Models\Payslip;
 use Services\PayrollApiService;
+
+enum GrossToNetSortBy: string {
+  case PayrollCode = 'PayrollCode';
+  case LastName = 'LastName';
+  case Department = 'Department';
+}
+
 /**
  * Model to retrieve Gross-To-Net report from Staffology Payroll API
  * 
@@ -44,13 +51,40 @@ class GrossToNetReport{
    */
   protected int $toPeriod;
   /**
+   * Defines the way to sort the data. Defaults to sorting by PayrollCode.
+   *
+   * @var GrossToNetSortBy
+   */
+  protected GrossToNetSortBy $sortBy;
+  /**
    * The sort order, done on Payroll Code (i.e. employee number)
    *
    * @var bool
    */
   protected bool $sortDescending;
 
-    /**
+  /**
+   * Sort By setter
+   */
+  public function setSortBy(?GrossToNetSortBy $sortBy) {
+    if ($sortBy == null) {
+      $sortBy = GrossToNetSortBy::PayrollCode;
+    }
+    $this->sortBy = $sortBy;
+    return $this;
+  }
+
+  /**
+   * Sort By getter.
+   */
+  public function getSortBy() : string {
+    if (isset($this->sortBy) == false) {
+      return GrossToNetSortBy::PayrollCode->value;
+    }
+    return $this->sortBy->value;
+  } 
+
+  /**
    * sortDescending setter
    */
   public function setSortDescending(bool $sortDescending) {
@@ -154,6 +188,7 @@ class GrossToNetReport{
     $params = array(
       'fromPeriod' => $this->fromPeriod,
       'toPeriod' => $this->toPeriod,
+      'sortBy' => $this->getSortBy(),
       'sortDescending' => $this->sortDescending ? 'true' : 'false'
     );
 

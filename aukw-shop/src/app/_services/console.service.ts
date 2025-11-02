@@ -34,7 +34,7 @@ export class ConsoleService {
     }
     payslips.forEach((payslip) => {
       const msg: string =
-        `${payslip.employeeName} : Salary:£${payslip.totalPay.toFixed(2)} ` +
+        `${payslip.payrollNumber} : ${payslip.employeeName} : Salary:£${payslip.totalPay.toFixed(2)} ` +
         `: Net:£${payslip.netPay.toFixed(2)} : SS:£${payslip.salarySacrifice.toFixed(2)}` +
         `: EE Pens:£${payslip.employeePension.toFixed(2)} : ER Pens:£${payslip.employerPension.toFixed(2)}` +
         `: Loan:£${payslip.studentLoan.toFixed(2)} : EE NI:£${payslip.employeeNI.toFixed(2)}` +

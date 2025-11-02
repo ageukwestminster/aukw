@@ -17,9 +17,9 @@ export class GrossToNetService {
    * Get a array of Payslips for the given employer, tax year and month
    * @returns Array of PayRun objects
    */
-  getAll(employerID: string, taxYear: string, month: number): any {
+  getAll(employerID: string, taxYear: string, month: number, sortBy: string|null, sortDescending: boolean): any {
     return this.http.get<IrisPayslip[]>(
-      `${baseUrl}/${employerID}/reports/gross-to-net/${taxYear}/month/${month}`
+      `${baseUrl}/${employerID}/reports/gross-to-net/${taxYear}/month/${month}?sortBy=${sortBy==null?'PayrollCode':sortBy}&sortDescending=${sortDescending?'true':'false'}`
     );
   }
 }

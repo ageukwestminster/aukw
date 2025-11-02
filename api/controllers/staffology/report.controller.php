@@ -5,6 +5,7 @@ namespace Controllers\Staffology;
 use Core\ErrorResponse as Error;
 use Exception;
 use Models\Staffology\GrossToNetReport;
+use Models\Staffology\GrossToNetSortBy;
 use \Models\Staffology\ParseGrosstoNetReport;
 
 /**
@@ -27,12 +28,23 @@ class PayrollReportCtl{
 
       $payrollDate = sprintf('%04d-%02d-25', intval(substr($taxYear, 4)), ($month>9) ? $month-9 : $month+4);
 
+      parse_str($_SERVER['QUERY_STRING'], $queries);
+      $sortDescending = isset($queries['sortDescending']) && 
+                        ($queries['sortDescending'] == 'true' || 
+                          $queries['sortDescending'] == '1') ? true : false;
+      if (isset($queries['sortBy'])) {
+        $sortBy = GrossToNetSortBy::from($queries['sortBy']);
+      } else {
+        $sortBy = GrossToNetSortBy::PayrollCode;
+      }
+
       $salaryData = GrossToNetReport::getInstance()
         ->setEmployerId($employerId)
         ->setTaxYear($taxYear)
         ->setFromPeriod($month)
         ->setToPeriod($month)
-        ->setSortDescending(false)
+        ->setSortBy($sortBy)
+        ->setSortDescending($sortDescending)
         ->generate();
         
       $payslips = ParseGrosstoNetReport::parse($salaryData, $payrollDate);

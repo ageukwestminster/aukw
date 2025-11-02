@@ -65,7 +65,7 @@ export class PayrollComponent {
   onSubmit() {
     if (this.form.valid) {
       this.grossToNetService
-        .getAll(this.employerID, this.f['taxYear'].value, this.f['month'].value)
+        .getAll(this.employerID, this.f['taxYear'].value, this.f['month'].value, this.f['sortBy'].value, this.f['sortDescending'].value)
         .subscribe((data: IrisPayslip[]) => {
           this.payslips = data;
           this.consoleService.sendPayslipsToConsole(this.payslips);
