@@ -11,7 +11,12 @@ import {
 } from '@app/_services';
 import { PayrollIdentifier } from '@app/_interfaces/payroll-identifier';
 import { Subject, takeUntil, tap } from 'rxjs';
-
+/**
+ * An abstract base component for taking employee salary and tax data in the form of
+ * IrisPayslip objects and converting them to QBO transactions.
+ * 
+ * It is a generic class that is constrained to those types that implement the PayrollIdentifier interface.
+ */
 @Component({
   standalone: true,
   imports: [],
@@ -69,10 +74,16 @@ export abstract class BasePayrollTransactionComponent<
    * Convert the array of IrisPayslips stored in payslips[] and the array of
    * project allocations stored in allocations[] to an array of objects in lines[].
    * Later, the line[] object will be used to create QBO transactions.
-   *
+   * This method must be implemented in derived classes.
    * This method is called in ngOnInit and nothing is returned (void).
    */
-  recalculateTransactions() {}
+  abstract recalculateTransactions(): void;
+
+  /**
+   * Create transaction(s) in QBO based on the data in lines[].
+   * This method must be implemented in derived classes.
+   */
+  abstract createTransaction(): void;
 
   /**
    * Filter out lines for which there is already a QBO entry
@@ -105,15 +116,26 @@ export abstract class BasePayrollTransactionComponent<
     );
   }
 
-  getQBFlagsProperty() {
-    return function (payslip: IrisPayslip) {
-      return false;
-    };
-  }
-  setQBFlagsProperty() {
-    return function (payslip: IrisPayslip, value: boolean) {};
-  }
-  setQBOFlagsToTrue() {
+  /** 
+   * Abstract method to get the QBFlags property from an IrisPayslip.
+   * This method must be implemented in derived classes.
+   * @returns A function that accepts an IrisPayslip and returns a boolean.
+   */
+  abstract getQBFlagsProperty(): (payslip: IrisPayslip) => boolean;
+  
+  /**
+   * Abstract method to set the QBFlags property on an IrisPayslip.
+   * This method must be implemented in derived classes.
+   * @returns A function that accepts an IrisPayslip and a boolean value.
+   */
+  abstract setQBFlagsProperty(): (payslip: IrisPayslip, value: boolean) => void;
+
+  /** Loop through all payslips contained in the module level payslips variable and set
+   * the QBFlag property to 'true'. Then return the updated array.
+   * 
+   * @return An array of IrisPayslip objects with the QBFlag property set to 'true'.
+   */
+  setQBOFlagsToTrue(): IrisPayslip[] {
     for (const payslip of this.payslips) {
       this.setQBFlagsProperty()(payslip, true);
     }
