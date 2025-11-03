@@ -84,10 +84,13 @@
     </form>
   </div>
 </div>
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title">Employees Missing From QuickBooks</h5>
-    <payslip-list [payslips]="payslipsWithMissingEmployeesOrAllocations">
-    </payslip-list>
+@if (payslipsWithMissingEmployeesOrAllocations && payslipsWithMissingEmployeesOrAllocations.length > 0) {
+  <div class="card mt-3">
+    <div class="card-body">
+      <h5 class="card-title">Employees Missing From QuickBooks</h5>
+      <payslip-list [payslips]="payslipsWithMissingEmployeesOrAllocations"
+        (employeeToAdd)="onEmployeeToAdd($event)">
+      </payslip-list>
+    </div>
   </div>
-</div>
+}

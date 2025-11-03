@@ -208,4 +208,11 @@ export class PayrollComponent {
         });
     }
   }
+
+  onEmployeeToAdd(payslip: IrisPayslip) {
+    
+    console.log('Add employee: ', payslip);
+
+    // Open new modal to add employee
+  }
 }

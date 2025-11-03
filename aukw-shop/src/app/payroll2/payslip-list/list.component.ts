@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { IrisPayslip } from '@app/_models';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
@@ -14,7 +14,10 @@ export class PayslipListComponent {
   @Input() payslips!: IrisPayslip[];
   @Input() total: IrisPayslip = new IrisPayslip();
 
+  @Output() employeeToAdd: EventEmitter<IrisPayslip> =
+    new EventEmitter<IrisPayslip>();
+
   addEmployee(payslip: IrisPayslip) {
-    console.log(payslip);
+    this.employeeToAdd.emit(payslip);
   }
 }
