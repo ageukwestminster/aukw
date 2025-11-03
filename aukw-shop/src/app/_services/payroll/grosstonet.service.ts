@@ -30,9 +30,9 @@ export class GrossToNetService {
     sortDescending: boolean,
   ): any {
     return this.http.get<IrisPayslip[]>(
-      `${baseUrl}/${employerID}/reports/gross-to-net/${taxYear}/month/${month}` + 
-      `?sortBy=${sortBy == null ? 'PayrollCode' : sortBy}` + 
-      `&sortDescending=${sortDescending ? 'true' : 'false'}`,
+      `${baseUrl}/${employerID}/reports/gross-to-net/${taxYear}/month/${month}` +
+        `?sortBy=${sortBy == null ? 'PayrollCode' : sortBy}` +
+        `&sortDescending=${sortDescending ? 'true' : 'false'}`,
     );
   }
 }

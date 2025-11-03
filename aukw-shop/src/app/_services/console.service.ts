@@ -33,15 +33,19 @@ export class ConsoleService {
       this.consoleMessageSubject.next('<none>');
     }
     payslips.forEach((payslip) => {
-      const msg: string =
+      var msg: string =
         `${payslip.payrollNumber} : ${payslip.employeeName} : Salary:£${payslip.totalPay.toFixed(2)} ` +
         `: Net:£${payslip.netPay.toFixed(2)} : SS:£${payslip.salarySacrifice.toFixed(2)}` +
         `: EE Pens:£${payslip.employeePension.toFixed(2)} : ER Pens:£${payslip.employerPension.toFixed(2)}` +
         `: Loan:£${payslip.studentLoan.toFixed(2)} : EE NI:£${payslip.employeeNI.toFixed(2)}` +
         `: ER NI:£${payslip.employerNI.toFixed(2)} : MissingEmployee:${payslip.employeeMissingFromQBO}` +
-        `: MissingAllocs:${payslip.allocationsMissingFromQBO} : JournalInQBO:${payslip.qbFlags.employeeJournal}` +
-        `: NIInQBO:${payslip.qbFlags.employerNI} : PensionInQBO:${payslip.qbFlags.pensionBill}` +
-        `: ShopJournalInQBO:${payslip.qbFlags.shopJournal}`;
+        `: MissingAllocs:${payslip.allocationsMissingFromQBO} `;
+      if (payslip.qbFlags) {
+        msg +=
+          `: JournalInQBO:${payslip.qbFlags.employeeJournal}` +
+          `: NIInQBO:${payslip.qbFlags.employerNI} : PensionInQBO:${payslip.qbFlags.pensionBill}` +
+          `: ShopJournalInQBO:${payslip.qbFlags.shopJournal}`;
+      }
       this.consoleMessageSubject.next(msg);
     });
   }
