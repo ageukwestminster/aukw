@@ -36,7 +36,7 @@ import {
   TaxYear,
 } from '@app/_models';
 import { fromArrayToElement } from '@app/_helpers';
-import { PayslipListComponent } from '../payroll/payslips/list.component';
+import { PayslipListComponent } from './payslip-list/list.component';
 
 @Component({
   selector: 'app-payroll',
@@ -169,7 +169,7 @@ export class PayrollComponent {
           }),
 
           toArray(), // Convert back from Observable<T> to Observable<T[]>
-
+          /*
           // Get payslip flags for Charity QBO ... checking to see if transactions have been entered already
           switchMap((payslips: IrisPayslip[]) => {
             return this.qbPayrollService.payslipFlagsForCharity(
@@ -184,7 +184,7 @@ export class PayrollComponent {
               payslips,
               this.payrollDate,
             );
-          }),
+          }),*/
         )
         .subscribe({
           next: (payslips: IrisPayslip[]) => {

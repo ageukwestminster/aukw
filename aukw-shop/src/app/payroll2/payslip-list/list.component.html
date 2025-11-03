@@ -1,0 +1,116 @@
+﻿<table class="table table-striped table-responsive text-end">
+  <thead>
+    <tr>
+      <th class="width-5">No.</th>
+      <th class="width-22 text-start">Name</th>
+      <th class="width-8">
+        <!-- Tooltip must be on element inside header, not header itself-->
+        <!-- From https://stackoverflow.com/a/48324991/6941165 -->
+        <div ngbTooltip="Total salary for the month">Gross</div>
+      </th>
+      <th class="width-6 d-none d-sm-table-cell">
+        <!-- Tooltip must be on element inside header, not header itself-->
+        <div ngbTooltip="Employer National Insurance">E'er NI</div>
+      </th>
+      <th class="width-6 d-none d-sm-table-cell">
+        <!-- Tooltip must be on element inside header, not header itself-->
+        <div ngbTooltip="Employee pension contribution">E'er Pen</div>
+      </th>
+      <th class="width-6 text-center">In QBO?</th>
+      <th class="width-6 text-center">Allocations?</th>
+      <th class="width-6 text-center">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (p of payslips; track p) {
+      <tr>
+        <td>
+          {{ p.payrollNumber }}
+        </td>
+        <td class="text-start">{{ p.employeeName }}</td>
+        <td>{{ p.totalPay | number: "1.2-2" }}</td>
+        <td class="d-none d-sm-table-cell">
+          {{ p.employerNI | number: "1.2-2" }}
+        </td>
+        <td class="d-none d-sm-table-cell">
+          {{ +p.employerPension | number: "1.2-2" }}
+        </td>
+        <td class="text-center">
+          <div class="col">
+            <span class="in-qbo">
+              @if (!p.employeeMissingFromQBO) {
+                <i
+                  class="fas fa-check"
+                  ngbTooltip="Employee (Payroll number {{
+                    p.payrollNumber
+                  }}) is in QBO."
+                ></i>
+              }
+            </span>
+            <span class="not-in-qbo">
+              @if (p.employeeMissingFromQBO) {
+                <i
+                  class="fas fa-times"
+                  ngbTooltip="Employee either not in QBO or with incorrect payroll number."
+                ></i>
+              }
+            </span>
+          </div>
+        </td>
+        <td class="text-center">
+          <div class="col">
+            <span class="in-qbo">
+              @if (!p.allocationsMissingFromQBO) {
+                <i
+                  class="fas fa-check"
+                  ngbTooltip="Employee is in the Allocations recurring transaction."
+                ></i>
+              }
+            </span>
+            <span class="not-in-qbo">
+              @if (p.allocationsMissingFromQBO) {
+                <i
+                  class="fas fa-times"
+                  ngbTooltip="Employee not in the Allocations recurring transaction."
+                ></i>
+              }
+            </span>
+          </div>
+        </td>
+        <td>
+          <button (click)="addEmployee(p)" class="btn btn-sm btn-success me-1">
+            <span>Add Employee</span>
+          </button>
+        </td>
+      </tr>
+    }
+    @if (total && total.totalPay) {
+      <tr class="total-line">
+        <td></td>
+        <td class="text-start">
+          Total for {{ this.payslips.length }} employees:
+        </td>
+        <td>{{ total.totalPay | number: "1.2-2" }}</td>
+        <td class="d-none d-sm-table-cell">
+          {{ total.employerNI | number: "1.2-2" }}
+        </td>
+        <td class="d-none d-sm-table-cell">
+          {{ total.employerPension | number: "1.2-2" }}
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    }
+    @if (!payslips) {
+      <tr>
+        <td colspan="11" class="text-center">
+          <span class="spinner-border spinner-border-lg align-center"></span>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>
