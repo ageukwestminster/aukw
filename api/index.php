@@ -32,6 +32,7 @@ require 'core/qboconstants.php';
 require 'services/payrollapiservice.php';
 
 // Define controllers
+require 'controllers/allocations.controller.php';
 require 'controllers/auditlog.controller.php';
 require 'controllers/quickbooks/qbauth.controller.php';
 require 'controllers/quickbooks/qbattachment.controller.php';
@@ -61,6 +62,8 @@ require 'controllers/takings.controller.php';
 require 'controllers/user.controller.php';
 
 // Define models
+require 'models/allocation.php';
+require 'models/allocations.php';
 require 'models/auditlog.php';
 require 'models/jwt.php';
 require 'models/payslip.php';

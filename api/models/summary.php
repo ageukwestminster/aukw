@@ -166,8 +166,7 @@ class TakingsSummary{
     }
 
     public function avgDailyTransactionSizeByQuarter($shopid){
-
-        // MySQL stored procedure
+        // Build query
         $query = "SELECT  shopid, YEAR(`date`) as `year`, QUARTER(`date`) as `quarter`
                         , DATE(CONCAT_WS('-', YEAR(`date`), MONTH(MIN(`date`)), 1)) as quarter_start
                         , if(QUARTER(`date`)=4,YEAR(`date`)+1,YEAR(`date`)) as trading_year

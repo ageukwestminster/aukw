@@ -176,8 +176,7 @@ $router->mount('/qb', function () use ($router) {
     
     // QB Employee
     $router->get('/(\d+)/employee/(\d+)', 'QuickBooks\QBEmployeeCtl@read_one');
-    $router->get('/(\d+)/employee', 'QuickBooks\QBEmployeeCtl@read_all');
-    $router->get('/(\d+)/employee/allocations', 'QuickBooks\QBPayrollJournalCtl@read_employee_allocations');
+    $router->get('/(\d+)/employee', 'QuickBooks\QBEmployeeCtl@read_all');    
     $router->post('/(\d+)/employee', 'QuickBooks\QBEmployeeCtl@create');
 
     // QB Recurring Transactions
@@ -224,6 +223,9 @@ $router->mount('/qb', function () use ($router) {
 
     // interco transaction matching
     $router->post('/(\d+)/transaction-match', 'QuickBooks\QBEntityCtl@interco_trade_from_rules');
+
+    // Allocations
+    $router->get('/(\d+)/employee/allocations', 'QuickBooks\QBPayrollJournalCtl@read_employee_allocations');
 });
 
 /***************/
@@ -279,4 +281,15 @@ $router->mount('/payroll', function () use ($router) {
     $router->get('/taxyear', 'Staffology\TaxYearCtl@read_names');
     $router->get('/([a-fA-F0-9._-]+)/reports/gross-to-net/(\w+)/month/(\d+)'
                             , 'Staffology\PayrollReportCtl@gross_to_net');
+});
+
+/*************************/
+/* Allocations Routes */
+/*************************/
+$router->mount('/allocations', function () use ($router) {
+    $router->get('/', 'AllocationsCtl@read_all');
+    $router->delete('/', 'AllocationsCtl@delete');
+    $router->get('/restore(/\d+)?', 'AllocationsCtl@restore'); 
+    $router->post('/', 'AllocationsCtl@create');
+       
 });
