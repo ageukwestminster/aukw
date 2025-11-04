@@ -108,7 +108,7 @@ INSERT INTO `allocation` (`quickbooksId`, `payrollNumber`, `percentage`, `accoun
 -- Indexes for table `allocation`
 --
 ALTER TABLE `allocation`
-  ADD UNIQUE KEY `UK_allocation_quickbooksId_payrollNumber_class` (`quickbooksId`,`payrollNumber`,`class`);
+  ADD UNIQUE KEY `UK_allocation_quickbooksId_payrollNumber_class` (`quickbooksId`,`class`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
