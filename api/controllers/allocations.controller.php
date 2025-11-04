@@ -29,6 +29,25 @@ class AllocationsCtl{
     }
   }
 
+  /**
+   * Return details of one Allocation
+   * 
+   * @return void Output is echo'd directly to response 
+   */
+  public static function read_one(int $quickbooksId, string $class):void{  
+    try {
+      // Note alsence of JSON_NUMERIC_CHECK to preserve class as string, despite being numeric
+      echo json_encode(
+        Allocation::getInstance()
+        ->setQuickbooksId($quickbooksId)
+        ->setClass($class)
+        ->readOne()
+      );
+    } catch (Exception $e) {
+      Error::response("Error retrieving details of one Allocation.", $e);
+    }
+  }
+
 
   /**
    * Delete from the database all the Allocations
@@ -111,5 +130,57 @@ class AllocationsCtl{
     } catch (Exception $e) {
       Error::response("Error inserting new Allocations.", $e);
     }
-  }  
+  } 
+  
+    /**
+   * Add a single new allocation to the database.
+   * 
+   * @return void Output is echo'd directly to response
+   * 
+   */
+  public static function append():void{
+    try {
+
+      $data = json_decode(file_get_contents("php://input"));
+
+      foreach($data as $item){
+
+        $model = Allocation::getInstance();
+
+        $allocation = $model
+          ->setQuickbooksId($item->quickbooksId)
+          ->setClass($item->class)
+          ->readOne();
+        
+        $model
+          ->setPayrollNumber($item->payrollNumber)
+          ->setPercentage($item->percentage)
+          ->setAccount($item->account)
+          ->setClass($item->class)
+          ->setIsShopEmployee($item->isShopEmployee);
+        if ($allocation !== null) {
+          $result = $model->update();
+        } else {
+          $result = $model->create();
+        }   
+
+        if ($result !== true) {
+          throw new Exception("Failed to insert new allocation for payroll number " . $item->payrollNumber);
+        }
+      }
+
+      if (!Allocations::getInstance()->verify()) {
+        throw new Exception("Percentage totals do not equal 100% after append.");
+      }
+
+      echo json_encode(
+        array(
+          "message" => "Allocation(s) has been appended.",
+        )
+      , JSON_NUMERIC_CHECK);
+
+    } catch (Exception $e) {
+      Error::response("Error appending new Allocation(s).", $e);
+    }
+  } 
 }

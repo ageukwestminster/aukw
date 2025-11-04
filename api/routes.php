@@ -288,8 +288,10 @@ $router->mount('/payroll', function () use ($router) {
 /*************************/
 $router->mount('/allocations', function () use ($router) {
     $router->get('/', 'AllocationsCtl@read_all');
+    $router->get('/id/(\d+)/class/(\d+)', 'AllocationsCtl@read_one');
     $router->delete('/', 'AllocationsCtl@delete');
     $router->get('/restore(/\d+)?', 'AllocationsCtl@restore'); 
     $router->post('/', 'AllocationsCtl@create');
+    $router->post('/append', 'AllocationsCtl@append');
        
 });

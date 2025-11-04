@@ -110,4 +110,22 @@ class Allocations{
       $stmt->bindParam(":_VersionID", $versionid, PDO::PARAM_INT);
       return $stmt->execute();
   }
+
+  /**
+   * Check that each employee has employee allocation percentages summing to 100%
+   * 
+   * @return bool 'true' if sum of employee percentages is always exactly 100%
+   * 
+   */
+  public function verify():bool{
+      // MySQL stored procedure
+      $query = "SELECT quickbooksId, payrollNumber,SUM(percentage)
+                    FROM allocation
+                    GROUP BY quickbooksId, payrollNumber
+                    HAVING SUM(percentage) <> 100";
+      $stmt = $this->conn->prepare( $query );
+      
+      $stmt->execute();
+      return $stmt->rowCount() == 0;
+  }
 }
