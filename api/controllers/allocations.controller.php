@@ -141,6 +141,10 @@ class AllocationsCtl{
   public static function append():void{
     try {
 
+      if (!Allocations::getInstance()->verify()) {
+        throw new Exception("Percentage totals do not equal 100% before append, aborting.");
+      }
+
       $data = json_decode(file_get_contents("php://input"));
 
       foreach($data as $item){
@@ -175,7 +179,7 @@ class AllocationsCtl{
 
       echo json_encode(
         array(
-          "message" => "Allocation(s) has been appended.",
+          "message" => "Allocation(s) have been appended.",
         )
       , JSON_NUMERIC_CHECK);
 
