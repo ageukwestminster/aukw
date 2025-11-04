@@ -1,25 +1,21 @@
--- MariaDB dump 10.19  Distrib 10.11.6-MariaDB, for debian-linux-gnu (x86_64)
+/*M!999999\- enable the sandbox mode */ 
+-- MariaDB dump 10.19-11.8.3-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: aukworgu_dailytakings
 -- ------------------------------------------------------
--- Server version	10.11.6-MariaDB-0+deb12u1-log
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+-- Server version	11.8.3-MariaDB-0+deb13u1 from Debian
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+/*M!100616 SET @OLD_NOTE_VERBOSITY=@@NOTE_VERBOSITY, NOTE_VERBOSITY=0 */;
 
 --
 -- Dumping routines for database 'aukworgu_dailytakings'
 --
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `avg_weekly_income` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -27,13 +23,14 @@
 /*!50003 SET character_set_results = utf8mb4 */ ;
 /*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
 DELIMITER ;;
-CREATE DEFINER=`aukworgu_shop`@`localhost` PROCEDURE `avg_weekly_income`(IN `_SHOPID` INT)
+CREATE DEFINER=`aukworgu_shop`@`%` PROCEDURE `avg_weekly_income`(IN `_SHOPID` INT)
 BEGIN
 DROP TABLE IF EXISTS weekly_sales;
 CREATE TEMPORARY TABLE weekly_sales (
 SELECT shopid, YEAR(date) as year, QUARTER(date) as quarter
 	,WEEK(date) as week, MONTH(MIN(date)) as quarter_start_month
     ,SUM(clothing+brica+books+linens+donations+other+rag) as sales_plus_rag
+    ,SUM(clothing+brica+books+linens+other) as instore_sales
 FROM takings
 WHERE shopid = _SHOPID
 GROUP BY YEAR(date)*100+WEEK(date));
@@ -43,7 +40,8 @@ SELECT shopid, year, quarter
     , (MOD(quarter, 4)+1) as trading_quarter
 	, if(quarter=4,year+1,year) as trading_year
 	, Round(AVG(sales_plus_rag),2) as avg_weekly_income
-    , count(*) AS count
+    , Round(AVG(instore_sales),2) as avg_weekly_instore_sales
+    , count(*) AS weeks_in_quarter
 FROM weekly_sales
 GROUP BY shopid, year, quarter
 ORDER BY year DESC, quarter DESC;
@@ -56,7 +54,6 @@ DELIMITER ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `cumm_sales_by_day` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -64,7 +61,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
 /*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 DELIMITER ;;
-CREATE DEFINER=`aukworgu`@`localhost` PROCEDURE `cumm_sales_by_day`(
+CREATE DEFINER=`aukworgu_shop`@`%` PROCEDURE `cumm_sales_by_day`(
 	_SHOPID INT,
 	_TODAY DATE
 )
@@ -152,7 +149,6 @@ DELIMITER ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `cumm_sales_by_dayofweek` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -160,7 +156,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
 /*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 DELIMITER ;;
-CREATE DEFINER=`aukworgu`@`localhost` PROCEDURE `cumm_sales_by_dayofweek`(
+CREATE DEFINER=`aukworgu_shop`@`%` PROCEDURE `cumm_sales_by_dayofweek`(
 	_SHOPID INT,
 	_TODAY DATE
 )
@@ -229,7 +225,6 @@ DELIMITER ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `cumm_sales_by_dept` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -237,7 +232,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
 /*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 DELIMITER ;;
-CREATE DEFINER=`aukworgu`@`localhost` PROCEDURE `cumm_sales_by_dept`(	
+CREATE DEFINER=`aukworgu_shop`@`%` PROCEDURE `cumm_sales_by_dept`(	
 	_SHOPID INT,
 	_TODAY DATE
 )
@@ -332,7 +327,6 @@ DELIMITER ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `cumm_sales_by_month` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -340,7 +334,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
 /*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 DELIMITER ;;
-CREATE DEFINER=`aukworgu`@`localhost` PROCEDURE `cumm_sales_by_month`(
+CREATE DEFINER=`aukworgu_shop`@`%` PROCEDURE `cumm_sales_by_month`(
 	_SHOPID INT,
 	_STARTDATE VARCHAR(20),
     _TARGET DECIMAL (8,2)
@@ -413,7 +407,6 @@ DELIMITER ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `cumm_sales_by_week` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -421,7 +414,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
 /*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 DELIMITER ;;
-CREATE DEFINER=`aukworgu`@`localhost` PROCEDURE `cumm_sales_by_week`(
+CREATE DEFINER=`aukworgu_shop`@`%` PROCEDURE `cumm_sales_by_week`(
 	_SHOPID INT,
 	_STARTDATE VARCHAR(20),
     _TARGET DECIMAL (8,2)
@@ -492,8 +485,46 @@ DELIMITER ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
+DELIMITER ;;
+CREATE DEFINER=`aukworgu_shop`@`%` PROCEDURE `delete_allocations`()
+BEGIN
+
+DECLARE _versionID INT;
+SELECT IFNULL(MAX(versionid),0)+1 as versionID 
+INTO _versionID
+FROM allocationamendment;
+
+INSERT INTO allocationamendment (
+		`quickbooksId`, 
+		`payrollNumber`, 
+		`percentage`, 
+		`account`, 
+		`class`, 
+		`isShopEmployee`, 
+		`versionid`,
+		`validfrom`)
+SELECT `quickbooksId`, `payrollNumber`, `percentage`, 
+		`account`, `class`, `isShopEmployee`, 
+		_versionID, `timestamp`
+FROM allocation;
+
+DELETE FROM allocation;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `rag_sales_over_time` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -501,7 +532,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
 /*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 DELIMITER ;;
-CREATE DEFINER=`aukworgu`@`localhost` PROCEDURE `rag_sales_over_time`(
+CREATE DEFINER=`aukworgu_shop`@`%` PROCEDURE `rag_sales_over_time`(
 	_SHOPID INT,
 	_ENDDATE VARCHAR(20),
     _TERM VARCHAR(1)
@@ -573,8 +604,49 @@ DELIMITER ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
+DELIMITER ;;
+CREATE DEFINER=`aukworgu_shop`@`%` PROCEDURE `restore_allocations`(IN _VersionID INT)
+BEGIN
+
+IF _VersionID IS NULL THEN
+	SELECT IFNULL(MAX(versionid),0)
+    INTO _VersionID
+	FROM allocationamendment;
+END IF;
+
+IF _VersionID IS NULL OR _VersionID = 0 THEN 
+	SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No allocations to restore. VersionID is NULL or zero.';
+END IF;
+
+IF _VersionID IS NOT NULL AND _VersionID <> 0 THEN 
+	INSERT INTO allocation (
+		`quickbooksId`, 
+		`payrollNumber`, 
+		`percentage`, 
+		`account`, 
+		`class`, 
+		`isShopEmployee`, 
+		`timestamp`)
+	SELECT `quickbooksId`, `payrollNumber`, `percentage`, 
+		`account`, `class`, `isShopEmployee`, NULL
+	FROM allocationamendment
+	WHERE versionid = _VersionID;
+END IF;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `sales_chart` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -582,7 +654,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
 /*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 DELIMITER ;;
-CREATE DEFINER=`aukworgu`@`localhost` PROCEDURE `sales_chart`(IN `_SHOPID` INT, IN `_TODAY` DATE, IN `_NUMBER` INT UNSIGNED)
+CREATE DEFINER=`aukworgu_shop`@`%` PROCEDURE `sales_chart`(IN `_SHOPID` INT, IN `_TODAY` DATE, IN `_NUMBER` INT UNSIGNED)
 BEGIN
 DECLARE Today DATE;
 DECLARE FirstDay DATE;
@@ -645,7 +717,6 @@ DELIMITER ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `sales_table` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -653,7 +724,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
 /*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 DELIMITER ;;
-CREATE DEFINER=`aukworgu`@`localhost` PROCEDURE `sales_table`(IN `_SHOPID` INT, IN `_TODAY` DATE)
+CREATE DEFINER=`aukworgu_shop`@`%` PROCEDURE `sales_table`(IN `_SHOPID` INT, IN `_TODAY` DATE)
 BEGIN
 DECLARE Today DATE;
 DECLARE Yesterday DATE;
@@ -935,9 +1006,6 @@ DELIMITER ;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+/*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2025-01-26 18:05:27
+-- Dump completed on 2025-11-04 16:43:44
