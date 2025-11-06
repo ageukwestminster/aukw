@@ -190,13 +190,25 @@ class QuickbooksEmployee{
       throw new \Exception("The QBO Response message is: " . $error->getResponseBody() . "\n");
     }
     else {
-
         $employeeArray = array();
         foreach ($items as $item) {
+
+          $firstName = $item->GivenName ?? '';
+          $lastName = $item->FamilyName ?? '';
+          
+          if($firstName != '' && $lastName != '') {
+            $fullName = $firstName . ' ' . $lastName;
+          } else {
+            $fullName = $item->DisplayName ?? '';
+          }
+
           $employee = array(
             "quickbooksId" => $item->Id,
-            "name" => $item->DisplayName,
+            "name" => $fullName,
             "payrollNumber" => $item->EmployeeNumber,
+            "firstName" => $firstName,
+            "lastName" => $lastName,
+            "middleName" => $item->MiddleName ?? '',
           );
           if ($item->EmployeeNumber) {
             if ($associateByName) {
