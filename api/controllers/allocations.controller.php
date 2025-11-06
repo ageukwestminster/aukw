@@ -2,8 +2,10 @@
 
 namespace Controllers;
 
-use Core\ErrorResponse as Error;
 use Exception;
+
+use Core\ErrorResponse as Error;
+use Core\QuickbooksConstants as QBO;
 use Models\Allocations;
 use Models\Allocation;
 
@@ -108,11 +110,16 @@ class AllocationsCtl{
       $model = Allocation::getInstance();
 
       foreach($data as $item){
+        // Account can be omitted in the input, so determine it here
+        $account = isset($item->account) ? 
+                      $item->account : 
+                      QBO::payrollAccountFromEmployeeStatus($item->isShopEmployee);
+
         $model
           ->setQuickbooksId($item->quickbooksId)
           ->setPayrollNumber($item->payrollNumber)
           ->setPercentage($item->percentage)
-          ->setAccount($item->account)
+          ->setAccount($account)
           ->setClass($item->class)
           ->setIsShopEmployee($item->isShopEmployee);
 
@@ -156,10 +163,15 @@ class AllocationsCtl{
           ->setClass($item->class)
           ->readOne();
         
+        // Account can be omitted in the input, so determine it here
+        $account = isset($item->account) ? 
+                      $item->account : 
+                      QBO::payrollAccountFromEmployeeStatus($item->isShopEmployee);
+
         $model
           ->setPayrollNumber($item->payrollNumber)
           ->setPercentage($item->percentage)
-          ->setAccount($item->account)
+          ->setAccount($account)
           ->setClass($item->class)
           ->setIsShopEmployee($item->isShopEmployee);
         if ($allocation !== null) {
@@ -187,4 +199,13 @@ class AllocationsCtl{
       Error::response("Error appending new Allocation(s).", $e);
     }
   } 
+
+  private static function accountNumberFromId(bool $isShopEmployee):int {
+    if ($isShopEmployee) {
+      return QBO::AUEW_ACCOUNT;
+    } else {
+      return QBO::EMPLOYER_NI_ACCOUNT;
+    }
+
+  }
 }

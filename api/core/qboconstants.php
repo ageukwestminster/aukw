@@ -46,6 +46,15 @@ class QuickbooksConstants {
 
   const LEGAL_AND_GENERAL_VENDOR = "357";
 
+  public static function payrollAccountFromEmployeeStatus(bool $isShopEmployee):int {
+    if ($isShopEmployee) {
+      return QuickbooksConstants::AUEW_ACCOUNT;
+    } else {
+      return QuickbooksConstants::EMPLOYER_NI_ACCOUNT;
+    }
+
+  }
+
   // Enterprises Constants
   const ENTERPRISES_REALMID = "9130350604308576";
   
