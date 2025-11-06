@@ -36,7 +36,7 @@
     </div>
 
     <div class="col mb-3">
-      <label for="lastName" class="form-label text-secondary">Surname* </label>
+      <label for="lastNameInput" class="form-label text-secondary">Surname* </label>
       <input
         id="lastNameInput"
         name="lastNameInput"
@@ -91,9 +91,7 @@
             </div>
             <div class="row">
               <div class="col-3 text-center text-secondary">%age</div>
-              <div class="col-9 text-left text-secondary">
-                <label for="inputProject-{{ i }}">Project</label>
-              </div>
+              <div class="col-9 text-left text-secondary">Project</div>
             </div>
           }
           <div class="row">
@@ -158,13 +156,14 @@
                   class="me-3 text-primary"
                   (click)="onAddAllocation()"
                   placement="bottom"
+                  container="body"
+                  
                 >
                   @if (loading) {
                     <span class="spinner-border spinner-border-sm mr-1"></span>
                   }
                   +
                 </button>
-                <div ngbTooltip="Add new allocation"></div>
               }
               @if (i == allocationsFormGroups.length - 1 && i != 0) {
                 <button
@@ -172,7 +171,8 @@
                   class="close text-danger"
                   (click)="onRemoveAllocation(i)"
                   placement="bottom"
-                  ngbTooltip="Remove allocation"
+                  container="body"
+                                
                 >
                   <span>&times;</span>
                 </button>

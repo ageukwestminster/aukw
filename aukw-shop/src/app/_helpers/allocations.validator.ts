@@ -17,7 +17,7 @@ export function ProjectAllocationsValidater(controlName: string): ValidatorFn {
   return (group: AbstractControl): ValidationErrors | null => {
 
     try{
-     console.log('Validating allocations form array for control:', controlName);
+      //console.log('Validating allocations form array for control:', controlName);
       const form = <FormGroup>group;
       const formArray = <FormArray>form.controls[controlName];
 

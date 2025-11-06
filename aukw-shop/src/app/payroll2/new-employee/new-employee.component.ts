@@ -8,10 +8,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import {
-  NgbActiveOffcanvas,
-  NgbTooltipModule,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveOffcanvas, NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '@environments/environment';
 import { Observable } from 'rxjs';
 import { FormMode, EmployeeName, ValueStringIdPair } from '@app/_models';
@@ -23,7 +20,7 @@ import {
 import { ProjectAllocationsValidater } from '@app/_helpers';
 
 @Component({
-  imports: [JsonPipe, NgClass, NgbTooltipModule, ReactiveFormsModule],
+  imports: [JsonPipe, NgClass, NgbTooltip, ReactiveFormsModule],
   templateUrl: './new-employee.component.html',
   styleUrl: './new-employee.component.css',
 })
