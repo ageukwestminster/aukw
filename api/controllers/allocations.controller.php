@@ -140,7 +140,8 @@ class AllocationsCtl{
   } 
   
     /**
-   * Add a single new allocation to the database.
+   * Add allocation(s) to the database. The provided allocation(s) are appended to existing ones.
+   * The POST data object must be an array.
    * 
    * @return void Output is echo'd directly to response
    * 
