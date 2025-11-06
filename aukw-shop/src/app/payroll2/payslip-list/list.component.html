@@ -2,23 +2,27 @@
   <thead>
     <tr>
       <th class="width-5">No.</th>
-      <th class="width-22 text-start">Name</th>
-      <th class="width-8">
+      <th class="width-25 text-start">Name</th>
+      <th class="width-10">
         <!-- Tooltip must be on element inside header, not header itself-->
         <!-- From https://stackoverflow.com/a/48324991/6941165 -->
         <div ngbTooltip="Total salary for the month">Gross</div>
       </th>
-      <th class="width-6 d-none d-sm-table-cell">
+      <th class="width-10 d-none d-sm-table-cell">
         <!-- Tooltip must be on element inside header, not header itself-->
         <div ngbTooltip="Employer National Insurance">E'er NI</div>
       </th>
-      <th class="width-6 d-none d-sm-table-cell">
+      <th class="width-10 d-none d-sm-table-cell">
         <!-- Tooltip must be on element inside header, not header itself-->
         <div ngbTooltip="Employee pension contribution">E'er Pen</div>
       </th>
-      <th class="width-6 text-center">In QBO?</th>
-      <th class="width-6 text-center">Allocations?</th>
-      <th class="width-6 text-center">Actions</th>
+      <th class="width-10 d-none d-sm-table-cell">
+        <!-- Tooltip must be on element inside header, not header itself-->
+        <div ngbTooltip="Total cost of employment" class="text-center">TCE</div>
+      </th>
+      <th class="width-10 text-center">Employee In QBO Payroll?</th>
+      <th class="width-10 text-center">Allocations Present?</th>
+      <th class="width-10 text-center">Actions</th>
     </tr>
   </thead>
   <tbody>
@@ -34,6 +38,9 @@
         </td>
         <td class="d-none d-sm-table-cell">
           {{ +p.employerPension | number: "1.2-2" }}
+        </td>
+        <td class="d-none d-sm-table-cell">
+          {{ p.totalPay + p.employerNI + p.employerPension | number: "1.2-2" }}
         </td>
         <td class="text-center">
           <div class="col">
@@ -76,11 +83,14 @@
           </div>
         </td>
         <td>
-        @if (p.employeeMissingFromQBO || p.allocationsMissingFromQBO) {
-          <button (click)="addEmployee(p)" class="btn btn-sm btn-success me-1">
-            <span>Add Employee</span>
-          </button>
-        }
+          @if (p.employeeMissingFromQBO || p.allocationsMissingFromQBO) {
+            <button
+              (click)="addEmployee(p)"
+              class="btn btn-sm btn-success me-1"
+            >
+              <span>Add Employee</span>
+            </button>
+          }
         </td>
       </tr>
     }

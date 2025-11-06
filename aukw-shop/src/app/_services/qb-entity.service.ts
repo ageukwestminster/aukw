@@ -43,7 +43,7 @@ export class QBEntityService {
     );
   }
 
-    /**
+  /**
    * Get a list of the names of all classes
    * @param realmID The company ID for the QBO company.
    * @returns Array of class ids and names. The ids are strings.

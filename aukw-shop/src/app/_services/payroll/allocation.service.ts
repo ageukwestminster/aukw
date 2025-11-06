@@ -18,7 +18,7 @@ export class AllocationsService {
   private authenticationService = inject(AuthenticationService);
 
   /**
-   * Add allocation(s) to the database. 
+   * Add allocation(s) to the database.
    * The provided allocation(s) are appended to existing ones.
    * @returns Message of success or failure
    */
@@ -33,6 +33,5 @@ export class AllocationsService {
         );
       }),
     );
-  
   }
 }

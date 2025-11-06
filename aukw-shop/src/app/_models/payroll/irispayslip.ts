@@ -63,7 +63,7 @@ export class IrisPayslip {
   qbFlags: QBTransactionFlags;
   /** 'True' if the employee is missing from QuickBooks */
   employeeMissingFromQBO: boolean = false;
-    /** 'True' if the project allocations for this employee are missing from QuickBooks */
+  /** 'True' if the project allocations for this employee are missing from QuickBooks */
   allocationsMissingFromQBO: boolean = false;
 
   add(obj: IrisPayslip): IrisPayslip {

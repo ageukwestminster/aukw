@@ -15,8 +15,7 @@ import {
  */
 export function ProjectAllocationsValidater(controlName: string): ValidatorFn {
   return (group: AbstractControl): ValidationErrors | null => {
-
-    try{
+    try {
       //console.log('Validating allocations form array for control:', controlName);
       const form = <FormGroup>group;
       const formArray = <FormArray>form.controls[controlName];
@@ -40,25 +39,23 @@ export function ProjectAllocationsValidater(controlName: string): ValidatorFn {
         }
 
         const projectName = control.get('project')?.value ?? '';
-        if (projectNames.indexOf(projectName) === -1) {
-          projectNames.push(projectName);
-        } else {
-          // Duplicate project name found
-          const projectControl = control.get('project');
-          if (projectControl) {
-            projectControl.setErrors({ duplicateProject: true });
+        if (projectName != '') {
+          if (projectNames.indexOf(projectName) === -1) {
+            projectNames.push(projectName);
+          } else {
+            // Duplicate project name found
+            const projectControl = control.get('project');
+            if (projectControl) {
+              projectControl.setErrors({ duplicateProject: true });
+            }
           }
         }
       }
-    
 
       return null;
-
-
     } catch (error) {
       console.error('Error in PercentagesMustSumToPar validator:', error);
       return null; // Don't stop execution flow due to validator error
     }
-    
   };
 }

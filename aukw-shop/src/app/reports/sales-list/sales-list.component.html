@@ -47,9 +47,7 @@
                 @for (item of data.sales; track item; let i = $index) {
                   <tr (click)="onRowSelected(data.takingsids[i])">
                     <th>
-                      
-                        <span class="text-dark">{{ data.dates[i] }}</span>
-                      
+                      <span class="text-dark">{{ data.dates[i] }}</span>
                     </th>
                     <td class="text-center">{{ item[1] | number: "1.2-2" }}</td>
                   </tr>

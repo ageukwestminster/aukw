@@ -7,6 +7,9 @@ import {
   Validators,
 } from '@angular/forms';
 import {
+  catchError,
+  concatMap,
+  from,
   Observable,
   of,
   map,
@@ -56,6 +59,7 @@ export class PayrollComponent implements OnInit {
   payrollDate: string = '';
   total: IrisPayslip = new IrisPayslip();
   payslipsWithMissingEmployeesOrAllocations: IrisPayslip[] = [];
+  loading: boolean = false;
 
   private employerID: string = environment.staffologyEmployerID;
   private realmID: string = environment.qboCharityRealmID;
@@ -84,11 +88,13 @@ export class PayrollComponent implements OnInit {
       month: [null, Validators.required],
       sortBy: [null],
       sortDescending: [false],
-    }); 
+    });
 
     this.form.controls['taxYear'].valueChanges.subscribe((value) => {
       this.payruns$ = this.payRunService.getAll(this.employerID, value);
     });
+
+    this.loading = true;
 
     /**
      * This pattern is used to subscribe to an rxjs Subject and automatically
@@ -112,9 +118,10 @@ export class PayrollComponent implements OnInit {
       .pipe(takeUntil(destroyed))
       .subscribe((allocations) => {
         this.allocations = allocations;
-          // DEBUG VALUES
-          this.f['month'].setValue(7);        
-          this.f['taxYear'].setValue('Year2025'); 
+        this.loading = false;
+        // DEBUG VALUES
+        this.f['month'].setValue(7);
+        this.f['taxYear'].setValue('Year2025');
       });
 
     // Load employee names and allocations
@@ -142,6 +149,7 @@ export class PayrollComponent implements OnInit {
 
   onSubmit() {
     if (this.form.valid) {
+      this.loading = true;
       this.grossToNetService
         .getAll(
           this.employerID,
@@ -165,12 +173,12 @@ export class PayrollComponent implements OnInit {
 
             // Check for missing employees and missing allocations
             var employeeName = this.employees.find(
-                (emp) => emp.payrollNumber === payslip.payrollNumber,
-              );
-            if(employeeName){
+              (emp) => emp.payrollNumber === payslip.payrollNumber,
+            );
+            if (employeeName) {
               payslip.employeeMissingFromQBO = false;
               payslip.quickbooksId = employeeName!.quickbooksId;
-            } else {              
+            } else {
               payslip.employeeMissingFromQBO = true;
             }
             payslip.allocationsMissingFromQBO = !this.allocations.find(
@@ -214,8 +222,9 @@ export class PayrollComponent implements OnInit {
             });
           },
           complete: () => {
+            this.loading = false;
             // DEBUG ONLY: send payslips to console
-            this.consoleService.sendPayslipsToConsole(this.payslips);
+            //this.consoleService.sendPayslipsToConsole(this.payslips);
           },
         });
     }
@@ -225,7 +234,7 @@ export class PayrollComponent implements OnInit {
     const offcanvasRef = this.offcanvasService.open(NewEmployeeComponent);
 
     // Pass known values to offcanvas component
-		offcanvasRef.componentInstance.payrollNumber = payslip.payrollNumber;
+    offcanvasRef.componentInstance.payrollNumber = payslip.payrollNumber;
 
     // Pass employee name if not missing
     if (!payslip.employeeMissingFromQBO) {
@@ -233,5 +242,18 @@ export class PayrollComponent implements OnInit {
         (emp) => emp.payrollNumber === payslip.payrollNumber,
       );
     }
+
+    from(offcanvasRef.result).pipe(
+      tap((allocations: EmployeeAllocation[]) => {
+        console.log(allocations);
+        this.allocations.concat(allocations);
+        this.onSubmit();
+        return of();
+      }),
+      catchError((err) => {
+        console.log(err);
+        return of();
+      }),
+    );
   }
 }

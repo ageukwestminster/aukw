@@ -1,12 +1,12 @@
 /**
- * information about a single Pay Run, including the relevant TaxYear, TaxMonth 
- * 
+ * information about a single Pay Run, including the relevant TaxYear, TaxMonth
+ *
  * There is a PayRun for each period in which people are paid.
  */
 export class PayRun {
   /** Display name of Pay Run */
   name: string;
-  /** The number of the month of the Pay Run. The range is 1-12 but it follows the fiscal year 
+  /** The number of the month of the Pay Run. The range is 1-12 but it follows the fiscal year
    * so April is 1, May is 2 ..... March is 12 */
   taxMonth: number;
   /** The tax year associated with the Pay Run. For example 'Year2024', 'Year2025' etc. */
@@ -48,7 +48,8 @@ export class PayRun {
     this.totalCost = (obj && obj.totalCost) || null;
     this.gross = (obj && obj.gross) || null;
     this.employerNi = (obj && obj.employerNi) || null;
-    this.employerPensionContribution = (obj && obj.employerPensionContribution) || null;
+    this.employerPensionContribution =
+      (obj && obj.employerPensionContribution) || null;
     this.employeeCount = (obj && obj.employeeCount) || null;
     this.version = (obj && obj.version) || null;
     this.isLatestVersion = (obj && obj.isLatestVersion) || false;

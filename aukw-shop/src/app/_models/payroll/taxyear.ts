@@ -1,5 +1,5 @@
 /**
- * An object that identifies a tax year. 
+ * An object that identifies a tax year.
  * The tax year is the fiscal year that runs from 6th April to 5th April the following year.
  */
 export class TaxYear {

@@ -15,7 +15,7 @@ import { Subject, takeUntil, tap } from 'rxjs';
 /**
  * An abstract base component for taking employee salary and tax data in the form of
  * IrisPayslip objects and converting them to QBO transactions.
- * 
+ *
  * It is a generic class that is constrained to those types that implement the PayrollIdentifier interface.
  */
 @Component({
@@ -23,9 +23,8 @@ import { Subject, takeUntil, tap } from 'rxjs';
   imports: [],
   template: '',
 })
-export abstract class QBOPayrollTxnBaseComponent<
-  T extends PayrollIdentifier,
-> implements OnInit
+export abstract class QBOPayrollTxnBaseComponent<T extends PayrollIdentifier>
+  implements OnInit
 {
   /**
    * An array of objects that will be used to create a tranaction
@@ -70,7 +69,7 @@ export abstract class QBOPayrollTxnBaseComponent<
         this.recalculateTransactions();
       });
   }
-/**
+  /**
    * Convert the array of IrisPayslips stored in payslips[] and the array of
    * project allocations stored in allocations[] to an array of objects in lines[].
    * Later, the line[] object will be used to create QBO transactions.
@@ -116,13 +115,13 @@ export abstract class QBOPayrollTxnBaseComponent<
     );
   }
 
-  /** 
+  /**
    * Abstract method to get the QBFlags property from an IrisPayslip.
    * This method must be implemented in derived classes.
    * @returns A function that accepts an IrisPayslip and returns a boolean.
    */
   abstract getQBFlagsProperty(): (payslip: IrisPayslip) => boolean;
-  
+
   /**
    * Abstract method to set the QBFlags property on an IrisPayslip.
    * This method must be implemented in derived classes.
@@ -132,7 +131,7 @@ export abstract class QBOPayrollTxnBaseComponent<
 
   /** Loop through all payslips contained in the module level payslips variable and set
    * the QBFlag property to 'true'. Then return the updated array.
-   * 
+   *
    * @return An array of IrisPayslip objects with the QBFlag property set to 'true'.
    */
   setQBOFlagsToTrue(): IrisPayslip[] {

@@ -9,7 +9,5 @@ import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
   styleUrl: './frontpage.component.css',
 })
 export class PayrollFrontPageComponent {
-
-  constructor() {  }
-
+  constructor() {}
 }

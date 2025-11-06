@@ -71,9 +71,9 @@
             type="button"
             class="btn btn-success"
             type="submit"
-            [disabled]="!allocations.length"
+            [disabled]="!allocations.length || loading"
           >
-            GO
+            Download from Staffology
           </button>
         </div>
         <div class="col-sm align-self-end mb-1">Help</div>
@@ -84,21 +84,28 @@
     </form>
   </div>
 </div>
-@if (payslipsWithMissingEmployeesOrAllocations && payslipsWithMissingEmployeesOrAllocations.length > 0) {
+@if (
+  payslipsWithMissingEmployeesOrAllocations &&
+  payslipsWithMissingEmployeesOrAllocations.length > 0
+) {
   <div class="card mt-3">
     <div class="card-body">
       <h5 class="card-title">Employees Missing From QuickBooks</h5>
-      <payslip-list [payslips]="payslipsWithMissingEmployeesOrAllocations"
-        (employeeToAdd)="onEmployeeToAdd($event)">
+      <payslip-list
+        [payslips]="payslipsWithMissingEmployeesOrAllocations"
+        (employeeToAdd)="onEmployeeToAdd($event)"
+      >
       </payslip-list>
     </div>
   </div>
 }
-  <div class="card mt-3">
-    <div class="card-body">
-      <h5 class="card-title">Payslips{{ ' for Month '+f['month'].value }}</h5>
-      <payslip-list [payslips]="payslips"
-        (employeeToAdd)="onEmployeeToAdd($event)">
-      </payslip-list>
-    </div>
+<div class="card mt-3">
+  <div class="card-body">
+    <h5 class="card-title">Payslips{{ " for Month " + f["month"].value }}</h5>
+    <payslip-list
+      [payslips]="payslips"
+      (employeeToAdd)="onEmployeeToAdd($event)"
+    >
+    </payslip-list>
   </div>
+</div>

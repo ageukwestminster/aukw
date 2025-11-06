@@ -1,4 +1,4 @@
-﻿export * from './allocations.validator'
+﻿export * from './allocations.validator';
 export * from './app.initializer';
 export * from './array2element.operator';
 export * from './date.adapter';

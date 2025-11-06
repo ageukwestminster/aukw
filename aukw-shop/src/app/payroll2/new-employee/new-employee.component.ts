@@ -11,7 +11,12 @@ import {
 import { NgbActiveOffcanvas, NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '@environments/environment';
 import { Observable } from 'rxjs';
-import { FormMode, EmployeeName, ValueStringIdPair } from '@app/_models';
+import {
+  FormMode,
+  EmployeeAllocation,
+  EmployeeName,
+  ValueStringIdPair,
+} from '@app/_models';
 import {
   AllocationsService,
   QBEmployeeService,
@@ -117,8 +122,8 @@ export class NewEmployeeComponent implements OnInit {
   onAddAllocation(percentage: number | '' = '', project: string = '') {
     this.allocs.push(
       this.formBuilder.group({
-        percentage: [percentage, [Validators.required]],
-        project: [project, [Validators.required]],
+        percentage: [percentage],
+        project: [project],
       }),
     );
   }
@@ -150,26 +155,29 @@ export class NewEmployeeComponent implements OnInit {
   private onEditEmployee() {
     console.log('Edit employee allocations');
 
-    var allocationsToAppend = this.allocationsFormGroups.map((allocGroup) => {
-      return {
-        quickbooksId: this.f['quickbooksId'].value,
-        payrollNumber: this.f['payrollNumber'].value,
-        isShopEmployee: this.f['isShopEmployee'].value,
-        percentage: allocGroup.get('percentage')?.value,
-        class: allocGroup.get('project')?.value,
-      };
-    });
+    var allocationsToAppend = this.allocationsFormGroups
+      .map((allocGroup) => {
+        return new EmployeeAllocation({
+          quickbooksId: this.f['quickbooksId'].value,
+          payrollNumber: this.f['payrollNumber'].value,
+          isShopEmployee: this.f['isShopEmployee'].value,
+          percentage: allocGroup.get('percentage')?.value,
+          class: allocGroup.get('project')?.value,
+        });
+      })
+      .filter((allocation) => allocation.class && allocation.class != '');
 
     console.log('Allocations to append:', allocationsToAppend);
-
-    this.allocationsService.append(allocationsToAppend).subscribe({
-      next: (response) => {
-        console.log('Allocations appended successfully:', response);
-        this.activeOffcanvas.close('Employee Allocations Saved');
-      },
-      error: (error) => {
-        console.error('Error appending allocations:', error);
-      },
-    });
+    if (allocationsToAppend && allocationsToAppend.length) {
+      this.allocationsService.append(allocationsToAppend).subscribe({
+        next: (response) => {
+          console.log('Allocations appended successfully:', response);
+          this.activeOffcanvas.close(allocationsToAppend);
+        },
+        error: (error) => {
+          console.error('Error appending allocations:', error);
+        },
+      });
+    }
   }
 }
