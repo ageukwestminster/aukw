@@ -87,9 +87,7 @@ export class QBPayrollService {
    */
   getAllocations(): Observable<EmployeeAllocation[]> {
     return this.http
-      .get<
-        EmployeeAllocation[]
-      >(`${baseUrl}/${environment.qboCharityRealmID}/employee/allocations`)
+      .get<EmployeeAllocation[]>(`${environment.apiUrl}/allocations`)
       .pipe(tap((result) => this.allocationsSubject.next(result)));
   }
 

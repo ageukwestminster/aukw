@@ -10,6 +10,18 @@ export class EmployeeName {
    * Full name of the employee
    */
   name: string;
+    /**
+   * Given name of the employee
+   */
+  firstName: string;
+    /**
+   * Family name of the employee
+   */
+  lastName: string;
+    /**
+   * Middle name of the employee
+   */
+  middleName: string;
   /**
    * The number of the employee on the Iris printouts
    */
@@ -19,5 +31,8 @@ export class EmployeeName {
     this.quickbooksId = (obj && obj.quickbooksId) || null;
     this.name = (obj && obj.name) || null;
     this.payrollNumber = (obj && obj.payrollNumber) || null;
+    this.firstName = (obj && obj.name) || null;
+    this.lastName = (obj && obj.name) || null;
+    this.middleName = (obj && obj.name) || null;
   }
 }

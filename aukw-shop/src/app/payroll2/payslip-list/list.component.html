@@ -22,7 +22,7 @@
     </tr>
   </thead>
   <tbody>
-    @for (p of payslips; track p) {
+    @for (p of payslips; track p.payrollNumber) {
       <tr>
         <td>
           {{ p.payrollNumber }}
@@ -76,9 +76,11 @@
           </div>
         </td>
         <td>
+        @if (p.employeeMissingFromQBO || p.allocationsMissingFromQBO) {
           <button (click)="addEmployee(p)" class="btn btn-sm btn-success me-1">
             <span>Add Employee</span>
           </button>
+        }
         </td>
       </tr>
     }

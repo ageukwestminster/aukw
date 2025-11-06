@@ -13,40 +13,44 @@ import {
  * @param controlName Name of the FormArray to check
  * @returns
  */
-export function PercentagesMustSumToPar(controlName: string): ValidatorFn {
+export function ProjectAllocationsValidater(controlName: string): ValidatorFn {
   return (group: AbstractControl): ValidationErrors | null => {
 
     try{
-
+     console.log('Validating allocations form array for control:', controlName);
       const form = <FormGroup>group;
       const formArray = <FormArray>form.controls[controlName];
 
       var percentage: number = 0;
       var percentageControl: AbstractControl | null = null;
+      var projectNames: string[] = [];
 
       // Loop through all allocations and sum percentages
       for (let i = 0; i < formArray.length; i++) {
         const control = formArray.at(i);
         percentageControl = control.get('percentage');
         percentage += Number(percentageControl?.value) || 0;
-      }
 
-      // If not 100%, set error on the last of the percentage controls
-      // It will be annoying if the errors appear on every control
-      if (percentage !== 100) {
-          if (percentageControl) {
-            percentageControl.setErrors({ percentagesMustSumToPar: true });
-          }
-      } else {
-        // Clear all errors on all controls, not just the last
-        for (let i = 0; i < formArray.length; i++) {
-          const control = formArray.at(i);
-          const percentageControl = control.get('percentage');
-          if (percentageControl) {
-            percentageControl.setErrors(null);
+        // If not 100% by the time we get to the last control then set error
+        if (percentage !== 100 && i === formArray.length - 1) {
+          percentageControl?.setErrors({ percentagesMustSumToPar: true });
+        } else {
+          // Clear all errors
+          percentageControl?.setErrors(null);
+        }
+
+        const projectName = control.get('project')?.value ?? '';
+        if (projectNames.indexOf(projectName) === -1) {
+          projectNames.push(projectName);
+        } else {
+          // Duplicate project name found
+          const projectControl = control.get('project');
+          if (projectControl) {
+            projectControl.setErrors({ duplicateProject: true });
           }
         }
       }
+    
 
       return null;
 

@@ -16,6 +16,7 @@ import {
   tap,
   toArray,
 } from 'rxjs';
+import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '@environments/environment';
 import {
   GrossToNetService,
@@ -37,6 +38,7 @@ import {
 } from '@app/_models';
 import { fromArrayToElement } from '@app/_helpers';
 import { PayslipListComponent } from './payslip-list/list.component';
+import { NewEmployeeComponent } from './new-employee/new-employee.component';
 
 @Component({
   selector: 'app-payroll',
@@ -44,7 +46,7 @@ import { PayslipListComponent } from './payslip-list/list.component';
   templateUrl: './payroll.component.html',
   styleUrl: './payroll.component.css',
 })
-export class PayrollComponent {
+export class PayrollComponent implements OnInit {
   form!: FormGroup;
   payruns$: Observable<PayRun[]>;
   taxyears$: Observable<TaxYear[]>;
@@ -69,6 +71,7 @@ export class PayrollComponent {
   /** Used to download list of current employee names */
   private qbEmployeeService = inject(QBEmployeeService);
   private destroyRef = inject(DestroyRef);
+  private offcanvasService = inject(NgbOffcanvas);
 
   constructor() {
     this.payruns$ = of([]);
@@ -81,7 +84,7 @@ export class PayrollComponent {
       month: [null, Validators.required],
       sortBy: [null],
       sortDescending: [false],
-    });
+    }); 
 
     this.form.controls['taxYear'].valueChanges.subscribe((value) => {
       this.payruns$ = this.payRunService.getAll(this.employerID, value);
@@ -109,6 +112,9 @@ export class PayrollComponent {
       .pipe(takeUntil(destroyed))
       .subscribe((allocations) => {
         this.allocations = allocations;
+          // DEBUG VALUES
+          this.f['month'].setValue(7);        
+          this.f['taxYear'].setValue('Year2025'); 
       });
 
     // Load employee names and allocations
@@ -158,9 +164,15 @@ export class PayrollComponent {
             this.total = this.total.add(payslip);
 
             // Check for missing employees and missing allocations
-            payslip.employeeMissingFromQBO = !this.employees.find(
-              (emp) => emp.payrollNumber === payslip.payrollNumber,
-            );
+            var employeeName = this.employees.find(
+                (emp) => emp.payrollNumber === payslip.payrollNumber,
+              );
+            if(employeeName){
+              payslip.employeeMissingFromQBO = false;
+              payslip.quickbooksId = employeeName!.quickbooksId;
+            } else {              
+              payslip.employeeMissingFromQBO = true;
+            }
             payslip.allocationsMissingFromQBO = !this.allocations.find(
               // Note use of '==' instead of '===' because of type difference (string vs number)
               (alloc) => alloc.payrollNumber == payslip.payrollNumber,
@@ -210,9 +222,16 @@ export class PayrollComponent {
   }
 
   onEmployeeToAdd(payslip: IrisPayslip) {
-    
-    console.log('Add employee: ', payslip);
+    const offcanvasRef = this.offcanvasService.open(NewEmployeeComponent);
 
-    // Open new modal to add employee
+    // Pass known values to offcanvas component
+		offcanvasRef.componentInstance.payrollNumber = payslip.payrollNumber;
+
+    // Pass employee name if not missing
+    if (!payslip.employeeMissingFromQBO) {
+      offcanvasRef.componentInstance.employeeName = this.employees.find(
+        (emp) => emp.payrollNumber === payslip.payrollNumber,
+      );
+    }
   }
 }

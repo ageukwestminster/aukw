@@ -94,3 +94,11 @@
     </div>
   </div>
 }
+  <div class="card mt-3">
+    <div class="card-body">
+      <h5 class="card-title">Payslips{{ ' for Month '+f['month'].value }}</h5>
+      <payslip-list [payslips]="payslips"
+        (employeeToAdd)="onEmployeeToAdd($event)">
+      </payslip-list>
+    </div>
+  </div>

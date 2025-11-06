@@ -106,3 +106,15 @@ export class ValueIdType extends ValueIdPair {
     this.type = (obj && obj.type) || null;
   }
 }
+export class ValueStringIdPair {
+  value: string;
+  id: string;
+  constructor(obj?: any) {
+    this.value = (obj && obj.value) || null;
+    this.id = (obj && obj.id) || null;
+  }
+
+  public toString(): string {
+    return this.value;
+  }
+}

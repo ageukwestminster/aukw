@@ -1,0 +1,218 @@
+<div class="offcanvas-header">
+  <h5 class="offcanvas-title">Add New Employee</h5>
+  <button
+    type="button"
+    class="btn-close text-reset"
+    aria-label="Close"
+    (click)="activeOffcanvas.dismiss('Cross click')"
+  ></button>
+</div>
+<div class="offcanvas-body">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="col mb-2">
+      <label for="firstnameInput" class="form-label text-secondary"
+        >First Name*
+      </label>
+      <input
+        id="firstnameInput"
+        name="firstnameInput"
+        type="text"
+        class="form-control"
+        formControlName="firstName"
+        placement="bottom"
+        ngbTooltip="The employee's first or given name."
+        container="body"
+        [ngClass]="{
+          'is-invalid': submitted && f['firstName'].errors,
+        }"
+      />
+      @if (submitted && f["firstName"].errors) {
+        <div class="invalid-feedback" id="firstNameError">
+          @if (f["firstName"].errors["required"]) {
+            <div>First Name is required.</div>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="col mb-3">
+      <label for="lastName" class="form-label text-secondary">Surname* </label>
+      <input
+        id="lastNameInput"
+        name="lastNameInput"
+        type="text"
+        class="form-control"
+        formControlName="lastName"
+        placement="bottom"
+        ngbTooltip="The employee's surname or family name."
+        container="body"
+        [ngClass]="{
+          'is-invalid': submitted && f['lastName'].errors,
+        }"
+      />
+      @if (submitted && f["lastName"].errors) {
+        <div class="invalid-feedback" id="lastNameError">
+          @if (f["lastName"].errors["required"]) {
+            <div>Surame is required.</div>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="row">
+      <div class="col-1"></div>
+      <div class="form-check col mb-4">
+        <input
+          type="checkbox"
+          formControlName="isShopEmployee"
+          class="form-check-input checkbox-outline"
+          placement="bottom"
+          ngbTooltip="The employee works in the charity shop."
+          container="body"
+          id="isShopEmployeeCheckbox"
+        />
+        <label class="form-check-label ms-1" for="isShopEmployeeCheckbox">
+          Charity Shop Employee
+        </label>
+      </div>
+    </div>
+
+    <!-- Allocations array -->
+    @for (
+      allocation of allocationsFormGroups;
+      track allocation;
+      let i = $index
+    ) {
+      <div class="row">
+        <div [formGroup]="allocation" class="form-row">
+          @if (i == 0) {
+            <div class="col-sm-auto">
+              <strong>Allocations</strong>
+            </div>
+            <div class="row">
+              <div class="col-3 text-center text-secondary">%age</div>
+              <div class="col-9 text-left text-secondary">
+                <label for="inputProject-{{ i }}">Project</label>
+              </div>
+            </div>
+          }
+          <div class="row">
+            <div class="col-4">
+              <input
+                type="number"
+                formControlName="percentage"
+                class="form-control text-end box-outline"
+                id="inputPercentage-{{ i }}"
+                [ngClass]="{
+                  'is-invalid':
+                    submitted && allocation.controls['percentage'].errors,
+                }"
+              />
+              @if (submitted && allocation.controls["percentage"].errors) {
+                <div class="invalid-feedback">
+                  @if (
+                    allocation.controls["percentage"].errors[
+                      "percentagesMustSumToPar"
+                    ]
+                  ) {
+                    <div>Must sum to 100%</div>
+                  }
+                </div>
+              }
+            </div>
+            <div class="col-8">
+              <select
+                formControlName="project"
+                id="inputProject-{{ i }}"
+                class="form-control box-outline"
+                [ngClass]="{
+                  'is-invalid':
+                    submitted && allocation.controls['project'].errors,
+                }"
+              >
+                @for (qbclass of classes; track qbclass) {
+                  <option [ngValue]="qbclass.id">
+                    {{ qbclass.value }}
+                  </option>
+                }
+              </select>
+              @if (submitted && allocation.controls["project"].errors) {
+                <div class="invalid-feedback">
+                  @if (allocation.controls["project"].errors["required"]) {
+                    <div>Select project name</div>
+                  }
+                  @if (
+                    allocation.controls["project"].errors["duplicateProject"]
+                  ) {
+                    <div>Duplicate project name</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="col mt-1">
+              @if (i == allocationsFormGroups.length - 1) {
+                <button
+                  type="button"
+                  [disabled]="loading"
+                  class="me-3 text-primary"
+                  (click)="onAddAllocation()"
+                  placement="bottom"
+                >
+                  @if (loading) {
+                    <span class="spinner-border spinner-border-sm mr-1"></span>
+                  }
+                  +
+                </button>
+                <div ngbTooltip="Add new allocation"></div>
+              }
+              @if (i == allocationsFormGroups.length - 1 && i != 0) {
+                <button
+                  type="button"
+                  class="close text-danger"
+                  (click)="onRemoveAllocation(i)"
+                  placement="bottom"
+                  ngbTooltip="Remove allocation"
+                >
+                  <span>&times;</span>
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+    <!-- end of Allocations array -->
+
+    <!-- Buttons -->
+    <div class="d-flex justify-content-between">
+      <div class="col-auto my-5">
+        <button type="submit" [disabled]="loading" class="btn btn-primary">
+          @if (loading) {
+            <span class="spinner-border spinner-border-sm me-1"></span>
+          }
+          Save New Employee
+        </button>
+
+        <!-- All button in a form are treated as 'submit' buttons' unless you specify type='button'-->
+        <!-- See https://stackoverflow.com/a/55685230/6941165 -->
+        <button
+          type="button"
+          (click)="activeOffcanvas.close('Close click')"
+          class="btn btn-outline-dark ms-5"
+        >
+          Close &times;
+        </button>
+      </div>
+    </div>
+
+    @if (true) {
+      <pre>
+        <!--Debug Information for Testing -->
+        <div>Form Value: {{ form.value | json }}</div>
+        <p>Form Status: {{ form.status | json }}</p>
+        <p>Submitted: {{ submitted }}</p>
+      </pre>
+    }
+  </form>
+</div>

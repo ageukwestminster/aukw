@@ -26,3 +26,4 @@ export * from './takings.service';
 export * from './toast.service';
 export * from './transaction-match.service';
 export * from './user.service';
+export * from './payroll';
