@@ -36,6 +36,14 @@ class QBEntityCtl{
   public static function read_all_accounts(string $realmid){  
     QBEntityCtl::read_all_impl($realmid, 'account', 'FullyQualifiedName');
   }
+    /**
+   * List name and id of all the QB Classes
+   * @param string $realmid The company ID for the QBO company.
+   * @return void Output is echo'd directly to response 
+   */
+  public static function read_all_classes(string $realmid){  
+    QBEntityCtl::read_all_impl($realmid, 'class', 'FullyQualifiedName');
+  }
 
     /**
    * List name and id of all the QB Entities of the given type

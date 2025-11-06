@@ -220,6 +220,7 @@ $router->mount('/qb', function () use ($router) {
     $router->get('/(\d+)/entity/vendor', 'QuickBooks\QBEntityCtl@read_all_vendors');
     $router->get('/(\d+)/entity/customer', 'QuickBooks\QBEntityCtl@read_all_customers');
     $router->get('/(\d+)/entity/account', 'QuickBooks\QBEntityCtl@read_all_accounts');
+    $router->get('/(\d+)/entity/class', 'QuickBooks\QBEntityCtl@read_all_classes');
 
     // interco transaction matching
     $router->post('/(\d+)/transaction-match', 'QuickBooks\QBEntityCtl@interco_trade_from_rules');
