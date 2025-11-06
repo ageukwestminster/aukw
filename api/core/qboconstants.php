@@ -46,6 +46,11 @@ class QuickbooksConstants {
 
   const LEGAL_AND_GENERAL_VENDOR = "357";
 
+  /**
+   * Determine the correct NI account by considering whether the employee works for the shop or not
+   * @param bool $isShopEmployee 'true' if the employee works for the Shop, not the Charity
+   * @return int The QuickBooks ID of an account
+   */
   public static function payrollAccountFromEmployeeStatus(bool $isShopEmployee):int {
     if ($isShopEmployee) {
       return QuickbooksConstants::AUEW_ACCOUNT;
