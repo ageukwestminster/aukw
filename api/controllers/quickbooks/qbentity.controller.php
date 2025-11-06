@@ -81,7 +81,12 @@ class QBEntityCtl{
 
       QBEntityCtl::sortByLowerCaseElement($entities, 'value');
 
-      echo json_encode($entities, JSON_NUMERIC_CHECK);
+      if ($type == 'class') {
+        // The class ID is a very long number and can get rounded if JSON_NUMERIC_CHECK is used
+        echo json_encode($entities);
+      } else {
+        echo json_encode($entities, JSON_NUMERIC_CHECK);
+      }
 
     } catch (\Exception $e) {
       Error::response("Unable to obtain list of entities from QuickBooks.", $e);
