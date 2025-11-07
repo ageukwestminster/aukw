@@ -143,6 +143,9 @@
                   ) {
                     <div>Duplicate project name</div>
                   }
+                  @if (allocation.controls["project"].errors["required"]) {
+                    <div>Project can't be blank</div>
+                  }
                 </div>
               }
             </div>
@@ -208,7 +211,6 @@
         <!--Debug Information for Testing -->
         <div>Form Value: {{ form.value | json }}</div>
         <p>Form Status: {{ form.status | json }}</p>
-        <p>Submitted: {{ submitted }}</p>
       </pre>
     }
   </form>

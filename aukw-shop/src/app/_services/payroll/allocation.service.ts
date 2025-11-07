@@ -28,8 +28,8 @@ export class AllocationsService {
         this.auditLogService.log(
           this.authenticationService.userValue,
           'INSERT',
-          `Allocations have been appended to.`,
-          'allocation',
+          `Appended project allocations to table.`,
+          'Allocation',
         );
       }),
     );

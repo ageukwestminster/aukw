@@ -10,12 +10,13 @@ import {
 } from '@angular/forms';
 import { NgbActiveOffcanvas, NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '@environments/environment';
-import { Observable } from 'rxjs';
+import { Observable, of, switchMap } from 'rxjs';
 import {
   FormMode,
   EmployeeAllocation,
   EmployeeName,
   ValueStringIdPair,
+  ApiMessage,
 } from '@app/_models';
 import {
   AllocationsService,
@@ -36,8 +37,10 @@ export class NewEmployeeComponent implements OnInit {
   loading: boolean = false;
   submitted: boolean = false;
   formMode!: FormMode;
+  newEmployee: EmployeeName | null = null;
 
   private realmID: string = environment.qboCharityRealmID;
+  private enterprisesRealmID: string = environment.qboEnterprisesRealmID;
 
   activeOffcanvas = inject(NgbActiveOffcanvas);
   private formBuilder = inject(FormBuilder);
@@ -56,7 +59,6 @@ export class NewEmployeeComponent implements OnInit {
     const invalidClasses = [
       'AFL',
       'EOC',
-      '01 Unrestricted',
       '02 Designated Funds',
       '03 Restricted',
       '04 Administration',
@@ -77,7 +79,7 @@ export class NewEmployeeComponent implements OnInit {
     this.form = this.formBuilder.group(
       {
         allocations: new FormArray([]), // Populated later
-        quickbooksId: [null, Validators.required],
+        quickbooksId: [null],
         payrollNumber: [null, Validators.required],
         firstName: [null, Validators.required],
         lastName: [null, Validators.required],
@@ -137,47 +139,91 @@ export class NewEmployeeComponent implements OnInit {
   onSubmit() {
     this.submitted = true;
 
-    switch (this.formMode) {
-      case FormMode.Add:
-        this.onAddEmployee();
-        break;
-      case FormMode.Edit:
-        this.onEditEmployee();
-        break;
-    }
+    if (this.form.valid) {
+      var obs$: Observable<ApiMessage> | null = null;
 
-    //this.activeOffcanvas.close('Employee Saved')
-  }
+      switch (this.formMode) {
+        case FormMode.Add:
+          obs$ = this.onAddEmployee();
+          break;
+        case FormMode.Edit:
+          obs$ = this.appendAllocationsToExistingEmployee();
+          break;
+      }
 
-  private onAddEmployee() {}
-
-  /** Just append allocations */
-  private onEditEmployee() {
-    console.log('Edit employee allocations');
-
-    var allocationsToAppend = this.allocationsFormGroups
-      .map((allocGroup) => {
-        return new EmployeeAllocation({
-          quickbooksId: this.f['quickbooksId'].value,
-          payrollNumber: this.f['payrollNumber'].value,
-          isShopEmployee: this.f['isShopEmployee'].value,
-          percentage: allocGroup.get('percentage')?.value,
-          class: allocGroup.get('project')?.value,
-        });
-      })
-      .filter((allocation) => allocation.class && allocation.class != '');
-
-    console.log('Allocations to append:', allocationsToAppend);
-    if (allocationsToAppend && allocationsToAppend.length) {
-      this.allocationsService.append(allocationsToAppend).subscribe({
-        next: (response) => {
-          console.log('Allocations appended successfully:', response);
-          this.activeOffcanvas.close(allocationsToAppend);
+      obs$?.subscribe({
+        next: () => {
+          this.activeOffcanvas.close('Complete');
         },
         error: (error) => {
-          console.error('Error appending allocations:', error);
+          console.error('Error creating or saving new Employee:', error);
         },
       });
+    }
+  }
+
+  private onAddEmployee(): Observable<ApiMessage> {
+    var newQBEmployee = {
+      givenName: this.f['firstName'].value,
+      familyName: this.f['lastName'].value,
+      employeeNumber: this.f['payrollNumber'].value,
+    };
+
+    return this.qbEmployeeService.create(this.realmID, newQBEmployee).pipe(
+      switchMap((message: ApiMessage) => {
+        this.newEmployee = new EmployeeName({
+          quickbooksId: message.id,
+          name: newQBEmployee.givenName + ' ' + newQBEmployee.familyName,
+          payrollNumber: newQBEmployee.employeeNumber,
+          firstName: newQBEmployee.givenName,
+          lastName: newQBEmployee.familyName,
+        });
+
+        this.f['quickbooksId'].setValue(message.id);
+
+        if (this.f['isShopEmployee'].value) {
+          return this.qbEmployeeService
+            .create(this.enterprisesRealmID, newQBEmployee)
+            .pipe(switchMap(() => this.appendAllocationsToExistingEmployee()));
+        } else {
+          return this.appendAllocationsToExistingEmployee();
+        }
+      }),
+    );
+  }
+
+  /** Just append allocations */
+  private appendAllocationsToExistingEmployee(): Observable<ApiMessage> {
+    return this.allocationsService.append(
+      this.extractAllocationsFromControls(),
+    );
+  }
+
+  private extractAllocationsFromControls() {
+    if (this.f['isShopEmployee'].value) {
+      return [
+        new EmployeeAllocation({
+          quickbooksId: this.f['quickbooksId'].value,
+          payrollNumber: this.f['payrollNumber'].value,
+          isShopEmployee: true,
+          percentage: 100,
+          class: this.classes.find((qbClass) =>
+            qbClass.value.toLowerCase().includes('unrestricted'),
+          )?.id,
+        }),
+      ];
+    } else {
+      return this.allocationsFormGroups
+        .map((allocGroup) => {
+          return new EmployeeAllocation({
+            quickbooksId: this.f['quickbooksId'].value,
+            payrollNumber: this.f['payrollNumber'].value,
+            isShopEmployee: this.f['isShopEmployee'].value,
+            percentage: allocGroup.get('percentage')?.value,
+            class: allocGroup.get('project')?.value,
+          });
+        })
+        .filter((allocation) => allocation.class && allocation.class != '');
     }
   }
 }

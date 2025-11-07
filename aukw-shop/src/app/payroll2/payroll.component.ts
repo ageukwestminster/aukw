@@ -19,7 +19,7 @@ import {
   tap,
   toArray,
 } from 'rxjs';
-import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { NgbOffcanvas, NgbOffcanvasRef } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '@environments/environment';
 import {
   GrossToNetService,
@@ -60,6 +60,7 @@ export class PayrollComponent implements OnInit {
   total: IrisPayslip = new IrisPayslip();
   payslipsWithMissingEmployeesOrAllocations: IrisPayslip[] = [];
   loading: boolean = false;
+  //newEmployeeOffcanvasRef: NgbOffcanvasRef|null = null;
 
   private employerID: string = environment.staffologyEmployerID;
   private realmID: string = environment.qboCharityRealmID;
@@ -122,18 +123,12 @@ export class PayrollComponent implements OnInit {
         // DEBUG VALUES
         this.f['month'].setValue(7);
         this.f['taxYear'].setValue('Year2025');
+
+        
       });
 
     // Load employee names and allocations
-    this.qbEmployeeService
-      .getAll(this.realmID)
-      .pipe(
-        switchMap((employees: EmployeeName[]) => {
-          this.employees = employees;
-          return this.qbPayrollService.getAllocations();
-        }),
-      )
-      .subscribe({
+    this.loadEmployeesAndAllocations().subscribe({
         error: (error: any) => {
           this.alertService.error(error, {
             autoClose: false,
@@ -244,16 +239,25 @@ export class PayrollComponent implements OnInit {
     }
 
     from(offcanvasRef.result).pipe(
-      tap((allocations: EmployeeAllocation[]) => {
-        console.log(allocations);
-        this.allocations.concat(allocations);
-        this.onSubmit();
-        return of();
-      }),
-      catchError((err) => {
-        console.log(err);
-        return of();
-      }),
+      // reload employees and allocations
+      switchMap(() =>        
+        this.loadEmployeesAndAllocations()
+      ),
+    ).subscribe(() => {      
+      this.onSubmit();
+    }
     );
+  }
+
+    private loadEmployeesAndAllocations():Observable<EmployeeAllocation[]> {
+    return this.qbEmployeeService
+      .getAll(this.realmID)
+      .pipe(
+        switchMap((employees: EmployeeName[]) => {
+          this.employees = employees;
+          return this.qbPayrollService.getAllocations();
+        })
+      )
+
   }
 }

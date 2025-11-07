@@ -68,7 +68,6 @@
         </div>
         <div class="col-sm align-self-end mb-1">
           <button
-            type="button"
             class="btn btn-success"
             type="submit"
             [disabled]="!allocations.length || loading"
@@ -76,7 +75,14 @@
             Download from Staffology
           </button>
         </div>
-        <div class="col-sm align-self-end mb-1">Help</div>
+        <div class="col-sm align-self-end mb-1">
+          <button
+            type="button"
+            class="btn btn-secondary"
+          >
+            Help
+          </button>
+        </div>
       </div>
       @if (false) {
         <pre>{{ form.value | json }}</pre>
