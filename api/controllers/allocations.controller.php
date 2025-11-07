@@ -173,7 +173,6 @@ class AllocationsCtl{
           ->setPayrollNumber($item->payrollNumber)
           ->setPercentage($item->percentage)
           ->setAccount($account)
-          ->setClass($item->class)
           ->setIsShopEmployee($item->isShopEmployee);
         if ($allocation !== null) {
           $result = $model->update();
