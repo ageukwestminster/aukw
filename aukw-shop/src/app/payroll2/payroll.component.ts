@@ -7,19 +7,18 @@ import {
   Validators,
 } from '@angular/forms';
 import {
-  catchError,
-  concatMap,
   from,
   Observable,
   of,
   map,
+  shareReplay,
   switchMap,
   Subject,
   takeUntil,
   tap,
   toArray,
 } from 'rxjs';
-import { NgbOffcanvas, NgbOffcanvasRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbOffcanvas, NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '@environments/environment';
 import {
   GrossToNetService,
@@ -29,6 +28,7 @@ import {
 import {
   AlertService,
   ConsoleService,
+  LoadingIndicatorService,
   QBEmployeeService,
   QBPayrollService,
 } from '@app/_services';
@@ -41,11 +41,19 @@ import {
 } from '@app/_models';
 import { fromArrayToElement } from '@app/_helpers';
 import { PayslipListComponent } from './payslip-list/list.component';
+import { PayslipsSummaryComponent } from './payslips-summary/payslips-summary.component';
 import { NewEmployeeComponent } from './new-employee/new-employee.component';
 
 @Component({
   selector: 'app-payroll',
-  imports: [AsyncPipe, JsonPipe, PayslipListComponent, ReactiveFormsModule],
+  imports: [
+    AsyncPipe,
+    JsonPipe,
+    PayslipListComponent,
+    PayslipsSummaryComponent,
+    ReactiveFormsModule,
+    NgbTooltip,
+  ],
   templateUrl: './payroll.component.html',
   styleUrl: './payroll.component.css',
 })
@@ -59,8 +67,8 @@ export class PayrollComponent implements OnInit {
   payrollDate: string = '';
   total: IrisPayslip = new IrisPayslip();
   payslipsWithMissingEmployeesOrAllocations: IrisPayslip[] = [];
-  loading: boolean = false;
-  //newEmployeeOffcanvasRef: NgbOffcanvasRef|null = null;
+  loading: [boolean, boolean] = [false, false];
+  showNextStep: boolean = false;
 
   private employerID: string = environment.staffologyEmployerID;
   private realmID: string = environment.qboCharityRealmID;
@@ -77,6 +85,7 @@ export class PayrollComponent implements OnInit {
   private qbEmployeeService = inject(QBEmployeeService);
   private destroyRef = inject(DestroyRef);
   private offcanvasService = inject(NgbOffcanvas);
+  private loadingIndicatorService = inject(LoadingIndicatorService);
 
   constructor() {
     this.payruns$ = of([]);
@@ -95,7 +104,7 @@ export class PayrollComponent implements OnInit {
       this.payruns$ = this.payRunService.getAll(this.employerID, value);
     });
 
-    this.loading = true;
+    this.loading[0] = true;
 
     /**
      * This pattern is used to subscribe to an rxjs Subject and automatically
@@ -119,23 +128,21 @@ export class PayrollComponent implements OnInit {
       .pipe(takeUntil(destroyed))
       .subscribe((allocations) => {
         this.allocations = allocations;
-        this.loading = false;
+        this.loading[0] = false;
         // DEBUG VALUES
         this.f['month'].setValue(7);
         this.f['taxYear'].setValue('Year2025');
-
-        
       });
 
     // Load employee names and allocations
     this.loadEmployeesAndAllocations().subscribe({
-        error: (error: any) => {
-          this.alertService.error(error, {
-            autoClose: false,
-            keepAfterRouteChange: true,
-          });
-        },
-      });
+      error: (error: any) => {
+        this.alertService.error(error, {
+          autoClose: false,
+          keepAfterRouteChange: true,
+        });
+      },
+    });
   }
 
   get f() {
@@ -143,8 +150,12 @@ export class PayrollComponent implements OnInit {
   }
 
   onSubmit() {
+    this.loading = [true, false];
+    this.reloadPayslipsFromAPI();
+  }
+
+  reloadPayslipsFromAPI() {
     if (this.form.valid) {
-      this.loading = true;
       this.grossToNetService
         .getAll(
           this.employerID,
@@ -176,15 +187,31 @@ export class PayrollComponent implements OnInit {
             } else {
               payslip.employeeMissingFromQBO = true;
             }
-            payslip.allocationsMissingFromQBO = !this.allocations.find(
+
+            const allocations = this.allocations.filter(
               // Note use of '==' instead of '===' because of type difference (string vs number)
               (alloc) => alloc.payrollNumber == payslip.payrollNumber,
             );
+            if (allocations && allocations.length) {
+              payslip.isShopEmployee = allocations[0].isShopEmployee;
+            } else {
+              payslip.allocationsMissingFromQBO = true;
+            }
+
             return payslip;
           }),
 
           toArray(), // Convert back from Observable<T> to Observable<T[]>
-          /*
+
+          map((payslips: IrisPayslip[]) => {
+            this.payslipsWithMissingEmployeesOrAllocations = payslips.filter(
+              (payslip) =>
+                payslip.employeeMissingFromQBO ||
+                payslip.allocationsMissingFromQBO,
+            );
+            return payslips;
+          }),
+
           // Get payslip flags for Charity QBO ... checking to see if transactions have been entered already
           switchMap((payslips: IrisPayslip[]) => {
             return this.qbPayrollService.payslipFlagsForCharity(
@@ -199,16 +226,20 @@ export class PayrollComponent implements OnInit {
               payslips,
               this.payrollDate,
             );
-          }),*/
+          }),
+
+          // Keep user informed
+          this.loadingIndicatorService.createObserving({
+            loading: () =>
+              ' Querying QuickBooks to see if transactions already entered.',
+            success: () => `Successfully loaded QuickBooks transactions.`,
+            error: (err) => `${err}`,
+          }),
+          shareReplay(1),
         )
         .subscribe({
           next: (payslips: IrisPayslip[]) => {
             this.payslips = payslips;
-            this.payslipsWithMissingEmployeesOrAllocations = payslips.filter(
-              (payslip) =>
-                payslip.employeeMissingFromQBO ||
-                payslip.allocationsMissingFromQBO,
-            );
           },
           error: (error: any) => {
             this.alertService.error(error, {
@@ -217,7 +248,10 @@ export class PayrollComponent implements OnInit {
             });
           },
           complete: () => {
-            this.loading = false;
+            this.loading = [false, false];
+            this.showNextStep =
+              this.payslipsWithMissingEmployeesOrAllocations &&
+              !this.payslipsWithMissingEmployeesOrAllocations.length;
             // DEBUG ONLY: send payslips to console
             //this.consoleService.sendPayslipsToConsole(this.payslips);
           },
@@ -238,26 +272,24 @@ export class PayrollComponent implements OnInit {
       );
     }
 
-    from(offcanvasRef.result).pipe(
-      // reload employees and allocations
-      switchMap(() =>        
-        this.loadEmployeesAndAllocations()
-      ),
-    ).subscribe(() => {      
-      this.onSubmit();
-    }
-    );
+    from(offcanvasRef.result).subscribe(() => {
+      this.reloadEverything();
+    });
   }
 
-    private loadEmployeesAndAllocations():Observable<EmployeeAllocation[]> {
-    return this.qbEmployeeService
-      .getAll(this.realmID)
-      .pipe(
-        switchMap((employees: EmployeeName[]) => {
-          this.employees = employees;
-          return this.qbPayrollService.getAllocations();
-        })
-      )
+  reloadEverything() {
+    this.loading = [false, true];
+    this.loadEmployeesAndAllocations().subscribe(() => {
+      this.reloadPayslipsFromAPI();
+    });
+  }
 
+  private loadEmployeesAndAllocations(): Observable<EmployeeAllocation[]> {
+    return this.qbEmployeeService.getAll(this.realmID).pipe(
+      switchMap((employees: EmployeeName[]) => {
+        this.employees = employees;
+        return this.qbPayrollService.getAllocations();
+      }),
+    );
   }
 }

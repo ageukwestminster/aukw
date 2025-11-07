@@ -70,19 +70,47 @@
           <button
             class="btn btn-success"
             type="submit"
-            [disabled]="!allocations.length || loading"
+            [disabled]="!allocations.length || loading[0]"
+            placement="bottom"
+            ngbTooltip="Download Gross-To-Net report from Staffology"
           >
-            Download from Staffology
+            @if (loading[0]) {
+              <i class="fa-solid fa-download fa-bounce fa-4x"></i>
+            } @else {
+              <i class="fa-solid fa-download fa-4x"></i>
+            }
           </button>
         </div>
         <div class="col-sm align-self-end mb-1">
           <button
             type="button"
-            class="btn btn-secondary"
+            class="btn btn-primary"
+            placement="bottom"
+            ngbTooltip="Reload Everything"
+            (click)="reloadEverything()"
           >
-            Help
+            @if (loading[1]) {
+              <i class="fa-solid fa-arrows-rotate fa-spin fa-4x"></i>
+            } @else {
+              <i class="fa-solid fa-arrows-rotate fa-4x"></i>
+            }
           </button>
         </div>
+        @if (
+          showNextStep && !payslipsWithMissingEmployeesOrAllocations.length
+        ) {
+          <div class="col-sm align-self-end mb-1">
+            <button
+              type="button"
+              class="btn btn-primary"
+              placement="bottom"
+              ngbTooltip="Create QBO accounting entries"
+              [disabled]="payslipsWithMissingEmployeesOrAllocations.length"
+            >
+              <i class="fa-solid fa-greater-than fa-4x"></i>
+            </button>
+          </div>
+        }
       </div>
       @if (false) {
         <pre>{{ form.value | json }}</pre>
@@ -90,21 +118,27 @@
     </form>
   </div>
 </div>
+
 @if (
   payslipsWithMissingEmployeesOrAllocations &&
   payslipsWithMissingEmployeesOrAllocations.length > 0
 ) {
   <div class="card mt-3">
-    <div class="card-body">
+    <div class="card-body bg-warning-subtle">
       <h5 class="card-title">Employees Missing From QuickBooks</h5>
-      <payslip-list
-        [payslips]="payslipsWithMissingEmployeesOrAllocations"
-        (employeeToAdd)="onEmployeeToAdd($event)"
-      >
-      </payslip-list>
+      <div class="bg-warning-subtle">
+        <payslip-list
+          [payslips]="payslipsWithMissingEmployeesOrAllocations"
+          (employeeToAdd)="onEmployeeToAdd($event)"
+        >
+        </payslip-list>
+      </div>
     </div>
   </div>
 }
+
+<payslips-summary [payslips]="payslips" [total]="total"></payslips-summary>
+
 <div class="card mt-3">
   <div class="card-body">
     <h5 class="card-title">Payslips{{ " for Month " + f["month"].value }}</h5>
