@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IrisPayslip, LineItemDetail, PayrollProcessState } from '@app/_models';
 import { scan, shareReplay, tap } from 'rxjs';
 import { AllocatedCostsListComponent } from './allocated-costs-list/list.component';
-import { BasePayrollTransactionComponent } from '../parent.component';
+import { BasePayrollTransactionComponent } from '../base-transaction.component';
 
 @Component({
   standalone: true,

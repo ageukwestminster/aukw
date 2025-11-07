@@ -7,7 +7,7 @@ import {
 } from '@app/_models';
 import { from, mergeMap, shareReplay, tap, toArray } from 'rxjs';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
-import { BasePayrollTransactionComponent } from '../parent.component';
+import { BasePayrollTransactionComponent } from '../base-transaction.component';
 
 @Component({
   selector: 'employee-journals',

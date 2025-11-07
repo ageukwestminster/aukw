@@ -5,7 +5,7 @@ import { QBEmployeeService } from '@app/_services';
 import { forkJoin, map, of, shareReplay, tap } from 'rxjs';
 import { environment } from '@environments/environment';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
-import { BasePayrollTransactionComponent } from '../parent.component';
+import { BasePayrollTransactionComponent } from '../base-transaction.component';
 
 @Component({
   selector: 'shop-journal',
