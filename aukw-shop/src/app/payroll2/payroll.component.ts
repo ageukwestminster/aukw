@@ -246,6 +246,7 @@ export class PayrollComponent implements OnInit {
               autoClose: false,
               keepAfterRouteChange: true,
             });
+            this.loading = [false, false];
           },
           complete: () => {
             this.loading = [false, false];
@@ -278,9 +279,21 @@ export class PayrollComponent implements OnInit {
   }
 
   reloadEverything() {
-    this.loading = [false, true];
-    this.loadEmployeesAndAllocations().subscribe(() => {
-      this.reloadPayslipsFromAPI();
+    this.loading[1] = true;
+    this.loadEmployeesAndAllocations().subscribe({
+      next: () => {
+        this.reloadPayslipsFromAPI();
+      },
+      error: (error: any) => {
+        this.alertService.error(error, {
+          autoClose: false,
+          keepAfterRouteChange: true,
+        });
+        this.loading[1] = false;
+      },
+      complete: () => {
+        this.loading[1] = false;
+      },
     });
   }
 
@@ -291,5 +304,9 @@ export class PayrollComponent implements OnInit {
         return this.qbPayrollService.getAllocations();
       }),
     );
+  }
+
+  createQBOEntries() {
+    
   }
 }

@@ -68,7 +68,7 @@
         </div>
         <div class="col-sm align-self-end mb-1">
           <button
-            class="btn btn-success"
+            class="btn btn-primary"
             type="submit"
             [disabled]="!allocations.length || loading[0]"
             placement="bottom"
@@ -88,6 +88,7 @@
             placement="bottom"
             ngbTooltip="Reload Everything"
             (click)="reloadEverything()"
+            [disabled]="!allocations.length || loading[0]"
           >
             @if (loading[1]) {
               <i class="fa-solid fa-arrows-rotate fa-spin fa-4x"></i>
@@ -106,6 +107,7 @@
               placement="bottom"
               ngbTooltip="Create QBO accounting entries"
               [disabled]="payslipsWithMissingEmployeesOrAllocations.length"
+              (click)="createQBOEntries()"
             >
               <i class="fa-solid fa-greater-than fa-4x"></i>
             </button>
