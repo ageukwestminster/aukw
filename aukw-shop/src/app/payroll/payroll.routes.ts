@@ -3,7 +3,7 @@ import { Routes } from '@angular/router';
 import { PayrollFrontPageComponent } from './frontpage.component';
 import { EmployeeAllocationsComponent } from './allocations/employee-allocations.component';
 import { UploadPayslipsComponent } from './payslips/upload-payslips.component';
-import { ShopJournalComponent } from './shop-journal/shop-journal.component';
+import { ShopJournalComponent } from '../payroll2/transactions/shop-journal/shop-journal.component';
 import { EmployeeJournalsComponent } from './employee-journals/employee-journals.component';
 import { PensionInvoiceComponent } from './employerni-and-pension-invoice/pension-invoice.component';
 import { EmployerNiComponent } from './employerni-and-pension-invoice/employer-ni.component';
