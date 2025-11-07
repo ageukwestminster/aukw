@@ -68,7 +68,7 @@ export class PayrollComponent implements OnInit {
   total: IrisPayslip = new IrisPayslip();
   payslipsWithMissingEmployeesOrAllocations: IrisPayslip[] = [];
   loading: [boolean, boolean] = [false, false];
-  showNextStep: boolean = false;
+  showCreateTransactionsButton: boolean = false;
 
   private employerID: string = environment.staffologyEmployerID;
   private realmID: string = environment.qboCharityRealmID;
@@ -250,7 +250,10 @@ export class PayrollComponent implements OnInit {
           },
           complete: () => {
             this.loading = [false, false];
-            this.showNextStep =
+
+            // Show create transactions button if there are no employees that are 
+            // missing from QBO or do not have allocations.
+            this.showCreateTransactionsButton =
               this.payslipsWithMissingEmployeesOrAllocations &&
               !this.payslipsWithMissingEmployeesOrAllocations.length;
             // DEBUG ONLY: send payslips to console
