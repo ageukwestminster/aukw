@@ -1,11 +1,23 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { AsyncPipe, JsonPipe } from '@angular/common';
+import {
+  Component,
+  DestroyRef,
+  inject,
+  LOCALE_ID,
+  OnInit,
+} from '@angular/core';
+import {
+  AsyncPipe,
+  formatDate,
+  JsonPipe,
+  LOCATION_INITIALIZED,
+} from '@angular/common';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { RouterOutlet } from '@angular/router';
 import {
   from,
   Observable,
@@ -18,7 +30,13 @@ import {
   tap,
   toArray,
 } from 'rxjs';
-import { NgbOffcanvas, NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbDateAdapter,
+  NgbDateParserFormatter,
+  NgbDatepickerModule,
+  NgbOffcanvas,
+  NgbTooltip,
+} from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '@environments/environment';
 import {
   GrossToNetService,
@@ -39,9 +57,12 @@ import {
   PayRun,
   TaxYear,
 } from '@app/_models';
-import { fromArrayToElement } from '@app/_helpers';
-import { PayslipListComponent } from './payslip-list/list.component';
-import { PayslipsSummaryComponent } from './payslips-summary/payslips-summary.component';
+import {
+  CustomDateParserFormatter,
+  fromArrayToElement,
+  NgbUTCStringAdapter,
+} from '@app/_helpers';
+import { PayslipListComponent } from './payslip-list/list/list.component';
 import { NewEmployeeComponent } from './new-employee/new-employee.component';
 
 @Component({
@@ -50,12 +71,17 @@ import { NewEmployeeComponent } from './new-employee/new-employee.component';
     AsyncPipe,
     JsonPipe,
     PayslipListComponent,
-    PayslipsSummaryComponent,
     ReactiveFormsModule,
+    NgbDatepickerModule,
     NgbTooltip,
+    RouterOutlet,
   ],
   templateUrl: './payroll.component.html',
   styleUrl: './payroll.component.css',
+  providers: [
+    { provide: NgbDateAdapter, useClass: NgbUTCStringAdapter },
+    { provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter },
+  ],
 })
 export class PayrollComponent implements OnInit {
   form!: FormGroup;
@@ -86,6 +112,7 @@ export class PayrollComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private offcanvasService = inject(NgbOffcanvas);
   private loadingIndicatorService = inject(LoadingIndicatorService);
+  private locale = inject(LOCALE_ID);
 
   constructor() {
     this.payruns$ = of([]);
@@ -96,6 +123,7 @@ export class PayrollComponent implements OnInit {
     this.form = this.formBuilder.group({
       taxYear: [null, Validators.required],
       month: [null, Validators.required],
+      payrollDate: [null],
       sortBy: [null],
       sortDescending: [false],
     });
@@ -130,8 +158,8 @@ export class PayrollComponent implements OnInit {
         this.allocations = allocations;
         this.loading[0] = false;
         // DEBUG VALUES
-        this.f['month'].setValue(7);
-        this.f['taxYear'].setValue('Year2025');
+        //this.f['month'].setValue(7);
+        //this.f['taxYear'].setValue('Year2025');
       });
 
     // Load employee names and allocations
@@ -168,6 +196,7 @@ export class PayrollComponent implements OnInit {
           tap((payslips: IrisPayslip[]) => {
             this.payslips = payslips;
             this.payrollDate = payslips[0]?.payrollDate || '';
+            this.total = new IrisPayslip();
           }),
           fromArrayToElement(), // Convert from Observable<T[]> to Observable<T>
 
@@ -211,7 +240,7 @@ export class PayrollComponent implements OnInit {
             );
             return payslips;
           }),
-
+          /*
           // Get payslip flags for Charity QBO ... checking to see if transactions have been entered already
           switchMap((payslips: IrisPayslip[]) => {
             return this.qbPayrollService.payslipFlagsForCharity(
@@ -226,7 +255,7 @@ export class PayrollComponent implements OnInit {
               payslips,
               this.payrollDate,
             );
-          }),
+          }),*/
 
           // Keep user informed
           this.loadingIndicatorService.createObserving({
@@ -240,6 +269,7 @@ export class PayrollComponent implements OnInit {
         .subscribe({
           next: (payslips: IrisPayslip[]) => {
             this.payslips = payslips;
+            this.qbPayrollService.sendPayslips(payslips);
           },
           error: (error: any) => {
             this.alertService.error(error, {
@@ -251,7 +281,7 @@ export class PayrollComponent implements OnInit {
           complete: () => {
             this.loading = [false, false];
 
-            // Show create transactions button if there are no employees that are 
+            // Show create transactions button if there are no employees that are
             // missing from QBO or do not have allocations.
             this.showCreateTransactionsButton =
               this.payslipsWithMissingEmployeesOrAllocations &&
@@ -309,7 +339,38 @@ export class PayrollComponent implements OnInit {
     );
   }
 
+  onMonthSelectClicked() {    
+    if (this.f['month'].value && this.f['taxYear'].value) {
+      this.f['payrollDate'].setValue(
+        this.calcPayrollDate(
+          Number(this.f['month'].value),
+          this.f['taxYear'].value,
+        ),
+      );
+    }
+  }
+
+  private calcPayrollDate(fiscalMonthNumber: number, taxYear: string): string {
+    try {
+      const months = [10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+      const monthNumber = months.indexOf(fiscalMonthNumber);
+
+      const year = Number(taxYear.substring(4));
+
+      const dt = new Date(year, monthNumber, 25);
+
+      return formatDate(dt, 'yyyy-MM-dd', this.locale);
+    } catch (error) {
+      console.log('Error ocurred calculating payroll date: ' + error);
+      return '';
+    }
+  }
+
   createQBOEntries() {
-    
+    // Show Nav Bar
+    // Recalculate Transactions
+    // Display transactions
+    // Recalculate InQBO flags
   }
 }

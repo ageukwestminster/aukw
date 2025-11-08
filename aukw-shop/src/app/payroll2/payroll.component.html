@@ -21,7 +21,7 @@
           </select>
         </div>
 
-        <div class="col-sm">
+        <div class="col-sm p-0">
           <div class="mb-2">Month</div>
           <select
             formControlName="month"
@@ -29,6 +29,7 @@
             id="monthSelect"
             name="monthSelect"
             class="form-control box-outline"
+            (click)="onMonthSelectClicked()"
           >
             @for (payrun of payruns$ | async; track payrun) {
               <option [ngValue]="payrun.taxMonth">
@@ -37,8 +38,28 @@
             }
           </select>
         </div>
-        <div class="col-sm">
-          <div class="mb-2">Sort By</div>
+        <div class="col-sm-3">
+          <div class="mb-2 text-center">Payroll Date</div>
+          <div class="input-group col p-0">
+            <!-- If using MySql dates don't forget to import NgbUTCStringAdapter-->
+            <input
+              class="form-control text-end box-outline"
+              name="dp1"
+              ngbDatepicker
+              #d1="ngbDatepicker"
+              formControlName="payrollDate"
+              id="inputpayrollDate"
+              placement="bottom"
+            />
+            <div class="input-group-append box-outline rounded-corners">
+              <button class="btn" (click)="d1.toggle()" type="button">
+                <i class="fa-solid fa-calendar-days"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm p-0">
+          <div class="mb-2 text-center">Sort By</div>
           <select
             formControlName="sortBy"
             #sortBySelect
@@ -51,19 +72,17 @@
             <option value="Department">Department</option>
           </select>
         </div>
-        <div class="col-sm align-self-end mb-1">
-          <div class="form-check">
+        <div class="col-sm">
+          <div class="">
+            <div class="mb-3">Desc</div>
             <input
               type="checkbox"
               formControlName="sortDescending"
-              class="form-check-input checkbox-outline"
+              class="form-check-input checkbox-outline ms-2"
               placement="bottom"
               container="body"
               id="sortDescendingCheckbox"
             />
-            <label class="form-check-label" for="sortDescendingCheckbox">
-              Sort Descending
-            </label>
           </div>
         </div>
         <div class="col-sm align-self-end mb-1">
@@ -97,9 +116,7 @@
             }
           </button>
         </div>
-        @if (
-          showCreateTransactionsButton
-        ) {
+        @if (showCreateTransactionsButton) {
           <div class="col-sm align-self-end mb-1">
             <button
               type="button"
@@ -139,15 +156,6 @@
   </div>
 }
 
-<payslips-summary [payslips]="payslips" [total]="total"></payslips-summary>
+<router-outlet></router-outlet>
 
-<div class="card mt-3">
-  <div class="card-body">
-    <h5 class="card-title">Payslips{{ " for Month " + f["month"].value }}</h5>
-    <payslip-list
-      [payslips]="payslips"
-      (employeeToAdd)="onEmployeeToAdd($event)"
-    >
-    </payslip-list>
-  </div>
-</div>
+<!--<payslips [payslips]="payslips" [total]="total" [month]="f['month'].value"></payslips>-->
