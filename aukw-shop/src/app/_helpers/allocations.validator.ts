@@ -16,7 +16,6 @@ import {
 export function ProjectAllocationsValidater(controlName: string): ValidatorFn {
   return (group: AbstractControl): ValidationErrors | null => {
     try {
-      
       const form = <FormGroup>group;
       const formArray = <FormArray>form.controls[controlName];
 
