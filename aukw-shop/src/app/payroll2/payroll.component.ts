@@ -227,7 +227,7 @@ export class PayrollComponent implements OnInit {
           shareReplay(1),
         )
         .subscribe({
-          next: (p) => this.payslipsWithMissingEmployeesOrAllocations = p,
+          next: (p:IrisPayslip[]) => this.payslipsWithMissingEmployeesOrAllocations = p,
           error: (error: any) => {
             this.alertService.error(error, {
               autoClose: false,

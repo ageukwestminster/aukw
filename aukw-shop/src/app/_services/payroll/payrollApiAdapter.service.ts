@@ -1,14 +1,10 @@
 import { Injectable, inject } from '@angular/core';
-
 import {
-  from,
+  forkJoin,
   Observable,
   of,
-  map,
-  shareReplay,
+  map,  
   switchMap,
-  Subject,
-  takeUntil,
   tap,
   toArray,
 } from 'rxjs';
@@ -99,6 +95,15 @@ export class PayrollApiAdapterService {
         returnObj.payslips = payslips;
         return returnObj;
       }),
+/*
+      switchMap(o => forkJoin(
+{
+      journals: of(o),
+      payrollPayslips: of(o),
+    }
+      )
+
+      ),*/
     );
   }
 }
