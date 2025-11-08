@@ -63,6 +63,7 @@ import {
   NgbUTCStringAdapter,
 } from '@app/_helpers';
 import { PayslipListComponent } from './payslip-list/list/list.component';
+import { PayslipsSummaryComponent } from './payslip-list/summary/payslips-summary.component';
 import { NewEmployeeComponent } from './new-employee/new-employee.component';
 
 @Component({
@@ -71,6 +72,7 @@ import { NewEmployeeComponent } from './new-employee/new-employee.component';
     AsyncPipe,
     JsonPipe,
     PayslipListComponent,
+    PayslipsSummaryComponent,
     ReactiveFormsModule,
     NgbDatepickerModule,
     NgbTooltip,
@@ -158,8 +160,8 @@ export class PayrollComponent implements OnInit {
         this.allocations = allocations;
         this.loading[0] = false;
         // DEBUG VALUES
-        //this.f['month'].setValue(7);
-        //this.f['taxYear'].setValue('Year2025');
+        this.f['month'].setValue(7);
+        this.f['taxYear'].setValue('Year2025');
       });
 
     // Load employee names and allocations
@@ -340,7 +342,7 @@ export class PayrollComponent implements OnInit {
     );
   }
 
-  onMonthSelectClicked() {    
+  onMonthSelectClicked() {
     if (this.f['month'].value && this.f['taxYear'].value) {
       this.f['payrollDate'].setValue(
         this.calcPayrollDate(

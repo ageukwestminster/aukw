@@ -1,14 +1,13 @@
 import { Component, DestroyRef, inject, OnInit, Output } from '@angular/core';
-import { reduce, Subject, takeUntil, tap } from 'rxjs';
+import { scan, Subject, takeUntil, tap } from 'rxjs';
 import { PayslipListComponent } from './list/list.component';
-import { PayslipsSummaryComponent } from './summary/payslips-summary.component';
 import { QBPayrollService } from '@app/_services';
 import { IrisPayslip } from '@app/_models';
 import { fromArrayToElement } from '@app/_helpers';
 
 @Component({
   selector: 'payslips',
-  imports: [PayslipListComponent, PayslipsSummaryComponent],
+  imports: [PayslipListComponent],
   templateUrl: './payslips.component.html',
 })
 export class PayslipsComponent implements OnInit {
@@ -31,6 +30,7 @@ export class PayslipsComponent implements OnInit {
         takeUntil(destroyed),
         tap((response) => {
           this.payslips = response;
+          this.total = new IrisPayslip();
 
           // The number of the month: January is 0, February is 1,... December is 11
           if (response && response.length) {
@@ -39,22 +39,26 @@ export class PayslipsComponent implements OnInit {
             this.month = monthNumber <= 2 ? monthNumber + 10 : monthNumber - 2;
           }
         }),
+
+        // Go from Observable<IrisPayslip[]> to Observable<IrisPayslip>
         fromArrayToElement(),
-        reduce((prev: IrisPayslip, current) => {
-          const cummTotal = (prev as IrisPayslip).add(current);
-          return cummTotal;
+
+        // loop through all payslips and sum the values to form a 
+        // "total" payslip that will be put in class level variable
+        scan((prev: IrisPayslip, current) => {
+          return prev.add(current);
         }, new IrisPayslip()),
       )
       .subscribe({
-        // Create IrisPayslip!!!!
-        next: (sum) => (this.total = sum),
+        next: (sumOfAllPayslips: IrisPayslip)=> {
+          this.total = sumOfAllPayslips;
+        },
         error: (err) => console.log(err),
+        // Because this is a Subject it will never complete
+        //complete: () => {}
       });
   }
 
   addEmployee(payslip: IrisPayslip) {}
 
-  test() {
-    console.log(this.month);
-  }
 }
