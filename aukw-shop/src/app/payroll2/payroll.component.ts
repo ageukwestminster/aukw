@@ -12,7 +12,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import {
   from,
   Observable,
@@ -23,10 +23,11 @@ import {
   Subject,
   takeUntil,
 } from 'rxjs';
-import {
+import {  
   NgbDateAdapter,
   NgbDateParserFormatter,
   NgbDatepickerModule,
+  NgbNavModule,
   NgbOffcanvas,
   NgbTooltip,
 } from '@ng-bootstrap/ng-bootstrap';
@@ -38,7 +39,6 @@ import {
 } from '@app/_services/payroll';
 import {
   AlertService,
-  ConsoleService,
   LoadingIndicatorService,
   PayrollApiAdapterService,
   QBEmployeeService,
@@ -68,7 +68,10 @@ import { NewEmployeeComponent } from './new-employee/new-employee.component';
     PayslipsSummaryComponent,
     ReactiveFormsModule,
     NgbDatepickerModule,
+    NgbNavModule,
     NgbTooltip,
+    RouterLink,
+    RouterLinkActive,
     RouterOutlet,
   ],
   templateUrl: './payroll.component.html',
@@ -90,6 +93,7 @@ export class PayrollComponent implements OnInit {
   payslipsWithMissingEmployeesOrAllocations: IrisPayslip[] = [];
   loading: [boolean, boolean] = [false, false];
   showCreateTransactionsButton: boolean = false;
+  active = 1;
 
   private employerID: string = environment.staffologyEmployerID;
   private realmID: string = environment.qboCharityRealmID;
