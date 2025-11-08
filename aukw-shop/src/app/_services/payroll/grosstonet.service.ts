@@ -27,14 +27,15 @@ export class GrossToNetService {
     employerID: string,
     taxYear: string,
     month: number,
-    payrollDate: string,
+    payrollDate: string | null,
     sortBy: string | null,
     sortDescending: boolean,    
   ): any {
     return this.http.get<IrisPayslip[]>(
       `${baseUrl}/${employerID}/reports/gross-to-net/${taxYear}/month/${month}` +
         `?sortBy=${sortBy == null ? 'PayrollCode' : sortBy}` +
-        `&sortDescending=${sortDescending ? 'true' : 'false'}`,
+        `${payrollDate == null ? '' : '&payrollDate='+payrollDate}` +         
+        `&sortDescending=${sortDescending ? 'true' : 'false'}`
     );
   }
 }

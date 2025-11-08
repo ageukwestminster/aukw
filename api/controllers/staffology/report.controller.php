@@ -35,7 +35,7 @@ class PayrollReportCtl{
       } else {
         $sortBy = GrossToNetSortBy::PayrollCode;
       }
-      if (isset($queries['payrollDate'])) {
+      if (isset($queries['payrollDate']) && $queries['payrollDate']!='') {
         if (!\Core\DatesHelper::validateDate($queries['payrollDate']) ) {
           throw new \InvalidArgumentException("'payrollDate' parameter is not in the correct format. Value provided: " . 
                             $queries['payrollDate'] . ", but expected yyyy-mm-dd format.");

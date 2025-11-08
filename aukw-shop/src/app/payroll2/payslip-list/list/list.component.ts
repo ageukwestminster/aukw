@@ -8,7 +8,7 @@ import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
   templateUrl: 'list.component.html',
   standalone: true,
   imports: [NgbTooltip, DecimalPipe],
-  styleUrls: ['../shared.css'],
+  styleUrls: ['../../shared.css'],
 })
 export class PayslipListComponent {
   @Input() payslips!: IrisPayslip[];

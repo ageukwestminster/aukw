@@ -189,6 +189,7 @@ export class PayrollComponent implements OnInit {
           this.employerID,
           this.f['taxYear'].value,
           this.f['month'].value,
+          this.f['payrollDate'].value,
           this.f['sortBy'].value,
           this.f['sortDescending'].value,
         )

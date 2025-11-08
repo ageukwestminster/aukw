@@ -7,11 +7,12 @@ import { HomeComponent } from './home';
 import { LoginComponent } from './login';
 import { authGuard } from './_helpers';
 import { Role } from './_models';
+import { PayrollComponent } from './payroll2/payroll.component';
 
 const usersRoutes = () =>
   import('./users/users.routes').then((x) => x.USERS_ROUTES);
 const payrollRoutes = () =>
-  import('./payroll/payroll.routes').then((x) => x.PAYROLL_ROUTES);
+  import('./payroll2/payroll.routes').then((x) => x.PAYROLL_ROUTES);
 const takingsRoutes = () =>
   import('./takings/takings.routes').then((x) => x.TAKINGS_ROUTES);
 const reportsRoutes = () =>
@@ -20,7 +21,7 @@ const reportsRoutes = () =>
 export const APP_ROUTES: Routes = [
   {
     path: '',
-    component: HomeComponent,
+    component: PayrollComponent,
     canActivate: [authGuard],
   },
   {

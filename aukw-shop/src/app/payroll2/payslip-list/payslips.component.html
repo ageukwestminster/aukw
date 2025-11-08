@@ -1,0 +1,11 @@
+<payslips-summary [payslips]="payslips" [total]="total"></payslips-summary>
+<button type="button" click="test()">Button</button>
+<div class="card mt-3">
+  <div class="card-body">
+    <h5 class="card-title">
+      Payslips{{ month != 0 ? " for Month " + month : "" }}
+    </h5>
+    <payslip-list [payslips]="payslips" (employeeToAdd)="addEmployee($event)">
+    </payslip-list>
+  </div>
+</div>
