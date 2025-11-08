@@ -9,7 +9,6 @@ import {
   AsyncPipe,
   formatDate,
   JsonPipe,
-  LOCATION_INITIALIZED,
 } from '@angular/common';
 import {
   FormBuilder,
