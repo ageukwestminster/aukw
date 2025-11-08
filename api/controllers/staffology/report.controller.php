@@ -24,9 +24,7 @@ class PayrollReportCtl{
    * @return void Output is echo'd directly to response 
    */
   public static function gross_to_net(string $employerId, string $taxYear, int $month):void{  
-    try {
-
-      $payrollDate = sprintf('%04d-%02d-25', intval(substr($taxYear, 4)), ($month>9) ? $month-9 : $month+3);
+    try {      
 
       parse_str($_SERVER['QUERY_STRING'], $queries);
       $sortDescending = isset($queries['sortDescending']) && 
@@ -36,6 +34,16 @@ class PayrollReportCtl{
         $sortBy = GrossToNetSortBy::from($queries['sortBy']);
       } else {
         $sortBy = GrossToNetSortBy::PayrollCode;
+      }
+      if (isset($queries['payrollDate'])) {
+        if (!\Core\DatesHelper::validateDate($queries['payrollDate']) ) {
+          throw new \InvalidArgumentException("'payrollDate' parameter is not in the correct format. Value provided: " . 
+                            $queries['payrollDate'] . ", but expected yyyy-mm-dd format.");
+        } 
+        $payrollDate = $queries['payrollDate'];
+      } else {
+        $payrollDate = sprintf('%04d-%02d-25', 
+              intval(substr($taxYear, 4)), ($month>9) ? $month-9 : $month+3);
       }
 
       $salaryData = GrossToNetReport::getInstance()

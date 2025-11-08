@@ -18,6 +18,7 @@ export class GrossToNetService {
    * @param employerID The Staffology employer ID
    * @param taxYear The Staffology tax year value, for example 'Year2024'
    * @param month The month number (1-12). April is month 1, May is month 2 etc.
+   * @param payrollDate The date the payroll run is for. Usually the 25th of the month.
    * @param sortBy The field to sort by. If null, defaults to 'PayrollCode'
    * @param sortDescending Whether to sort in descending order
    * @returns Array of PayRun objects
@@ -26,8 +27,9 @@ export class GrossToNetService {
     employerID: string,
     taxYear: string,
     month: number,
+    payrollDate: string,
     sortBy: string | null,
-    sortDescending: boolean,
+    sortDescending: boolean,    
   ): any {
     return this.http.get<IrisPayslip[]>(
       `${baseUrl}/${employerID}/reports/gross-to-net/${taxYear}/month/${month}` +
