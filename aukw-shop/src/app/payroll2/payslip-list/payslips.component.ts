@@ -43,14 +43,14 @@ export class PayslipsComponent implements OnInit {
         // Go from Observable<IrisPayslip[]> to Observable<IrisPayslip>
         fromArrayToElement(),
 
-        // loop through all payslips and sum the values to form a 
+        // loop through all payslips and sum the values to form a
         // "total" payslip that will be put in class level variable
         scan((prev: IrisPayslip, current) => {
           return prev.add(current);
         }, new IrisPayslip()),
       )
       .subscribe({
-        next: (sumOfAllPayslips: IrisPayslip)=> {
+        next: (sumOfAllPayslips: IrisPayslip) => {
           this.total = sumOfAllPayslips;
         },
         error: (err) => console.log(err),
@@ -60,5 +60,4 @@ export class PayslipsComponent implements OnInit {
   }
 
   addEmployee(payslip: IrisPayslip) {}
-
 }

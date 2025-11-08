@@ -3,7 +3,11 @@
     <h5 class="card-title">
       Payslips{{ month != 0 ? " for Month " + month : "" }}
     </h5>
-    <payslip-list [payslips]="payslips" [total]="total" (employeeToAdd)="addEmployee($event)">
+    <payslip-list
+      [payslips]="payslips"
+      [total]="total"
+      (employeeToAdd)="addEmployee($event)"
+    >
     </payslip-list>
   </div>
 </div>

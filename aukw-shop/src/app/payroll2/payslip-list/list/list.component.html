@@ -200,7 +200,10 @@
           {{ total.employerPension | number: "1.2-2" }}
         </td>
         <td class="d-none d-sm-table-cell">
-          {{ total.totalPay + total.employerNI + total.employerPension | number: "1.2-2" }}
+          {{
+            total.totalPay + total.employerNI + total.employerPension
+              | number: "1.2-2"
+          }}
         </td>
         <td></td>
         <td></td>

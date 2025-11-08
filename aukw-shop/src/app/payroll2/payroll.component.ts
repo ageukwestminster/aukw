@@ -5,11 +5,7 @@ import {
   LOCALE_ID,
   OnInit,
 } from '@angular/core';
-import {
-  AsyncPipe,
-  formatDate,
-  JsonPipe,
-} from '@angular/common';
+import { AsyncPipe, formatDate, JsonPipe } from '@angular/common';
 import {
   FormBuilder,
   FormGroup,
@@ -26,8 +22,6 @@ import {
   switchMap,
   Subject,
   takeUntil,
-  tap,
-  toArray,
 } from 'rxjs';
 import {
   NgbDateAdapter,
@@ -46,6 +40,7 @@ import {
   AlertService,
   ConsoleService,
   LoadingIndicatorService,
+  PayrollApiAdapterService,
   QBEmployeeService,
   QBPayrollService,
 } from '@app/_services';
@@ -58,7 +53,6 @@ import {
 } from '@app/_models';
 import {
   CustomDateParserFormatter,
-  fromArrayToElement,
   NgbUTCStringAdapter,
 } from '@app/_helpers';
 import { PayslipListComponent } from './payslip-list/list/list.component';
@@ -101,7 +95,6 @@ export class PayrollComponent implements OnInit {
   private realmID: string = environment.qboCharityRealmID;
 
   private formBuilder = inject(FormBuilder);
-  private consoleService = inject(ConsoleService);
   private grossToNetService = inject(GrossToNetService);
   private payRunService = inject(PayRunService);
   private taxYearService = inject(TaxYearService);
@@ -114,6 +107,7 @@ export class PayrollComponent implements OnInit {
   private offcanvasService = inject(NgbOffcanvas);
   private loadingIndicatorService = inject(LoadingIndicatorService);
   private locale = inject(LOCALE_ID);
+  private payrollApiAdapterService = inject(PayrollApiAdapterService);
 
   constructor() {
     this.payruns$ = of([]);
@@ -147,12 +141,6 @@ export class PayrollComponent implements OnInit {
       destroyed.complete();
     });
 
-    this.consoleService.consoleMessage$
-      .pipe(takeUntil(destroyed))
-      .subscribe((message) => {
-        console.log(message);
-      });
-
     this.qbPayrollService.allocations$
       .pipe(takeUntil(destroyed))
       .subscribe((allocations) => {
@@ -185,79 +173,45 @@ export class PayrollComponent implements OnInit {
 
   reloadPayslipsFromAPI() {
     if (this.form.valid) {
-      this.grossToNetService
-        .getAll(
-          this.employerID,
-          this.f['taxYear'].value,
-          this.f['month'].value,
-          this.f['payrollDate'].value,
-          this.f['sortBy'].value,
-          this.f['sortDescending'].value,
-        )
-        .pipe(
-          tap((payslips: IrisPayslip[]) => {
-            this.payslips = payslips;
-            this.payrollDate = payslips[0]?.payrollDate || '';
-            this.total = new IrisPayslip();
-          }),
-          fromArrayToElement(), // Convert from Observable<T[]> to Observable<T>
+      
+      // Get the pay information from the Staffology api
+      const grossToNetReport$ = this.grossToNetService.getAll(
+        this.employerID,
+        this.f['taxYear'].value,
+        this.f['month'].value,
+        this.f['payrollDate'].value,
+        this.f['sortBy'].value,
+        this.f['sortDescending'].value,
+      );
 
-          // Loop through each payslip
-          map((payslip: IrisPayslip) => {
-            // loop through all payslips and sum the values
-            // to form a new "total" payslip and put in class level variable
-            this.total = this.total.add(payslip);
+      // Adapt the salary info into QuickBooks transaction-ready arrays
+      this.payrollApiAdapterService
+        .adaptStaffologyToQuickBooks(
+          grossToNetReport$,
+          this.employees,
+          this.allocations,
+        ).pipe(
+          map(
+            (o: {
+              payslips: IrisPayslip[];
+              total: IrisPayslip;
+              payrollDate: string;
+            }) => {
 
-            // Check for missing employees and missing allocations
-            var employeeName = this.employees.find(
-              (emp) => emp.payrollNumber === payslip.payrollNumber,
-            );
-            if (employeeName) {
-              payslip.employeeMissingFromQBO = false;
-              payslip.quickbooksId = employeeName!.quickbooksId;
-            } else {
-              payslip.employeeMissingFromQBO = true;
-            }
+              // Store module-level array stuff
+              this.payslips = o.payslips;
+              this.payrollDate = o.payrollDate;
+              this.total = o.total;            
 
-            const allocations = this.allocations.filter(
-              // Note use of '==' instead of '===' because of type difference (string vs number)
-              (alloc) => alloc.payrollNumber == payslip.payrollNumber,
-            );
-            if (allocations && allocations.length) {
-              payslip.isShopEmployee = allocations[0].isShopEmployee;
-            } else {
-              payslip.allocationsMissingFromQBO = true;
-            }
-
-            return payslip;
-          }),
-
-          toArray(), // Convert back from Observable<T> to Observable<T[]>
-
-          map((payslips: IrisPayslip[]) => {
-            this.payslipsWithMissingEmployeesOrAllocations = payslips.filter(
+            // Are their payslips for employees who are either
+            // i) Not in QuickBooks; or
+            // ii) Do not have saved allocations in the database
+            return o.payslips.filter(
               (payslip) =>
                 payslip.employeeMissingFromQBO ||
                 payslip.allocationsMissingFromQBO,
             );
-            return payslips;
           }),
-          /*
-          // Get payslip flags for Charity QBO ... checking to see if transactions have been entered already
-          switchMap((payslips: IrisPayslip[]) => {
-            return this.qbPayrollService.payslipFlagsForCharity(
-              payslips,
-              this.payrollDate,
-            );
-          }),
-
-          // Get payslip flags for Enterprises QBO
-          switchMap((payslips: IrisPayslip[]) => {
-            return this.qbPayrollService.payslipFlagsForShop(
-              payslips,
-              this.payrollDate,
-            );
-          }),*/
 
           // Keep user informed
           this.loadingIndicatorService.createObserving({
@@ -269,10 +223,7 @@ export class PayrollComponent implements OnInit {
           shareReplay(1),
         )
         .subscribe({
-          next: (payslips: IrisPayslip[]) => {
-            this.payslips = payslips;
-            this.qbPayrollService.sendPayslips(payslips);
-          },
+          next: (p) => this.payslipsWithMissingEmployeesOrAllocations = p,
           error: (error: any) => {
             this.alertService.error(error, {
               autoClose: false,
@@ -288,8 +239,7 @@ export class PayrollComponent implements OnInit {
             this.showCreateTransactionsButton =
               this.payslipsWithMissingEmployeesOrAllocations &&
               !this.payslipsWithMissingEmployeesOrAllocations.length;
-            // DEBUG ONLY: send payslips to console
-            //this.consoleService.sendPayslipsToConsole(this.payslips);
+
           },
         });
     }
@@ -354,9 +304,13 @@ export class PayrollComponent implements OnInit {
 
   private calcPayrollDate(fiscalMonthNumber: number, taxYear: string): string {
     try {
+      // The fiscal month numbers of Jan, Feb, Mar, Apr... etc.
       const months = [10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
       const monthNumber = months.indexOf(fiscalMonthNumber);
+      if (monthNumber == -1) { // Not Found
+        return '';
+      }
 
       const year = Number(taxYear.substring(4));
 
