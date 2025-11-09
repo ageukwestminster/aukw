@@ -11,7 +11,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (line of lines; track line.name+line.class) {
+        @for (line of lines; track line.name + line.class) {
           <tr>
             <td>
               {{ line.payrollNumber }}
@@ -45,13 +45,13 @@
             </td>
           </tr>
         }
-        @if (!lines) {
-          <tr>
-            <td colspan="5" class="text-center">
-              <span
-                class="spinner-border spinner-border-lg align-center"
-              ></span>
-            </td>
+        @if (total) {
+          <tr class="total-line">
+            <td></td>
+            <td>Total for {{ title }}:</td>
+            <td>{{ total | number: "1.2-2" }}</td>
+            <td></td>
+            <td></td>
           </tr>
         }
       </tbody>

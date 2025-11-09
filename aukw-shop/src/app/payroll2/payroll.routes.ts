@@ -5,6 +5,7 @@ import { PayslipsComponent } from './payslip-list/payslips.component';
 import {
   EmployeeJournalsListComponent,
   EnterprisesJournalsListComponent,
+  NILinesListComponent,
   PensionLinesListComponent,
 } from './transactions/views';
 
@@ -17,7 +18,7 @@ export const PAYROLL_ROUTES: Routes = [
       { path: 'journals', component: EmployeeJournalsListComponent },
       { path: 'enterprises', component: EnterprisesJournalsListComponent },
       { path: 'pensions', component: PensionLinesListComponent },
-      //{ path: 'employerni', component: EmployerNiComponent },*/
+      { path: 'employerni', component: NILinesListComponent },
     ],
   },
 ];

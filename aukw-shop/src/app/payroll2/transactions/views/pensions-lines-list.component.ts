@@ -36,10 +36,6 @@ export class PensionLinesListComponent implements OnInit {
         // Go from Observable<T[]> to Observable<T>
         fromArrayToElement(),
 
-        map((line) => {
-          return line;
-        }),
-
         // loop through all LineItemDetail's and sum the values to form a
         // "total" LineItemDetail that will be put in class level variable
         scan(
@@ -50,31 +46,30 @@ export class PensionLinesListComponent implements OnInit {
               employee: number;
               employer: number;
             },
-            curr:LineItemDetail,
+            curr: LineItemDetail,
           ) => {
-            var ret = { all: prev.all+curr.amount, salarySacrifice: 0, employee: 0, employer: 0 };
-            switch (curr.name.substring(0,10)) {              
+            switch (curr.name.substring(0, 10)) {
               case 'Salary Sac':
-                return { 
-                  all: prev.all+curr.amount,
-                  salarySacrifice: prev.salarySacrifice+curr.amount,
+                return {
+                  all: prev.all + curr.amount,
+                  salarySacrifice: prev.salarySacrifice + curr.amount,
                   employee: prev.employee,
                   employer: prev.employer,
                 };
               case 'Employee P':
-                return { 
-                  all: prev.all+curr.amount,
+                return {
+                  all: prev.all + curr.amount,
                   salarySacrifice: prev.salarySacrifice,
-                  employee: prev.employee+curr.amount,
+                  employee: prev.employee + curr.amount,
                   employer: prev.employer,
-                };         
+                };
               default:
-                return { 
-                  all: prev.all+curr.amount,
+                return {
+                  all: prev.all + curr.amount,
                   salarySacrifice: prev.salarySacrifice,
                   employee: prev.employee,
-                  employer: prev.employer+curr.amount,
-                };   
+                  employer: prev.employer + curr.amount,
+                };
             }
           },
           { all: 0, salarySacrifice: 0, employee: 0, employer: 0 },

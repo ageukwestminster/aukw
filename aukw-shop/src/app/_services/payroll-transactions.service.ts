@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { IrisPayslip, LineItemDetail, PayrollJournalEntry } from '@app/_models';
-import { EmployeeJournalsComponent, EnterprisesJournalComponent, PensionInvoiceComponent } from '@app/payroll2/transactions';
+import { EmployeeJournalsComponent, EmployerNiComponent, EnterprisesJournalComponent, PensionInvoiceComponent } from '@app/payroll2/transactions';
 import { PayrollIdentifier } from '@app/_interfaces/payroll-identifier';
 
 @Injectable({
@@ -11,6 +11,7 @@ export class PayrollTransactionsService {
   private employeeJournalsAdapter = new EmployeeJournalsComponent();
   private enterprisesJournalsAdapter = new EnterprisesJournalComponent();
   private pensionsJournalsAdapter = new PensionInvoiceComponent();
+  private niJournalsAdapter = new EmployerNiComponent();
 
   private empJournalsSubject = new BehaviorSubject<PayrollJournalEntry[]>([]);
   private pensionsSubject = new BehaviorSubject<LineItemDetail[]>([]);
@@ -34,10 +35,15 @@ export class PayrollTransactionsService {
     this.pensionsJournalsAdapter
       .createTransactions()
       .subscribe((response) => {this.pensionsSubject.next(response);});
+
+    this.niJournalsAdapter
+      .createTransactions()
+      .subscribe((response) => {this.employerniSubject.next(response);});
   }
 
   addToQuickBooks() {
     this.employeeJournalsAdapter.addToQuickBooks();
+    this.niJournalsAdapter.addToQuickBooks();
     this.pensionsJournalsAdapter.addToQuickBooks();
     this.enterprisesJournalsAdapter.addToQuickBooks();
   }
@@ -50,6 +56,8 @@ export class PayrollTransactionsService {
          return this.enterprisesJournalsAdapter.inQBO(line);
       case 'Pensions':  
          return this.pensionsJournalsAdapter.inQBO(line);
+      case 'EmployerNI':  
+         return this.niJournalsAdapter.inQBO(line);         
       default:
         return false;
         break;

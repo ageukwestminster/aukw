@@ -1,39 +1,39 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Observable, of, toArray, shareReplay, tap } from 'rxjs';
 import { IrisPayslip, LineItemDetail, PayrollProcessState } from '@app/_models';
-import { scan, shareReplay, tap } from 'rxjs';
-import { AllocatedCostsListComponent } from './allocated-costs-list/list.component';
-import { BasePayrollTransactionComponent } from '../base-transaction.component';
+import { BasePayrollTransactionComponent } from './base-transaction.component';
 
 @Component({
   standalone: true,
-  imports: [AllocatedCostsListComponent, CommonModule],
-  templateUrl: './employer-ni.component.html',
+  imports: [],
+  template: '',
   selector: 'employer-ni',
 })
 export class EmployerNiComponent extends BasePayrollTransactionComponent<LineItemDetail> {
   total: number = 0;
 
-  override recalculateTransactions() {
-    if (!this.payslips.length || !this.allocations.length) return;
+  override createTransactions(): Observable<LineItemDetail[]> {
+    if (!this.payslips.length || !this.allocations.length) return of([]);
 
     this.total = 0;
     this.lines = [];
 
-    this.payrollService
+    return this.payrollService
       .employerNIAllocatedCosts(this.payslips, this.allocations)
       .pipe(
-        tap((line: LineItemDetail) => this.lines.push(line)),
-        scan((a: number, v: LineItemDetail) => a + v.amount, 0),
-      )
-      .subscribe((total: number) => (this.total = total));
+        tap((line) => {
+          this.lines.push(line);
+          this.total += line.amount;
+        }),
+        toArray(),
+      );
   }
 
   /**
    * Create a single new journal entry in the Charity QuickBooks file that records the Employer NI amounts and
    * account and class allocations for each employee.
    */
-  createTransaction() {
+  addToQuickBooks() {
     // Filter out lines for which there is already a QBO entry
     const filteredTransactions = this.filteredTransactions(
       this.getQBFlagsProperty(),
@@ -82,12 +82,12 @@ export class EmployerNiComponent extends BasePayrollTransactionComponent<LineIte
   /** This is the property that the list must check to see if the line is in QBO or not*/
   override getQBFlagsProperty() {
     return function (payslip: IrisPayslip) {
-      return payslip.qbFlags.employerNI;
+      return payslip.niJournalInQBO;
     };
   }
   override setQBFlagsProperty() {
     return function (payslip: IrisPayslip, value: boolean) {
-      payslip.qbFlags.employerNI = value;
+      payslip.niJournalInQBO = value;
     };
   }
 }
