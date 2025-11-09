@@ -158,47 +158,47 @@
 <payslips-summary [payslips]="payslips" [total]="total"></payslips-summary>
 
 <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
-	<li [ngbNavItem]="1">
-            <a
-              class="nav-item nav-link"
-              routerLink="/payroll"
-              routerLinkActive="active"
-              [routerLinkActiveOptions]="{ exact: true }"
-              >Home</a
-            >
-	</li>
-          <li [ngbNavItem]="2">
-            <a
-              class="nav-item nav-link"
-              routerLink="/payroll/journals"
-              routerLinkActive="active"
-              >Employee Journals</a
-            >
-          </li>
-          <li [ngbNavItem]="3">
-            <a
-              class="nav-item nav-link"
-              routerLink="/payroll/employerni"
-              routerLinkActive="active"
-              >Employer NI</a
-            >
-          </li>
-          <li [ngbNavItem]="4">
-            <a
-              class="nav-item nav-link"
-              routerLink="/payroll/pensions"
-              routerLinkActive="active"
-              >Pensions</a
-            >
-          </li>
-          <li [ngbNavItem]="5">
-            <a
-              class="nav-item nav-link"
-              routerLink="/payroll/enterprises"
-              routerLinkActive="active"
-              >Shop Transactions</a
-            >
-          </li>
+  <li [ngbNavItem]="1">
+    <a
+      class="nav-item nav-link"
+      routerLink="/payroll"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      >Home</a
+    >
+  </li>
+  <li [ngbNavItem]="2">
+    <a
+      class="nav-item nav-link"
+      routerLink="/payroll/journals"
+      routerLinkActive="active"
+      >Employee Journals</a
+    >
+  </li>
+  <li [ngbNavItem]="3">
+    <a
+      class="nav-item nav-link"
+      routerLink="/payroll/employerni"
+      routerLinkActive="active"
+      >Employer NI</a
+    >
+  </li>
+  <li [ngbNavItem]="4">
+    <a
+      class="nav-item nav-link"
+      routerLink="/payroll/pensions"
+      routerLinkActive="active"
+      >Pensions</a
+    >
+  </li>
+  <li [ngbNavItem]="5">
+    <a
+      class="nav-item nav-link"
+      routerLink="/payroll/enterprises"
+      routerLinkActive="active"
+      >Shop Transactions</a
+    >
+  </li>
 </ul>
 
 <div [ngbNavOutlet]="nav" class="mt-2"></div>

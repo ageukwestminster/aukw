@@ -23,7 +23,7 @@ import {
   Subject,
   takeUntil,
 } from 'rxjs';
-import {  
+import {
   NgbDateAdapter,
   NgbDateParserFormatter,
   NgbDatepickerModule,
@@ -51,10 +51,7 @@ import {
   PayRun,
   TaxYear,
 } from '@app/_models';
-import {
-  CustomDateParserFormatter,
-  NgbUTCStringAdapter,
-} from '@app/_helpers';
+import { CustomDateParserFormatter, NgbUTCStringAdapter } from '@app/_helpers';
 import { PayslipListComponent } from './payslip-list/list/list.component';
 import { PayslipsSummaryComponent } from './payslip-list/summary/payslips-summary.component';
 import { NewEmployeeComponent } from './new-employee/new-employee.component';
@@ -96,8 +93,6 @@ export class PayrollComponent implements OnInit {
   showCreateTransactionsButton: boolean = false;
   active = 1;
 
-  
-
   private employerID: string = environment.staffologyEmployerID;
   private realmID: string = environment.qboCharityRealmID;
 
@@ -120,7 +115,6 @@ export class PayrollComponent implements OnInit {
   constructor() {
     this.payruns$ = of([]);
     this.taxyears$ = this.taxYearService.getAll();
-
   }
 
   ngOnInit(): void {
@@ -156,8 +150,8 @@ export class PayrollComponent implements OnInit {
         this.allocations = allocations;
         this.loading[0] = false;
         // DEBUG VALUES
-        this.f['month'].setValue(7);
         this.f['taxYear'].setValue('Year2025');
+        this.f['month'].setValue(6);
       });
 
     // Load employee names and allocations
@@ -180,9 +174,8 @@ export class PayrollComponent implements OnInit {
     this.reloadPayslipsFromAPI();
   }
 
-  reloadPayslipsFromAPI() {    
+  reloadPayslipsFromAPI() {
     if (this.form.valid) {
-      
       // Get the pay information from the Staffology api
       const grossToNetReport$ = this.grossToNetService.getAll(
         this.employerID,
@@ -199,28 +192,29 @@ export class PayrollComponent implements OnInit {
           grossToNetReport$,
           this.employees,
           this.allocations,
-        ).pipe(
+        )
+        .pipe(
           map(
             (o: {
               payslips: IrisPayslip[];
               total: IrisPayslip;
               payrollDate: string;
             }) => {
-
               // Store module-level array stuff
               this.payslips = o.payslips;
               this.payrollDate = o.payrollDate;
-              this.total = o.total;            
+              this.total = o.total;
 
-            // Are their payslips for employees who are either
-            // i) Not in QuickBooks; or
-            // ii) Do not have saved allocations in the database
-            return o.payslips.filter(
-              (payslip) =>
-                payslip.employeeMissingFromQBO ||
-                payslip.allocationsMissingFromQBO,
-            );
-          }),
+              // Are their payslips for employees who are either
+              // i) Not in QuickBooks; or
+              // ii) Do not have saved allocations in the database
+              return o.payslips.filter(
+                (payslip) =>
+                  payslip.employeeMissingFromQBO ||
+                  payslip.allocationsMissingFromQBO,
+              );
+            },
+          ),
 
           // Keep user informed
           this.loadingIndicatorService.createObserving({
@@ -232,7 +226,8 @@ export class PayrollComponent implements OnInit {
           shareReplay(1),
         )
         .subscribe({
-          next: (p:IrisPayslip[]) => this.payslipsWithMissingEmployeesOrAllocations = p,
+          next: (p: IrisPayslip[]) =>
+            (this.payslipsWithMissingEmployeesOrAllocations = p),
           error: (error: any) => {
             this.alertService.error(error, {
               autoClose: false,
@@ -248,7 +243,6 @@ export class PayrollComponent implements OnInit {
             this.showCreateTransactionsButton =
               this.payslipsWithMissingEmployeesOrAllocations &&
               !this.payslipsWithMissingEmployeesOrAllocations.length;
-
           },
         });
     }
@@ -317,7 +311,8 @@ export class PayrollComponent implements OnInit {
       const months = [10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
       const monthNumber = months.indexOf(fiscalMonthNumber);
-      if (monthNumber == -1) { // Not Found
+      if (monthNumber == -1) {
+        // Not Found
         return '';
       }
 
@@ -338,6 +333,6 @@ export class PayrollComponent implements OnInit {
     // Display transactions
     // Recalculate InQBO flags
 
-    this.payrollTransactionsService.createTransactions();
+    this.payrollTransactionsService.addToQuickBooks();
   }
 }

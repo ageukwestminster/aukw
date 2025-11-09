@@ -15,7 +15,7 @@ export class ShopJournalComponent extends BasePayrollTransactionComponent<IrisPa
 
   private qbEmployeeService = inject(QBEmployeeService);
 
-  override createTransactions() : Observable<IrisPayslip[]> {
+  override createTransactions(): Observable<IrisPayslip[]> {
     if (!this.payslips.length) return of([]);
 
     this.total = new IrisPayslip(); // reset to zero
@@ -25,40 +25,39 @@ export class ShopJournalComponent extends BasePayrollTransactionComponent<IrisPa
       employees: this.qbEmployeeService.getAll(
         environment.qboEnterprisesRealmID,
       ),
-    })
-      .pipe(
-        map((x) => {
-          let returnArray: Array<IrisPayslip> = [];
+    }).pipe(
+      map((x) => {
+        let returnArray: Array<IrisPayslip> = [];
 
-          x.payslips.forEach((payslip) => {
-            // Find the employee that matches the payslip
-            const employeeName = x.employees.filter(
-              (emp) => emp.payrollNumber == payslip.payrollNumber,
-            )[0];
+        x.payslips.forEach((payslip) => {
+          // Find the employee that matches the payslip
+          const employeeName = x.employees.filter(
+            (emp) => emp.payrollNumber == payslip.payrollNumber,
+          )[0];
 
-            // This data will go to the API
-            returnArray.push(
-              new IrisPayslip({
-                payrollNumber: payslip.payrollNumber,
-                quickbooksId: employeeName.quickbooksId,
-                employeeName: employeeName.name,
-                totalPay: payslip.totalPay,
-                employerNI: payslip.employerNI,
-                employerPension: payslip.employerPension,
-              }),
-            );
-          });
+          // This data will go to the API
+          returnArray.push(
+            new IrisPayslip({
+              payrollNumber: payslip.payrollNumber,
+              quickbooksId: employeeName.quickbooksId,
+              employeeName: employeeName.name,
+              totalPay: payslip.totalPay,
+              employerNI: payslip.employerNI,
+              employerPension: payslip.employerPension,
+            }),
+          );
+        });
 
-          return returnArray;
-        }),
-        map((x: Array<IrisPayslip>) => {
-          x.forEach((element) => {
-            this.total.add(element);
-          });
-          return x;
-        }),
-        tap((x: Array<IrisPayslip>) => {}),
-      );
+        return returnArray;
+      }),
+      map((x: Array<IrisPayslip>) => {
+        x.forEach((element) => {
+          this.total.add(element);
+        });
+        return x;
+      }),
+      tap((x: Array<IrisPayslip>) => {}),
+    );
   }
 
   /**
@@ -113,12 +112,12 @@ export class ShopJournalComponent extends BasePayrollTransactionComponent<IrisPa
   /** This is the property that the list must check to see if the line is in QBO or not*/
   override getQBFlagsProperty() {
     return function (payslip: IrisPayslip) {
-      return payslip.qbFlags.shopJournal;
+      return payslip.shopJournalInQBO;
     };
   }
   override setQBFlagsProperty() {
     return function (payslip: IrisPayslip, value: boolean) {
-      payslip.qbFlags.shopJournal = value;
+      payslip.shopJournalInQBO = value;
     };
   }
 }

@@ -1,6 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, forkJoin, of, BehaviorSubject, Subject } from 'rxjs';
+import {
+  Observable,
+  forkJoin,
+  of,
+  BehaviorSubject,
+  Subject,
+  switchMap,
+} from 'rxjs';
 import { defaultIfEmpty, map, tap } from 'rxjs/operators';
 
 import { environment } from '@environments/environment';
@@ -10,7 +17,6 @@ import {
   IrisPayslip,
   LineItemDetail,
   PayrollJournalEntry,
-  QBTransactionFlags,
 } from '@app/_models';
 import {
   isEqualPay,
@@ -18,6 +24,7 @@ import {
   isEqualEmployerNI,
   isEqualShopPay,
 } from '@app/_helpers';
+import { QBEntityService } from './qb-entity.service';
 
 const baseUrl = `${environment.apiUrl}/qb`;
 
@@ -27,6 +34,7 @@ const baseUrl = `${environment.apiUrl}/qb`;
 @Injectable({ providedIn: 'root' })
 export class QBPayrollService {
   private http = inject(HttpClient);
+  private qbEntityService = inject(QBEntityService);
 
   private allocationsSubject = new BehaviorSubject<EmployeeAllocation[]>([]);
   private payslipsSubject = new BehaviorSubject<IrisPayslip[]>([]);
@@ -86,9 +94,23 @@ export class QBPayrollService {
    * @returns An array of percentage allocations, one or more for each employee, or an empty array.
    */
   getAllocations(): Observable<EmployeeAllocation[]> {
-    return this.http
-      .get<EmployeeAllocation[]>(`${environment.apiUrl}/allocations`)
-      .pipe(tap((result) => this.allocationsSubject.next(result)));
+    return forkJoin({
+      classes: this.qbEntityService
+        .getAllClasses(environment.qboCharityRealmID)
+        .pipe(defaultIfEmpty([])),
+      allocations: this.http.get<EmployeeAllocation[]>(
+        `${environment.apiUrl}/allocations`,
+      ),
+    }).pipe(
+      switchMap((x) => {
+        x.allocations.forEach((element) => {
+          element.className =
+            x.classes.find((c) => c.id === element.class)?.value ?? '';
+        });
+        return of(x.allocations);
+      }),
+      tap((result) => this.allocationsSubject.next(result)),
+    );
   }
 
   /**
@@ -179,19 +201,11 @@ export class QBPayrollService {
               (item) => item.payrollNumber == payslip.payrollNumber,
             ) ?? new IrisPayslip();
 
-          if (!payslip.qbFlags) {
-            payslip.qbFlags = new QBTransactionFlags({
-              // isEqualEmployerNI() is defined in @app/_helpers/payslip-comparer.ts
-              employerNI: isEqualEmployerNI(payslip, qbPayslip),
-              pensionBill: isEqualPension(payslip, qbPayslip),
-              employeeJournal: isEqualPay(payslip, qbPayslip),
-              shopJournal: false,
-            });
-          } else {
+          if (qbPayslip) {
             // isEqualEmployerNI() is defined in @app/_helpers/payslip-comparer.ts
-            payslip.qbFlags.employerNI = isEqualEmployerNI(payslip, qbPayslip);
-            payslip.qbFlags.pensionBill = isEqualPension(payslip, qbPayslip);
-            payslip.qbFlags.employeeJournal = isEqualPay(payslip, qbPayslip);
+            payslip.niJournalInQBO = isEqualEmployerNI(payslip, qbPayslip);
+            payslip.pensionBillInQBO = isEqualPension(payslip, qbPayslip);
+            payslip.payslipJournalInQBO = isEqualPay(payslip, qbPayslip);
           }
         });
         return x.payrollPayslips;
@@ -225,17 +239,7 @@ export class QBPayrollService {
             (item) => item.payrollNumber == payslip.payrollNumber,
           );
           if (qbPayslip) {
-            if (!payslip.qbFlags) {
-              payslip.qbFlags = new QBTransactionFlags({
-                employerNI: false,
-                pensionBill: false,
-                employeeJournal: false,
-                // isEqualShopPay() is defined in @app/_helpers/payslip-comparer.ts
-                shopJournal: isEqualShopPay(payslip, qbPayslip),
-              });
-            } else {
-              payslip.qbFlags.shopJournal = isEqualShopPay(payslip, qbPayslip);
-            }
+            payslip.shopJournalInQBO = isEqualShopPay(payslip, qbPayslip);
           }
         });
         return x.payrollPayslips;

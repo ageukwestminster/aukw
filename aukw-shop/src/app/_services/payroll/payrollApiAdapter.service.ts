@@ -1,13 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import {
-  forkJoin,
-  Observable,
-  of,
-  map,  
-  switchMap,
-  tap,
-  toArray,
-} from 'rxjs';
+import { forkJoin, Observable, of, map, switchMap, tap, toArray } from 'rxjs';
 
 import { fromArrayToElement } from '@app/_helpers';
 import { EmployeeAllocation, EmployeeName, IrisPayslip } from '@app/_models';
@@ -72,7 +64,7 @@ export class PayrollApiAdapterService {
 
       // Convert back from Observable<T> to Observable<T[]>
       toArray(),
-/*
+
       // Get payslip flags for Charity QBO ... checking to see if transactions have been entered already
       switchMap((payslips: IrisPayslip[]) => {
         return this.qbPayrollService.payslipFlagsForCharity(
@@ -87,7 +79,7 @@ export class PayrollApiAdapterService {
           payslips,
           returnObj.payrollDate,
         );
-      }),*/
+      }),
 
       // We will use this service to inform other components of the payslips
       map((payslips) => {
@@ -97,17 +89,6 @@ export class PayrollApiAdapterService {
         returnObj.payslips = payslips;
         return returnObj;
       }),
-
-      //tap(() => this.payrollTransactionsService.createTransactions())
-/*
-      switchMap(o => forkJoin(
-{
-      journals: of(o),
-      payrollPayslips: of(o),
-    }
-      )
-
-      ),*/
     );
   }
 }

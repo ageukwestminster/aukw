@@ -40,12 +40,12 @@ export class ConsoleService {
         `: Loan:£${payslip.studentLoan.toFixed(2)} : EE NI:£${payslip.employeeNI.toFixed(2)} ` +
         `: ER NI:£${payslip.employerNI.toFixed(2)} : MissingEmployee:${payslip.employeeMissingFromQBO} ` +
         `: MissingAllocs:${payslip.allocationsMissingFromQBO} `;
-      if (payslip.qbFlags) {
-        msg +=
-          `: JournalInQBO:${payslip.qbFlags.employeeJournal} ` +
-          `: NIInQBO:${payslip.qbFlags.employerNI} : PensionInQBO:${payslip.qbFlags.pensionBill} ` +
-          `: ShopJournalInQBO:${payslip.qbFlags.shopJournal}`;
-      }
+
+      msg +=
+        `: JournalInQBO:${payslip.payslipJournalInQBO} ` +
+        `: NIInQBO:${payslip.niJournalInQBO} : PensionInQBO:${payslip.pensionBillInQBO} ` +
+        `: ShopJournalInQBO:${payslip.shopJournalInQBO}`;
+
       this.consoleMessageSubject.next(msg);
     });
   }

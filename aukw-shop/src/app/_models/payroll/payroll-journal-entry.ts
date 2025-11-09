@@ -26,6 +26,25 @@ export class PayrollJournalEntry implements PayrollIdentifier {
    * creation of the DocNumber of the payroll journal. */
   employeeName: string;
 
+  sumOfTotalPay(): number {
+    return this.totalPay
+      ? this.totalPay.reduce((n, { amount }) => n + amount, 0)
+      : 0;
+  }
+
+  add(obj: any): PayrollJournalEntry {
+    this.totalPay =
+      obj && obj.totalPay ? this.totalPay.concat(obj.totalPay) : this.totalPay;
+    this.paye += (obj && obj.paye) || 0;
+    this.employeeNI += (obj && obj.employeeNI) || 0;
+    this.otherDeductions += (obj && obj.otherDeductions) || 0;
+    this.salarySacrifice += (obj && obj.salarySacrifice) || 0;
+    this.studentLoan += (obj && obj.studentLoan) || 0;
+    this.netPay += (obj && obj.netPay) || 0;
+    this.employeePension += (obj && obj.employeePension) || 0;
+    return this;
+  }
+
   constructor(obj?: any) {
     this.payrollNumber = (obj && obj.payrollNumber) || null;
     this.quickbooksId = (obj && obj.quickbooksId) || null;

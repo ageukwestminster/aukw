@@ -60,7 +60,7 @@ export class IrisPayslip {
   /** 'True' if the shop employee's salary, NI and pension has been booked in the Enterprises QBO company. */
   shopJournalInQBO: boolean = false;
   /** QuickBooks transaction flags for this employee */
-  qbFlags: QBTransactionFlags;
+  //qbFlags: QBTransactionFlags;
   /** 'True' if the employee is missing from QuickBooks */
   employeeMissingFromQBO: boolean = false;
   /** 'True' if the project allocations for this employee are missing from QuickBooks */
@@ -96,7 +96,7 @@ export class IrisPayslip {
     this.employerPension = (obj && obj.employerPension) || 0;
     this.employeePension = (obj && obj.employeePension) || 0;
     this.isShopEmployee = obj && obj.isShopEmployee;
-    this.qbFlags = (obj && obj.qbFlags) || null;
+    //this.qbFlags = (obj && obj.qbFlags) || null;
     this.employeeMissingFromQBO = obj && obj.employeeMissingFromQBO;
     this.allocationsMissingFromQBO = obj && obj.allocationsMissingFromQBO;
   }

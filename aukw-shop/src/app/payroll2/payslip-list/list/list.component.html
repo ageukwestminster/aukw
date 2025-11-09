@@ -88,7 +88,7 @@
           <div class="row">
             <div class="col p-0">
               <span class="in-qbo">
-                @if (p.qbFlags && p.qbFlags.employeeJournal) {
+                @if (p.payslipJournalInQBO) {
                   <i
                     class="fas fa-check"
                     ngbTooltip="Employee payslip GJ done."
@@ -96,7 +96,7 @@
                 }
               </span>
               <span class="not-in-qbo">
-                @if (!p.qbFlags || !p.qbFlags.employeeJournal) {
+                @if (!p.payslipJournalInQBO) {
                   <i
                     class="fas fa-times"
                     ngbTooltip="Employee payslip GJ missing."
@@ -109,7 +109,7 @@
                 <i class="fas fa-minus" ngbTooltip="Not in pension plan."></i>
               }
               <span class="in-qbo">
-                @if (p.employerPension && p.qbFlags && p.qbFlags.pensionBill) {
+                @if (p.employerPension && p.pensionBillInQBO) {
                   <i
                     class="fas fa-check"
                     ngbTooltip="L&G pension bill done."
@@ -117,9 +117,7 @@
                 }
               </span>
               <span class="not-in-qbo">
-                @if (
-                  p.employerPension && (!p.qbFlags || !p.qbFlags.pensionBill)
-                ) {
+                @if (p.employerPension && !p.pensionBillInQBO) {
                   <i
                     class="fas fa-times"
                     ngbTooltip="L&G pension bill missing."
@@ -132,7 +130,7 @@
                 <i class="fas fa-minus" ngbTooltip="Employer NI is zero."></i>
               }
               <span class="in-qbo">
-                @if (p.employerNI && p.qbFlags && p.qbFlags.employerNI) {
+                @if (p.employerNI && p.niJournalInQBO) {
                   <i
                     class="fas fa-check"
                     ngbTooltip="Employer NI journal done."
@@ -140,7 +138,7 @@
                 }
               </span>
               <span class="not-in-qbo">
-                @if (p.employerNI && (!p.qbFlags || !p.qbFlags.employerNI)) {
+                @if (p.employerNI && !p.niJournalInQBO) {
                   <i
                     class="fas fa-times"
                     ngbTooltip="Employer NI journal missing."
@@ -153,7 +151,7 @@
                 <i class="fas fa-minus" ngbTooltip="Not a shop employee."></i>
               }
               <span class="in-qbo">
-                @if (p.isShopEmployee && p.qbFlags && p.qbFlags.shopJournal) {
+                @if (p.isShopEmployee && p.shopJournalInQBO) {
                   <i
                     class="fas fa-check"
                     ngbTooltip="Shop journal entry done."
@@ -161,9 +159,7 @@
                 }
               </span>
               <span class="not-in-qbo">
-                @if (
-                  p.isShopEmployee && (!p.qbFlags || !p.qbFlags.shopJournal)
-                ) {
+                @if (p.isShopEmployee && !p.shopJournalInQBO) {
                   <i
                     class="fas fa-times"
                     ngbTooltip="Shop journal entry missing."

@@ -115,6 +115,38 @@
             </td>
           </tr>
         }
+        @if (total && total.totalPay) {
+          <tr class="total-line">
+            <td></td>
+            <td>Total for {{ this.lines.length }} employees:</td>
+            <td></td>
+            <td class="d-none d-sm-table-cell">
+              {{ total.sumOfTotalPay() | number: "1.2-2" }}
+            </td>
+            <td class="d-none d-sm-table-cell">
+              {{ total.paye | number: "1.2-2" }}
+            </td>
+            <td class="d-none d-sm-table-cell">
+              {{ total.employeeNI | number: "1.2-2" }}
+            </td>
+            <td class="d-none d-sm-table-cell">
+              {{ total.otherDeductions | number: "1.2-2" }}
+            </td>
+            <td class="d-none d-sm-table-cell">
+              {{ -total.salarySacrifice | number: "1.2-2" }}
+            </td>
+            <td class="d-none d-sm-table-cell">
+              {{ -total.employeePension | number: "1.2-2" }}
+            </td>
+            <td class="d-none d-sm-table-cell">
+              {{ total.studentLoan | number: "1.2-2" }}
+            </td>
+            <td class="d-none d-sm-table-cell">
+              {{ -total.netPay | number: "1.2-2" }}
+            </td>
+            <td></td>
+          </tr>
+        }
       </tbody>
     </table>
   </div>

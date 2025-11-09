@@ -4,7 +4,15 @@ import {
   PayrollJournalEntry,
   PayrollProcessState,
 } from '@app/_models';
-import { from, mergeMap, Observable, of, shareReplay, tap, toArray } from 'rxjs';
+import {
+  from,
+  mergeMap,
+  Observable,
+  of,
+  shareReplay,
+  tap,
+  toArray,
+} from 'rxjs';
 import { BasePayrollTransactionComponent } from './base-transaction.component';
 
 @Component({
@@ -13,16 +21,18 @@ import { BasePayrollTransactionComponent } from './base-transaction.component';
   template: '',
 })
 export class EmployeeJournalsComponent extends BasePayrollTransactionComponent<PayrollJournalEntry> {
-
   constructor() {
     super();
   }
 
-  override createTransactions() : Observable<PayrollJournalEntry[]> {    
-
-    if (!this.payslips || !this.payslips.length
-        || !this.allocations || !this.allocations.length
-    ) return of([]);
+  override createTransactions(): Observable<PayrollJournalEntry[]> {
+    if (
+      !this.payslips ||
+      !this.payslips.length ||
+      !this.allocations ||
+      !this.allocations.length
+    )
+      return of([]);
 
     return this.payrollService
       .employeeJournalEntries(this.payslips, this.allocations)
@@ -84,12 +94,12 @@ export class EmployeeJournalsComponent extends BasePayrollTransactionComponent<P
 
   override getQBFlagsProperty() {
     return function (payslip: IrisPayslip) {
-      return payslip.qbFlags.employeeJournal;
+      return payslip.payslipJournalInQBO;
     };
   }
   override setQBFlagsProperty() {
     return function (payslip: IrisPayslip, value: boolean) {
-      payslip.qbFlags.employeeJournal = value;
+      payslip.payslipJournalInQBO = value;
     };
   }
 }

@@ -1,5 +1,11 @@
 import { Component, DestroyRef, inject } from '@angular/core';
-import { ApiMessage, EmployeeAllocation, IrisPayslip, LineItemDetail, User } from '@app/_models';
+import {
+  ApiMessage,
+  EmployeeAllocation,
+  IrisPayslip,
+  LineItemDetail,
+  User,
+} from '@app/_models';
 import {
   AlertService,
   AuditLogService,
@@ -24,8 +30,7 @@ import { Observable, Subject, takeUntil, tap } from 'rxjs';
 })
 export abstract class BasePayrollTransactionComponent<
   T extends PayrollIdentifier,
-> 
-{
+> {
   /**
    * An array of objects that will be used to create a tranaction
    * or transactions on QBO.
@@ -99,8 +104,7 @@ export abstract class BasePayrollTransactionComponent<
   filteredTransactions(prop: (p: IrisPayslip) => boolean) {
     return this.lines.filter((item) => {
       let ps = this.payslips.filter(
-        (p) =>
-          p.payrollNumber == item.payrollNumber && (!p.qbFlags || !prop(p)),
+        (p) => p.payrollNumber == item.payrollNumber && !prop(p),
       );
       return ps.length > 0;
     });
@@ -113,7 +117,7 @@ export abstract class BasePayrollTransactionComponent<
    * @returns 'True' if already in QBO.
    */
   inQBO(line: PayrollIdentifier): boolean {
-    if (!this.payslips || !this.payslips.length) return false;
+    if (!this.payslips || !this.payslips.length || !line) return false;
     return (
       this.payslips.filter(
         (p) =>

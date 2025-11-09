@@ -9,7 +9,7 @@ export const PAYROLL_ROUTES: Routes = [
     path: '',
     component: PayrollComponent,
     children: [
-      { path: '', component: PayslipsComponent },      
+      { path: '', component: PayslipsComponent },
       { path: 'journals', component: EmployeeJournalsListComponent },
       //{ path: 'enterprises', component: ShopJournalComponent },
       /*{ path: 'pensions', component: PensionInvoiceComponent },
