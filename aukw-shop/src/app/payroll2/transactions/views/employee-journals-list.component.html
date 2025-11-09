@@ -1,20 +1,5 @@
 <h4>Employee Costs</h4>
 <div class="row">
-  <div class="col-sm-4">
-    <p>Number of Employees: {{ payslips.length }}</p>
-    <p>Payroll Date: {{ payslips[0].payrollDate | date: "dd MMM yyyy" }}</p>
-  </div>
-  <div class="col-sm-4">
-    <button
-      (click)="createTransaction()"
-      class="btn btn-sm btn-success m-1 mt-1"
-      [disabled]="!lines || !lines.length"
-    >
-      Create Salary Journals
-    </button>
-  </div>
-</div>
-<div class="row">
   <div class="col">
     <table class="table table-striped table-responsive">
       <thead>

@@ -1,41 +1,39 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import {
   IrisPayslip,
   PayrollJournalEntry,
   PayrollProcessState,
 } from '@app/_models';
-import { from, mergeMap, shareReplay, tap, toArray } from 'rxjs';
-import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
-import { BasePayrollTransactionComponent } from '../base-transaction.component';
+import { from, mergeMap, Observable, of, shareReplay, tap, toArray } from 'rxjs';
+import { BasePayrollTransactionComponent } from './base-transaction.component';
 
 @Component({
-  selector: 'employee-journals',
   standalone: true,
-  imports: [CommonModule, NgbTooltip],
-  templateUrl: './employee-journals.component.html',
-  styleUrls: ['./employee-journals.component.css', '../shared.css'],
+  imports: [],
+  template: '',
 })
 export class EmployeeJournalsComponent extends BasePayrollTransactionComponent<PayrollJournalEntry> {
-  override recalculateTransactions() {
-    if (!this.payslips.length) return;
 
-    this.payrollService
+  constructor() {
+    super();
+  }
+
+  override createTransactions() : Observable<PayrollJournalEntry[]> {    
+
+    if (!this.payslips || !this.payslips.length
+        || !this.allocations || !this.allocations.length
+    ) return of([]);
+
+    return this.payrollService
       .employeeJournalEntries(this.payslips, this.allocations)
-      .pipe(toArray())
-      .subscribe({
-        next: (response) => (this.lines = response),
-        error: (e) => {
-          this.alertService.error(e, { autoClose: false });
-        },
-      });
+      .pipe(toArray());
   }
 
   /**
    * Create a set of new journals in the Charity QuickBooks file that records the salary,
    * deductions and net pay amounts for each employee.
    */
-  createTransaction() {
+  addToQuickBooks() {
     // Filter out lines for which there is already a QBO entry
     const filteredTransactions = this.filteredTransactions(
       this.getQBFlagsProperty(),

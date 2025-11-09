@@ -58,6 +58,7 @@ import {
 import { PayslipListComponent } from './payslip-list/list/list.component';
 import { PayslipsSummaryComponent } from './payslip-list/summary/payslips-summary.component';
 import { NewEmployeeComponent } from './new-employee/new-employee.component';
+import { PayrollTransactionsService } from '@app/_services';
 
 @Component({
   selector: 'app-payroll',
@@ -95,6 +96,8 @@ export class PayrollComponent implements OnInit {
   showCreateTransactionsButton: boolean = false;
   active = 1;
 
+  
+
   private employerID: string = environment.staffologyEmployerID;
   private realmID: string = environment.qboCharityRealmID;
 
@@ -112,10 +115,12 @@ export class PayrollComponent implements OnInit {
   private loadingIndicatorService = inject(LoadingIndicatorService);
   private locale = inject(LOCALE_ID);
   private payrollApiAdapterService = inject(PayrollApiAdapterService);
+  private payrollTransactionsService = inject(PayrollTransactionsService);
 
   constructor() {
     this.payruns$ = of([]);
     this.taxyears$ = this.taxYearService.getAll();
+
   }
 
   ngOnInit(): void {
@@ -175,7 +180,7 @@ export class PayrollComponent implements OnInit {
     this.reloadPayslipsFromAPI();
   }
 
-  reloadPayslipsFromAPI() {
+  reloadPayslipsFromAPI() {    
     if (this.form.valid) {
       
       // Get the pay information from the Staffology api
@@ -332,5 +337,7 @@ export class PayrollComponent implements OnInit {
     // Recalculate Transactions
     // Display transactions
     // Recalculate InQBO flags
+
+    this.payrollTransactionsService.createTransactions();
   }
 }

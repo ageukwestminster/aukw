@@ -1,5 +1,5 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { EmployeeAllocation, IrisPayslip, User } from '@app/_models';
+import { Component, DestroyRef, inject } from '@angular/core';
+import { ApiMessage, EmployeeAllocation, IrisPayslip, LineItemDetail, User } from '@app/_models';
 import {
   AlertService,
   AuditLogService,
@@ -10,7 +10,7 @@ import {
   PayrollProcessStateService,
 } from '@app/_services';
 import { PayrollIdentifier } from '@app/_interfaces/payroll-identifier';
-import { Subject, takeUntil, tap } from 'rxjs';
+import { Observable, Subject, takeUntil, tap } from 'rxjs';
 /**
  * An abstract base component for taking employee salary and tax data in the form of
  * IrisPayslip objects and converting them to QBO transactions.
@@ -24,7 +24,7 @@ import { Subject, takeUntil, tap } from 'rxjs';
 })
 export abstract class BasePayrollTransactionComponent<
   T extends PayrollIdentifier,
-> implements OnInit
+> 
 {
   /**
    * An array of objects that will be used to create a tranaction
@@ -46,7 +46,7 @@ export abstract class BasePayrollTransactionComponent<
   protected auditLogService = inject(AuditLogService);
   protected authenticationService = inject(AuthenticationService);
 
-  ngOnInit() {
+  constructor() {
     const destroyed = new Subject();
     this.destroyRef.onDestroy(() => {
       destroyed.next('');
@@ -62,12 +62,18 @@ export abstract class BasePayrollTransactionComponent<
         takeUntil(destroyed),
         tap((response) => {
           this.payslips = response;
-          this.payrollDate = response[0].payrollDate;
         }),
       )
-      .subscribe(() => {
-        this.recalculateTransactions();
-      });
+      .subscribe();
+
+    this.qbPayrollService.payrollDate$
+      .pipe(
+        takeUntil(destroyed),
+        tap((response) => {
+          this.payrollDate = response;
+        }),
+      )
+      .subscribe();
   }
 
   /**
@@ -77,13 +83,13 @@ export abstract class BasePayrollTransactionComponent<
    * This method must be implemented in derived classes.
    * This method is called in ngOnInit and nothing is returned (void).
    */
-  abstract recalculateTransactions(): void;
+  abstract createTransactions(): Observable<T[]>;
 
   /**
    * Create transaction(s) in QBO based on the data in lines[].
    * This method must be implemented in derived classes.
    */
-  abstract createTransaction(): void;
+  abstract addToQuickBooks(): void;
 
   /**
    * Filter out lines for which there is already a QBO entry

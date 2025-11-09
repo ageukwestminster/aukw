@@ -1,30 +1,26 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { IrisPayslip, PayrollProcessState } from '@app/_models';
 import { QBEmployeeService } from '@app/_services';
-import { forkJoin, map, of, shareReplay, tap } from 'rxjs';
+import { forkJoin, map, Observable, of, shareReplay, tap } from 'rxjs';
 import { environment } from '@environments/environment';
-import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
-import { BasePayrollTransactionComponent } from '../base-transaction.component';
+import { BasePayrollTransactionComponent } from './base-transaction.component';
 
 @Component({
-  selector: 'shop-journal',
   standalone: true,
-  imports: [CommonModule, NgbTooltip],
-  templateUrl: './shop-journal.component.html',
-  styleUrls: ['./shop-journal.component.css', '../shared.css'],
+  imports: [],
+  template: '',
 })
 export class ShopJournalComponent extends BasePayrollTransactionComponent<IrisPayslip> {
   total: IrisPayslip = new IrisPayslip();
 
   private qbEmployeeService = inject(QBEmployeeService);
 
-  override recalculateTransactions(): void {
-    if (!this.payslips.length) return;
+  override createTransactions() : Observable<IrisPayslip[]> {
+    if (!this.payslips.length) return of([]);
 
     this.total = new IrisPayslip(); // reset to zero
 
-    forkJoin({
+    return forkJoin({
       payslips: of(this.payslips.filter((p) => p.isShopEmployee)),
       employees: this.qbEmployeeService.getAll(
         environment.qboEnterprisesRealmID,
@@ -62,15 +58,14 @@ export class ShopJournalComponent extends BasePayrollTransactionComponent<IrisPa
           return x;
         }),
         tap((x: Array<IrisPayslip>) => {}),
-      )
-      .subscribe((response) => (this.lines = response));
+      );
   }
 
   /**
    * Create a single new journal in the Enterprises QuickBooks file that records the salary, employer
    * NI and pension amounts for each shop employee.
    */
-  createTransaction() {
+  addToQuickBooks() {
     // Filter out lines for which there is already a QBO entry
     const filteredTransactions = this.filteredTransactions(
       this.getQBFlagsProperty(),

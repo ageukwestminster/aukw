@@ -11,7 +11,7 @@ import {
 
 import { fromArrayToElement } from '@app/_helpers';
 import { EmployeeAllocation, EmployeeName, IrisPayslip } from '@app/_models';
-import { QBPayrollService } from '@app/_services';
+import { PayrollTransactionsService, QBPayrollService } from '@app/_services';
 
 /**
  *
@@ -20,6 +20,7 @@ import { QBPayrollService } from '@app/_services';
 @Injectable({ providedIn: 'root' })
 export class PayrollApiAdapterService {
   private qbPayrollService = inject(QBPayrollService);
+  private payrollTransactionsService = inject(PayrollTransactionsService);
 
   adaptStaffologyToQuickBooks(
     payslips$: Observable<IrisPayslip[]>,
@@ -71,7 +72,7 @@ export class PayrollApiAdapterService {
 
       // Convert back from Observable<T> to Observable<T[]>
       toArray(),
-
+/*
       // Get payslip flags for Charity QBO ... checking to see if transactions have been entered already
       switchMap((payslips: IrisPayslip[]) => {
         return this.qbPayrollService.payslipFlagsForCharity(
@@ -86,15 +87,18 @@ export class PayrollApiAdapterService {
           payslips,
           returnObj.payrollDate,
         );
-      }),
+      }),*/
 
       // We will use this service to inform other components of the payslips
       map((payslips) => {
         this.qbPayrollService.sendPayslips(payslips);
+        this.payrollTransactionsService.createTransactions();
 
         returnObj.payslips = payslips;
         return returnObj;
       }),
+
+      //tap(() => this.payrollTransactionsService.createTransactions())
 /*
       switchMap(o => forkJoin(
 {
