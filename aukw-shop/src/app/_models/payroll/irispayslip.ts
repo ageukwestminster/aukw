@@ -66,6 +66,11 @@ export class IrisPayslip {
   /** 'True' if the project allocations for this employee are missing from QuickBooks */
   allocationsMissingFromQBO: boolean = false;
 
+  /** 
+   * Add the values from a specified payslip to this instance
+   * @param IrisPayslip The payslip to add to this instance.
+   * @returns This instance
+   */
   add(obj: IrisPayslip): IrisPayslip {
     this.totalPay += (obj && obj.totalPay) || 0;
     this.paye += (obj && obj.paye) || 0;

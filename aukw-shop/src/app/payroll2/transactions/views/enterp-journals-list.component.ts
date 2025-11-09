@@ -9,7 +9,6 @@ import { PayrollTransactionsService } from '@app/_services';
 import { fromArrayToElement } from '@app/_helpers';
 
 @Component({
-  selector: 'employee-journals',
   standalone: true,
   imports: [CommonModule, NgbTooltip],
   templateUrl: './enterp-journal.component.html',
@@ -17,7 +16,7 @@ import { fromArrayToElement } from '@app/_helpers';
 })
 export class EnterprisesJournalsListComponent implements OnInit {
   lines: IrisPayslip[] = [];
-  total: IrisPayslip = new IrisPayslip;
+  total: IrisPayslip = new IrisPayslip();
 
   private payrollTransactionsService = inject(PayrollTransactionsService);
 

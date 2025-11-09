@@ -9,7 +9,6 @@ import { PayrollTransactionsService } from '@app/_services';
 import { fromArrayToElement } from '@app/_helpers';
 
 @Component({
-  selector: 'employee-journals',
   standalone: true,
   imports: [CommonModule, NgbTooltip],
   templateUrl: './employee-journals-list.component.html',

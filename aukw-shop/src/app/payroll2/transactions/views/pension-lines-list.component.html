@@ -1,0 +1,22 @@
+<h4>Allocated Employer Pension Costs</h4>
+<div class="col-sm-4">
+  <table class="table table-striped table-responsive text-end">
+    <tbody>
+      <tr>
+        <td class="text-start">Salary Sacrifice:</td>
+        <td>£{{ this.total.salarySacrifice| number: "1.2-2" }}</td>
+      </tr>
+      <tr>
+        <td class="text-start">Employee Pension Contribution:</td>
+        <td>£{{ this.total.employee| number: "1.2-2" }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<allocated-costs-list
+  [title]="'Pension costs'"
+  [transactionType]="'invoice'"
+  [lines]="lines"
+  [payslips]="payslips | async"
+  [inQBOProperty]="getQBFlagsProperty()"
+></allocated-costs-list>

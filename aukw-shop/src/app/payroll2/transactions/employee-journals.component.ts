@@ -16,6 +16,7 @@ import {
 import { BasePayrollTransactionComponent } from './base-transaction.component';
 
 @Component({
+  selector: 'employee-journals',
   standalone: true,
   imports: [],
   template: '',

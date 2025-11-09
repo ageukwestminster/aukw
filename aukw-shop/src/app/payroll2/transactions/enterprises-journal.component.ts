@@ -6,6 +6,7 @@ import { environment } from '@environments/environment';
 import { BasePayrollTransactionComponent } from './base-transaction.component';
 
 @Component({
+  selector: 'enterprises-journals',
   standalone: true,
   imports: [],
   template: '',
@@ -50,7 +51,7 @@ export class EnterprisesJournalComponent extends BasePayrollTransactionComponent
 
         return returnArray;
       }),
-      map((x: Array<IrisPayslip>) => {
+      map((x: IrisPayslip[]) => {
         x.forEach((element) => {
           this.total.add(element);
         });

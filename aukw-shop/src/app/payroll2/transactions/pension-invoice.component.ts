@@ -1,30 +1,31 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { IrisPayslip, LineItemDetail, PayrollProcessState } from '@app/_models';
-import { scan, shareReplay, tap } from 'rxjs';
-import { AllocatedCostsListComponent } from './allocated-costs-list/list.component';
-import { BasePayrollTransactionComponent } from '../base-transaction.component';
+import { from, merge, Observable, of, shareReplay, tap, toArray } from 'rxjs';
+import { BasePayrollTransactionComponent } from './base-transaction.component';
 
 @Component({
+  selector: 'pension-invoice',
   standalone: true,
-  imports: [AllocatedCostsListComponent, CommonModule],
-  templateUrl: './pension-invoice.component.html',
-  selector: 'pensions-invoice',
+  imports: [],
+  template: '',
 })
 export class PensionInvoiceComponent extends BasePayrollTransactionComponent<LineItemDetail> {
   total: number = 0;
   totalSalarySacrifice: number = 0;
   totalEmployeePension: number = 0;
 
-  override recalculateTransactions() {
-    if (!this.payslips.length || !this.allocations.length) return;
+  override createTransactions(): Observable<LineItemDetail[]> {
+    if (!this.payslips.length || !this.allocations.length) return of([]);
 
-    this.lines = [];
+    const lines: LineItemDetail[] = [];
+    this.total = 0;
+
     this.payslips.forEach((p: IrisPayslip) => {
       this.totalSalarySacrifice += p.salarySacrifice;
       this.totalEmployeePension += p.employeePension;
     });
-    this.lines.push(
+
+    lines.push(
       new LineItemDetail({
         payrollNumber: 0,
         name: 'Salary Sacrifice total',
@@ -32,7 +33,7 @@ export class PensionInvoiceComponent extends BasePayrollTransactionComponent<Lin
         className: '04 Administration',
       }),
     );
-    this.lines.push(
+    lines.push(
       new LineItemDetail({
         payrollNumber: 0,
         name: 'Employee Pension total',
@@ -41,20 +42,26 @@ export class PensionInvoiceComponent extends BasePayrollTransactionComponent<Lin
       }),
     );
 
-    this.payrollService
-      .pensionAllocatedCosts(this.payslips, this.allocations)
-      .pipe(
-        tap((line: LineItemDetail) => this.lines.push(line)),
-        scan((a: number, v: LineItemDetail) => a + v.amount, 0),
-      )
-      .subscribe((total: number) => (this.total = total));
+    return merge(
+      from(lines),
+      this.payrollService.pensionAllocatedCosts(
+        this.payslips,
+        this.allocations,
+      ),
+    ).pipe(
+      tap((line) => {
+        this.lines.push(line);
+        this.total += line.amount;
+      }),
+      toArray(),
+    );
   }
 
   /**
    * Create a single new invoice in the Charity QuickBooks file that records the pension amounts and
    * account and class allocations for each employee.
    */
-  createTransaction() {
+  addToQuickBooks() {
     // Filter out lines for which there is already a QBO entry
     const filteredTransactions = this.filteredTransactions(
       this.getQBFlagsProperty(),
@@ -115,12 +122,12 @@ export class PensionInvoiceComponent extends BasePayrollTransactionComponent<Lin
   /** This is the property that the list must check to see if the line is in QBO or not*/
   override getQBFlagsProperty() {
     return function (payslip: IrisPayslip) {
-      return payslip.qbFlags.pensionBill;
+      return payslip.pensionBillInQBO;
     };
   }
   override setQBFlagsProperty() {
     return function (payslip: IrisPayslip, value: boolean) {
-      payslip.qbFlags.pensionBill = value;
+      payslip.pensionBillInQBO = value;
     };
   }
 }

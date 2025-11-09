@@ -83,7 +83,8 @@ export class PayrollService {
   }
 
   /**
-   * Return an Observable of allocations. This is a private function.
+   * Return an Observable of allocations. This is a private function called from grossSalaryAllocatedCosts(),
+   * pensionAllocatedCosts() and employerNIAllocatedCosts();
    * @param payslips An array of payslips, detailing each employee's salary and ni
    * @param allocations An array of allocation objects that show how to split costs between classes
    * @param property A function that takes an irisPayslip and returns the object property that is 
@@ -148,7 +149,7 @@ export class PayrollService {
               const line = new LineItemDetail({
                 // '+' = https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Unary_plus
                 quickbooksId: +empAllocation.quickbooksId,
-                name: empAllocation.name,
+                name: p.employeeName,
                 account: empAllocation.account,
                 accountName: empAllocation.accountName,
                 class: empAllocation.class,

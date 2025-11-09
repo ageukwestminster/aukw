@@ -2,8 +2,11 @@ import { Routes } from '@angular/router';
 
 import { PayrollComponent } from './payroll.component';
 import { PayslipsComponent } from './payslip-list/payslips.component';
-import { EmployeeJournalsListComponent } from './transactions/views/employee-journals-list.component';
-import { EnterprisesJournalsListComponent } from './transactions/views';
+import {
+  EmployeeJournalsListComponent,
+  EnterprisesJournalsListComponent,
+  PensionLinesListComponent,
+} from './transactions/views';
 
 export const PAYROLL_ROUTES: Routes = [
   {
@@ -13,8 +16,8 @@ export const PAYROLL_ROUTES: Routes = [
       { path: '', component: PayslipsComponent },
       { path: 'journals', component: EmployeeJournalsListComponent },
       { path: 'enterprises', component: EnterprisesJournalsListComponent },
-      /*{ path: 'pensions', component: PensionInvoiceComponent },
-      { path: 'employerni', component: EmployerNiComponent },*/
+      { path: 'pensions', component: PensionLinesListComponent },
+      //{ path: 'employerni', component: EmployerNiComponent },*/
     ],
   },
 ];

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IrisPayslip, LineItemDetail } from '@app/_models';
 import { from, scan } from 'rxjs';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
+import { PayrollIdentifier } from '@app/_interfaces/payroll-identifier';
 
 @Component({
   selector: 'allocated-costs-list',
@@ -17,11 +18,13 @@ export class AllocatedCostsListComponent implements OnChanges {
   @Input() title!: string;
   @Input() transactionType!: string;
   @Input() lines: LineItemDetail[] = [];
-  @Input() payslips: IrisPayslip[] = [];
+  @Input() payslips: IrisPayslip[] | null = [];
   @Input() inQBOProperty!: (p: IrisPayslip) => boolean;
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (!this.payslips.length || !this.lines.length) return;
+    if (!this.payslips || !this.payslips.length || !this.lines.length) {
+      return;
+    }
 
     this.total = 0;
 
@@ -40,7 +43,7 @@ export class AllocatedCostsListComponent implements OnChanges {
   }
 
   /**
-   * Check if the values contianed in the given LineItemDetail have been flagged as having already been
+   * Check if the values contained in the given LineItemDetail have been flagged as having already been
    * entered in QuickBooks.
    * @param line The details of the entry
    * @returns 'True' if already in QBO.
