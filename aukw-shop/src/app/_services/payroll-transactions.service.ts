@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { IrisPayslip, LineItemDetail, PayrollJournalEntry } from '@app/_models';
-import { EmployeeJournalsComponent } from '../payroll2/transactions/employee-journals.component';
+import { EmployeeJournalsComponent, EnterprisesJournalComponent } from '@app/payroll2/transactions';
 import { PayrollIdentifier } from '@app/_interfaces/payroll-identifier';
 
 @Injectable({
@@ -9,15 +9,14 @@ import { PayrollIdentifier } from '@app/_interfaces/payroll-identifier';
 })
 export class PayrollTransactionsService {
   private employeeJournalsAdapter = new EmployeeJournalsComponent();
+  private enterprisesJournalsAdapter = new EnterprisesJournalComponent();
 
-  private employeejournalsSubject = new BehaviorSubject<PayrollJournalEntry[]>(
-    [],
-  );
+  private empJournalsSubject = new BehaviorSubject<PayrollJournalEntry[]>([]);
   private pensionsSubject = new BehaviorSubject<LineItemDetail[]>([]);
   private employerniSubject = new BehaviorSubject<LineItemDetail[]>([]);
-  private enterprisesSubject = new BehaviorSubject<LineItemDetail[]>([]);
+  private enterprisesSubject = new BehaviorSubject<IrisPayslip[]>([]);
 
-  employeejournals$ = this.employeejournalsSubject.asObservable();
+  employeejournals$ = this.empJournalsSubject.asObservable();
   pensions$ = this.pensionsSubject.asObservable();
   employerni$ = this.employerniSubject.asObservable();
   enterprises$ = this.enterprisesSubject.asObservable();
@@ -25,14 +24,28 @@ export class PayrollTransactionsService {
   createTransactions() {
     this.employeeJournalsAdapter
       .createTransactions()
-      .subscribe((response) => this.employeejournalsSubject.next(response));
+      .subscribe((response) => this.empJournalsSubject.next(response));
+
+    this.enterprisesJournalsAdapter
+      .createTransactions()
+      .subscribe((response) => this.enterprisesSubject.next(response));
   }
 
   addToQuickBooks() {
     this.employeeJournalsAdapter.addToQuickBooks();
+    this.enterprisesJournalsAdapter.addToQuickBooks();
   }
 
-  inQBOEmployeeJournals(line: PayrollIdentifier): boolean {
-    return this.employeeJournalsAdapter.inQBO(line);
+  inQBO(line: PayrollIdentifier, transactionType: string): boolean {
+    switch (transactionType) {
+      case 'EmployeeJournals':
+        return this.employeeJournalsAdapter.inQBO(line);
+      case 'Enterprises':  
+         return this.enterprisesJournalsAdapter.inQBO(line);
+      default:
+        return false;
+        break;
+    }
+    
   }
 }

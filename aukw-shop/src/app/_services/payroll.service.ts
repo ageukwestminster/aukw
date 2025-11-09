@@ -28,7 +28,7 @@ export class PayrollService {
     allocations: EmployeeAllocation[],
   ): Observable<PayrollJournalEntry> {
     return from(payslips).pipe(
-      filter((p) => !p.payslipJournalInQBO), // Only add if not already in QBO
+      //filter((p) => !p.payslipJournalInQBO), // Only add if not already in QBO
       map((p: IrisPayslip) => this.convertPayslipToQBOFormat(p, allocations)), // map into allocated classes
     );
   }
@@ -86,8 +86,9 @@ export class PayrollService {
    * Return an Observable of allocations. This is a private function.
    * @param payslips An array of payslips, detailing each employee's salary and ni
    * @param allocations An array of allocation objects that show how to split costs between classes
-   * @param property A function that takes an irisPayslip and returns the quantity that is to be allocated
-   * @returns Observable<Allocation>
+   * @param property A function that takes an irisPayslip and returns the object property that is 
+   * to be split between the various projects
+   * @returns An observable of LineItemDetail objects
    */
   private entries(
     payslips: IrisPayslip[],

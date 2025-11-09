@@ -1,26 +1,4 @@
 <h4>Employee Costs for Enterprises</h4>
-<div class="col-sm-8">
-  <p>
-    In order to make the general journal entry in the shop QuickBooks field it
-    is important that each shop employee is in QuickBooks payroll and has their
-    Employee ID set to the payroll number.
-  </p>
-</div>
-<div class="row">
-  <div class="col-sm-4">
-    <p>Number of Shop Employees: {{ lines.length }}</p>
-    <p>Payroll Date: {{ payrollDate | date: "dd MMM yyyy" }}</p>
-  </div>
-  <div class="col-sm-4">
-    <button
-      (click)="createTransaction()"
-      class="btn btn-sm btn-success m-1 mt-1 #employerNI"
-      [disabled]="!lines || !lines.length"
-    >
-      Create Shop Journal Entry
-    </button>
-  </div>
-</div>
 <div class="row">
   <div class="col-sm-8">
     <table class="table table-striped table-responsive">

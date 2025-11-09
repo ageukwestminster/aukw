@@ -10,7 +10,7 @@ import { BasePayrollTransactionComponent } from './base-transaction.component';
   imports: [],
   template: '',
 })
-export class ShopJournalComponent extends BasePayrollTransactionComponent<IrisPayslip> {
+export class EnterprisesJournalComponent extends BasePayrollTransactionComponent<IrisPayslip> {
   total: IrisPayslip = new IrisPayslip();
 
   private qbEmployeeService = inject(QBEmployeeService);
@@ -56,7 +56,6 @@ export class ShopJournalComponent extends BasePayrollTransactionComponent<IrisPa
         });
         return x;
       }),
-      tap((x: Array<IrisPayslip>) => {}),
     );
   }
 
