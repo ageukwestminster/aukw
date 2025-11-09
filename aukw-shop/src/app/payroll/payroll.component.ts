@@ -54,7 +54,7 @@ import {
 import { CustomDateParserFormatter, NgbUTCStringAdapter } from '@app/_helpers';
 import { PayslipListComponent } from './payslip-list/list/list.component';
 import { PayslipsSummaryComponent } from './payslip-list/summary/payslips-summary.component';
-import { NewEmployeeComponent } from './new-employee/new-employee.component';
+import { NewEmployeeComponent } from '../payroll/new-employee/new-employee.component';
 import { PayrollTransactionsService } from '@app/_services';
 
 @Component({

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { IrisPayslip, LineItemDetail, PayrollJournalEntry } from '@app/_models';
-import { EmployeeJournalsComponent, EmployerNiComponent, EnterprisesJournalComponent, PensionInvoiceComponent } from '@app/payroll2/transactions';
+import { EmployeeJournalsComponent, EmployerNiComponent, EnterprisesJournalComponent, PensionInvoiceComponent } from '@app/payroll/transactions';
 import { PayrollIdentifier } from '@app/_interfaces/payroll-identifier';
 
 @Injectable({
