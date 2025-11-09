@@ -1,7 +1,12 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { IrisPayslip, LineItemDetail, PayrollJournalEntry } from '@app/_models';
-import { EmployeeJournalsComponent, EmployerNiComponent, EnterprisesJournalComponent, PensionInvoiceComponent } from '@app/payroll/transactions';
+import {
+  EmployeeJournalsComponent,
+  EmployerNiComponent,
+  EnterprisesJournalComponent,
+  PensionInvoiceComponent,
+} from '@app/payroll/transactions';
 import { PayrollIdentifier } from '@app/_interfaces/payroll-identifier';
 
 @Injectable({
@@ -32,13 +37,13 @@ export class PayrollTransactionsService {
       .createTransactions()
       .subscribe((response) => this.enterprisesSubject.next(response));
 
-    this.pensionsJournalsAdapter
-      .createTransactions()
-      .subscribe((response) => {this.pensionsSubject.next(response);});
+    this.pensionsJournalsAdapter.createTransactions().subscribe((response) => {
+      this.pensionsSubject.next(response);
+    });
 
-    this.niJournalsAdapter
-      .createTransactions()
-      .subscribe((response) => {this.employerniSubject.next(response);});
+    this.niJournalsAdapter.createTransactions().subscribe((response) => {
+      this.employerniSubject.next(response);
+    });
   }
 
   addToQuickBooks() {
@@ -52,16 +57,15 @@ export class PayrollTransactionsService {
     switch (transactionType) {
       case 'EmployeeJournals':
         return this.employeeJournalsAdapter.inQBO(line);
-      case 'Enterprises':  
-         return this.enterprisesJournalsAdapter.inQBO(line);
-      case 'Pensions':  
-         return this.pensionsJournalsAdapter.inQBO(line);
-      case 'EmployerNI':  
-         return this.niJournalsAdapter.inQBO(line);         
+      case 'Enterprises':
+        return this.enterprisesJournalsAdapter.inQBO(line);
+      case 'Pensions':
+        return this.pensionsJournalsAdapter.inQBO(line);
+      case 'EmployerNI':
+        return this.niJournalsAdapter.inQBO(line);
       default:
         return false;
         break;
     }
-    
   }
 }

@@ -87,7 +87,7 @@ export class PayrollService {
    * pensionAllocatedCosts() and employerNIAllocatedCosts();
    * @param payslips An array of payslips, detailing each employee's salary and ni
    * @param allocations An array of allocation objects that show how to split costs between classes
-   * @param property A function that takes an irisPayslip and returns the object property that is 
+   * @param property A function that takes an irisPayslip and returns the object property that is
    * to be split between the various projects
    * @returns An observable of LineItemDetail objects
    */
