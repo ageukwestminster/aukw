@@ -149,7 +149,8 @@ export class PayrollService {
               const line = new LineItemDetail({
                 // '+' = https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Unary_plus
                 quickbooksId: +empAllocation.quickbooksId,
-                name: p.employeeName,
+                // The name is put in the Description field in the pensions bill in QBO. It must match the QBO employee name.
+                name: empAllocation.name,
                 account: empAllocation.account,
                 accountName: empAllocation.accountName,
                 class: empAllocation.class,

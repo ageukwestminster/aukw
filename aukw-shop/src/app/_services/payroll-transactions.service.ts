@@ -49,7 +49,7 @@ export class PayrollTransactionsService {
   addToQuickBooks() {
     //this.employeeJournalsAdapter.addToQuickBooks();
     this.niJournalsAdapter.addToQuickBooks();
-    //this.pensionsJournalsAdapter.addToQuickBooks();
+    this.pensionsJournalsAdapter.addToQuickBooks();
     //this.enterprisesJournalsAdapter.addToQuickBooks();
   }
 

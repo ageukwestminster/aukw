@@ -24,7 +24,7 @@ import {
   isEqualEmployerNI,
   isEqualShopPay,
 } from '@app/_helpers';
-import { QBEntityService } from './qb-entity.service';
+import { QBEntityService, QBEmployeeService } from '@app/_services';
 
 const baseUrl = `${environment.apiUrl}/qb`;
 
@@ -35,6 +35,7 @@ const baseUrl = `${environment.apiUrl}/qb`;
 export class QBPayrollService {
   private http = inject(HttpClient);
   private qbEntityService = inject(QBEntityService);
+  private qbEmployeeService = inject(QBEmployeeService);
 
   private allocationsSubject = new BehaviorSubject<EmployeeAllocation[]>([]);
   private payslipsSubject = new BehaviorSubject<IrisPayslip[]>([]);
@@ -98,6 +99,9 @@ export class QBPayrollService {
       classes: this.qbEntityService
         .getAllClasses(environment.qboCharityRealmID)
         .pipe(defaultIfEmpty([])),
+      employees: this.qbEmployeeService
+        .getAll(environment.qboCharityRealmID)
+        .pipe(defaultIfEmpty([])),
       allocations: this.http.get<EmployeeAllocation[]>(
         `${environment.apiUrl}/allocations`,
       ),
@@ -106,6 +110,8 @@ export class QBPayrollService {
         x.allocations.forEach((element) => {
           element.className =
             x.classes.find((c) => c.id === element.class)?.value ?? '';
+          element.name =
+            x.employees.find((e) => e.payrollNumber === element.payrollNumber)?.name ?? '';
         });
         return of(x.allocations);
       }),
