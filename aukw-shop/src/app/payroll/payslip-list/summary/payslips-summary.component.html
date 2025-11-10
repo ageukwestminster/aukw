@@ -64,26 +64,26 @@
 
   <div class="col-sm-4 mt-2">
     <!-- TODO: Place '+' to show whole list on an Off Canvas -->
-     <div class = "row mb-1">
+    <div class="row mb-1">
       <div class="col-6"><strong>Top Four Projects</strong></div>
       <div class="col-6 text-end">
         <a class="btn btn-link py-1" (click)="showAllClasses()">See All</a>
       </div>
-     </div>
-    
-   <!--@if (payslips && payslips.length && topClasses && topClasses.length) {-->
-      <table class="table table-striped table-responsive text-end  p-0 m-0">
-        <tbody>
-          @for (entry of topClasses$ | async; track entry[0]; let i = $index) {
-            @if (i < 4) {
-              <tr>
-                <td class="text-start">{{ entry[1] }}</td>
-                <td>{{ entry[2] | number: "1.2-2" }}</td>
-              </tr>
-            }
+    </div>
+
+    <!--@if (payslips && payslips.length && topClasses && topClasses.length) {-->
+    <table class="table table-striped table-responsive text-end p-0 m-0">
+      <tbody>
+        @for (entry of topClasses$ | async; track entry[0]; let i = $index) {
+          @if (i < 4) {
+            <tr>
+              <td class="text-start">{{ entry[1] }}</td>
+              <td>{{ entry[2] | number: "1.2-2" }}</td>
+            </tr>
           }
-        </tbody>
-      </table>
+        }
+      </tbody>
+    </table>
     <!--}-->
   </div>
 </div>

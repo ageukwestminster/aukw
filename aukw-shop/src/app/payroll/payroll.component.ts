@@ -155,8 +155,9 @@ export class PayrollComponent implements OnInit {
         this.loading[0] = false;
       });
 
-    this.tceByClass$ = this.payrollTransactionsService.tceByClass$
-      .pipe(takeUntil(destroyed));
+    this.tceByClass$ = this.payrollTransactionsService.tceByClass$.pipe(
+      takeUntil(destroyed),
+    );
 
     // Load employee names and allocations
     this.loadEmployeesAndAllocations().subscribe({

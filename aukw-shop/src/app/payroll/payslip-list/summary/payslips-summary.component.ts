@@ -19,10 +19,14 @@ export class PayslipsSummaryComponent {
   private offcanvasService = inject(NgbOffcanvas);
 
   // TODO: open offcanvas for whole list of top classes
-  showAllClasses(){
-    const offcanvasRef = this.offcanvasService.open(PayrollCostByClassComponent);
+  showAllClasses() {
+    const offcanvasRef = this.offcanvasService.open(
+      PayrollCostByClassComponent,
+    );
 
     // Pass known values to offcanvas component
-    this.topClasses$.subscribe(value => offcanvasRef.componentInstance.topClasses = value);
+    this.topClasses$.subscribe(
+      (value) => (offcanvasRef.componentInstance.topClasses = value),
+    );
   }
 }
