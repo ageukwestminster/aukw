@@ -86,6 +86,7 @@
           </div>
         </div>
         <div class="col-sm align-self-end mb-1">
+          <div>Download</div>
           <button
             class="btn btn-primary"
             type="submit"
@@ -94,13 +95,14 @@
             ngbTooltip="Download Gross-To-Net report from Staffology"
           >
             @if (loading[0]) {
-              <i class="fa-solid fa-download fa-bounce fa-4x"></i>
+              <i class="fa-solid fa-download fa-bounce fa-2x"></i>
             } @else {
-              <i class="fa-solid fa-download fa-4x"></i>
+              <i class="fa-solid fa-download fa-2x"></i>
             }
           </button>
         </div>
         <div class="col-sm align-self-end mb-1">
+          <div>Refresh</div>
           <button
             type="button"
             class="btn btn-primary"
@@ -110,14 +112,15 @@
             [disabled]="!allocations.length || loading[0]"
           >
             @if (loading[1]) {
-              <i class="fa-solid fa-arrows-rotate fa-spin fa-4x"></i>
+              <i class="fa-solid fa-arrows-rotate fa-spin fa-2x"></i>
             } @else {
-              <i class="fa-solid fa-arrows-rotate fa-4x"></i>
+              <i class="fa-solid fa-arrows-rotate fa-2x"></i>
             }
           </button>
         </div>
         @if (showCreateTransactionsButton) {
           <div class="col-sm align-self-end mb-1">
+            <div>Add to QBO</div>
             <button
               type="button"
               class="btn btn-primary"
@@ -126,7 +129,7 @@
               [disabled]="payslipsWithMissingEmployeesOrAllocations.length"
               (click)="createQBOEntries()"
             >
-              <i class="fa-solid fa-greater-than fa-4x"></i>
+              <i class="fa-solid fa-greater-than fa-2x"></i>
             </button>
           </div>
         }

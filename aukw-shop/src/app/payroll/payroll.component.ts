@@ -89,6 +89,8 @@ export class PayrollComponent implements OnInit {
   payrollDate: string = '';
   total: IrisPayslip = new IrisPayslip();
   payslipsWithMissingEmployeesOrAllocations: IrisPayslip[] = [];
+
+  /** 1st value is for the Download button, 2nd is for reload button */
   loading: [boolean, boolean] = [false, false];
   showCreateTransactionsButton: boolean = false;
   active = 1;
@@ -149,9 +151,6 @@ export class PayrollComponent implements OnInit {
       .subscribe((allocations) => {
         this.allocations = allocations;
         this.loading[0] = false;
-        // DEBUG VALUES
-        this.f['taxYear'].setValue('Year2025');
-        this.f['month'].setValue(6);
       });
 
     // Load employee names and allocations
