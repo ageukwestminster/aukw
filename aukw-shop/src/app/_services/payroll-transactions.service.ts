@@ -82,6 +82,11 @@ export class PayrollTransactionsService {
               }
             });
           output.sort((a,b)=> b[2]-a[2]);
+
+          // Rename '01 Unrestricted' to 'Charity Shop'
+          var shopClass = output.find((item) => item[1] === '01 Unrestricted');
+          if (shopClass) shopClass[1] = 'Charity Shop';
+
           return of(output);
         }),
       )
