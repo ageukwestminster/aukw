@@ -7,6 +7,7 @@ import { HomeComponent } from './home';
 import { LoginComponent } from './login';
 import { authGuard } from './_helpers';
 import { Role } from './_models';
+import { AllocationsComponent } from './payroll/allocations/allocations.component';
 
 const usersRoutes = () =>
   import('./users/users.routes').then((x) => x.USERS_ROUTES);
@@ -39,6 +40,12 @@ export const APP_ROUTES: Routes = [
   {
     path: 'payroll',
     loadChildren: payrollRoutes,
+    canActivate: [authGuard],
+    data: { roles: [Role.Admin] },
+  },
+  {
+    path: 'allocations',
+    component: AllocationsComponent,
     canActivate: [authGuard],
     data: { roles: [Role.Admin] },
   },

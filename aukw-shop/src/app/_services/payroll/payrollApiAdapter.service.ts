@@ -64,7 +64,7 @@ export class PayrollApiAdapterService {
 
       // Convert back from Observable<T> to Observable<T[]>
       toArray(),
-/*
+
       // Get payslip flags for Charity QBO ... checking to see if transactions have been entered already
       switchMap((payslips: IrisPayslip[]) => {
         return this.qbPayrollService.payslipFlagsForCharity(
@@ -80,7 +80,7 @@ export class PayrollApiAdapterService {
           returnObj.payrollDate,
         );
       }),
-*/
+
       // We will use this service to inform other components of the payslips
       map((payslips) => {
         this.qbPayrollService.sendPayslips(payslips);
