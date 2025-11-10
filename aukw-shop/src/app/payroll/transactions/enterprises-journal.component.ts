@@ -51,6 +51,7 @@ export class EnterprisesJournalComponent extends BasePayrollTransactionComponent
 
         return returnArray;
       }),
+      tap((lines) => this.lines = lines ),
       map((x: IrisPayslip[]) => {
         x.forEach((element) => {
           this.total.add(element);
@@ -104,7 +105,7 @@ export class EnterprisesJournalComponent extends BasePayrollTransactionComponent
         });
     } else {
       this.alertService.info(
-        'There are no entries to add: they are all in QuickBooks already.',
+        'The shop journal entries have already been booked in Enterprises QuickBooks.',
       );
     }
   }

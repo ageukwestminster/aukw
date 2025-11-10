@@ -50,7 +50,7 @@ export class PayrollTransactionsService {
     //this.employeeJournalsAdapter.addToQuickBooks();
     this.niJournalsAdapter.addToQuickBooks();
     this.pensionsJournalsAdapter.addToQuickBooks();
-    //this.enterprisesJournalsAdapter.addToQuickBooks();
+    this.enterprisesJournalsAdapter.addToQuickBooks();
   }
 
   inQBO(line: PayrollIdentifier, transactionType: string): boolean {
