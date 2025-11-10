@@ -90,7 +90,7 @@
           <button
             class="btn btn-primary"
             type="submit"
-            [disabled]="!allocations.length || loading[0]"
+            [disabled]="!allocations.length || loading[0] || !form.valid"
             placement="bottom"
             ngbTooltip="Download Gross-To-Net report from Staffology"
           >
@@ -109,7 +109,7 @@
             placement="bottom"
             ngbTooltip="Reload Everything"
             (click)="reloadEverything()"
-            [disabled]="!allocations.length || loading[0]"
+            [disabled]="!allocations.length || loading[0] || !form.valid"
           >
             @if (loading[1]) {
               <i class="fa-solid fa-arrows-rotate fa-spin fa-2x"></i>

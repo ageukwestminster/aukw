@@ -37,7 +37,10 @@ export class EmployeeJournalsComponent extends BasePayrollTransactionComponent<P
 
     return this.payrollService
       .employeeJournalEntries(this.payslips, this.allocations)
-      .pipe(toArray());
+      .pipe(
+        toArray(),
+        tap(lines => this.lines = lines)
+      );
   }
 
   /**
