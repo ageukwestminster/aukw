@@ -51,7 +51,7 @@ export class EnterprisesJournalComponent extends BasePayrollTransactionComponent
 
         return returnArray;
       }),
-      tap((lines) => this.lines = lines ),
+      tap((lines) => (this.lines = lines)),
       map((x: IrisPayslip[]) => {
         x.forEach((element) => {
           this.total.add(element);

@@ -113,9 +113,7 @@ export class PensionInvoiceComponent extends BasePayrollTransactionComponent<Lin
           },
         });
     } else {
-      this.alertService.info(
-        'The pension invoice is already in QuickBooks.',
-      );
+      this.alertService.info('The pension invoice is already in QuickBooks.');
     }
   }
 

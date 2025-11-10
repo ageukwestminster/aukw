@@ -39,7 +39,7 @@ export class EmployeeJournalsComponent extends BasePayrollTransactionComponent<P
       .employeeJournalEntries(this.payslips, this.allocations)
       .pipe(
         toArray(),
-        tap(lines => this.lines = lines)
+        tap((lines) => (this.lines = lines)),
       );
   }
 
