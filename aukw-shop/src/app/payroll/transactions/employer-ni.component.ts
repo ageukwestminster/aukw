@@ -74,7 +74,7 @@ export class EmployerNiComponent extends BasePayrollTransactionComponent<LineIte
         });
     } else {
       this.alertService.info(
-        'There are no entries to add: they are all in QuickBooks already.',
+        'There are no Employer NI journal entries to add: they are all in QuickBooks already.',
       );
     }
   }

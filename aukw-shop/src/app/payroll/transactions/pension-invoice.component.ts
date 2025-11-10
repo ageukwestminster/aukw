@@ -97,7 +97,7 @@ export class PensionInvoiceComponent extends BasePayrollTransactionComponent<Lin
             this.auditLogService.log(
               this.authenticationService.userValue,
               'INSERT',
-              `Added pension invoice journal with id=${result.id} to QuickBooks`,
+              `Added pension invoice with id=${result.id} to QuickBooks`,
               'General Journal',
               result.id,
             );
@@ -114,7 +114,7 @@ export class PensionInvoiceComponent extends BasePayrollTransactionComponent<Lin
         });
     } else {
       this.alertService.info(
-        'There are no entries to add: they are all in QuickBooks already.',
+        'The pension invoice is already in QuickBooks.',
       );
     }
   }
