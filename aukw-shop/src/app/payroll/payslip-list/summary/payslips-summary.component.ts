@@ -12,17 +12,5 @@ import { IrisPayslip, ValueStringIdPair } from '@app/_models';
 export class PayslipsSummaryComponent {
   @Input() payslips: IrisPayslip[] = [];
   @Input() total: IrisPayslip = new IrisPayslip();
-
-  /*topNProjects() : Observable<ValueStringIdPair[]> {
-    return from(this.payslips).pipe(
-      toArray(),
-      map (items => {
-        var output:ValueStringIdPair[] = [];
-        items.forEach(element => {
-          if (output.find(x => x.id === element.))
-        });
-      return output;
-      })
-    )
-  }*/
+  @Input() topClasses: [string, string, number][] = [];
 }

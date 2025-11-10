@@ -111,7 +111,8 @@ export class QBPayrollService {
           element.className =
             x.classes.find((c) => c.id === element.class)?.value ?? '';
           element.name =
-            x.employees.find((e) => e.payrollNumber === element.payrollNumber)?.name ?? '';
+            x.employees.find((e) => e.payrollNumber === element.payrollNumber)
+              ?.name ?? '';
         });
         return of(x.allocations);
       }),

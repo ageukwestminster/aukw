@@ -95,6 +95,8 @@ export class PayrollComponent implements OnInit {
   showCreateTransactionsButton: boolean = false;
   active = 1;
 
+  tceByClass: [string, string, number][] = [];
+
   private employerID: string = environment.staffologyEmployerID;
   private realmID: string = environment.qboCharityRealmID;
 
@@ -151,6 +153,12 @@ export class PayrollComponent implements OnInit {
       .subscribe((allocations) => {
         this.allocations = allocations;
         this.loading[0] = false;
+      });
+
+    this.payrollTransactionsService.tceByClass$
+      .pipe(takeUntil(destroyed))
+      .subscribe((tceByClass) => {
+        this.tceByClass = tceByClass;
       });
 
     // Load employee names and allocations

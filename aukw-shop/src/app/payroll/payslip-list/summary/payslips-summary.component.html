@@ -64,25 +64,25 @@
 
   <div class="col-sm-4 mt-2">
     <p><strong>Top Four Projects</strong></p>
-    @if (payslips && payslips.length) {
+    @if (payslips && payslips.length && topClasses && topClasses.length) {
       <table class="table table-striped table-responsive text-end">
         <tbody>
           <tr>
-            <td class="text-start">Project 1</td>
-            <td>{{ 0 | number: "1.2-2" }}</td>
+            <td class="text-start">{{ topClasses[0][1] }}</td>
+            <td>{{ topClasses[0][2] | number: "1.2-2" }}</td>
           </tr>
           <tr>
-            <td class="text-start">Project 2</td>
-            <td>{{ 0 | number: "1.2-2" }}</td>
+            <td class="text-start">{{ topClasses[1][1] }}</td>
+            <td>{{ topClasses[1][2] | number: "1.2-2" }}</td>
           </tr>
           <tr>
-            <td class="text-start">Project 3</td>
-            <td>{{ 0 | number: "1.2-2" }}</td>
+            <td class="text-start">{{ topClasses[2][1] }}</td>
+            <td>{{ topClasses[2][2] | number: "1.2-2" }}</td>
           </tr>
           <tr class="total-line">
-            <td class="text-start">Project 4</td>
+            <td class="text-start">{{ topClasses[3][1] }}</td>
             <td>
-              {{ 0 | number: "1.2-2" }}
+              {{ topClasses[3][2] | number: "1.2-2" }}
             </td>
           </tr>
         </tbody>

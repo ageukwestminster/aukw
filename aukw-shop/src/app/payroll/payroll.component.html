@@ -158,7 +158,11 @@
     </div>
   </div>
 }
-<payslips-summary [payslips]="payslips" [total]="total"></payslips-summary>
+<payslips-summary
+  [payslips]="payslips"
+  [total]="total"
+  [topClasses]="tceByClass"
+></payslips-summary>
 
 <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
   <li [ngbNavItem]="1">
