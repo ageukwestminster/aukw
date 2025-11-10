@@ -161,7 +161,7 @@
 <payslips-summary
   [payslips]="payslips"
   [total]="total"
-  [topClasses]="tceByClass"
+  [topClasses$]="tceByClass$"
 ></payslips-summary>
 
 <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">

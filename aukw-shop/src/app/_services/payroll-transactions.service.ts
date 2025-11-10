@@ -22,7 +22,7 @@ export class PayrollTransactionsService {
   private pensionsSubject = new BehaviorSubject<LineItemDetail[]>([]);
   private employerniSubject = new BehaviorSubject<LineItemDetail[]>([]);
   private enterprisesSubject = new BehaviorSubject<IrisPayslip[]>([]);
-  private tceByClassSubject = new Subject<[string, string, number][]>();
+  private tceByClassSubject = new BehaviorSubject<[string, string, number][]>([]);
 
   employeejournals$ = this.empJournalsSubject.asObservable();
   pensions$ = this.pensionsSubject.asObservable();

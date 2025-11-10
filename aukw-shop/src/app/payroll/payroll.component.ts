@@ -41,6 +41,7 @@ import {
   AlertService,
   LoadingIndicatorService,
   PayrollApiAdapterService,
+  PayrollTransactionsService,
   QBEmployeeService,
   QBPayrollService,
 } from '@app/_services';
@@ -54,8 +55,7 @@ import {
 import { CustomDateParserFormatter, NgbUTCStringAdapter } from '@app/_helpers';
 import { PayslipListComponent } from './payslip-list/list/list.component';
 import { PayslipsSummaryComponent } from './payslip-list/summary/payslips-summary.component';
-import { NewEmployeeComponent } from '../payroll/new-employee/new-employee.component';
-import { PayrollTransactionsService } from '@app/_services';
+import { NewEmployeeComponent } from './new-employee/new-employee.component';
 
 @Component({
   selector: 'app-payroll',
@@ -95,7 +95,7 @@ export class PayrollComponent implements OnInit {
   showCreateTransactionsButton: boolean = false;
   active = 1;
 
-  tceByClass: [string, string, number][] = [];
+  tceByClass$: Observable<[string, string, number][]> = of([]);
 
   private employerID: string = environment.staffologyEmployerID;
   private realmID: string = environment.qboCharityRealmID;
@@ -155,11 +155,8 @@ export class PayrollComponent implements OnInit {
         this.loading[0] = false;
       });
 
-    this.payrollTransactionsService.tceByClass$
-      .pipe(takeUntil(destroyed))
-      .subscribe((tceByClass) => {
-        this.tceByClass = tceByClass;
-      });
+    this.tceByClass$ = this.payrollTransactionsService.tceByClass$
+      .pipe(takeUntil(destroyed));
 
     // Load employee names and allocations
     this.loadEmployeesAndAllocations().subscribe({
@@ -212,7 +209,7 @@ export class PayrollComponent implements OnInit {
               this.payrollDate = o.payrollDate;
               this.total = o.total;
 
-              // Are their payslips for employees who are either
+              // check and flag any payslips for employees who are either
               // i) Not in QuickBooks; or
               // ii) Do not have saved allocations in the database
               return o.payslips.filter(

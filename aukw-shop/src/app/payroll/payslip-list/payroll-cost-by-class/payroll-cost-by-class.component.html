@@ -1,0 +1,32 @@
+<div class="offcanvas-header">
+  <h5 class="offcanvas-title">Total Cost of Employment</h5>  
+  <button
+    type="button"
+    class="btn-close text-reset"
+    aria-label="Close"
+    (click)="activeOffcanvas.dismiss('Cross click')"
+  ></button>
+</div>
+<div class="col ms-3"><strong>By Project</strong></div>
+<div class="offcanvas-body">
+      <table class="table table-striped table-responsive text-end">
+        <tbody>
+          @for (entry of topClasses ; track entry[0]; let i = $index) {
+              <tr>
+                <td class="text-start">{{ entry[1] }}</td>
+                <td>{{ entry[2] | number: "1.2-2" }}</td>
+                <td>{{ entry[3] | number: "1.2-2" }}%</td>
+              </tr>
+          }
+          @if (totals) {
+          <tr class="total-line">
+            <td class="text-start">Total for All Projects:</td>
+            <td>{{ totals[0] | number: "1.2-2" }}</td>
+            <td>{{ totals[1] | number: "1.2-2" }}</td>
+          </tr>
+        }
+        </tbody>
+      </table>
+
+      <tce-by-class-pie-chart [topClasses] = "topClasses"></tce-by-class-pie-chart>
+</div>

@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { IrisPayslip, LineItemDetail } from '@app/_models';
 import { from, scan } from 'rxjs';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
-import { PayrollIdentifier } from '@app/_interfaces/payroll-identifier';
 
 @Component({
   selector: 'allocated-costs-list',

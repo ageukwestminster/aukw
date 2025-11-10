@@ -12,3 +12,4 @@ export * from './ragging-chart/ragging-chart.component';
 export * from './sales-chart/sales-chart.component';
 export * from './sales-histogram/sales-histogram-chart.component';
 export * from './summary-table/summary-table.component';
+export * from './tce-by-class-chart/tce-by-class-chart.component';
