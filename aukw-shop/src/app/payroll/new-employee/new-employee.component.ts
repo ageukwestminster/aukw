@@ -61,7 +61,6 @@ export class NewEmployeeComponent implements OnInit {
       'EOC',
       '02 Designated Funds',
       '03 Restricted',
-      '04 Administration',
     ];
     this.qbEntityService.getAllClasses(this.realmID).subscribe((classes) => {
       this.classes = classes.filter(
