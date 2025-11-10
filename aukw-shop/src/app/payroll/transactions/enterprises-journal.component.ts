@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { IrisPayslip, PayrollProcessState } from '@app/_models';
+import { IrisPayslip } from '@app/_models';
 import { QBEmployeeService } from '@app/_services';
 import { forkJoin, map, Observable, of, shareReplay, tap } from 'rxjs';
 import { environment } from '@environments/environment';
@@ -100,7 +100,6 @@ export class EnterprisesJournalComponent extends BasePayrollTransactionComponent
           },
           complete: () => {
             this.qbPayrollService.sendPayslips(this.setQBOFlagsToTrue());
-            this.stateService.setState(PayrollProcessState.EMPLOYERNI);
           },
         });
     } else {

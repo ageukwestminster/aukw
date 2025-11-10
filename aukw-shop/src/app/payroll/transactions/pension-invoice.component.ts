@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IrisPayslip, LineItemDetail, PayrollProcessState } from '@app/_models';
+import { IrisPayslip, LineItemDetail } from '@app/_models';
 import { from, merge, Observable, of, shareReplay, tap, toArray } from 'rxjs';
 import { BasePayrollTransactionComponent } from './base-transaction.component';
 
@@ -109,7 +109,6 @@ export class PensionInvoiceComponent extends BasePayrollTransactionComponent<Lin
           },
           complete: () => {
             this.qbPayrollService.sendPayslips(this.setQBOFlagsToTrue());
-            this.stateService.setState(PayrollProcessState.PENSIONS);
           },
         });
     } else {

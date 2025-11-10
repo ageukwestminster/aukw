@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Observable, of, toArray, shareReplay, tap } from 'rxjs';
-import { IrisPayslip, LineItemDetail, PayrollProcessState } from '@app/_models';
+import { IrisPayslip, LineItemDetail } from '@app/_models';
 import { BasePayrollTransactionComponent } from './base-transaction.component';
 
 @Component({
@@ -69,7 +69,6 @@ export class EmployerNiComponent extends BasePayrollTransactionComponent<LineIte
           },
           complete: () => {
             this.qbPayrollService.sendPayslips(this.setQBOFlagsToTrue());
-            this.stateService.setState(PayrollProcessState.EMPLOYERNI);
           },
         });
     } else {

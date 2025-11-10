@@ -29,7 +29,6 @@ export * from './payroll/irispayslip';
 export * from './payroll/line-item-detail';
 export * from './payroll/employee';
 export * from './payroll/payroll-journal-entry';
-export * from './payroll/payroll-process-state.enum';
 export * from './payroll/payrun';
 export * from './payroll/taxyear';
 

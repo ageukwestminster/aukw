@@ -13,7 +13,6 @@ import {
   LoadingIndicatorService,
   QBPayrollService,
   PayrollService,
-  PayrollProcessStateService,
 } from '@app/_services';
 import { PayrollIdentifier } from '@app/_interfaces/payroll-identifier';
 import { Observable, Subject, takeUntil, tap } from 'rxjs';
@@ -47,7 +46,6 @@ export abstract class BasePayrollTransactionComponent<
   protected qbPayrollService = inject(QBPayrollService);
   protected alertService = inject(AlertService);
   private destroyRef = inject(DestroyRef);
-  protected stateService = inject(PayrollProcessStateService);
   protected auditLogService = inject(AuditLogService);
   protected authenticationService = inject(AuthenticationService);
 

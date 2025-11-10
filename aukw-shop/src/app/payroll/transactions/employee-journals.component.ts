@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import {
   IrisPayslip,
   PayrollJournalEntry,
-  PayrollProcessState,
 } from '@app/_models';
 import {
   from,
@@ -86,7 +85,6 @@ export class EmployeeJournalsComponent extends BasePayrollTransactionComponent<P
           },
           complete: () => {
             this.qbPayrollService.sendPayslips(this.setQBOFlagsToTrue());
-            this.stateService.setState(PayrollProcessState.JOURNALS);
           },
         });
     } else {
