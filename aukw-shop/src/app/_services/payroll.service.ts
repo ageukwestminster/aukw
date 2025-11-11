@@ -214,6 +214,23 @@ export class PayrollService {
       (allocation) => allocation.payrollNumber == p.payrollNumber,
     );
 
+    // If employee is mising from allocations then return default value.
+    if (!allocations || !allocations.length) {
+      return new PayrollJournalEntry({
+        quickbooksId: null,
+        totalPay: [],
+        paye: p.paye,
+        employeeNI: p.employeeNI,
+        otherDeductions: p.otherDeductions,
+        salarySacrifice: -p.salarySacrifice,
+        employeePension: -p.employeePension,
+        studentLoan: p.studentLoan,
+        netPay: -p.netPay,
+        employeeName: p.employeeName,
+        payrollNumber: p.payrollNumber,
+      });
+    }
+
     // Add the simple information
     const entry = new PayrollJournalEntry({
       quickbooksId: allocations[0].quickbooksId,
