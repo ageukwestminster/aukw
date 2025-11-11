@@ -50,7 +50,7 @@ class Allocation{
    */
   protected string $class;
   /**
-   * True if the employee is a shop employee
+   * True if the allocation to a cost that needs to be charged back to the shop.
    *
    * @var bool
    */
