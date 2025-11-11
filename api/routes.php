@@ -279,7 +279,9 @@ $router->mount('/transaction-match', function () use ($router) {
 /*************************/
 $router->mount('/payroll', function () use ($router) {
     $router->get('/([a-fA-F0-9._-]+)/payrun/(\w+)', 'Staffology\PayRunCtl@read_all');
+    $router->get('/([a-fA-F0-9._-]+)/payrun/most-recent(/\w+)?', 'Staffology\PayRunCtl@read_most_recent');
     $router->get('/taxyear', 'Staffology\TaxYearCtl@read_names');
+    $router->get('/taxyear/latest', 'Staffology\TaxYearCtl@read_name_latest');
     $router->get('/([a-fA-F0-9._-]+)/reports/gross-to-net/(\w+)/month/(\d+)'
                             , 'Staffology\PayrollReportCtl@gross_to_net');
 });

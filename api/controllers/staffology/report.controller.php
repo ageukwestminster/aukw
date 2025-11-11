@@ -6,7 +6,7 @@ use Core\ErrorResponse as Error;
 use Exception;
 use Models\Staffology\GrossToNetReport;
 use Models\Staffology\GrossToNetSortBy;
-use \Models\Staffology\ParseGrosstoNetReport;
+use Models\Staffology\ParseGrosstoNetReport;
 
 /**
  * Controller to retrieve Payroll report from Staffology API and parse it for use in the system. 
