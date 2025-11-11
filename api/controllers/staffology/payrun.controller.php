@@ -16,7 +16,6 @@ class PayRunCtl{
 
   /**
    * Return details of all PayRuns, in JSON format.
-   * This is a slow funciton, taking over 1 second to return.
    *
    * @param string $employerId The Staffology Employer ID
    * @param string $taxYear The Staffology Tax Year
@@ -37,7 +36,6 @@ class PayRunCtl{
 
     /**
    * Return the most recent PayRun, in JSON format.
-   * This is a slow funciton, taking over 1 second to return.
    *
    * @param string $employerId The Staffology Employer ID
    * @return void Output is echo'd directly to response 
