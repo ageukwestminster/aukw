@@ -1,1 +1,74 @@
-<p>allocations works!</p>
+<h5>Project Allocations</h5>
+
+<table class="table table-sm table-responsive">
+  <thead>
+    <tr>
+      <th>No.</th>
+      <th class="text-start">Name</th>
+      <th>Active?</th>
+      <th>
+        <!-- Tooltip must be on element inside header, not header itself-->
+        <!-- From https://stackoverflow.com/a/48324991/6941165 -->
+        <div ngbTooltip="Is this allocation to the Enterprise company?">
+          Shop?
+        </div>
+      </th>
+      <th>
+        <div ngbTooltip="The QuickBooks Class">Percentage</div>
+      </th>
+      <th>
+        <div ngbTooltip="The QuickBooks Class">Project</div>
+      </th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (
+      employee of allocatedEmployees;
+      track employee.payrollNumber;
+      let i = $index
+    ) {
+      <tr [ngClass]="{'table-danger': !inPayrun.get(employee.payrollNumber)}">
+        <td>
+          <a class="btn" (click)="onRemoveAllocation(employee)"><i class="fa-solid fa-trash"></i></a>
+        </td>
+        <td class="text-start">{{ employee.name }}</td>
+        <td>
+          <div class="d-flex justify-content-center">
+            @if (inPayrun.get(employee.payrollNumber)) {
+              <div class="form-check">
+                <input
+                  class="form-check-input checkbox-outline"
+                  type="checkbox"
+                  checked
+                />
+              </div>
+            }
+            @if (!inPayrun.get(employee.payrollNumber)) {
+              <div class="form-check">
+                <input
+                  class="form-check-input checkbox-outline"
+                  type="checkbox"
+                />
+              </div>
+            }
+          </div>
+        </td>
+        <!--
+        <td class="">
+          {{ alloc.percentage | number: "1.2-2" }}
+        </td>
+        <td class="d-none d-sm-table-cell">
+          {{ alloc.className }}
+        </td>-->
+      </tr>
+    }
+    @if (!allocations || !allocations.length) {
+      <tr>
+        <td colspan="4" class="text-center">
+          <span class="spinner-border spinner-border-lg align-center"></span>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>

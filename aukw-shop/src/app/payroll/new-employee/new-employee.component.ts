@@ -24,16 +24,23 @@ import {
   QBEntityService,
 } from '@app/_services';
 import { ProjectAllocationsValidater } from '@app/_helpers';
+import { AllocationRowComponent } from '../allocations/allocation-row/allocation-row.component';
 
 @Component({
-  imports: [JsonPipe, NgClass, NgbTooltip, ReactiveFormsModule],
+  imports: [
+    AllocationRowComponent,
+    JsonPipe,
+    NgClass,
+    NgbTooltip,
+    ReactiveFormsModule,
+  ],
   templateUrl: './new-employee.component.html',
   styleUrl: './new-employee.component.css',
 })
 export class NewEmployeeComponent implements OnInit {
   form!: FormGroup;
   classes: ValueStringIdPair[] = [];
-  employees$: Observable<EmployeeName[]>;
+  employees$: Observable<EmployeeName[]> = of([]);
   loading: boolean = false;
   submitted: boolean = false;
   formMode!: FormMode;
@@ -55,7 +62,9 @@ export class NewEmployeeComponent implements OnInit {
    */
   @Input() employeeName: EmployeeName | null = null;
 
-  constructor() {
+  constructor() {}
+
+  ngOnInit(): void {
     const invalidClasses = [
       'AFL',
       'EOC',
@@ -68,9 +77,7 @@ export class NewEmployeeComponent implements OnInit {
       );
     });
     this.employees$ = this.qbEmployeeService.getAll(this.realmID);
-  }
 
-  ngOnInit(): void {
     const formOptions: AbstractControlOptions = {
       validators: [ProjectAllocationsValidater('allocations')],
     };
@@ -104,7 +111,7 @@ export class NewEmployeeComponent implements OnInit {
     } else {
       this.formMode = FormMode.Add;
     }
-    this.onAddAllocation(); // Add one blank allocation
+    this.addAllocationToArray(); // Add one blank allocation
   }
 
   /** convenience getter for easy access to form fields */
@@ -117,10 +124,14 @@ export class NewEmployeeComponent implements OnInit {
   }
   /** convenience getter for easy access to form fields within allocations array*/
   get allocationsFormGroups() {
-    return this.allocs.controls as FormGroup[];
+    return this.allocs!.controls as FormGroup[];
   }
 
-  onAddAllocation(percentage: number | '' = '', project: string = '') {
+  onAddAllocation() {
+    this.addAllocationToArray('', '');
+  }
+
+  addAllocationToArray(percentage: number | '' = '', project: string = '') {
     this.allocs.push(
       this.formBuilder.group({
         percentage: [percentage],
@@ -130,8 +141,8 @@ export class NewEmployeeComponent implements OnInit {
   }
 
   onRemoveAllocation(index: number) {
-    if (this.allocs.length > 1 && index) {
-      this.allocs.removeAt(index);
+    if (this.allocs!.length > 1 && index) {
+      this.allocs!.removeAt(index);
     }
   }
 
@@ -212,7 +223,7 @@ export class NewEmployeeComponent implements OnInit {
         }),
       ];
     } else {
-      return this.allocationsFormGroups
+      return this.allocs.controls
         .map((allocGroup) => {
           return new EmployeeAllocation({
             quickbooksId: this.f['quickbooksId'].value,

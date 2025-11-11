@@ -81,107 +81,62 @@
 
     <!-- Allocations array -->
     @for (
-      allocation of allocationsFormGroups;
-      track allocation;
+      allocationFG of allocationsFormGroups;
+      track allocationFG;
       let i = $index
     ) {
       <div class="row">
-        <div [formGroup]="allocation" class="form-row">
+        <div [formGroup]="allocationFG" class="form-row">
           @if (i == 0) {
             <div class="col-sm-auto">
               <strong>Allocations</strong>
             </div>
-            <div class="row">
-              <div class="col-3 text-center text-secondary">%age</div>
-              <div class="col-9 text-left text-secondary">Project</div>
+            <div class="row mb-1">
+              <div class="col-5 text-center text-secondary">%age</div>
+              <div class="col-7 text-left text-secondary">Project</div>
             </div>
           }
-          <div class="row">
-            <div class="col-4">
-              <input
-                type="number"
-                formControlName="percentage"
-                class="form-control text-end box-outline"
-                id="inputPercentage-{{ i }}"
-                [ngClass]="{
-                  'is-invalid':
-                    submitted && allocation.controls['percentage'].errors,
-                }"
-              />
-              @if (submitted && allocation.controls["percentage"].errors) {
-                <div class="invalid-feedback">
-                  @if (
-                    allocation.controls["percentage"].errors[
-                      "percentagesMustSumToPar"
-                    ]
-                  ) {
-                    <div>Must sum to 100%</div>
-                  }
-                </div>
-              }
-            </div>
-            <div class="col-8">
-              <select
-                formControlName="project"
-                id="inputProject-{{ i }}"
-                class="form-control box-outline"
-                [ngClass]="{
-                  'is-invalid':
-                    submitted && allocation.controls['project'].errors,
-                }"
-              >
-                @for (qbclass of classes; track qbclass) {
-                  <option [ngValue]="qbclass.id">
-                    {{ qbclass.value }}
-                  </option>
-                }
-              </select>
-              @if (submitted && allocation.controls["project"].errors) {
-                <div class="invalid-feedback">
-                  @if (
-                    allocation.controls["project"].errors["duplicateProject"]
-                  ) {
-                    <div>Duplicate project name</div>
-                  }
-                  @if (allocation.controls["project"].errors["required"]) {
-                    <div>Project can't be blank</div>
-                  }
-                </div>
-              }
-            </div>
 
-            <div class="col mt-1">
-              @if (i == allocationsFormGroups.length - 1) {
-                <button
-                  type="button"
-                  [disabled]="loading"
-                  class="me-3 text-primary"
-                  (click)="onAddAllocation()"
-                  placement="bottom"
-                  container="body"
-                >
-                  @if (loading) {
-                    <span class="spinner-border spinner-border-sm mr-1"></span>
-                  }
-                  +
-                </button>
-              }
-              @if (i == allocationsFormGroups.length - 1 && i != 0) {
-                <button
-                  type="button"
-                  class="close text-danger"
-                  (click)="onRemoveAllocation(i)"
-                  placement="bottom"
-                  container="body"
-                >
-                  <span>&times;</span>
-                </button>
-              }
-            </div>
+          <allocation-row
+            [classes]="classes"
+            [submitted]="submitted"
+            [loading]="loading"
+            [rowNumber]="i"
+            [allocation]="allocationFG"
+          ></allocation-row>
+
+          <div class="col mt-1">
+            @if (i == allocationsFormGroups.length - 1) {
+              <button
+                type="button"
+                [disabled]="loading"
+                class="me-3 text-primary"
+                (click)="onAddAllocation()"
+                placement="bottom"
+                container="body"
+              >
+                @if (loading) {
+                  <span class="spinner-border spinner-border-sm mr-1"></span>
+                }
+                +
+              </button>
+            }
+            @if (i == allocationsFormGroups.length - 1 && i != 0) {
+              <button
+                type="button"
+                class="close text-danger"
+                (click)="onRemoveAllocation(i)"
+                placement="bottom"
+                container="body"
+              >
+                <span>&times;</span>
+              </button>
+            }
           </div>
         </div>
       </div>
     }
+
     <!-- end of Allocations array -->
 
     <!-- Buttons -->

@@ -1,8 +1,5 @@
 import { Component } from '@angular/core';
-import {
-  IrisPayslip,
-  PayrollJournalEntry,
-} from '@app/_models';
+import { IrisPayslip, PayrollJournalEntry } from '@app/_models';
 import {
   from,
   mergeMap,

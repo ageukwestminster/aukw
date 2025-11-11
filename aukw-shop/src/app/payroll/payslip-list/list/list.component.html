@@ -3,7 +3,7 @@
     <tr>
       <th class="width-5">No.</th>
       <th class="width-22 text-start">Name</th>
-      <th class="width-8">
+      <th class="width-8 d-none d-sm-table-cell">
         <!-- Tooltip must be on element inside header, not header itself-->
         <!-- From https://stackoverflow.com/a/48324991/6941165 -->
         <div ngbTooltip="Total salary for the month">Gross</div>
@@ -20,10 +20,23 @@
         <!-- Tooltip must be on element inside header, not header itself-->
         <div ngbTooltip="Total cost of employment" class="text-center">TCE</div>
       </th>
-      <th class="width-10 text-center">Employee In QBO Payroll?</th>
-      <th class="width-10 text-center">Allocations Present?</th>
-      <th class="width-10 text-center">In QuickBooks?</th>
-      <th class="width-10 text-center">Actions</th>
+
+      <!-- Only one of these will be visitble, depending on screen width-->
+      <th class="width-10 text-center d-none d-sm-table-cell">
+        Employee In QBO Payroll?
+      </th>
+      <th class="width-5 text-center d-sm-none d-xs-table-cell">In QBO?</th>
+
+      <!-- Only one of these will be visitble, depending on screen width-->
+      <th class="width-10 text-center d-none d-sm-table-cell">
+        Allocations Present?
+      </th>
+      <th class="width-5 text-center d-sm-none d-xs-table-cell">Allocs?</th>
+
+      <th class="width-10 text-center d-none d-sm-table-cell">
+        In QuickBooks?
+      </th>
+      <th class="width-5 text-center">Actions</th>
     </tr>
   </thead>
   <tbody>
@@ -33,7 +46,9 @@
           {{ p.payrollNumber }}
         </td>
         <td class="text-start">{{ p.employeeName }}</td>
-        <td>{{ p.totalPay | number: "1.2-2" }}</td>
+        <td class="d-none d-sm-table-cell">
+          {{ p.totalPay | number: "1.2-2" }}
+        </td>
         <td class="d-none d-sm-table-cell">
           {{ p.employerNI | number: "1.2-2" }}
         </td>
@@ -84,7 +99,7 @@
           </div>
         </td>
 
-        <td class="text-center">
+        <td class="text-center d-none d-sm-table-cell">
           <div class="row">
             <div class="col p-0">
               <span class="in-qbo">
@@ -170,7 +185,7 @@
           </div>
         </td>
 
-        <td>
+        <td class="">
           @if (p.employeeMissingFromQBO || p.allocationsMissingFromQBO) {
             <button
               (click)="addEmployee(p)"
@@ -184,7 +199,7 @@
     }
     @if (total && total.totalPay) {
       <tr class="total-line">
-        <td></td>
+        <td class="d-none d-sm-table-cell"></td>
         <td class="text-start">
           Total for {{ this.payslips.length }} employees:
         </td>
@@ -201,11 +216,10 @@
               | number: "1.2-2"
           }}
         </td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td class="d-none d-sm-table-cell"></td>
+        <td class="d-none d-sm-table-cell"></td>
+        <td class="d-none d-sm-table-cell"></td>
+        <td class="d-none d-sm-table-cell"></td>
       </tr>
     }
   </tbody>

@@ -20,4 +20,8 @@ export class TaxYearService {
   getAll() {
     return this.http.get<TaxYear[]>(baseUrl);
   }
+
+  getLatest() {
+    
+  }
 }

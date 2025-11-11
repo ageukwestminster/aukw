@@ -1,0 +1,48 @@
+<div class="row mb-1">
+  <div class="col-4 pe-2">
+    <input
+      type="number"
+      formControlName="percentage"
+      class="form-control text-end box-outline"
+      id="inputPercentage-{{ rowNumber }}"
+      [ngClass]="{
+        'is-invalid': submitted && allocation.controls['percentage'].errors,
+      }"
+    />
+    @if (submitted && allocation.controls["percentage"].errors) {
+      <div class="invalid-feedback">
+        @if (
+          allocation.controls["percentage"].errors["percentagesMustSumToPar"]
+        ) {
+          <div>Must sum to 100%</div>
+        }
+      </div>
+    }
+  </div>
+  <div class="col-8">
+    <select
+      formControlName="project"
+      id="inputProject-{{ rowNumber }}"
+      class="form-control box-outline"
+      [ngClass]="{
+        'is-invalid': submitted && allocation.controls['project'].errors,
+      }"
+    >
+      @for (qbclass of classes; track qbclass) {
+        <option [ngValue]="qbclass.id">
+          {{ qbclass.value }}
+        </option>
+      }
+    </select>
+    @if (submitted && allocation.controls["project"].errors) {
+      <div class="invalid-feedback">
+        @if (allocation.controls["project"].errors["duplicateProject"]) {
+          <div>Duplicate project name</div>
+        }
+        @if (allocation.controls["project"].errors["required"]) {
+          <div>Project can't be blank</div>
+        }
+      </div>
+    }
+  </div>
+</div>
