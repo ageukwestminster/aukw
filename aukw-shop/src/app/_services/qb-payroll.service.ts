@@ -14,9 +14,11 @@ import { environment } from '@environments/environment';
 import {
   ApiMessage,
   EmployeeAllocation,
+  EmployeeName,
   IrisPayslip,
   LineItemDetail,
   PayrollJournalEntry,
+  ValueStringIdPair,
 } from '@app/_models';
 import {
   isEqualPay,
@@ -94,14 +96,25 @@ export class QBPayrollService {
    * The allocations are stored in the Charity QuickBooks file as a recurring transaction.
    * @returns An array of percentage allocations, one or more for each employee, or an empty array.
    */
-  getAllocations(): Observable<EmployeeAllocation[]> {
-    return forkJoin({
-      classes: this.qbEntityService
+  getAllocations(classes: ValueStringIdPair[] = [], employees: EmployeeName[] = []): Observable<EmployeeAllocation[]> {
+    
+    var classes$ : Observable<ValueStringIdPair[]> = this.qbEntityService
         .getAllClasses(environment.qboCharityRealmID)
-        .pipe(defaultIfEmpty([])),
-      employees: this.qbEmployeeService
+        .pipe(defaultIfEmpty([]));
+    if (classes && classes.length) {
+      classes$ = of(classes);
+    }
+    
+    var employees$ : Observable<EmployeeName[]> = this.qbEmployeeService
         .getAll(environment.qboCharityRealmID)
-        .pipe(defaultIfEmpty([])),
+        .pipe(defaultIfEmpty([]));
+    if (employees && employees.length) {
+      employees$ = of(employees);
+    }
+
+    return forkJoin({
+      classes: classes$,
+      employees: employees$,
       allocations: this.http.get<EmployeeAllocation[]>(
         `${environment.apiUrl}/allocations`,
       ),
