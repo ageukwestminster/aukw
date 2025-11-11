@@ -179,7 +179,9 @@ export class AllocationsComponent implements OnInit {
 
   onRemoveAllocation(employee: EmployeeName) {
     if (employee && employee.payrollNumber) {
-      this.allocatedEmployees = this.allocatedEmployees.filter((x) => x.payrollNumber != employee.payrollNumber);
+      this.allocatedEmployees = this.allocatedEmployees.filter(
+        (x) => x.payrollNumber != employee.payrollNumber,
+      );
     }
   }
 
