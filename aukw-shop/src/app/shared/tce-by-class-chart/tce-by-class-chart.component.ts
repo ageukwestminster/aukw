@@ -60,15 +60,17 @@ export class TCEByClassChartComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    this.topClasses.forEach((element) => {
-      this.options.series[0]['data'].push({
-        name: element[1],
-        y: element[2],
-        sliced: true,
-        selected: true,
+    if (this.topClasses && this.topClasses.length) {
+      this.topClasses.forEach((element) => {
+        this.options.series[0]['data'].push({
+          name: element[1],
+          y: element[2],
+          sliced: true,
+          selected: true,
+        });
       });
-    });
 
-    Highcharts.chart('tce-by-class-chart', this.options);
+      Highcharts.chart('tce-by-class-chart', this.options);
+    }
   }
 }
