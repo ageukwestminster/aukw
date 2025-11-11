@@ -13,3 +13,6 @@
 tr {
   vertical-align: middle;
 }
+.total-line {
+  font-weight: bold;
+}

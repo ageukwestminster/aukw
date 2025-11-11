@@ -1,10 +1,16 @@
 <th scope="row" class="d-table-cell">
   {{ takings.date | date: "E, MMM dd" }}
 </th>
-<td scope="row" class="d-table-cell">
+<td class="d-table-cell">
   {{ takings.daily_net_sales | number: "1.2-2" }}
 </td>
-<td scope="row" class="d-table-cell">
+<td class="d-table-cell">
+  {{ takings.cash_to_bank| number: "1.2-2" }}
+</td>
+<td class="d-none d-sm-table-cell">
+  {{ takings.credit_cards| number: "1.2-2" }}
+</td>
+<td class="d-table-cell">
   {{ takings.cash_difference | number: "1.2-2" }}
 </td>
 <td>

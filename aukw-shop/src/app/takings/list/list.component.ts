@@ -44,6 +44,7 @@ export class TakingsListComponent implements OnInit {
   user!: User;
   loading: boolean = false;
   filter!: TakingsFilter;
+  total: TakingsSummary | null = null;
 
   private loadingIndicatorService = inject(LoadingIndicatorService);
   private takingsService = inject(TakingsService);
@@ -80,19 +81,22 @@ export class TakingsListComponent implements OnInit {
         // to Observable<number> (daily sales)
         switchMap((dataArray: TakingsSummary[]) => {
           const obs = dataArray.map((x) => {
-            return of(x.daily_net_sales);
+            return of(x);
           });
           return merge(...obs);
         }),
         // reduce calculates total sum & count
         reduce(
-          (prev: { sum: number; count: number }, current) => {
-            return { sum: prev.sum + current, count: prev.count + 1 };
+          (prev: { sum: TakingsSummary, count: number }, current) => {
+            return { sum: prev.sum.add(current), count: prev.count + 1 };
           },
-          { sum: 0, count: 0 },
+          { sum: new TakingsSummary(), count: 0 },
         ),
+        tap(x => this.total = x.sum),
         // map calculates average
-        map((x) => x.sum / x.count),
+        map((x) => {
+          return x.sum.daily_net_sales / x.count;
+        }),
       )
       .subscribe((average) => (this.average = average));
   }
