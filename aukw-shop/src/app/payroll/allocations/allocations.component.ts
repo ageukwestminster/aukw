@@ -8,7 +8,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { Observable, of, switchMap, tap } from 'rxjs';
 import { environment } from '@environments/environment';
 import {
@@ -30,7 +30,7 @@ import {
 
 @Component({
   selector: 'app-allocations',
-  imports: [NgClass, ReactiveFormsModule, RouterOutlet],
+  imports: [NgClass, ReactiveFormsModule, RouterLink, RouterOutlet],
   templateUrl: './allocations.component.html',
   styleUrl: './allocations.component.css',
 })
@@ -90,29 +90,24 @@ export class AllocationsComponent implements OnInit {
       '03 Restricted',
     ];
     this.qbClassService
-      .getAll(this.realmID)
+      .getAllocatableClasses(this.realmID)
       .pipe(
-        switchMap((classes) => {
-          const unrestricted = classes.find(
-            (cls) => cls.value.toLowerCase() === '01 unrestricted',
-          );
-          if (unrestricted) {
-            unrestricted.value = 'Charity Shop';
-            unrestricted.shortName = 'Charity Shop';
-          }
 
-          this.classes = classes.filter(
-            (qbClass) => invalidClasses.indexOf(qbClass.value) === -1,
-          );
-
+        // Now get EmployeeNames
+        switchMap(classes => {
+          this.classes = classes;
           return this.qbEmployeeService.getAll(this.realmID);
         }),
+
+        // Get the most recent Pay Run, accordign to Staffology
         switchMap((employees) => {
           this.employees = employees;
           return this.payrunService.getLatest(this.employerID);
         }),
 
-        // Get details of last pay run
+        // Get full details of that last pay run.
+        // This will be used to see if some employees can be deleted
+        // from the allocations table
         switchMap((payrun) => {
           return this.grosstonetService.getAll(
             this.employerID,
@@ -124,6 +119,7 @@ export class AllocationsComponent implements OnInit {
           );
         }),
 
+        // Now get the actual allocations
         switchMap((grossToNetReport) => {
           this.mostRecentPayrun = grossToNetReport;
 
@@ -193,7 +189,6 @@ export class AllocationsComponent implements OnInit {
       (a) => a.name.payrollNumber === en.payrollNumber,
     );
 
-    // Projects IS NULL !!
     if (!ea || !ea.projects || !ea.projects.length) return '';
 
     var output: string = '';

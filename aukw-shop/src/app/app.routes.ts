@@ -23,7 +23,7 @@ const allocationsRoutes = () =>
 export const APP_ROUTES: Routes = [
   {
     path: '',
-    component: HomeComponent,
+    loadChildren: allocationsRoutes,
     canActivate: [authGuard],
   },
   {

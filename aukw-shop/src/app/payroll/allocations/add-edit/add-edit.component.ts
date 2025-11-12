@@ -1,5 +1,6 @@
-import { Component, Input } from '@angular/core';
-import { EmployeeAllocations } from '@app/_models';
+import { Component, inject, OnInit } from '@angular/core';
+import { Router, ActivatedRoute, Event, NavigationEnd, NavigationError } from '@angular/router';
+import { EmployeeAllocations, FormMode, QBClass } from '@app/_models';
 
 @Component({
   selector: 'app-add-edit',
@@ -7,9 +8,19 @@ import { EmployeeAllocations } from '@app/_models';
   templateUrl: './add-edit.component.html',
   styleUrl: './add-edit.component.css',
 })
-export class AllocationsAddEditComponent {
-  //@Input() employeeAllocs: EmployeeAllocations | null = null;
+export class AllocationsAddEditComponent implements OnInit {
+  
   employeeAllocs: EmployeeAllocations | null = null;
+  classes: QBClass[] = [];
+  payrollNumber!: number;
+  formMode: FormMode = FormMode.Add;
+
+  // Need
+  //classes
+  //emplo
+
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   constructor() {
     //Dummy Data
@@ -20,4 +31,25 @@ export class AllocationsAddEditComponent {
         'lassID":"1400000000000130711"}]}',
     );
   }
+    ngOnInit() {
+      this.payrollNumber = this.route.snapshot.params['id'];
+      if (this.payrollNumber) {
+        this.formMode = FormMode.Edit;
+      }
+
+        this.router.events.subscribe((event: Event) => {
+
+            if (event instanceof NavigationEnd) {
+              this.payrollNumber = this.route.snapshot.params['id'];
+              if (this.payrollNumber) console.log(`PayrollNumber: ${this.payrollNumber}`)
+            }
+
+            if (event instanceof NavigationError) {
+                // Hide loading indicator
+
+                // Present error to user
+                console.log(event.error);
+            }
+        });
+    }
 }

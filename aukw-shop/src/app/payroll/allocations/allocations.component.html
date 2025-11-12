@@ -47,6 +47,7 @@
       <!-- If the employee was not in the last payrun then flag their table row-->
       <tr
         [ngClass]="{ 'table-warning': !inPayrun.get(employee.payrollNumber) }"
+        routerLink="edit/{{ employee.payrollNumber }}"
       >
         <td>
           <!-- Button to remove line from table -->
