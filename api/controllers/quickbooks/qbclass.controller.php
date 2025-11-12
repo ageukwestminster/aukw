@@ -38,10 +38,24 @@ class QBClassCtl{
    */
   public static function read_all(string $realmid){  
     try {
-      $model = \Models\QuickbooksClass::getInstance()
-        ->setRealmID($realmid);
 
-      echo json_encode($model->readAll(), JSON_NUMERIC_CHECK);
+      $classes = \Models\QuickbooksClass::getInstance()
+        ->setRealmID($realmid)
+        ->readAll();
+
+      // If the raw http parameter is set then return the QBO data without changing it
+      if(isset($_GET['raw'])) {
+        echo json_encode($classes, JSON_NUMERIC_CHECK);
+        exit;
+      }
+
+        $classes = array_map(fn($entity) => [
+          "id" => $entity->Id,
+          "value" => $entity->{'FullyQualifiedName'},
+          "shortName" => $entity->{'Name'}
+        ] , array_values($classes));
+
+      echo json_encode($classes, JSON_NUMERIC_CHECK);
     
     } catch (Exception $e) {
       Error::response("Unable to return lsit of QBO Classes.", $e);
