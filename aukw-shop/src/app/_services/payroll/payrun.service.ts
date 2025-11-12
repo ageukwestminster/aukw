@@ -24,13 +24,11 @@ export class PayRunService {
     );
   }
 
-    /**
+  /**
    * Get the most recent 'Closed' Pay Run
    * @returns Array of PayRun objects
    */
   getLatest(employerID: string): Observable<PayRun> {
-    return this.http.get<PayRun>(
-      `${baseUrl}/${employerID}/payrun/most-recent`,
-    );
+    return this.http.get<PayRun>(`${baseUrl}/${employerID}/payrun/most-recent`);
   }
 }

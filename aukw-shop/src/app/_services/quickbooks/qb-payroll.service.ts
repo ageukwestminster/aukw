@@ -97,18 +97,20 @@ export class QBPayrollService {
    * The allocations are stored in the Charity QuickBooks file as a recurring transaction.
    * @returns An array of percentage allocations, one or more for each employee, or an empty array.
    */
-  getAllocations(classes: ValueStringIdPair[] = [], employees: EmployeeName[] = []): Observable<EmployeeAllocation[]> {
-    
-    var classes$ : Observable<ValueStringIdPair[]> = this.qbEntityService
-        .getAllClasses(environment.qboCharityRealmID)
-        .pipe(defaultIfEmpty([]));
+  getAllocations(
+    classes: ValueStringIdPair[] = [],
+    employees: EmployeeName[] = [],
+  ): Observable<EmployeeAllocation[]> {
+    var classes$: Observable<ValueStringIdPair[]> = this.qbEntityService
+      .getAllClasses(environment.qboCharityRealmID)
+      .pipe(defaultIfEmpty([]));
     if (classes && classes.length) {
       classes$ = of(classes);
     }
-    
-    var employees$ : Observable<EmployeeName[]> = this.qbEmployeeService
-        .getAll(environment.qboCharityRealmID)
-        .pipe(defaultIfEmpty([]));
+
+    var employees$: Observable<EmployeeName[]> = this.qbEmployeeService
+      .getAll(environment.qboCharityRealmID)
+      .pipe(defaultIfEmpty([]));
     if (employees && employees.length) {
       employees$ = of(employees);
     }
@@ -133,8 +135,6 @@ export class QBPayrollService {
       tap((result) => this.allocationsSubject.next(result)),
     );
   }
-
-
 
   /**
    * Create a new journal entry in the Charity QuickBooks file that records the Employer NI amounts and

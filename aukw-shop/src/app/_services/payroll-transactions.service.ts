@@ -22,7 +22,9 @@ export class PayrollTransactionsService {
   private pensionsSubject = new BehaviorSubject<LineItemDetail[]>([]);
   private employerniSubject = new BehaviorSubject<LineItemDetail[]>([]);
   private enterprisesSubject = new BehaviorSubject<IrisPayslip[]>([]);
-  private tceByClassSubject = new BehaviorSubject<[string, string, number][]>([]);
+  private tceByClassSubject = new BehaviorSubject<[string, string, number][]>(
+    [],
+  );
 
   employeejournals$ = this.empJournalsSubject.asObservable();
   pensions$ = this.pensionsSubject.asObservable();
@@ -57,12 +59,16 @@ export class PayrollTransactionsService {
               if (outputItem) {
                 outputItem[2] += totalPayLine.amount;
               } else {
-                output.push([totalPayLine.class, totalPayLine.className, totalPayLine.amount]);
+                output.push([
+                  totalPayLine.class,
+                  totalPayLine.className,
+                  totalPayLine.amount,
+                ]);
               }
             });
           });
 
-          // For pensions must filter out lines with Payroll Numbers 
+          // For pensions must filter out lines with Payroll Numbers
           x.pensions
             .filter((x) => x.payrollNumber)
             .forEach((line) => {
@@ -73,15 +79,15 @@ export class PayrollTransactionsService {
                 output.push([line.class, line.className, line.amount]);
               }
             });
-            x.ni.forEach((line) => {
-              var outputItem = output.find((item) => item[0] === line.class);
-              if (outputItem) {
-                outputItem[2] += line.amount;
-              } else {
-                output.push([line.class, line.className, line.amount]);
-              }
-            });
-          output.sort((a,b)=> b[2]-a[2]);
+          x.ni.forEach((line) => {
+            var outputItem = output.find((item) => item[0] === line.class);
+            if (outputItem) {
+              outputItem[2] += line.amount;
+            } else {
+              output.push([line.class, line.className, line.amount]);
+            }
+          });
+          output.sort((a, b) => b[2] - a[2]);
 
           // Rename '01 Unrestricted' to 'Charity Shop'
           var shopClass = output.find((item) => item[1] === '01 Unrestricted');

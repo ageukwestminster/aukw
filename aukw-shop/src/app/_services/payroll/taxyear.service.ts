@@ -21,7 +21,5 @@ export class TaxYearService {
     return this.http.get<TaxYear[]>(baseUrl);
   }
 
-  getLatest() {
-    
-  }
+  getLatest() {}
 }
