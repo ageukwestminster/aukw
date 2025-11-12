@@ -15,19 +15,17 @@ import {
   AllocationsService,
   GrossToNetService,
   PayRunService,
+  QBClassService,
   QBEmployeeService,
-  QBEntityService,
   QBPayrollService,
 } from '@app/_services';
 import {
   EmployeeAllocation,
-  EmployeeName,
-  ValueStringIdPair,
-  ApiMessage,
-  ValueIdPair,
+  EmployeeAllocations,
+  EmployeeName,  
   IrisPayslip,
+  QBClass,
 } from '@app/_models';
-import { fromArrayToElement } from '@app/_helpers';
 
 @Component({
   selector: 'app-allocations',
@@ -37,9 +35,9 @@ import { fromArrayToElement } from '@app/_helpers';
 })
 export class AllocationsComponent implements OnInit {
   form!: FormGroup;
-  classes: ValueStringIdPair[] = [];
+  classes: QBClass[] = [];
   employees: EmployeeName[] = [];
-  allocations: EmployeeAllocation[] = [];
+  allocations: EmployeeAllocations[] = [];
   loading: boolean = false;
   submitted: boolean = false;
   allocatedEmployees: EmployeeName[] = [];
@@ -52,7 +50,7 @@ export class AllocationsComponent implements OnInit {
   private formBuilder = inject(FormBuilder);
   private alertService = inject(AlertService);
   private allocationsService = inject(AllocationsService);
-  private qbEntityService = inject(QBEntityService);
+  private qbClassService = inject(QBClassService);
   private qbEmployeeService = inject(QBEmployeeService);
   private qbPayrollService = inject(QBPayrollService);
   private payrunService = inject(PayRunService);
@@ -89,17 +87,20 @@ export class AllocationsComponent implements OnInit {
       '02 Designated Funds',
       '03 Restricted',
     ];
-    this.qbEntityService
-      .getAllClasses(this.realmID)
+    this.qbClassService
+      .getAll(this.realmID)
       .pipe(
         switchMap((classes) => {
+
+          const unrestricted = classes.find(
+            (cls) => cls.value.toLowerCase() === '01 unrestricted',
+          );
+          if (unrestricted) unrestricted.value = 'Charity Shop';
+
           this.classes = classes.filter(
             (qbClass) => invalidClasses.indexOf(qbClass.value) === -1,
           );
-          const unrestricted = this.classes.find(
-            (cls) => cls.value === '01 unrestricted',
-          );
-          if (unrestricted) unrestricted.value = 'Charity Shop';
+
           return this.qbEmployeeService.getAll(this.realmID);
         }),
         switchMap((employees) => {
@@ -107,6 +108,7 @@ export class AllocationsComponent implements OnInit {
           return this.payrunService.getLatest(this.employerID);
         }),
 
+        // Get details of last pay run
         switchMap((payrun) => {
           return this.grosstonetService.getAll(
             this.employerID,
@@ -121,8 +123,7 @@ export class AllocationsComponent implements OnInit {
         switchMap((grossToNetReport) => {
           this.mostRecentPayrun = grossToNetReport;
 
-          return this.qbPayrollService.getAllocations(
-            this.classes,
+          return this.qbPayrollService.getAllocations2(
             this.employees,
           );
         }),
@@ -133,19 +134,14 @@ export class AllocationsComponent implements OnInit {
           allocations.forEach((element) => {
             if (
               !this.allocatedEmployees.find(
-                (pair) => pair.payrollNumber === element.payrollNumber,
+                (pair) => pair.payrollNumber === element.name.payrollNumber,
               )
             ) {
-              const name = this.employees.find(
-                (emp) => emp.payrollNumber === element.payrollNumber,
-              );
-              if (name) {
-                this.allocatedEmployees.push(name);
+                this.allocatedEmployees.push(element.name);
                 this.inPayrun.set(
-                  name.payrollNumber,
-                  this.isInMostRecentPayrun(name.payrollNumber),
+                  element.name.payrollNumber,
+                  this.isInMostRecentPayrun(element.name.payrollNumber),
                 );
-              }
             }
           });
 
@@ -153,7 +149,7 @@ export class AllocationsComponent implements OnInit {
         }),
       )
       .subscribe({
-        next: (allocations) => (this.allocations = allocations),
+        next: (value) => this.allocations = value,
         error: (e) => {
           this.alertService.error(e, { autoClose: false });
           this.loading = false;
@@ -200,4 +196,27 @@ export class AllocationsComponent implements OnInit {
   }
 
   onSubmit() {}
+
+  summarizeProjects(en : EmployeeName) : string {
+
+    var ea : EmployeeAllocations|undefined = this.allocations.find(a => a.name.payrollNumber === en.payrollNumber);
+    
+    // Projects IS NULL !!
+    if (!ea || !ea.projects || !ea.projects.length) return '';
+
+    var output: string = ''
+    var count: number = 0;
+
+    ea.projects.forEach(element => {
+      var cls = this.classes.find(clz => clz.id === element.classID);
+      if (cls) {
+        output.concat(count?', ':''+cls.shortName);
+      } else {
+        output.concat(count?', ':''+'Unknown Project')
+      }
+      count++;
+    });
+
+    return output;
+  }
 }

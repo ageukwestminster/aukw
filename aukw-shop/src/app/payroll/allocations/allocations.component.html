@@ -5,21 +5,7 @@
     <tr>
       <th>No.</th>
       <th class="text-start">Name</th>
-      <th>Active?</th>
-      <th>
-        <!-- Tooltip must be on element inside header, not header itself-->
-        <!-- From https://stackoverflow.com/a/48324991/6941165 -->
-        <div ngbTooltip="Is this allocation to the Enterprise company?">
-          Shop?
-        </div>
-      </th>
-      <th>
-        <div ngbTooltip="The QuickBooks Class">Percentage</div>
-      </th>
-      <th>
-        <div ngbTooltip="The QuickBooks Class">Project</div>
-      </th>
-      <th></th>
+      <th>Projects</th>
     </tr>
   </thead>
   <tbody>
@@ -28,44 +14,22 @@
       track employee.payrollNumber;
       let i = $index
     ) {
-      <tr [ngClass]="{'table-danger': !inPayrun.get(employee.payrollNumber)}">
+      <!-- If the employee was not in the last payrun then flag their table row-->
+      <tr [ngClass]="{ 'table-secondary': !inPayrun.get(employee.payrollNumber) }">
         <td>
-          <a class="btn" (click)="onRemoveAllocation(employee)"><i class="fa-solid fa-trash"></i></a>
+          <!-- Button to remove line from table -->
+          <a class="btn" (click)="onRemoveAllocation(employee)"
+            ><i class="fa-solid fa-trash"></i
+          ></a>
         </td>
         <td class="text-start">{{ employee.name }}</td>
-        <td>
-          <div class="d-flex justify-content-center">
-            @if (inPayrun.get(employee.payrollNumber)) {
-              <div class="form-check">
-                <input
-                  class="form-check-input checkbox-outline"
-                  type="checkbox"
-                  checked
-                />
-              </div>
-            }
-            @if (!inPayrun.get(employee.payrollNumber)) {
-              <div class="form-check">
-                <input
-                  class="form-check-input checkbox-outline"
-                  type="checkbox"
-                />
-              </div>
-            }
-          </div>
-        </td>
-        <!--
-        <td class="">
-          {{ alloc.percentage | number: "1.2-2" }}
-        </td>
-        <td class="d-none d-sm-table-cell">
-          {{ alloc.className }}
-        </td>-->
+        <td class="text-start">{{ summarizeProjects(employee) }}</td>
       </tr>
     }
     @if (!allocations || !allocations.length) {
+      <tr></tr>
       <tr>
-        <td colspan="4" class="text-center">
+        <td colspan="3" class="text-center">
           <span class="spinner-border spinner-border-lg align-center"></span>
         </td>
       </tr>

@@ -1,3 +1,5 @@
+import { EmployeeName } from "./employee";
+
 /**
  * Stores a percentage allocation for a given employee (identified by payrollNumber, quickbooksId and name)
  * against a class / account pair. Also stores if the employee is a shop employee because this affects the
@@ -37,5 +39,48 @@ export class EmployeeAllocation {
     this.class = (obj && obj.class) || null;
     this.accountName = (obj && obj.accountName) || null;
     this.className = (obj && obj.className) || null;
+  }
+}
+
+/**
+ * Newer version of employee Allocation
+ * 
+ * Sample Value:
+ * 
+ *      {
+ *        "name": {
+ *            "quickbooksId": 4233,
+ *            "name": "John Smith",
+ *            "payrollNumber": 399,
+ *             "firstName": "John",
+ *             "lastName": "Smith",
+ *             "middleName": "Peter"
+ *         },
+ *        "projects": [
+ *              {
+ *                "percentage": 40,
+ *                "classID": '1400000000000130722'
+ *              },
+ *              {
+ *                "percentage": 60,
+ *                "classID": '1400000000000130711'
+ *              },
+ *         ]
+ *      }
+ */
+export class EmployeeAllocations {
+
+  /** Display name of employee */
+  name: EmployeeName;
+
+  /** Percentage is the percentage of cost to be allocated to this account/class pair. Cannot be less than 0 or more than 100. 
+   * Class is project Quickbooks id
+  */
+  projects: {percentage: number, classID: string}[] = [];
+
+  /**Create a new EmployeeAllocation */
+  constructor(obj?: any) {
+    this.name = (obj && obj.name) || null;
+    this.projects = (obj && obj.project) || [];
   }
 }
