@@ -1,5 +1,15 @@
 /**
  * The name and id numbers of an employee
+ * 
+ * Sample Value:
+ *     {
+ *       "quickbooksId": 4233,
+ *       "name": "John Smith",
+ *       "payrollNumber": 399,
+ *       "firstName": "John",
+ *       "lastName": "Smith",
+ *       "middleName": "Peter"
+ *   } 
  */
 export class EmployeeName {
   /**
@@ -36,3 +46,5 @@ export class EmployeeName {
     this.middleName = (obj && obj.name) || null;
   }
 }
+
+
