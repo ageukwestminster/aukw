@@ -8,6 +8,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { RouterOutlet } from '@angular/router';
 import { Observable, of, switchMap, tap } from 'rxjs';
 import { environment } from '@environments/environment';
 import {
@@ -29,7 +30,7 @@ import {
 
 @Component({
   selector: 'app-allocations',
-  imports: [NgClass, ReactiveFormsModule],
+  imports: [NgClass, ReactiveFormsModule, RouterOutlet],
   templateUrl: './allocations.component.html',
   styleUrl: './allocations.component.css',
 })
@@ -158,23 +159,12 @@ export class AllocationsComponent implements OnInit {
         complete: () => (this.loading = false),
       });
   }
-/*
-  onAddAllocation() {
-    this.addAllocationToArray(null);
+
+  onEditEmployee(employee: EmployeeName) {
+    console.log(employee);
   }
 
-  addAllocationToArray(employeeAllocation: EmployeeAllocation | null = null) {
-    if (!employeeAllocation) {
-      this.allocs.push(
-        this.formBuilder.group({
-          percentage: [''],
-          project: [''],
-        }),
-      );
-    }
-  }*/
-
-  onRemoveAllocation(employee: EmployeeName) {
+  onRemoveEmployee(employee: EmployeeName) {
     if (employee && employee.payrollNumber) {
       this.employeesWithAllocations = this.employeesWithAllocations.filter(
         (x) => x.payrollNumber != employee.payrollNumber,

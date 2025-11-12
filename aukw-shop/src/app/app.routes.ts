@@ -17,6 +17,8 @@ const takingsRoutes = () =>
   import('./takings/takings.routes').then((x) => x.TAKINGS_ROUTES);
 const reportsRoutes = () =>
   import('./reports/reports.routes').then((x) => x.REPORTS_ROUTES);
+const allocationsRoutes = () =>
+  import('./payroll/allocations/allocations.routes').then((x) => x.ALLOCATIONS_ROUTES);
 
 export const APP_ROUTES: Routes = [
   {
@@ -45,7 +47,7 @@ export const APP_ROUTES: Routes = [
   },
   {
     path: 'allocations',
-    component: AllocationsComponent,
+    loadChildren: allocationsRoutes,
     canActivate: [authGuard],
     data: { roles: [Role.Admin] },
   },
