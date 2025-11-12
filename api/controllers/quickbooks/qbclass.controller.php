@@ -49,13 +49,14 @@ class QBClassCtl{
         exit;
       }
 
-        $classes = array_map(fn($entity) => [
-          "id" => $entity->Id,
-          "value" => $entity->{'FullyQualifiedName'},
-          "shortName" => $entity->{'Name'}
-        ] , array_values($classes));
+      $classes = array_map(fn($entity) => [
+        "id" => $entity->Id,
+        "value" => $entity->{'FullyQualifiedName'},
+        "shortName" => $entity->{'Name'}
+      ] , array_values($classes));
 
-      echo json_encode($classes, JSON_NUMERIC_CHECK);
+      // The class ID is a very long number and can get rounded if JSON_NUMERIC_CHECK is used
+      echo json_encode($classes); 
     
     } catch (Exception $e) {
       Error::response("Unable to return lsit of QBO Classes.", $e);

@@ -9,3 +9,12 @@
 .employee-inactive {
   background: grey;
 }
+
+.project-name {
+  border-radius: 8px 8px 8px 8px;
+  background: lightblue;
+}
+
+.thin-bottom {
+  border-bottom: 3px solid #cccccc;
+}

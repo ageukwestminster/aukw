@@ -1,10 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { forkJoin, defaultIfEmpty, Observable, of, switchMap, tap } from 'rxjs';
 
 import { environment } from '@environments/environment';
-import { ApiMessage } from '@app/_models';
-import { AuditLogService, AuthenticationService } from '@app/_services';
+import { ApiMessage, EmployeeAllocation, EmployeeAllocations, EmployeeName } from '@app/_models';
+import { AuditLogService, AuthenticationService, QBEmployeeService } from '@app/_services';
 
 const baseUrl = `${environment.apiUrl}/allocations`;
 
@@ -16,6 +16,7 @@ export class AllocationsService {
   private http = inject(HttpClient);
   private auditLogService = inject(AuditLogService);
   private authenticationService = inject(AuthenticationService);
+  private qbEmployeeService = inject(QBEmployeeService);
 
   /**
    * Add allocation(s) to the database.
@@ -34,4 +35,49 @@ export class AllocationsService {
       }),
     );
   }
+
+    /**
+   * This query returns an array of allocation objects that specify what percentage of
+   * employee salary costs must be allocated to what account/class pairs.
+   * There will be one or more objects for each employee. The sum of the percentages
+   * for each employee must be 100.0.
+   * The allocations are stored in the Charity QuickBooks file as a recurring transaction.
+   * @returns An array of percentage allocations, one or more for each employee, or an empty array.
+   */
+  getAllocations(employees: EmployeeName[] = []): Observable<EmployeeAllocations[]> {
+    
+    var employees$ : Observable<EmployeeName[]>;
+    if (employees && employees.length) {
+      employees$ = of(employees);
+    } else {
+      employees$ = this.qbEmployeeService
+              .getAll(environment.qboCharityRealmID)
+              .pipe(defaultIfEmpty([]));
+    }
+
+    return forkJoin({
+      employees: employees$,
+      allocations: this.http.get<EmployeeAllocation[]>(
+        `${environment.apiUrl}/allocations`,
+      ),
+    }).pipe(
+      switchMap((x) => {
+        const output : EmployeeAllocations[] = [];
+
+        x.allocations.forEach((element) => {
+          const ea = output.find((ea) => ea.name.payrollNumber === element.payrollNumber);
+          if (ea) {
+            ea.projects.push({percentage: element.percentage, classID: element.class });
+          } else {
+            const name = x.employees.find((e) => e.payrollNumber === element.payrollNumber);
+            if (name) {
+              const allocations = [{percentage: element.percentage, classID: element.class }];
+              output.push(new EmployeeAllocations({name: name, projects: allocations}));
+              }
+          }
+        });
+        return of(output);
+      }),
+    );
+  }  
 }

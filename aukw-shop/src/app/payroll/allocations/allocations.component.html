@@ -1,29 +1,72 @@
-<h5>Project Allocations</h5>
+<h1>Project Allocations</h1>
+<div class="w-100 border-bottom border-secondary mb-3"></div>
+<div class="mb-3">
+      <button
+      type="button"
+      class="btn btn-primary btn-lg me-3"
+      [disabled]="loading"
+      (click)="reload()"
+    >
+      Reload
+    </button>
+      <button
+      type="submit"
+      [disabled]="loading"
+      class="btn btn-primary btn-lg me-3"
+      aria-label="Create Transaction in Quickbooks"
+    >
+      Save
+    </button>
+    <button
+      type="button"
+      class="btn btn-outline-dark btn-lg"
+      (click)="goBack()"
+    >
+      Cancel
+    </button>
+
+  </div>
+
+
 
 <table class="table table-sm table-responsive">
   <thead>
     <tr>
-      <th>No.</th>
+      <th>Actions</th>
       <th class="text-start">Name</th>
       <th>Projects</th>
     </tr>
   </thead>
   <tbody>
     @for (
-      employee of allocatedEmployees;
+      employee of employeesWithAllocations;
       track employee.payrollNumber;
       let i = $index
     ) {
       <!-- If the employee was not in the last payrun then flag their table row-->
-      <tr [ngClass]="{ 'table-secondary': !inPayrun.get(employee.payrollNumber) }">
+      <tr
+        [ngClass]="{ 'table-warning': !inPayrun.get(employee.payrollNumber) }"
+      >
         <td>
           <!-- Button to remove line from table -->
-          <a class="btn" (click)="onRemoveAllocation(employee)"
+          <a class="btn p-0 me-2" (click)="onRemoveAllocation(employee)"
+            ><i class="fa-solid fa-pen-to-square"></i
+          ></a>
+          <a class="btn p-0" (click)="onRemoveAllocation(employee)"
             ><i class="fa-solid fa-trash"></i
           ></a>
         </td>
         <td class="text-start">{{ employee.name }}</td>
-        <td class="text-start">{{ summarizeProjects(employee) }}</td>
+        <td class="text-start">
+          <div class="row">
+            @for (
+              projectName of employeeProjects(employee);
+              track projectName
+            ) {
+              <div class="col-sm-auto project-name me-2">{{ projectName }}</div>
+            }
+          </div>
+        </td>
       </tr>
     }
     @if (!allocations || !allocations.length) {

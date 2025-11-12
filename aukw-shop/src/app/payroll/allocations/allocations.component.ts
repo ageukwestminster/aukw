@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { NgClass } from '@angular/common';
+import { Location, NgClass } from '@angular/common';
 import {
   AbstractControlOptions,
   FormArray,
@@ -22,7 +22,7 @@ import {
 import {
   EmployeeAllocation,
   EmployeeAllocations,
-  EmployeeName,  
+  EmployeeName,
   IrisPayslip,
   QBClass,
 } from '@app/_models';
@@ -40,7 +40,7 @@ export class AllocationsComponent implements OnInit {
   allocations: EmployeeAllocations[] = [];
   loading: boolean = false;
   submitted: boolean = false;
-  allocatedEmployees: EmployeeName[] = [];
+  employeesWithAllocations: EmployeeName[] = [];
   mostRecentPayrun: IrisPayslip[] = [];
   inPayrun: Map<number, boolean> = new Map<number, boolean>();
 
@@ -55,6 +55,7 @@ export class AllocationsComponent implements OnInit {
   private qbPayrollService = inject(QBPayrollService);
   private payrunService = inject(PayRunService);
   private grosstonetService = inject(GrossToNetService);
+  private location = inject(Location);
 
   /** convenience getter for easy access to form fields */
   get f() {
@@ -91,11 +92,13 @@ export class AllocationsComponent implements OnInit {
       .getAll(this.realmID)
       .pipe(
         switchMap((classes) => {
-
           const unrestricted = classes.find(
             (cls) => cls.value.toLowerCase() === '01 unrestricted',
           );
-          if (unrestricted) unrestricted.value = 'Charity Shop';
+          if (unrestricted) {
+            unrestricted.value = 'Charity Shop';
+            unrestricted.shortName = 'Charity Shop';
+          }
 
           this.classes = classes.filter(
             (qbClass) => invalidClasses.indexOf(qbClass.value) === -1,
@@ -123,9 +126,7 @@ export class AllocationsComponent implements OnInit {
         switchMap((grossToNetReport) => {
           this.mostRecentPayrun = grossToNetReport;
 
-          return this.qbPayrollService.getAllocations2(
-            this.employees,
-          );
+          return this.allocationsService.getAllocations(this.employees);
         }),
 
         switchMap((allocations) => {
@@ -133,15 +134,15 @@ export class AllocationsComponent implements OnInit {
 
           allocations.forEach((element) => {
             if (
-              !this.allocatedEmployees.find(
+              !this.employeesWithAllocations.find(
                 (pair) => pair.payrollNumber === element.name.payrollNumber,
               )
             ) {
-                this.allocatedEmployees.push(element.name);
-                this.inPayrun.set(
-                  element.name.payrollNumber,
-                  this.isInMostRecentPayrun(element.name.payrollNumber),
-                );
+              this.employeesWithAllocations.push(element.name);
+              this.inPayrun.set(
+                element.name.payrollNumber,
+                this.isInMostRecentPayrun(element.name.payrollNumber),
+              );
             }
           });
 
@@ -149,7 +150,7 @@ export class AllocationsComponent implements OnInit {
         }),
       )
       .subscribe({
-        next: (value) => this.allocations = value,
+        next: (value) => (this.allocations = value),
         error: (e) => {
           this.alertService.error(e, { autoClose: false });
           this.loading = false;
@@ -157,7 +158,7 @@ export class AllocationsComponent implements OnInit {
         complete: () => (this.loading = false),
       });
   }
-
+/*
   onAddAllocation() {
     this.addAllocationToArray(null);
   }
@@ -171,11 +172,11 @@ export class AllocationsComponent implements OnInit {
         }),
       );
     }
-  }
+  }*/
 
   onRemoveAllocation(employee: EmployeeName) {
     if (employee && employee.payrollNumber) {
-      this.allocatedEmployees = this.allocatedEmployees.filter(
+      this.employeesWithAllocations = this.employeesWithAllocations.filter(
         (x) => x.payrollNumber != employee.payrollNumber,
       );
     }
@@ -197,26 +198,75 @@ export class AllocationsComponent implements OnInit {
 
   onSubmit() {}
 
-  summarizeProjects(en : EmployeeName) : string {
+  summarizeProjects(en: EmployeeName): string {
+    var ea: EmployeeAllocations | undefined = this.allocations.find(
+      (a) => a.name.payrollNumber === en.payrollNumber,
+    );
 
-    var ea : EmployeeAllocations|undefined = this.allocations.find(a => a.name.payrollNumber === en.payrollNumber);
-    
     // Projects IS NULL !!
     if (!ea || !ea.projects || !ea.projects.length) return '';
 
-    var output: string = ''
+    var output: string = '';
     var count: number = 0;
 
-    ea.projects.forEach(element => {
-      var cls = this.classes.find(clz => clz.id === element.classID);
+    ea.projects.forEach((element) => {
+      var cls = this.classes.find((clz) => clz.id === element.classID);
       if (cls) {
-        output.concat(count?', ':''+cls.shortName);
+        output = output + (count ? ', ' : '') + cls.shortName;
       } else {
-        output.concat(count?', ':''+'Unknown Project')
+        output = output + (count ? ', ' : '') + 'Unknown Project';
       }
       count++;
     });
 
     return output;
+  }
+
+  employeeProjects(en: EmployeeName): string[] {
+    var ea: EmployeeAllocations | undefined = this.allocations.find(
+      (a) => a.name.payrollNumber === en.payrollNumber,
+    );
+
+    // Projects IS NULL !!
+    if (!ea || !ea.projects || !ea.projects.length) return [];
+
+    var output: string[] = [];
+
+    return ea.projects.map((element) => {
+      var cls = this.classes.find((clz) => clz.id === element.classID);
+      if (cls) {
+        return cls.shortName;
+      } else {
+        return 'Unknown Project';
+      }
+    });
+  }
+
+  reload() {
+    this.allocationsService
+      .getAllocations(this.employees)
+      .pipe(
+        switchMap((allocations) => {
+          this.employeesWithAllocations = [];
+
+          allocations.forEach((element) => {
+            if (
+              !this.employeesWithAllocations.find(
+                (pair) => pair.payrollNumber === element.name.payrollNumber,
+              )
+            ) {
+              this.employeesWithAllocations.push(element.name);
+            }
+          });
+          return of();
+        }),
+      )
+      .subscribe();
+  }
+
+  /** Return to previous page */
+  goBack() {
+    this.location.back();
+    return false; // don't propagate event
   }
 }

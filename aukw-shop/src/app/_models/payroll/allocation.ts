@@ -81,6 +81,6 @@ export class EmployeeAllocations {
   /**Create a new EmployeeAllocation */
   constructor(obj?: any) {
     this.name = (obj && obj.name) || null;
-    this.projects = (obj && obj.project) || [];
+    this.projects = (obj && obj.projects) || [];
   }
 }
