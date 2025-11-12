@@ -107,3 +107,6 @@ Config::write('qb.allocationsid', '15654');
 Config::write('staffology.apiurl', 'https://api.staffology.co.uk/');
 Config::write('staffology.apikey', 'STAFFOLOGY_API_KEY'); // environment variable name
 Config::write('staffology.payperiod', 'Monthly');
+
+// Directory for downloaded files
+Config::write('file.downloaddir', './downloads/');
