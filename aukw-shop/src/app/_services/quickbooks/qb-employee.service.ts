@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 
 import { environment } from '@environments/environment';
 import { ApiMessage, EmployeeName } from '@app/_models';
@@ -17,13 +17,22 @@ export class QBEmployeeService {
   private auditLogService = inject(AuditLogService);
   private authenticationService = inject(AuthenticationService);
 
+  private employeesSubject = new BehaviorSubject<EmployeeName[]>([]);
+
+  /**
+   * Use this Subject to see the most recent set of Employees from QBO.
+   */
+  employees$ = this.employeesSubject.asObservable();
+
   /**
    * Get a list of the names of all available employees
    * @param realmID The company ID for the QBO company.
    * @returns Array of employee ids and names
    */
   getAll(realmID: string): Observable<EmployeeName[]> {
-    return this.http.get<EmployeeName[]>(`${baseUrl}/${realmID}/employee`);
+    return this.http
+      .get<EmployeeName[]>(`${baseUrl}/${realmID}/employee`)
+      .pipe(tap((employees) => this.employeesSubject.next(employees)));
   }
 
   /**

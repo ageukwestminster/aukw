@@ -82,6 +82,8 @@ export class AllocationsComponent implements OnInit {
 
     this.loading = true;
 
+    this.allocationsService.allocations$.subscribe(allocs => this.allocations = allocs);
+
     // Start initializing the component by downloading lsits of
     //  i) QBO classes; and
     // ii) QBO Employees

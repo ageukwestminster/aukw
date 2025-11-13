@@ -47,7 +47,7 @@ export class AllocationsService {
    * The provided allocation(s) are appended to existing ones.
    * @returns Message of success or failure
    */
-  append(params: any): Observable<ApiMessage> {
+  append(params: EmployeeAllocation[]): Observable<ApiMessage> {
     return this.http.post<ApiMessage>(`${baseUrl}/append`, params).pipe(
       tap(() => {
         this.auditLogService.log(
@@ -55,6 +55,25 @@ export class AllocationsService {
           'INSERT',
           `Appended project allocations to table.`,
           'Allocation',
+        );
+      }),
+    );
+  }
+
+    /**
+   * Delete any allocations for the employee given by the parameter
+   * @param payrollNumber The payroll number for the employee
+   * @returns Message of success or failure
+   */
+  deleteEmployeeAllocations(payrollNumber: number): Observable<ApiMessage> {
+    return this.http.delete<ApiMessage>(`${baseUrl}/${payrollNumber}`).pipe(
+      tap(() => {
+        this.auditLogService.log(
+          this.authenticationService.userValue,
+          'DELETE',
+          `Delete project allocations from table for payroll number: ${payrollNumber}.`,
+          'Allocation',
+          payrollNumber 
         );
       }),
     );

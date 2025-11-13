@@ -72,14 +72,6 @@
               </div>
             }
 
-            <!--<allocation-row
-              [classes]="classes"
-              [submitted]="submitted"
-              [loading]="loading"
-              [rowNumber]="i"
-              [allocation]="allocationFG"
-            ></allocation-row>-->
-
             <div class="row mb-1">
               <div class="col-2 pe-2">
                 <input
@@ -184,4 +176,12 @@
       Save Employee
     </button>
   </div>
+  @if (true) {
+    <pre>
+      <!--Debug Information for Testing -->
+      <div>Form Value: {{ form.value | json }}</div>
+      <p>Form Status: {{ form.status | json }}</p>
+      <p>Form Submitted: {{ submitted | json }}</p>
+    </pre>
+  }
 </form>
