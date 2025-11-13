@@ -8,20 +8,20 @@ use QuickBooksOnline\API\Exception\SdkException;
 /**
  * This is the parent class of a series of classes tha can be used to run selected QBO reports.
  * This class is abstract and cannot be instantiated. Use one of the child classes.
- * 
+ *
  * A QBO Report is a complex object of the form:
- * 
+ *
  * {
  *   "Header": {...},      // Basic attributes of the report such as Start & end dates
  *   "Columns": {...},     // Names and types of columns
  *   "Rows": {...},        // One or more Row objects containing the report values
  * }
  * The exact format is given in Report.xsd in the quickbooks api source code.
- * 
+ *
  * @category Model
  */
-abstract class QuickbooksReport{
-
+abstract class QuickbooksReport
+{
     private \QuickBooksOnline\API\DataService\DataService $dataService;
     protected ReportService $reportService;
     protected $report;
@@ -92,7 +92,8 @@ abstract class QuickbooksReport{
      * The DataService and ReportService are retained as class variables
      * @return void
      */
-    protected function prepare() : void {
+    protected function prepare(): void
+    {
         $auth = new QuickbooksAuth();
         $this->dataService = $auth->prepare($this->realmid);
         if ($this->dataService == false) {
@@ -111,20 +112,22 @@ abstract class QuickbooksReport{
     /**Check to see if the most recent QBO request returned an error. If so,
      * then re-throw as a new SdkException.
      */
-    protected function checkForError() : void {
+    protected function checkForError(): void
+    {
         $error = $this->dataService->getLastError();
         if ($error) {
             throw new SdkException("The QBO Response message is: " . $error->getResponseBody());
-        }   
+        }
     }
 
     /**
      * Run the QBO report
      */
-    public function run() {
+    public function run()
+    {
         $this->prepare();
         $report = $this->queryQuickBooks();
-        $this->checkForError(); 
+        $this->checkForError();
         return $report;
     }
 
@@ -132,13 +135,12 @@ abstract class QuickbooksReport{
      * Abstract function that, when implemented, performs the QBO query and returns a
      * QBO reponse object.
      */
-    abstract protected function queryQuickBooks() : mixed;
+    abstract protected function queryQuickBooks(): mixed;
 
     /**
-     * Abstract function that, when implemented, converts the QBO report into a 
+     * Abstract function that, when implemented, converts the QBO report into a
      * simpler array object
      */
-    abstract protected function adaptReport() : array;
+    abstract protected function adaptReport(): array;
 
 }
-

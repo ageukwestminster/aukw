@@ -7,14 +7,13 @@ use Exception;
 use Core\ErrorResponse as Error;
 
 /**
- * Provide open PDO database connection via $conn property.  
+ * Provide open PDO database connection via $conn property.
  * Uses singleton pattern to ensure only one connection open at a time.
- * 
+ *
  * @category Core
  */
-class Database{
-
-
+class Database
+{
     /**
      * Thhe PDO database connection. Null if connection closed or invalid.
      *
@@ -34,10 +33,10 @@ class Database{
      * Singleton pattern derived from code at {@link https://stackoverflow.com/a/2047999/6941165 stackoverflow},
      * then improved with CoPilot suggestions.
      *
-     * @return Database 
-     * 
+     * @return Database
+     *
      */
-    public static function getInstance() 
+    public static function getInstance()
     {
         if (self::$instance === null) {
             self::$instance = new self();
@@ -49,32 +48,33 @@ class Database{
      * Instantiate new Database class. As part of this process it test if a connection to the
      * configured database can be opened. Database configuration is set in the config.php file.
      */
-    private function __construct(){
+    private function __construct()
+    {
 
         $this->conn = null;
 
-        try{
+        try {
             $host = Config::read('db.host');
             $port = Config::read('db.port');
 
             if ($this->testConnection($host, $port)) {
 
-                $this->conn = new PDO("mysql:host=" . $host . ";port=" . 
-                                            $port. ";dbname=" . 
+                $this->conn = new PDO(
+                    "mysql:host=" . $host . ";port=" .
+                                            $port. ";dbname=" .
                                             Config::read('db.name') . ";charset=utf8",
-                                            Config::read('db.user'),
-                                            getenv(Config::read('db.password'))
-                                        );
+                    Config::read('db.user'),
+                    getenv(Config::read('db.password'))
+                );
 
                 // From https://stackoverflow.com/a/60496/6941165
                 $this->conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-                $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);    
-            }
-            else {
+                $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            } else {
                 Error::response("Database error: Connection refused by $host:$port");
             }
-                
-        }catch(Exception $e){
+
+        } catch (Exception $e) {
             Error::response("Database error: Connection refused by $host:$port", $e, 503);
         }
     }
@@ -85,10 +85,11 @@ class Database{
      *
      * @param string $host The location of the database server, often '127.0.0.1'
      * @param int $port The mysql/mariadb port, usually 3306
-     * 
+     *
      * @return bool 'true' if connection can be opened
      */
-    private function testConnection(string $host, int $port) : bool{
+    private function testConnection(string $host, int $port): bool
+    {
         $waitTimeoutInSeconds = 1;
 
         $fp = @fsockopen($host, $port, $errCode, $errStr, $waitTimeoutInSeconds);

@@ -8,14 +8,15 @@ use PDOException;
 
 /**
  * Defines a Takings and has data persistance capbility.
- * 
+ *
  * @category Model
  */
-class Takings{
+class Takings
+{
     /**
      * Database connection
      * @var PDO|null
-     */ 
+     */
     private $conn;
     /**
      * The name of the table that holds the data
@@ -26,7 +27,8 @@ class Takings{
     /**
      * Instantiate a new Takings object
      */
-    public function __construct(){
+    public function __construct()
+    {
         $this->conn = \Core\Database::getInstance()->conn;
     }
 
@@ -71,7 +73,8 @@ class Takings{
     public int $quickbooks;
 
     // Show takings data  for a given shop, between start and end dates
-    public function summary($shopid, $startdate, $enddate){
+    public function summary($shopid, $startdate, $enddate)
+    {
         $query = "SELECT
                     takingsid, `date`, t.shopid, s.`name` as shopname, 
                     (clothing_num+brica_num+books_num+linens_num+donations_num+other_num+rag_num) as number_of_items_sold,
@@ -89,9 +92,9 @@ class Takings{
                     WHERE t.shopid = :shopid AND t.`date` >= :start AND t.`date`<= :end
                     ORDER BY t.`date` DESC
                     ";
-        
+
         // prepare query statement
-        $stmt = $this->conn->prepare( $query );
+        $stmt = $this->conn->prepare($query);
 
         // bind id of product to be updated
         $stmt->bindParam(":shopid", $shopid, PDO::PARAM_INT);
@@ -103,20 +106,20 @@ class Takings{
 
         $num = $stmt->rowCount();
 
-        $item_arr=array();
+        $item_arr = array();
 
         // check if more than 0 records found
-        if($num>0){
+        if ($num > 0) {
             // retrieve our table contents
             // fetch() is faster than fetchAll()
             // http://stackoverflow.com/questions/2770630/pdofetchall-vs-pdofetch-in-a-loop
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 // extract row
                 // this will make $row['name'] to
                 // just $name only
                 extract($row);
-            
-                $takings_item=array(
+
+                $takings_item = array(
                     "id" => $takingsid,
                     "date" => $date,
                     "shopid" => $shopid,
@@ -143,10 +146,11 @@ class Takings{
         return $item_arr;
     }
 
-       
+
 
     // Show takings data for the last 90 days for a given shop
-    public function read_by_shop($shopid){
+    public function read_by_shop($shopid)
+    {
         $query = "SELECT
                     takingsid as `id`, `date`, shopid, clothing_num, brica_num,
                     books_num, linens_num, donations_num, other_num, rag_num, clothing,
@@ -159,9 +163,9 @@ class Takings{
                     WHERE shopid = :shopid AND `date` > DATE_sub(NOW(), INTERVAL 90 DAY)
                     ORDER BY `date` DESC
                     ";
-        
+
         // prepare query statement
-        $stmt = $this->conn->prepare( $query );
+        $stmt = $this->conn->prepare($query);
 
         // bind id of product to be updated
         $stmt->bindParam(":shopid", $shopid, PDO::PARAM_INT);
@@ -171,14 +175,14 @@ class Takings{
 
         $num = $stmt->rowCount();
 
-        $item_arr=array();
+        $item_arr = array();
 
         // check if more than 0 records found
-        if($num>0){
+        if ($num > 0) {
             // retrieve our table contents
             // fetch() is faster than fetchAll()
             // http://stackoverflow.com/questions/2770630/pdofetchall-vs-pdofetch-in-a-loop
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){            
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $item = Takings::pass_row_data($row);
                 $item_arr[] = $item;
             }
@@ -191,11 +195,12 @@ class Takings{
      * List all takings that have the 'quickbooks' property matching the given value.
      *
      * @param bool $quickbooks 'true' means already booked into QBO, 'false' means yet to be booked in QBO.
-     * 
+     *
      * @return array An array of Takings objects
-     * 
+     *
      */
-    public function read_by_quickbooks_status(bool $quickbooks){
+    public function read_by_quickbooks_status(bool $quickbooks)
+    {
         $query = "SELECT
                     takingsid as `id`, `date`, shopid, clothing_num, brica_num,
                     books_num, linens_num, donations_num, other_num, rag_num, clothing,
@@ -207,9 +212,9 @@ class Takings{
                     " . $this->table_name . "
                     WHERE quickbooks = :quickbooks
                     ";
-        
+
         // prepare query statement
-        $stmt = $this->conn->prepare( $query );
+        $stmt = $this->conn->prepare($query);
 
         // bind id of product to be updated
         $stmt->bindParam(":quickbooks", $quickbooks, PDO::PARAM_INT);
@@ -219,14 +224,14 @@ class Takings{
 
         $num = $stmt->rowCount();
 
-        $item_arr=array();
+        $item_arr = array();
 
         // check if more than 0 records found
-        if($num>0){
+        if ($num > 0) {
             // retrieve our table contents
             // fetch() is faster than fetchAll()
             // http://stackoverflow.com/questions/2770630/pdofetchall-vs-pdofetch-in-a-loop
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $item = Takings::pass_row_data($row);
                 $item_arr[] = $item;
             }
@@ -240,11 +245,12 @@ class Takings{
      * Used by ReportCtl::takingsSummary()
      *
      * @param int $shopid
-     * 
+     *
      * @return mixed
-     * 
+     *
      */
-    public function read_most_recent(int $shopid){
+    public function read_most_recent(int $shopid)
+    {
         $query = "SELECT
                     takingsid as `id`, `date`, shopid, clothing_num, brica_num,
                     books_num, linens_num, donations_num, other_num, rag_num, clothing,
@@ -257,9 +263,9 @@ class Takings{
                     WHERE shopid = :shopid 
                     ORDER BY date DESC LIMIT 0,1
                     ";
-        
+
         // prepare query statement
-        $stmt = $this->conn->prepare( $query );
+        $stmt = $this->conn->prepare($query);
 
         // bind id of product to be updated
         $stmt->bindParam(":shopid", $shopid, PDO::PARAM_INT);
@@ -270,14 +276,15 @@ class Takings{
         // get retrieved row
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if($row){
+        if ($row) {
             return Takings::pass_row_data($row);
         } else {
             throw new \Exception('No takings found.');
         }
-    }    
+    }
 
-    function readOne(){
+    public function readOne()
+    {
         $query = "SELECT
                     takingsid, `date`, shopid, clothing_num, brica_num,
                     books_num, linens_num, donations_num, other_num, rag_num, clothing,
@@ -289,9 +296,9 @@ class Takings{
                     " . $this->table_name . "
                     WHERE takingsid = ?
                     LIMIT 0,1";
-        
+
         // prepare query statement
-        $stmt = $this->conn->prepare( $query );
+        $stmt = $this->conn->prepare($query);
 
         // bind id of product to be updated
         $stmt->bindParam(1, $this->id);
@@ -361,18 +368,19 @@ class Takings{
                 "comments" => $this->comments,
                 "rags_paid_in_cash" => $this->rags_paid_in_cash,
                 "timestamp" => $this->timestamp,
-                "quickbooks" => $this->quickbooks 
+                "quickbooks" => $this->quickbooks
             );
         }
     }
 
     /**
      * Add this takings object to the database.
-     * @return true 
-     * @throws PDOException 
-     * @throws Exception 
+     * @return true
+     * @throws PDOException
+     * @throws Exception
      */
-    function create() : true{
+    public function create(): true
+    {
         $query = "INSERT INTO
                     " . $this->table_name . "
                     SET 
@@ -406,29 +414,29 @@ class Takings{
         $stmt = $this->conn->prepare($query);
 
         // sanitize
-        $this->date=htmlspecialchars(strip_tags($this->date));
-        $this->shopid=htmlspecialchars(strip_tags($this->shopid));
-        $this->clothing_num=htmlspecialchars(strip_tags($this->clothing_num));
-        $this->brica_num=htmlspecialchars(strip_tags($this->brica_num));
-        $this->books_num=htmlspecialchars(strip_tags($this->books_num));
-        $this->linens_num=htmlspecialchars(strip_tags($this->linens_num));
-        $this->donations_num=htmlspecialchars(strip_tags($this->donations_num));
-        $this->other_num=htmlspecialchars(strip_tags($this->other_num));
-        $this->rag_num=htmlspecialchars(strip_tags($this->rag_num));
-        $this->clothing=htmlspecialchars(strip_tags($this->clothing));
-        $this->brica=htmlspecialchars(strip_tags($this->brica));
-        $this->books=htmlspecialchars(strip_tags($this->books));
-        $this->linens=htmlspecialchars(strip_tags($this->linens));
-        $this->donations=htmlspecialchars(strip_tags($this->donations));
-        $this->other=htmlspecialchars(strip_tags($this->other));
-        $this->rag=htmlspecialchars(strip_tags($this->rag));
-        $this->customers_num_total=htmlspecialchars(strip_tags($this->customers_num_total));
-        $this->cash_to_bank=htmlspecialchars(strip_tags($this->cash_to_bank));
-        $this->credit_cards=htmlspecialchars(strip_tags($this->credit_cards));
-        $this->operating_expenses=htmlspecialchars(strip_tags($this->operating_expenses));
-        $this->volunteer_expenses=htmlspecialchars(strip_tags($this->volunteer_expenses));
-        $this->cash_difference=htmlspecialchars(strip_tags($this->cash_difference));
-        $this->comments=htmlspecialchars(strip_tags($this->comments ?? ''));
+        $this->date = htmlspecialchars(strip_tags($this->date));
+        $this->shopid = htmlspecialchars(strip_tags($this->shopid));
+        $this->clothing_num = htmlspecialchars(strip_tags($this->clothing_num));
+        $this->brica_num = htmlspecialchars(strip_tags($this->brica_num));
+        $this->books_num = htmlspecialchars(strip_tags($this->books_num));
+        $this->linens_num = htmlspecialchars(strip_tags($this->linens_num));
+        $this->donations_num = htmlspecialchars(strip_tags($this->donations_num));
+        $this->other_num = htmlspecialchars(strip_tags($this->other_num));
+        $this->rag_num = htmlspecialchars(strip_tags($this->rag_num));
+        $this->clothing = htmlspecialchars(strip_tags($this->clothing));
+        $this->brica = htmlspecialchars(strip_tags($this->brica));
+        $this->books = htmlspecialchars(strip_tags($this->books));
+        $this->linens = htmlspecialchars(strip_tags($this->linens));
+        $this->donations = htmlspecialchars(strip_tags($this->donations));
+        $this->other = htmlspecialchars(strip_tags($this->other));
+        $this->rag = htmlspecialchars(strip_tags($this->rag));
+        $this->customers_num_total = htmlspecialchars(strip_tags($this->customers_num_total));
+        $this->cash_to_bank = htmlspecialchars(strip_tags($this->cash_to_bank));
+        $this->credit_cards = htmlspecialchars(strip_tags($this->credit_cards));
+        $this->operating_expenses = htmlspecialchars(strip_tags($this->operating_expenses));
+        $this->volunteer_expenses = htmlspecialchars(strip_tags($this->volunteer_expenses));
+        $this->cash_difference = htmlspecialchars(strip_tags($this->cash_difference));
+        $this->comments = htmlspecialchars(strip_tags($this->comments ?? ''));
 
         // bind values
         $stmt->bindParam(":date", $this->date);
@@ -456,9 +464,9 @@ class Takings{
         $stmt->bindParam(":comments", $this->comments);
 
         // execute query
-        if($stmt->execute()){
+        if ($stmt->execute()) {
             $this->id = $this->conn->lastInsertId();
-            if($this->id) {
+            if ($this->id) {
                 return true;
             } else {
                 throw new Exception("Id of Takings entry is missing.");
@@ -471,9 +479,10 @@ class Takings{
     /**
      * Update an existing Takings entry in the database with new data.
      * @return bool 'true' if updated succeeded.
-     * @throws PDOException 
+     * @throws PDOException
      */
-    function update() : bool{
+    public function update(): bool
+    {
         $query = "UPDATE
                     " . $this->table_name . "
                     SET 
@@ -510,31 +519,31 @@ class Takings{
         $stmt = $this->conn->prepare($query);
 
         // sanitize
-        $this->date=htmlspecialchars(strip_tags($this->date));
-        $this->shopid=htmlspecialchars(strip_tags($this->shopid));
-        $this->clothing_num=htmlspecialchars(strip_tags($this->clothing_num));
-        $this->brica_num=htmlspecialchars(strip_tags($this->brica_num));
-        $this->books_num=htmlspecialchars(strip_tags($this->books_num));
-        $this->linens_num=htmlspecialchars(strip_tags($this->linens_num));
-        $this->donations_num=htmlspecialchars(strip_tags($this->donations_num));
-        $this->other_num=htmlspecialchars(strip_tags($this->other_num));
-        $this->rag_num=htmlspecialchars(strip_tags($this->rag_num));
-        $this->clothing=htmlspecialchars(strip_tags($this->clothing));
-        $this->brica=htmlspecialchars(strip_tags($this->brica));
-        $this->books=htmlspecialchars(strip_tags($this->books));
-        $this->linens=htmlspecialchars(strip_tags($this->linens));
-        $this->donations=htmlspecialchars(strip_tags($this->donations));
-        $this->other=htmlspecialchars(strip_tags($this->other));
-        $this->rag=htmlspecialchars(strip_tags($this->rag));
-        $this->customers_num_total=htmlspecialchars(strip_tags($this->customers_num_total));
-        $this->cash_to_bank=htmlspecialchars(strip_tags($this->cash_to_bank));
-        $this->credit_cards=htmlspecialchars(strip_tags($this->credit_cards));
-        $this->operating_expenses=htmlspecialchars(strip_tags($this->operating_expenses));
-        $this->volunteer_expenses=htmlspecialchars(strip_tags($this->volunteer_expenses));
-        $this->cash_difference=htmlspecialchars(strip_tags($this->cash_difference));
-        $this->comments=htmlspecialchars(strip_tags($this->comments ?? ''));
-        $this->quickbooks=htmlspecialchars(strip_tags($this->quickbooks));
-        $this->rags_paid_in_cash=htmlspecialchars(strip_tags($this->rags_paid_in_cash));
+        $this->date = htmlspecialchars(strip_tags($this->date));
+        $this->shopid = htmlspecialchars(strip_tags($this->shopid));
+        $this->clothing_num = htmlspecialchars(strip_tags($this->clothing_num));
+        $this->brica_num = htmlspecialchars(strip_tags($this->brica_num));
+        $this->books_num = htmlspecialchars(strip_tags($this->books_num));
+        $this->linens_num = htmlspecialchars(strip_tags($this->linens_num));
+        $this->donations_num = htmlspecialchars(strip_tags($this->donations_num));
+        $this->other_num = htmlspecialchars(strip_tags($this->other_num));
+        $this->rag_num = htmlspecialchars(strip_tags($this->rag_num));
+        $this->clothing = htmlspecialchars(strip_tags($this->clothing));
+        $this->brica = htmlspecialchars(strip_tags($this->brica));
+        $this->books = htmlspecialchars(strip_tags($this->books));
+        $this->linens = htmlspecialchars(strip_tags($this->linens));
+        $this->donations = htmlspecialchars(strip_tags($this->donations));
+        $this->other = htmlspecialchars(strip_tags($this->other));
+        $this->rag = htmlspecialchars(strip_tags($this->rag));
+        $this->customers_num_total = htmlspecialchars(strip_tags($this->customers_num_total));
+        $this->cash_to_bank = htmlspecialchars(strip_tags($this->cash_to_bank));
+        $this->credit_cards = htmlspecialchars(strip_tags($this->credit_cards));
+        $this->operating_expenses = htmlspecialchars(strip_tags($this->operating_expenses));
+        $this->volunteer_expenses = htmlspecialchars(strip_tags($this->volunteer_expenses));
+        $this->cash_difference = htmlspecialchars(strip_tags($this->cash_difference));
+        $this->comments = htmlspecialchars(strip_tags($this->comments ?? ''));
+        $this->quickbooks = htmlspecialchars(strip_tags($this->quickbooks));
+        $this->rags_paid_in_cash = htmlspecialchars(strip_tags($this->rags_paid_in_cash));
 
         // bind values
         $stmt->bindParam(":id", $this->id);
@@ -563,20 +572,21 @@ class Takings{
         $stmt->bindParam(":comments", $this->comments);
         $stmt->bindParam(":quickbooks", $this->quickbooks);
         $stmt->bindParam(":rags_paid_in_cash", $this->rags_paid_in_cash);
-        
+
         return $stmt->execute();
     }
 
     /**
      * Delete this takings record from the database.
      * @return bool 'true' if delete succeeded.
-     * @throws PDOException 
+     * @throws PDOException
      */
-    function delete():bool{
+    public function delete(): bool
+    {
         $query = "DELETE FROM " . $this->table_name . " WHERE takingsid = ?";
 
         $stmt = $this->conn->prepare($query);
-        $this->id=htmlspecialchars(strip_tags($this->id));
+        $this->id = htmlspecialchars(strip_tags($this->id));
         $stmt->bindParam(1, $this->id);
 
         return $stmt->execute();
@@ -585,9 +595,10 @@ class Takings{
     /**
      * Update the quickbooks field for the given takings record.
      * @return bool 'true' if updated succeeded.
-     * @throws PDOException 
+     * @throws PDOException
      */
-    public function patch_quickbooks(){
+    public function patch_quickbooks()
+    {
         $query = "UPDATE
                     " . $this->table_name . "
                     SET 
@@ -600,12 +611,12 @@ class Takings{
         $stmt = $this->conn->prepare($query);
 
         // sanitize
-        $this->quickbooks=htmlspecialchars(strip_tags($this->quickbooks));
+        $this->quickbooks = htmlspecialchars(strip_tags($this->quickbooks));
 
         // bind values
         $stmt->bindParam(":id", $this->id);
         $stmt->bindParam(":quickbooks", $this->quickbooks);
-        
+
         return $stmt->execute();
     }
 
@@ -614,7 +625,8 @@ class Takings{
      * @param mixed $row The row from a PDO result set.
      * @return array The new array.
      */
-    private function pass_row_data($row) {
+    private function pass_row_data($row)
+    {
 
         // extract row
         // this will make $row['name'] to

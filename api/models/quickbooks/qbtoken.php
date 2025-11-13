@@ -6,21 +6,22 @@ use PDO;
 
 /**
  * Holds QB token information and has data persistance capability.
- * 
+ *
  * The QB token is an OAuth2 access/refresh token pair that can be used to perform QuickBooks tasks.
  * There is a different token for each realm: one for the Charity and one for Enterprises.
- * 
+ *
  * An App can have links to multiple realms but it can only have one link to each realm.
- * 
+ *
  * Only the QB Company Admin can create an app<->realm link.
- * 
+ *
  * @category Model
  */
-class QuickbooksToken{
+class QuickbooksToken
+{
     /**
      * Database connection
      * @var Database
-     */ 
+     */
     private $conn;
     /**
      * The name of the table that holds the data
@@ -31,7 +32,8 @@ class QuickbooksToken{
     /**
      * initializes a new instance of the QuickbooksToken class.
      */
-    public function __construct(){
+    public function __construct()
+    {
         $this->conn = \Core\Database::getInstance()->conn;
     }
 
@@ -66,7 +68,7 @@ class QuickbooksToken{
      */
     public $accesstoken;
     /**
-     * Date and time that QBO access token expires in string format. Time is 
+     * Date and time that QBO access token expires in string format. Time is
      * London local time.
      * @var string
      */
@@ -77,7 +79,7 @@ class QuickbooksToken{
      */
     public $refreshtoken;
     /**
-     * Date and time that QBO refresh token expires in string format. Time is 
+     * Date and time that QBO refresh token expires in string format. Time is
      * London local time.
      * @var string
      */
@@ -86,10 +88,11 @@ class QuickbooksToken{
     /**
      * Insert the QB token information into the database with the values of
      * the current instance.
-     * 
+     *
      * @return bool 'true' if operation succeeded
      */
-    function insert(){
+    public function insert()
+    {
         $query = "INSERT INTO
                     " . $this->table_name . "
                     SET
@@ -102,7 +105,7 @@ class QuickbooksToken{
                     refreshtokenexpiry=:refreshtokenexpiry,
                     `timestamp`=NULL
                     ;";
-        
+
         // prepare query
         $stmt = $this->conn->prepare($query);
 
@@ -113,23 +116,24 @@ class QuickbooksToken{
         $stmt->bindParam(":accesstoken", $this->accesstoken);
         $stmt->bindParam(":accesstokenexpiry", $this->accesstokenexpiry);
         $stmt->bindParam(":refreshtoken", $this->refreshtoken);
-        $stmt->bindParam(":refreshtokenexpiry", $this->refreshtokenexpiry);      
+        $stmt->bindParam(":refreshtokenexpiry", $this->refreshtokenexpiry);
 
         // execute query
-        if($stmt->execute()){
+        if ($stmt->execute()) {
             return true;
         }
-        
+
         return false;
     }
 
     /**
      * Update the QB token information in the database with the values of
      * the current instance.
-     * 
+     *
      * @return bool 'true' if operation succeeded
      */
-    function update(){
+    public function update()
+    {
         $query = "UPDATE
                     " . $this->table_name . "
                     SET                
@@ -141,7 +145,7 @@ class QuickbooksToken{
                     refreshtokenexpiry=:refreshtokenexpiry,
                     `timestamp`=NULL
                     WHERE realmid=:realmid";
-        
+
         // prepare query
         $stmt = $this->conn->prepare($query);
 
@@ -152,22 +156,23 @@ class QuickbooksToken{
         $stmt->bindParam(":accesstoken", $this->accesstoken);
         $stmt->bindParam(":accesstokenexpiry", $this->accesstokenexpiry);
         $stmt->bindParam(":refreshtoken", $this->refreshtoken);
-        $stmt->bindParam(":refreshtokenexpiry", $this->refreshtokenexpiry);        
+        $stmt->bindParam(":refreshtokenexpiry", $this->refreshtokenexpiry);
 
         // execute query
-        if($stmt->execute()){
+        if ($stmt->execute()) {
             return true;
         }
-        
+
         return false;
     }
 
     /**
      * Refresh the instance properties with QB token information from the database
-     * 
+     *
      * @return void Output is echo'd directly to response
      */
-    function read($realmid){
+    public function read($realmid)
+    {
         $query = "SELECT t.`accesstoken`,t.`accesstokenexpiry`,t.`refreshtoken`,t.`refreshtokenexpiry`
                         ,t.userid, t.realmid, q.companyName, t.email
                         ,CONCAT(u.firstname, ' ', u.surname) as fullname
@@ -177,7 +182,7 @@ class QuickbooksToken{
 
         // prepare query
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":realmid", $realmid);   
+        $stmt->bindParam(":realmid", $realmid);
 
         // execute query
         $stmt->execute();
@@ -186,7 +191,7 @@ class QuickbooksToken{
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         // set values to object properties
-        if ( !empty($row) ) {
+        if (!empty($row)) {
             $this->linkcreatoruserid = $row['userid'];
             $this->linkcreatoremail = $row['email'];
             $this->linkcreatorname = $row['fullname'];
@@ -201,29 +206,30 @@ class QuickbooksToken{
 
     /**
      * Get a list of all the saved QB credentials in the database
-     * 
+     *
      * @return QuickbooksToken[] Array of access and refresh tokens
      */
-    function read_all(){
-        
+    public function read_all()
+    {
+
         $query = "SELECT t.`accesstoken`,t.`accesstokenexpiry`,t.`refreshtoken`,t.`refreshtokenexpiry`
                         ,t.userid, t.realmid, q.companyName, t.email
                         ,CONCAT(u.firstname, ' ', u.surname) as fullname
                     FROM " . $this->table_name . " t JOIN qbrealm q ON t.realmid = q.realmid" .
                     " JOIN user u ON t.userid = u.id ";
-        
+
         // prepare query
         $stmt = $this->conn->prepare($query);
-   
+
         // execute query
         $stmt->execute();
 
         $num = $stmt->rowCount();
 
-        $item_arr=array();
+        $item_arr = array();
 
-        if ($num>0) {
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+        if ($num > 0) {
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 extract($row);
                 $item_arr[] = array(
                     "linkcreatoruserid" => $userid,
@@ -236,7 +242,7 @@ class QuickbooksToken{
                     "refreshtoken" => $refreshtoken,
                     "refreshtokenexpiry" => $refreshtokenexpiry
                 );
-            }            
+            }
         }
 
         return $item_arr;
@@ -244,19 +250,20 @@ class QuickbooksToken{
 
     /**
      * Delete the QB access and refresh tokens from the database
-     * 
+     *
      * @param string $realmid QBO Company id
      * @return bool 'true' if operation succeeded
      */
-    public function delete($realmid){
-        $query = "DELETE FROM " . $this->table_name . 
+    public function delete($realmid)
+    {
+        $query = "DELETE FROM " . $this->table_name .
             " WHERE realmid=:realmid";
 
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":realmid", $realmid);
 
         // execute query
-        if($stmt->execute()){
+        if ($stmt->execute()) {
             return true;
         }
 

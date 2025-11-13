@@ -8,14 +8,15 @@ use PDOException;
 
 /**
  * Defines a user and has data persistance capbility.
- * 
+ *
  * @category Model
  */
-class User{
+class User
+{
     /**
      * Database connection
      * @var PDO|null
-     */ 
+     */
     private $conn;
     /**
      * The name of the table that holds the data
@@ -26,7 +27,8 @@ class User{
     /**
      * Instantiate a new User
      */
-    public function __construct(){
+    public function __construct()
+    {
         $this->conn = \Core\Database::getInstance()->conn;
     }
 
@@ -47,45 +49,46 @@ class User{
 
     /**
      * Return details of all Users
-     * 
+     *
      * @return array An array of Users
      */
-    public function read(){
-               
+    public function read()
+    {
+
         $stmt = User::prepareAndExecuteSelectStatement('BY_SUSPENDED');
 
         $num = $stmt->rowCount();
 
-        $users_arr=array();
+        $users_arr = array();
 
-        if($num>0){
-        
+        if ($num > 0) {
+
             // retrieve our table contents
             // fetch() is faster than fetchAll()
             // http://stackoverflow.com/questions/2770630/pdofetchall-vs-pdofetch-in-a-loop
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 // extract row
                 // this will make $row['name'] to
                 // just $name only
                 extract($row);
-            
-                    $user_item=array(
-                        "id" => $id,
-                        "username" => $username,
-                        "firstname" => html_entity_decode($firstname ?? ''),
-                        "surname" => html_entity_decode($surname ?? ''),
-                        "role" => $isAdmin?'Admin':'User',
-                        "suspended" => $suspended?true:false,
-                        "email" => html_entity_decode($email ?? ''),
-                        "title" => html_entity_decode($title ?? ''),
-                        "shopid" => $shopid,
-                        "quickbooksUserId" => html_entity_decode($quickbooksUserId ?? ''),
-                    );
-        
-                    // create nonindexed array
-                    array_push ($users_arr, $user_item);
-                }
-               
+
+                $user_item = array(
+                    "id" => $id,
+                    "username" => $username,
+                    "firstname" => html_entity_decode($firstname ?? ''),
+                    "surname" => html_entity_decode($surname ?? ''),
+                    "role" => $isAdmin ? 'Admin' : 'User',
+                    "suspended" => $suspended ? true : false,
+                    "email" => html_entity_decode($email ?? ''),
+                    "title" => html_entity_decode($title ?? ''),
+                    "shopid" => $shopid,
+                    "quickbooksUserId" => html_entity_decode($quickbooksUserId ?? ''),
+                );
+
+                // create nonindexed array
+                array_push($users_arr, $user_item);
+            }
+
         }
 
         return $users_arr;
@@ -94,11 +97,12 @@ class User{
     /**
      * Retrieve from the database details of the User, specified by
      * First Name, Surname and Email address
-     * 
+     *
      * @return void
-     * 
+     *
      */
-    public function readOneByNameAndEmail(){
+    public function readOneByNameAndEmail()
+    {
 
         $stmt = User::prepareAndExecuteSelectStatement('BY_NAMEANDEMAIL');
 
@@ -107,25 +111,27 @@ class User{
     }
 
     /**
-     * Query for the details of one user using $username but return the results as a 
+     * Query for the details of one user using $username but return the results as a
      * MySQLi statement rather than a JSON string or an object.
-     * 
+     *
      * This is used by the auth.php script as part of the login procedure
-     * 
+     *
      * @return object Returns a MySQLi statement
      */
-    public function readOneByUsernameStmt(){
+    public function readOneByUsernameStmt()
+    {
         return User::prepareAndExecuteSelectStatement('BY_USERNAME');
     }
 
     /**
-     * Retrieve from the database details of a User, queried using the 
+     * Retrieve from the database details of a User, queried using the
      * model property $username
-     * 
+     *
      * @return void
-     * 
+     *
      */
-    public function readOneByUsername(){
+    public function readOneByUsername()
+    {
 
         // execute query
         $stmt = User::readOneByUsernameStmt();
@@ -134,13 +140,14 @@ class User{
     }
 
     /**
-     * Retrieve from the database details of a User, queried using the 
+     * Retrieve from the database details of a User, queried using the
      * model property $id
-     * 
+     *
      * @return void
-     * 
+     *
      */
-    public function readOneByUserID(){
+    public function readOneByUserID()
+    {
 
         // execute query
         $stmt = User::prepareAndExecuteSelectStatement('BY_USERID');
@@ -151,10 +158,11 @@ class User{
     /**
      * Add a new User to the database.
      * @return true 'true' if database insert succeeded.
-     * @throws PDOException 
-     * @throws Exception 
+     * @throws PDOException
+     * @throws Exception
      */
-    function create():true{
+    public function create(): true
+    {
         $query = "INSERT INTO
                     " . $this->table_name . "
                     SET 
@@ -167,24 +175,24 @@ class User{
                     title=:title,
                     suspended=:suspended,
                     failedloginattempts=:failedloginattempts"
-                    . (isset($this->password)?',password=:password ':'');
-        
+                    . (isset($this->password) ? ',password=:password ' : '');
+
         // prepare query
         $stmt = $this->conn->prepare($query);
 
         // sanitize
-        $this->username=htmlspecialchars(strip_tags($this->username));
-        $this->firstname=htmlspecialchars(strip_tags($this->firstname));
-        $this->surname=htmlspecialchars(strip_tags($this->surname ?? ''));
-        $this->email=htmlspecialchars(strip_tags($this->email ?? ''));
-        $this->title=htmlspecialchars(strip_tags($this->title ?? ''));
-        $this->role=htmlspecialchars(strip_tags($this->role));
-        $this->failedloginattempts=filter_var($this->failedloginattempts, FILTER_SANITIZE_NUMBER_INT);
-        $this->shopid=filter_var($this->shopid, FILTER_SANITIZE_NUMBER_INT);
-        $this->role=htmlspecialchars(strip_tags($this->role));
+        $this->username = htmlspecialchars(strip_tags($this->username));
+        $this->firstname = htmlspecialchars(strip_tags($this->firstname));
+        $this->surname = htmlspecialchars(strip_tags($this->surname ?? ''));
+        $this->email = htmlspecialchars(strip_tags($this->email ?? ''));
+        $this->title = htmlspecialchars(strip_tags($this->title ?? ''));
+        $this->role = htmlspecialchars(strip_tags($this->role));
+        $this->failedloginattempts = filter_var($this->failedloginattempts, FILTER_SANITIZE_NUMBER_INT);
+        $this->shopid = filter_var($this->shopid, FILTER_SANITIZE_NUMBER_INT);
+        $this->role = htmlspecialchars(strip_tags($this->role));
 
         // Convert supplied values to tinyint for database
-        $isadmin = ($this->role=='Admin') ? 1 : 0;
+        $isadmin = ($this->role == 'Admin') ? 1 : 0;
         $suspended = $this->suspended ? 1 : 0;
 
         // Shopid sometimes comes through as ""
@@ -202,11 +210,11 @@ class User{
         $stmt->bindParam(":title", $this->title);
         $stmt->bindParam(":failedloginattempts", $this->failedloginattempts, PDO::PARAM_INT);
         $stmt->bindParam(":password", $this->password);
-        
+
         // execute query
-        if($stmt->execute()){
+        if ($stmt->execute()) {
             $this->id = $this->conn->lastInsertId();
-            if($this->id) {
+            if ($this->id) {
                 return true;
             } else {
                 throw new Exception("Id of new User is missing.");
@@ -218,11 +226,12 @@ class User{
 
     /**
      * Update an existing User in the database with new data.
-     * 
+     *
      * @return bool 'true' if database update succeeded.
-     * 
+     *
      */
-    function update():bool{
+    public function update(): bool
+    {
         $query = "UPDATE
                     " . $this->table_name . "
                     SET 
@@ -236,37 +245,37 @@ class User{
                     shopid=:shopid,
                     timestamp=NULL,
                     failedloginattempts=:failedloginattempts"
-                    . (isset($this->quickbooksUserId)?',quickbooksUserId=:quickbooksUserId ':'') 
-                    . (isset($this->password)?',password=:password ':'') 
+                    . (isset($this->quickbooksUserId) ? ',quickbooksUserId=:quickbooksUserId ' : '')
+                    . (isset($this->password) ? ',password=:password ' : '')
                     ." WHERE id=:id";
-        
+
         // prepare query
         $stmt = $this->conn->prepare($query);
 
         // sanitize
-        $this->username=htmlspecialchars(strip_tags($this->username));
-        $this->firstname=htmlspecialchars(strip_tags($this->firstname));
-        $this->surname=htmlspecialchars(strip_tags($this->surname));
-        $this->email=htmlspecialchars(strip_tags($this->email));
-        $this->title=htmlspecialchars(strip_tags($this->title));
-        $this->role=htmlspecialchars(strip_tags($this->role));
-        $this->shopid=filter_var($this->shopid, FILTER_SANITIZE_NUMBER_INT);
+        $this->username = htmlspecialchars(strip_tags($this->username));
+        $this->firstname = htmlspecialchars(strip_tags($this->firstname));
+        $this->surname = htmlspecialchars(strip_tags($this->surname));
+        $this->email = htmlspecialchars(strip_tags($this->email));
+        $this->title = htmlspecialchars(strip_tags($this->title));
+        $this->role = htmlspecialchars(strip_tags($this->role));
+        $this->shopid = filter_var($this->shopid, FILTER_SANITIZE_NUMBER_INT);
 
-        $this->failedloginattempts=filter_var($this->failedloginattempts, FILTER_SANITIZE_NUMBER_INT);
+        $this->failedloginattempts = filter_var($this->failedloginattempts, FILTER_SANITIZE_NUMBER_INT);
         $this->failedloginattempts = !empty($this->failedloginattempts) ? $this->failedloginattempts : 0;
 
-        if(isset($this->password)) {
-            $this->password=htmlspecialchars(strip_tags($this->password));
+        if (isset($this->password)) {
+            $this->password = htmlspecialchars(strip_tags($this->password));
             $stmt->bindParam(":password", $this->password);
         }
-        if(isset($this->quickbooksUserId)) {
-            $this->quickbooksUserId=htmlspecialchars(strip_tags($this->quickbooksUserId));
+        if (isset($this->quickbooksUserId)) {
+            $this->quickbooksUserId = htmlspecialchars(strip_tags($this->quickbooksUserId));
             $stmt->bindParam(":quickbooksUserId", $this->quickbooksUserId);
         }
-        
 
-        $isadmin = ($this->role=='Admin') ? 1 : 0;
-        $suspended = $this->suspended ? 1 : 0;        
+
+        $isadmin = ($this->role == 'Admin') ? 1 : 0;
+        $suspended = $this->suspended ? 1 : 0;
 
         // bind values
         $stmt->bindParam(":id", $this->id, PDO::PARAM_INT);
@@ -277,24 +286,25 @@ class User{
         $stmt->bindParam(":suspended", $suspended, PDO::PARAM_INT);
         $stmt->bindParam(":firstname", $this->firstname);
         $stmt->bindParam(":surname", $this->surname);
-        $stmt->bindParam(":shopid", $this->shopid, PDO::PARAM_INT);   
-        $stmt->bindParam(":failedloginattempts", $this->failedloginattempts, PDO::PARAM_INT); 
+        $stmt->bindParam(":shopid", $this->shopid, PDO::PARAM_INT);
+        $stmt->bindParam(":failedloginattempts", $this->failedloginattempts, PDO::PARAM_INT);
 
         return $stmt->execute();
     }
 
     /**
-     * Delete the user from the database that matches the id property 
+     * Delete the user from the database that matches the id property
      * of the user.
-     * 
+     *
      * @return bool 'true' if database delete succeeded.
-     * 
+     *
      */
-    public function delete():bool{
+    public function delete(): bool
+    {
         $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
 
         $stmt = $this->conn->prepare($query);
-        $this->id=filter_var($this->id, FILTER_SANITIZE_NUMBER_INT);
+        $this->id = filter_var($this->id, FILTER_SANITIZE_NUMBER_INT);
         $stmt->bindParam(1, $this->id, PDO::PARAM_INT);
 
         return $stmt->execute();
@@ -306,13 +316,14 @@ class User{
      *
      * @param int $id The id of the user to update.
      * @param int $failedloginattempts The number of failed attempts to login.
-     * @param bool $suspendUser If 'true' then the user will be set to 'suspended'. 
+     * @param bool $suspendUser If 'true' then the user will be set to 'suspended'.
      * If 'false' then 'suspended' is unset.
-     * 
+     *
      * @return bool 'true' if database update succeeded.
-     * 
+     *
      */
-    public function updateFailedAttempts(int $id, int $failedloginattempts, bool $suspendUser){
+    public function updateFailedAttempts(int $id, int $failedloginattempts, bool $suspendUser)
+    {
         $query = "UPDATE
                     " . $this->table_name . "
                     SET 
@@ -320,24 +331,24 @@ class User{
                     suspended=:suspended
                  WHERE
                     id=:id";
-        
+
         // prepare query
         $stmt = $this->conn->prepare($query);
 
         // bind values
-        $stmt->bindParam(":id", $id);      
-        $stmt->bindParam(":failedloginattempts", $failedloginattempts);     
+        $stmt->bindParam(":id", $id);
+        $stmt->bindParam(":failedloginattempts", $failedloginattempts);
         $stmt->bindValue(":suspended", $suspendUser ? 1 : 0);
 
         // execute query
-        if($stmt->execute()){
+        if ($stmt->execute()) {
             return true;
         }
-        
+
         return false;
     }
 
-    
+
     /**
      * Check the supplied password meets minimum standards:
      *  - 8 or more characters
@@ -346,25 +357,26 @@ class User{
      *
      * @param string $pwd The password to test
      * @param array $errors An array of errors. Empty if no errors.
-     * 
+     *
      * @return bool 'true' if password passess the tests
-     * 
+     *
      */
-    public function checkPassword(string $pwd, &$errors) {
+    public function checkPassword(string $pwd, &$errors)
+    {
         $errors_init = $errors;
-    
+
         if (strlen($pwd) < 8) {
             $errors[] = "Password too short!";
         }
-    
+
         if (!preg_match("#[0-9]+#", $pwd)) {
             $errors[] = "Password must include at least one number!";
         }
-    
+
         if (!preg_match("#[a-zA-Z]+#", $pwd)) {
             $errors[] = "Password must include at least one letter!";
-        }     
-    
+        }
+
         return ($errors == $errors_init);
     }
 
@@ -372,13 +384,14 @@ class User{
      * Build and execute a MySQLi statement to query the database for a user or users. The
      * query is customised by the where query specifier. This method was written to reduce
      * code re-use in the various read... methods.
-     * 
+     *
      * @param string $whereQuery One of '','BY_USERID', 'BY_USERNAME','BY_NAMEANDEMAIL','BY_SUSPENDED'
-     * 
+     *
      * @return object Returns a MySQLi statement
      */
-    private function prepareAndExecuteSelectStatement(string $whereQuery) {
-        
+    private function prepareAndExecuteSelectStatement(string $whereQuery)
+    {
+
         $query = "SELECT
                     u.`id`, u.`username`, u.`password`, u.`surname`, u.`shopid`,
                     u.isAdmin, u.suspended, u.`firstname`, u.`failedloginattempts`,
@@ -386,7 +399,7 @@ class User{
                     u.`email`, u.`title`, u.`quickbooksUserId`
                     FROM
                     " . $this->table_name . " u";
-                
+
         switch ($whereQuery) {
             case 'BY_USERID':
                 $query .= " WHERE u.id = :id";
@@ -395,35 +408,35 @@ class User{
                 $query .= " WHERE u.username = :username";
                 break;
             case 'BY_NAMEANDEMAIL':
-                $query .= " WHERE u.firstname = :firstname AND " . 
+                $query .= " WHERE u.firstname = :firstname AND " .
                                 "u.surname = :surname AND u.email = :email";
-                break;                
+                break;
             case 'BY_SUSPENDED':
-                $query .= 
-                    (isset($this->suspended)?' WHERE suspended = '.$this->suspended.' ':'');   
-                break;            
-        }             
+                $query .=
+                    (isset($this->suspended) ? ' WHERE suspended = '.$this->suspended.' ' : '');
+                break;
+        }
 
-        $stmt = $this->conn->prepare( $query );
+        $stmt = $this->conn->prepare($query);
 
         switch ($whereQuery) {
             case 'BY_USERID':
                 $id = filter_var($this->id, FILTER_SANITIZE_NUMBER_INT);
-                $stmt->bindParam (":id", $id, PDO::PARAM_INT);
+                $stmt->bindParam(":id", $id, PDO::PARAM_INT);
                 break;
             case 'BY_USERNAME':
-                $this->username=htmlspecialchars(strip_tags($this->username));
+                $this->username = htmlspecialchars(strip_tags($this->username));
                 $stmt->bindParam(":username", $this->username);
                 break;
             case 'BY_NAMEANDEMAIL':
-                $this->firstname=htmlspecialchars(strip_tags($this->firstname));
-                $this->surname=htmlspecialchars(strip_tags($this->surname));
-                $this->email=htmlspecialchars(strip_tags($this->email));
+                $this->firstname = htmlspecialchars(strip_tags($this->firstname));
+                $this->surname = htmlspecialchars(strip_tags($this->surname));
+                $this->email = htmlspecialchars(strip_tags($this->email));
                 $stmt->bindParam(":firstname", $this->firstname);
                 $stmt->bindParam(":surname", $this->surname);
                 $stmt->bindParam(":email", $this->email);
-                break;                           
-        }   
+                break;
+        }
 
         $stmt->execute();
 
@@ -432,15 +445,16 @@ class User{
 
     /**
      * Update the properties of the user model with the data from the database
-     * 
+     *
      * @return void
      */
-    private function transferPropertiestoModel($stmt) {
+    private function transferPropertiestoModel($stmt)
+    {
         // get retrieved row
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        
+
         // set values to object properties
-        if ( !empty($row) ) {
+        if (!empty($row)) {
             $this->id = $row['id'];
             $this->username = $row['username'];
             $this->firstname = $row['firstname'];
@@ -450,7 +464,7 @@ class User{
             $this->email = $row['email'];
             $this->title = $row['title'];
             $this->role = $row['isAdmin'] ? 'Admin' : 'User';
-            $this->suspended = $row['suspended']?true:false;
+            $this->suspended = $row['suspended'] ? true : false;
             $this->failedloginattempts = $row['failedloginattempts'];
             $this->quickbooksUserId = $row['quickbooksUserId'];
         }

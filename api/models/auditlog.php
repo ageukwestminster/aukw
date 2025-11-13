@@ -7,14 +7,15 @@ use PDO;
 
 /**
  * Defines an entry in the Audit Log and has data persistance capbility.
- * 
+ *
  * @category Model
  */
-class AuditLog{
+class AuditLog
+{
     /**
      * Database connection
      * @var PDO|null
-     */ 
+     */
     private $conn;
     /**
      * The name of the table that holds the data
@@ -25,7 +26,8 @@ class AuditLog{
     /**
      * Instantiate a new instance of the AuditLog
      */
-    public function __construct(){
+    public function __construct()
+    {
         $this->conn = \Core\Database::getInstance()->conn;
     }
 
@@ -68,18 +70,19 @@ class AuditLog{
 
     /**
      * Return details of all audit log entries
-     * 
+     *
      * @return array An array of audit log entries
      */
-    public function read($userid, $startdate, $enddate, $eventtype){
-               
+    public function read($userid, $startdate, $enddate, $eventtype)
+    {
+
         $query = "SELECT
             a.`id`, a.`userid`, u.`username`, CONCAT(u.`firstname`,' ',u.`surname`) as fullname,
             a.eventtype, a.description, a.objecttype, a.objectid, a.timestamp
             FROM
             " . $this->table_name . " a" .
             " JOIN user u ON a.userid = u.id " .
-            "WHERE DATE(a.`timestamp`) >= :start AND DATE(a.`timestamp`) <= :end "; 
+            "WHERE DATE(a.`timestamp`) >= :start AND DATE(a.`timestamp`) <= :end ";
 
         if (isset($userid)) {
             $query .= "AND u.id=:userid ";
@@ -91,7 +94,7 @@ class AuditLog{
 
         $query .= " ORDER BY timestamp DESC";
 
-        $stmt = $this->conn->prepare( $query );
+        $stmt = $this->conn->prepare($query);
 
         if (isset($userid)) {
             $stmt->bindParam(":userid", $userid, PDO::PARAM_INT);
@@ -105,64 +108,65 @@ class AuditLog{
         $stmt->execute();
         $num = $stmt->rowCount();
 
-        $auditlog_arr=array();
+        $auditlog_arr = array();
 
-        if($num>0){
-        
+        if ($num > 0) {
+
             // retrieve our table contents
             // fetch() is faster than fetchAll()
             // http://stackoverflow.com/questions/2770630/pdofetchall-vs-pdofetch-in-a-loop
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 // extract row
                 // this will make $row['name'] to
                 // just $name only
                 extract($row);
-            
-                    $auditlog_item=array(
-                        "id" => $id,
-                        "userid" => $userid,
-                        "username" => $username,
-                        "fullname" => html_entity_decode($fullname ?? ''),
-                        "eventtype" => html_entity_decode($eventtype ?? ''),
-                        "description" => html_entity_decode($description ?? ''),
-                        "objecttype" => html_entity_decode($objecttype ?? ''),
-                        "objectid" => html_entity_decode($objectid ?? ''),
-                        "timestamp" => $timestamp,
-                    );
-        
-                    // create nonindexed array
-                    array_push ($auditlog_arr, $auditlog_item);
-                }
-               
+
+                $auditlog_item = array(
+                    "id" => $id,
+                    "userid" => $userid,
+                    "username" => $username,
+                    "fullname" => html_entity_decode($fullname ?? ''),
+                    "eventtype" => html_entity_decode($eventtype ?? ''),
+                    "description" => html_entity_decode($description ?? ''),
+                    "objecttype" => html_entity_decode($objecttype ?? ''),
+                    "objectid" => html_entity_decode($objectid ?? ''),
+                    "timestamp" => $timestamp,
+                );
+
+                // create nonindexed array
+                array_push($auditlog_arr, $auditlog_item);
+            }
+
         }
 
         return $auditlog_arr;
     }
 
-    function create(){
+    public function create()
+    {
         $query = "INSERT INTO
                     " . $this->table_name . "
                     SET 
                     userid=:userid,
                     eventtype=:eventtype,
                     description=:description"
-                    . (isset($this->objecttype)?',objecttype=:objecttype ':'')
-                    . (isset($this->objectid)?',objectid=:objectid ':'')
+                    . (isset($this->objecttype) ? ',objecttype=:objecttype ' : '')
+                    . (isset($this->objectid) ? ',objectid=:objectid ' : '')
                     . ",timestamp=NULL;";
 
         // prepare query
         $stmt = $this->conn->prepare($query);
 
         // sanitize
-        $this->userid=htmlspecialchars(strip_tags($this->userid));
-        $this->eventtype=htmlspecialchars(strip_tags($this->eventtype));
-        $this->description=htmlspecialchars(strip_tags($this->description));
+        $this->userid = htmlspecialchars(strip_tags($this->userid));
+        $this->eventtype = htmlspecialchars(strip_tags($this->eventtype));
+        $this->description = htmlspecialchars(strip_tags($this->description));
 
-        if(isset($this->objecttype)) {
-            $this->objecttype=htmlspecialchars(strip_tags($this->objecttype));
+        if (isset($this->objecttype)) {
+            $this->objecttype = htmlspecialchars(strip_tags($this->objecttype));
             $stmt->bindParam(":objecttype", $this->objecttype);
         }
-        if(isset($this->objectid)) {
+        if (isset($this->objectid)) {
             $stmt->bindParam(":objectid", $this->objectid, PDO::PARAM_INT);
         }
 
@@ -172,9 +176,9 @@ class AuditLog{
         $stmt->bindParam(":description", $this->description);
 
         // execute query
-        if($stmt->execute()){
+        if ($stmt->execute()) {
             $this->id = $this->conn->lastInsertId();
-            if($this->id) {
+            if ($this->id) {
                 return true;
             } else {
                 throw new Exception("Id of AuditLog entry is missing.");
@@ -182,31 +186,32 @@ class AuditLog{
         }
     }
 
-        /**
+    /**
      * Return a list of all Event Types
-     * 
+     *
      * @return array An array of strings
      */
-    public function read_eventtypes(){
-               
-        $query = "SELECT eventtype FROM auditlog GROUP BY eventtype ORDER BY eventtype"; 
+    public function read_eventtypes()
+    {
 
-        $stmt = $this->conn->prepare( $query );
+        $query = "SELECT eventtype FROM auditlog GROUP BY eventtype ORDER BY eventtype";
+
+        $stmt = $this->conn->prepare($query);
 
         $stmt->execute();
         $num = $stmt->rowCount();
 
-        $auditlog_arr=array();
+        $auditlog_arr = array();
 
-        if($num>0){
-        
+        if ($num > 0) {
+
             // retrieve our table contents
             // fetch() is faster than fetchAll()
             // http://stackoverflow.com/questions/2770630/pdofetchall-vs-pdofetch-in-a-loop
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-                array_push ($auditlog_arr, $row['eventtype']);
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                array_push($auditlog_arr, $row['eventtype']);
             }
-               
+
         }
 
         return $auditlog_arr;

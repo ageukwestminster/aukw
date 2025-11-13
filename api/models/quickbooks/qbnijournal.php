@@ -7,72 +7,87 @@ use QuickBooksOnline\API\Facades\JournalEntry;
 
 /**
  * Factory class that all creation of QB Employer NI journals
- * 
+ *
  * @category Model
  */
-class QuickbooksEmployerNIJournal extends QuickbooksJournal{
-
+class QuickbooksEmployerNIJournal extends QuickbooksJournal
+{
     /**
      * Constructor
      */
-    protected function __construct(){}
+    protected function __construct()
+    {
+    }
 
     /**
      * Static constructor / factory
      */
-    public static function getInstance() {
+    public static function getInstance()
+    {
         return new self();
     }
 
     /**
-     * Create the general journal entry for Employer NI 
-     * 
+     * Create the general journal entry for Employer NI
+     *
      * @return array|false On success return an array with details of the new object. On failure return 'false'.
      */
-    public function create_employerNI_journal($entries):array|false {
+    public function create_employerNI_journal($entries): array|false
+    {
 
-      $payrolljournal = array(
-          "TxnDate" => $this->TxnDate,
-          "DocNumber" => $this->DocNumber,
-          "Line" => [],
-          "TotalAmt" => 0
-      );
-
-      $sum = 0;
-      foreach ($entries as $line) {
-        //&$line_array, $description, $amount, $employee, $class, $account)
-        // This code will only add the respective line if amount != 0
-        $this->payrolljournal_line($payrolljournal['Line'], QBO::EMPLOYER_NI_DESCRIPTION, 
-            $line->amount, $line->quickbooksId, $line->class, $line->account);
-        
-        $sum -= $line->amount;
-      }
-
-      $this->payrolljournal_line($payrolljournal['Line'], 
-        "Total of " . QBO::EMPLOYER_NI_DESCRIPTION, 
-        $sum, '', QBO::ADMIN_CLASS, QBO::TAX_ACCOUNT);
-    
-      $theResourceObj = JournalEntry::create($payrolljournal);
-  
-      $auth = new QuickbooksAuth();
-      $dataService = $auth->prepare($this->getrealmId());
-
-      $resultingObj = $dataService->Add($theResourceObj);
-
-      $error = $dataService->getLastError();
-      if ($error) {
-          echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
-          echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
-          echo "The QBO Response message is: " . $error->getResponseBody() . "\n";
-          return false;
-      } else {      
-        return array(
-            "id" => $resultingObj->Id ?? 0,
-            "date" => $this->TxnDate,
-            "label" => $this->DocNumber
+        $payrolljournal = array(
+            "TxnDate" => $this->TxnDate,
+            "DocNumber" => $this->DocNumber,
+            "Line" => [],
+            "TotalAmt" => 0
         );
-      }        
-  }
+
+        $sum = 0;
+        foreach ($entries as $line) {
+            //&$line_array, $description, $amount, $employee, $class, $account)
+            // This code will only add the respective line if amount != 0
+            $this->payrolljournal_line(
+                $payrolljournal['Line'],
+                QBO::EMPLOYER_NI_DESCRIPTION,
+                $line->amount,
+                $line->quickbooksId,
+                $line->class,
+                $line->account
+            );
+
+            $sum -= $line->amount;
+        }
+
+        $this->payrolljournal_line(
+            $payrolljournal['Line'],
+            "Total of " . QBO::EMPLOYER_NI_DESCRIPTION,
+            $sum,
+            '',
+            QBO::ADMIN_CLASS,
+            QBO::TAX_ACCOUNT
+        );
+
+        $theResourceObj = JournalEntry::create($payrolljournal);
+
+        $auth = new QuickbooksAuth();
+        $dataService = $auth->prepare($this->getrealmId());
+
+        $resultingObj = $dataService->Add($theResourceObj);
+
+        $error = $dataService->getLastError();
+        if ($error) {
+            echo "The Status code is: " . $error->getHttpStatusCode() . "\n";
+            echo "The Helper message is: " . $error->getOAuthHelperError() . "\n";
+            echo "The QBO Response message is: " . $error->getResponseBody() . "\n";
+            return false;
+        } else {
+            return array(
+                "id" => $resultingObj->Id ?? 0,
+                "date" => $this->TxnDate,
+                "label" => $this->DocNumber
+            );
+        }
+    }
 
 
 

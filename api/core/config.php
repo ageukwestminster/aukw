@@ -12,12 +12,12 @@ error_reporting(E_ALL);
 //error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
 /**
- * The Config class in config.php is designed to hold application-level constants and configuration 
- * settings. It uses a static array to store these values and provides methods to read and write them. 
+ * The Config class in config.php is designed to hold application-level constants and configuration
+ * settings. It uses a static array to store these values and provides methods to read and write them.
  * The file also includes some initial configuration settings for development and production environments.
- * 
+ *
  * The config pattern that this classs uses is from {@link https://stackoverflow.com/a/2047999/6941165 stackoverflow}
- * 
+ *
  * @category Core
  */
 class Config
@@ -26,11 +26,11 @@ class Config
      * Array of constants
      * @var array
      */
-    static $confArray;
+    public static $confArray;
 
     /**
      * Read a constant value
-     *      
+     *
      * @param string $name The name of the constant
      * @return mixed The value of the constant
      */
@@ -41,7 +41,7 @@ class Config
 
     /**
      * Write a constant value
-     * 
+     *
      * @param string $name The name of the constant
      * @param mixed $value The value of the constant
      * @return void
@@ -90,7 +90,7 @@ Config::write('qb.authscope', 'com.intuit.quickbooks.accounting openid profile e
 Config::write('qb.responsetype', 'code');
 Config::write('qb.authstate', 'QB_AUTH_STATE'); // used to verify QBO callback, environment variable name
 Config::write('qb.enablelog', true);
-Config::write('qb.loglocation', 'B:\\logs'); 
+Config::write('qb.loglocation', 'B:\\logs');
 // Note: most logging goes into developer's %temp% directory
 // Only OAuth request and response end up in qb.loglocation
 
@@ -101,7 +101,7 @@ Config::write('qb.redirectdomain', 'https://e6c7-91-125-74-184.ngrok-free.app');
 Config::write('qb.redirecturl', Config::read('qb.redirectdomain') . '/callback');
 
 // QBO id of recurring txn that defines employee salary allocations.
-Config::write('qb.allocationsid', '15654'); 
+Config::write('qb.allocationsid', '15654');
 
 // Staffology API settings
 Config::write('staffology.apiurl', 'https://api.staffology.co.uk/');
