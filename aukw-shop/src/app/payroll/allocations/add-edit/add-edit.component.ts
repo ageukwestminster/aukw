@@ -1,55 +1,165 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, Event, NavigationEnd, NavigationError } from '@angular/router';
-import { EmployeeAllocations, FormMode, QBClass } from '@app/_models';
+import { AsyncPipe, NgClass } from '@angular/common';
+import {
+  Router,
+  ActivatedRoute,
+  Event,
+  NavigationEnd,
+  NavigationError,
+} from '@angular/router';
+import { environment } from '@environments/environment';
+import {
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { Observable, of, switchMap } from 'rxjs';
+import {
+  EmployeeAllocations,
+  EmployeeName,
+  FormMode,
+  QBClass,
+} from '@app/_models';
+import {
+  AllocationsService,
+  QBClassService,
+  QBEmployeeService,
+} from '@app/_services';
+import { AllocationRowComponent } from '../allocation-row/allocation-row.component';
 
 @Component({
-  selector: 'app-add-edit',
-  imports: [],
+  imports: [AllocationRowComponent, AsyncPipe, NgClass, ReactiveFormsModule],
   templateUrl: './add-edit.component.html',
   styleUrl: './add-edit.component.css',
 })
 export class AllocationsAddEditComponent implements OnInit {
-  
-  employeeAllocs: EmployeeAllocations | null = null;
-  classes: QBClass[] = [];
+  allEmployeeAllocs: EmployeeAllocations[] = [];
+  classes: Observable<QBClass[]> = of([]);
+  employees: EmployeeName[] = [];
   payrollNumber!: number;
+  form!: FormGroup;
   formMode: FormMode = FormMode.Add;
+  submitted: boolean = false;
+  loading: boolean = false;
 
-  // Need
-  //classes
-  //emplo
+  private realmID: string = environment.qboCharityRealmID;
 
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private allocationsService = inject(AllocationsService);
+  private formBuilder = inject(FormBuilder);
+  private qbClassService = inject(QBClassService);
+  private qbEmployeeService = inject(QBEmployeeService);
 
-  constructor() {
-    //Dummy Data
-    this.employeeAllocs = JSON.parse(
-      '{"name":{"quickbooksId":423,"name":"Carly Connolly",' +
-        '"payrollNumber":39,"firstName":"Carly","lastName":"Connolly","middleName":"Jayne"}' +
-        ',"projects":[{"percentage":40,"classID":"1400000000000130722"},{"percentage":60,"c' +
-        'lassID":"1400000000000130711"}]}',
+  /** convenience getter for easy access to form fields */
+  get f() {
+    return this.form.controls;
+  }
+  /** convenience getter for easy access to projects FormArray */
+  get projects() {
+    return this.f['projects'] as FormArray;
+  }
+  /** convenience getter for easy access to form fields within allocations array*/
+  get allocationsFormGroups() {
+    return this.projects!.controls as FormGroup[];
+  }
+
+  ngOnInit() {
+    this.form = this.formBuilder.group({
+      projects: new FormArray([]), // Populated later
+      quickbooksId: [null],
+      payrollNumber: [null, Validators.required],
+      firstName: [null, Validators.required],
+      lastName: [null, Validators.required],
+    });
+
+    this.classes = this.qbClassService.allocatableClasses$;
+    this.allocationsService.allocations$.subscribe(
+      (allocations) => (this.allEmployeeAllocs = allocations),
+    );
+
+    this.qbEmployeeService
+      .getAll(this.realmID)
+      .pipe(
+        switchMap((employees) => {
+          this.employees = employees;
+
+          return this.allocationsService.getAllocations(employees);
+        }),
+      )
+      .subscribe((allocations) => {
+        this.allEmployeeAllocs = allocations;
+
+        const payrollNumber = Number(this.route.snapshot.params['id']);
+        if (payrollNumber) {
+          this.formMode = FormMode.Edit;
+
+          this.completeFormFromRouteId(payrollNumber);
+        } else {
+          this.onAddAllocation();
+        }
+      });
+
+    this.router.events.subscribe((event: Event) => {
+      if (event instanceof NavigationEnd) {
+        const payrollNumber = Number(this.route.snapshot.params['id']);
+        if (payrollNumber) {
+          this.completeFormFromRouteId(payrollNumber);
+        }
+      }
+      if (event instanceof NavigationError) {
+        // Present error to user
+        console.log(event.error);
+      }
+    });
+  }
+
+  completeFormFromRouteId(payrollNumber: number) {
+    const employee = this.allEmployeeAllocs.find(
+      (ea) => ea.name.payrollNumber === payrollNumber,
+    );
+    if (employee && this.formMode == FormMode.Edit) {
+      this.form.patchValue({
+        quickbooksId: employee.name.quickbooksId,
+        payrollNumber: employee.name.payrollNumber,
+        firstName: employee.name.firstName,
+        lastName: employee.name.lastName,
+      });
+      this.clearProjectAllocationsArray();
+      employee.projects.forEach((project) => {
+        this.addAllocationToArray(project.percentage, project.classID);
+      });
+    }
+  }
+
+  onSubmit() {}
+
+  onAddAllocation() {
+    this.addAllocationToArray('', '');
+  }
+
+  addAllocationToArray(percentage: number | '' = '', project: string = '') {
+    this.projects.push(
+      this.formBuilder.group({
+        percentage: [percentage],
+        project: [project],
+      }),
     );
   }
-    ngOnInit() {
-      this.payrollNumber = this.route.snapshot.params['id'];
-      if (this.payrollNumber) {
-        this.formMode = FormMode.Edit;
-      }
 
-        this.router.events.subscribe((event: Event) => {
-
-            if (event instanceof NavigationEnd) {
-              this.payrollNumber = this.route.snapshot.params['id'];
-              if (this.payrollNumber) console.log(`PayrollNumber: ${this.payrollNumber}`)
-            }
-
-            if (event instanceof NavigationError) {
-                // Hide loading indicator
-
-                // Present error to user
-                console.log(event.error);
-            }
-        });
+  onRemoveAllocation(index: number) {
+    if (this.projects!.length > 1 && index) {
+      this.projects!.removeAt(index);
     }
+  }
+  clearProjectAllocationsArray() {
+    const length = this.projects.length;
+    if (length) {
+      for (let index = 0; index < length; index++) {
+        this.projects!.removeAt(0);
+      }
+    }
+  }
 }

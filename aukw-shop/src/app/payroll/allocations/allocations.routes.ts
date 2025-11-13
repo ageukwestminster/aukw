@@ -9,6 +9,7 @@ export const ALLOCATIONS_ROUTES: Routes = [
     component: AllocationsComponent,
     children: [
       { path: '', component: AllocationsAddEditComponent },
+      { path: 'add', component: AllocationsAddEditComponent },
       { path: 'edit/:id', component: AllocationsAddEditComponent },
     ],
   },

@@ -26,6 +26,7 @@ export class PayRunService {
 
   /**
    * Get the most recent 'Closed' Pay Run
+   * An 'Open' pay run might not yet have employees allocated to it.
    * @returns Array of PayRun objects
    */
   getLatest(employerID: string): Observable<PayRun> {

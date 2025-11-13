@@ -38,7 +38,7 @@ export class AllocationsService {
   private allocationsSubject = new BehaviorSubject<EmployeeAllocations[]>([]);
 
   /**
-   * Usae this Subject to see the most recent set of Employee Allocations from the database.
+   * Use this Subject to see the most recent set of Employee Allocations from the database.
    */
   allocations$ = this.allocationsSubject.asObservable();
 

@@ -9,7 +9,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterLink, RouterOutlet } from '@angular/router';
-import { Observable, of, switchMap, tap } from 'rxjs';
+import { forkJoin, of, switchMap, tap } from 'rxjs';
 import { environment } from '@environments/environment';
 import {
   AlertService,
@@ -42,7 +42,6 @@ export class AllocationsComponent implements OnInit {
   loading: boolean = false;
   submitted: boolean = false;
   employeesWithAllocations: EmployeeName[] = [];
-  mostRecentPayrun: IrisPayslip[] = [];
   inPayrun: Map<number, boolean> = new Map<number, boolean>();
 
   private realmID: string = environment.qboCharityRealmID;
@@ -83,67 +82,46 @@ export class AllocationsComponent implements OnInit {
 
     this.loading = true;
 
-    const invalidClasses = [
-      'AFL',
-      'EOC',
-      '02 Designated Funds',
-      '03 Restricted',
-    ];
-    this.qbClassService
-      .getAllocatableClasses(this.realmID)
+    // Start initializing the component by downloading lsits of
+    //  i) QBO classes; and
+    // ii) QBO Employees
+    forkJoin({
+      employees: this.qbEmployeeService.getAll(this.realmID),
+      classes: this.qbClassService.getAllocatableClasses(this.realmID),
+    })
       .pipe(
+        switchMap((x) => {
+          this.classes = x.classes;
+          this.employees = x.employees;
 
-        // Now get EmployeeNames
-        switchMap(classes => {
-          this.classes = classes;
-          return this.qbEmployeeService.getAll(this.realmID);
-        }),
-
-        // Get the most recent Pay Run, accordign to Staffology
-        switchMap((employees) => {
-          this.employees = employees;
+          // Get metadata about the most recent closed Pay Run
+          // An 'Open' pay run might not yet have employees allocated to it
           return this.payrunService.getLatest(this.employerID);
         }),
 
-        // Get full details of that last pay run.
-        // This will be used to see if some employees can be deleted
-        // from the allocations table
         switchMap((payrun) => {
-          return this.grosstonetService.getAll(
-            this.employerID,
-            payrun.taxYear,
-            payrun.taxMonth,
-            null,
-            null,
-            false,
-          );
-        }),
-
-        // Now get the actual allocations
-        switchMap((grossToNetReport) => {
-          this.mostRecentPayrun = grossToNetReport;
-
-          return this.allocationsService.getAllocations(this.employees);
-        }),
-
-        switchMap((allocations) => {
-          this.inPayrun = new Map<number, boolean>();
-
-          allocations.forEach((element) => {
-            if (
-              !this.employeesWithAllocations.find(
-                (pair) => pair.payrollNumber === element.name.payrollNumber,
-              )
-            ) {
-              this.employeesWithAllocations.push(element.name);
-              this.inPayrun.set(
-                element.name.payrollNumber,
-                this.isInMostRecentPayrun(element.name.payrollNumber),
-              );
-            }
+          return forkJoin({
+            // Get full details of that last pay run.
+            // This will be used to see if some employees can be deleted
+            // from the allocations table
+            grossToNet: this.grosstonetService.getAll(
+              this.employerID,
+              payrun.taxYear,
+              payrun.taxMonth,
+              null,
+              null,
+              false,
+            ),
+            // Get the full list of Employees
+            allocations: this.allocationsService.getAllocations(this.employees),
           });
+        }),
 
-          return of(allocations);
+        switchMap((x) => {
+          x.allocations.forEach((element) => {
+            this.assignEmployeeByAllocationStatus(element.name, x.grossToNet);
+          });
+          return of(x.allocations);
         }),
       )
       .subscribe({
@@ -156,6 +134,50 @@ export class AllocationsComponent implements OnInit {
       });
   }
 
+  /**
+   * From the list of all QBO employees, find thsoe that actually have
+   * project allocations. Of those, identify those that are missing
+   * from the last pay run.
+   * @param employee
+   * @param grossToNetPayslips
+   */
+  private assignEmployeeByAllocationStatus(
+    employee: EmployeeName,
+    grossToNetPayslips: IrisPayslip[],
+  ) {
+    if (
+      !this.employeesWithAllocations.find(
+        (pair) => pair.payrollNumber === employee.payrollNumber,
+      )
+    ) {
+      this.employeesWithAllocations.push(employee);
+
+      // Identify the employees who were not in the last payrun
+      this.identifyMissingEmployeesInLastPayrun(
+        employee.payrollNumber,
+        grossToNetPayslips,
+      );
+    }
+  }
+
+  /**
+   * Identify the employees who were not in the last payrun and
+   * place them into a component-level boolean-valued Map called inPayrun
+   * @param payrollNumber
+   * @param grossToNetPayslips
+   */
+  private identifyMissingEmployeesInLastPayrun(
+    payrollNumber: number,
+    grossToNetPayslips: IrisPayslip[],
+  ) {
+    this.inPayrun.set(
+      payrollNumber,
+      grossToNetPayslips.some(
+        (payslip) => payslip.payrollNumber === payrollNumber,
+      ),
+    );
+  }
+
   onEditEmployee(employee: EmployeeName) {
     console.log(employee);
   }
@@ -164,20 +186,6 @@ export class AllocationsComponent implements OnInit {
     if (employee && employee.payrollNumber) {
       this.employeesWithAllocations = this.employeesWithAllocations.filter(
         (x) => x.payrollNumber != employee.payrollNumber,
-      );
-    }
-  }
-
-  isInMostRecentPayrun(payrollNumber: number): boolean {
-    if (
-      !payrollNumber ||
-      !this.mostRecentPayrun ||
-      !this.mostRecentPayrun.length
-    ) {
-      return false;
-    } else {
-      return this.mostRecentPayrun.some(
-        (payslip) => payslip.payrollNumber === payrollNumber,
       );
     }
   }

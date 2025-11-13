@@ -1,4 +1,187 @@
-<div class="row">
-  <div class="col">Hello</div>
-  <div class="col">World!</div>
-</div>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="row">
+    <div class="col-sm">
+      <div class="col mb-2">
+        <label for="firstnameInput" class="form-label text-secondary"
+          >First Name*
+        </label>
+        <input
+          id="firstnameInput"
+          name="firstnameInput"
+          type="text"
+          class="form-control"
+          formControlName="firstName"
+          placement="bottom"
+          ngbTooltip="The employee's first or given name."
+          container="body"
+          [ngClass]="{
+            'is-invalid': submitted && f['firstName'].errors,
+          }"
+        />
+        @if (submitted && f["firstName"].errors) {
+          <div class="invalid-feedback" id="firstNameError">
+            @if (f["firstName"].errors["required"]) {
+              <div>First Name is required.</div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="col mb-3">
+        <label for="lastNameInput" class="form-label text-secondary"
+          >Surname*
+        </label>
+        <input
+          id="lastNameInput"
+          name="lastNameInput"
+          type="text"
+          class="form-control"
+          formControlName="lastName"
+          placement="bottom"
+          ngbTooltip="The employee's surname or family name."
+          container="body"
+          [ngClass]="{
+            'is-invalid': submitted && f['lastName'].errors,
+          }"
+        />
+        @if (submitted && f["lastName"].errors) {
+          <div class="invalid-feedback" id="lastNameError">
+            @if (f["lastName"].errors["required"]) {
+              <div>Surname is required.</div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+    <div class="col-sm">
+      <!-- Allocations array -->
+      @for (
+        allocationFG of allocationsFormGroups;
+        track allocationFG;
+        let i = $index
+      ) {
+        <div class="row">
+          <div [formGroup]="allocationFG" class="form-row">
+            @if (i == 0) {
+              <div class="col-sm-auto">
+                <strong>Allocations</strong>
+              </div>
+              <div class="row mb-1">
+                <div class="col-2 text-left text-secondary">%age</div>
+                <div class="col-7 text-left text-secondary">Project</div>
+              </div>
+            }
+
+            <!--<allocation-row
+              [classes]="classes"
+              [submitted]="submitted"
+              [loading]="loading"
+              [rowNumber]="i"
+              [allocation]="allocationFG"
+            ></allocation-row>-->
+
+            <div class="row mb-1">
+              <div class="col-2 pe-2">
+                <input
+                  type="number"
+                  formControlName="percentage"
+                  class="form-control text-end box-outline"
+                  id="inputPercentage-{{ i }}"
+                  [ngClass]="{
+                    'is-invalid':
+                      submitted && allocationFG.controls['percentage'].errors,
+                  }"
+                />
+                @if (submitted && allocationFG.controls["percentage"].errors) {
+                  <div class="invalid-feedback">
+                    @if (
+                      allocationFG.controls["percentage"].errors[
+                        "percentagesMustSumToPar"
+                      ]
+                    ) {
+                      <div>Must sum to 100%</div>
+                    }
+                  </div>
+                }
+              </div>
+              <div class="col-7 pe-2">
+                <select
+                  formControlName="project"
+                  id="inputProject-{{ i }}"
+                  class="form-control box-outline"
+                  [ngClass]="{
+                    'is-invalid':
+                      submitted && allocationFG.controls['project'].errors,
+                  }"
+                >
+                  @for (qbclass of classes | async; track qbclass) {
+                    <option [ngValue]="qbclass.id">
+                      {{ qbclass.value }}
+                    </option>
+                  }
+                </select>
+                @if (submitted && allocationFG.controls["project"].errors) {
+                  <div class="invalid-feedback">
+                    @if (
+                      allocationFG.controls["project"].errors[
+                        "duplicateProject"
+                      ]
+                    ) {
+                      <div>Duplicate project name</div>
+                    }
+                    @if (allocationFG.controls["project"].errors["required"]) {
+                      <div>Project can't be blank</div>
+                    }
+                  </div>
+                }
+              </div>
+
+              <div class="col-2 mt-1">
+                @if (i == allocationsFormGroups.length - 1) {
+                  <button
+                    type="button"
+                    [disabled]="loading"
+                    class="me-3 text-primary"
+                    (click)="onAddAllocation()"
+                    placement="bottom"
+                    container="body"
+                  >
+                    @if (loading) {
+                      <span
+                        class="spinner-border spinner-border-sm mr-1"
+                      ></span>
+                    }
+                    +
+                  </button>
+                }
+                @if (i == allocationsFormGroups.length - 1 && i != 0) {
+                  <button
+                    type="button"
+                    class="close text-danger"
+                    (click)="onRemoveAllocation(i)"
+                    placement="bottom"
+                    container="body"
+                  >
+                    <span>&times;</span>
+                  </button>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- end of Allocations array -->
+    </div>
+  </div>
+  <div class="d-flex justify-content-end">
+    <button
+      type="submit"
+      [disabled]="loading"
+      class="btn btn-primary btn-lg me-3 mb-3"
+      aria-label="Create Transaction in Quickbooks"
+    >
+      Save Employee
+    </button>
+  </div>
+</form>
