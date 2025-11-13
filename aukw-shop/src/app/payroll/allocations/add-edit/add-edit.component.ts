@@ -9,6 +9,7 @@ import {
 } from '@angular/router';
 import { environment } from '@environments/environment';
 import {
+  AbstractControlOptions,
   FormArray,
   FormBuilder,
   FormGroup,
@@ -17,6 +18,7 @@ import {
 } from '@angular/forms';
 import { Observable, of, switchMap } from 'rxjs';
 import {
+  ApiMessage,
   EmployeeAllocation,
   EmployeeAllocations,
   EmployeeName,
@@ -29,6 +31,7 @@ import {
   QBClassService,
   QBEmployeeService,
 } from '@app/_services';
+import { ProjectAllocationsValidater } from '@app/_helpers';
 
 @Component({
   imports: [AsyncPipe, JsonPipe, NgClass, ReactiveFormsModule],
@@ -44,6 +47,7 @@ export class AllocationsAddEditComponent implements OnInit {
   formMode: FormMode = FormMode.Add;
   submitted: boolean = false;
   loading: boolean = false;
+  formOptions: AbstractControlOptions;
 
   private realmID: string = environment.qboCharityRealmID;
 
@@ -68,15 +72,27 @@ export class AllocationsAddEditComponent implements OnInit {
     return this.projects!.controls as FormGroup[];
   }
 
+  constructor() {
+    this.formOptions = {
+      validators: [ProjectAllocationsValidater('projects')],
+    };
+  }
+
   ngOnInit() {
     this.formMode = FormMode.Add;
-    this.form = this.formBuilder.group({
-      projects: new FormArray([]), // Populated later
-      quickbooksId: [null],
-      payrollNumber: [null, Validators.required],
-      firstName: [null, Validators.required],
-      lastName: [null, Validators.required],
-    });
+    this.form = this.formBuilder.group(
+      {
+        projects: new FormArray([]), // Populated later
+        quickbooksId: [null],
+        payrollNumber: [
+          null,
+          [Validators.required, Validators.pattern(/^(0|[1-9]\d*)?$/)],
+        ],
+        firstName: [null, Validators.required],
+        lastName: [null, Validators.required],
+      },
+      this.formOptions,
+    );
 
     this.classes = this.qbClassService.allocatableClasses$;
     this.allocationsService.allocations$.subscribe(
@@ -94,12 +110,15 @@ export class AllocationsAddEditComponent implements OnInit {
         this.allEmployeeAllocs = allocations;
 
         const payrollNumber = Number(this.route.snapshot.params['id']);
+        const unAllocatedEmployee = Boolean(
+          this.route.snapshot.queryParams['unallocated'],
+        );
         if (payrollNumber) {
           this.formMode = FormMode.Edit;
 
-          this.disableNameFormControls();
+          this.rebuildFormForEditMode();
 
-          this.completeFormUsingPayrollNumber(payrollNumber);
+          this.patchFormUsingRouteParams(payrollNumber, unAllocatedEmployee);
         } else {
           // Add one blank Allocation
           this.onAddAllocation();
@@ -109,81 +128,155 @@ export class AllocationsAddEditComponent implements OnInit {
     this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationEnd) {
         const payrollNumber = Number(this.route.snapshot.params['id']);
+        const unAllocatedEmployee = Boolean(
+          this.route.snapshot.queryParams['unallocated'],
+        );
         if (payrollNumber) {
-          this.completeFormUsingPayrollNumber(payrollNumber);
+          this.patchFormUsingRouteParams(payrollNumber, unAllocatedEmployee);
         }
       }
       if (event instanceof NavigationError) {
         // Present error to user
-        console.log(event.error);
+        this.alertService.error('Navigation error ocurred. ' + event.error, {
+          autoClose: false,
+        });
       }
     });
   }
 
-  disableNameFormControls() {
-    this.form = this.formBuilder.group({
-      projects: new FormArray([]),
-      quickbooksId: [null, Validators.required],
-      payrollNumber: [null, Validators.required],
-      // If in edit mode then disable the 'name' controls of the form
-      // Can't change Employee's name using this Form, only add New
-      firstName: [{ value: null, disabled: true }, Validators.required],
-      lastName: [{ value: null, disabled: true }, Validators.required],
-    });
+  rebuildFormForEditMode() {
+    this.form = this.formBuilder.group(
+      {
+        projects: new FormArray([]),
+        quickbooksId: [null, Validators.required],
+        payrollNumber: [
+          { value: null, disabled: true },
+          Validators.required,
+          Validators.pattern('^\d+$'),
+        ],
+        // If in edit mode then disable the 'name' controls of the form
+        // Can't change Employee's name using this Form, only add New
+        firstName: [{ value: null, disabled: true }, Validators.required],
+        lastName: [{ value: null, disabled: true }, Validators.required],
+      },
+      this.formOptions,
+    );
   }
 
-  completeFormUsingPayrollNumber(payrollNumber: number) {
-    const employee = this.allEmployeeAllocs.find(
-      (ea) => ea.name.payrollNumber === payrollNumber,
-    );
-    if (employee && this.formMode == FormMode.Edit) {
+  /**
+   *
+   * @param payrollNumber The payroll ID of the employee as supplied by the payroll software supplier
+   * @param unAllocatedEmployee 'true' if the employee is in QBO but has no allocations
+   */
+  patchFormUsingRouteParams(
+    payrollNumber: number,
+    unAllocatedEmployee: boolean,
+  ) {
+    if (this.formMode == FormMode.Add) return;
+
+    this.clearProjectAllocationsArray();
+
+    if (unAllocatedEmployee) {
+      const employeeName = this.employees.find(
+        (e) => e.payrollNumber === payrollNumber,
+      );
+      this.patchFormUsingEmployeeName(employeeName);
+      // Add one blank Allocation
+      this.onAddAllocation();
+    } else {
+      const employeeAllocs = this.allEmployeeAllocs.find(
+        (ea) => ea.name.payrollNumber === payrollNumber,
+      );
+      if (employeeAllocs) {
+        this.patchFormUsingEmployeeName(employeeAllocs.name);
+        employeeAllocs.projects.forEach((project) => {
+          this.addAllocationToArray(project.percentage, project.classID);
+        });
+      }
+    }
+  }
+
+  /**
+   * Using the information in the supplied EmployeeName object set
+   * the values of the form controls
+   * @param employeeName
+   */
+  private patchFormUsingEmployeeName(employeeName: EmployeeName | undefined) {
+    if (employeeName) {
       this.form.patchValue({
-        quickbooksId: employee.name.quickbooksId,
-        payrollNumber: employee.name.payrollNumber,
-        firstName: employee.name.firstName,
-        lastName: employee.name.lastName,
-      });
-      this.clearProjectAllocationsArray();
-      employee.projects.forEach((project) => {
-        this.addAllocationToArray(project.percentage, project.classID);
+        quickbooksId: employeeName.quickbooksId,
+        payrollNumber: employeeName.payrollNumber,
+        firstName: employeeName.firstName,
+        lastName: employeeName.lastName,
       });
     }
   }
 
   onSubmit() {
     this.submitted = true;
+
+    if (!this.form.valid) return;
+
+    this.loading = true;
+
+    var editOrAdd$: Observable<ApiMessage>;
+
     if (this.formMode == FormMode.Edit) {
-      this.loading = true;
-      this.allocationsService
+      // clear any old allocations for this employee in the db
+      editOrAdd$ = this.allocationsService
         .deleteEmployeeAllocations(this.f['payrollNumber'].value)
         .pipe(
+          // Store allocations in database
           switchMap(() => {
             return this.allocationsService.append(
               this.convertAllocationsToAllocationArray(),
             );
           }),
-          switchMap(() =>
-            this.allocationsService.getAllocations(this.employees),
-          ),
-        )
-        .subscribe({
-          next: () => {
-            this.alertService.success('Employee allocations saved.', {
-              keepAfterRouteChange: true,
-            });
-            this.router.navigate(['../'], { relativeTo: this.route });
-          },
-          error: (error) => {
-            this.alertService.error(
-              'Employee allocations not saved. ' + error,
-              {
-                autoClose: false,
-              },
-            );
-          },
+        );
+    } else {
+      // Create the new employee in QBO
+      editOrAdd$ = this.qbEmployeeService
+        .create(this.realmID, {
+          givenName: this.f['firstName'].value,
+          familyName: this.f['lastName'].value,
+          employeeNumber: this.f['payrollNumber'].value,
         })
-        .add(() => (this.loading = false));
+        .pipe(
+          // Store allocations in database
+          switchMap((message) => {
+            const quickbooksId = message.id;
+            this.f['quickbooksId'].setValue(quickbooksId);
+            return this.allocationsService.append(
+              this.convertAllocationsToAllocationArray(),
+            );
+          }),
+        );
     }
+
+    editOrAdd$
+      .pipe(
+        // Reload allocations
+        switchMap(() => {
+          return this.allocationsService.append(
+            this.convertAllocationsToAllocationArray(),
+          );
+        }),
+        switchMap(() => this.allocationsService.getAllocations(this.employees)),
+      )
+      .subscribe({
+        next: () => {
+          this.alertService.success('Employee allocations saved.', {
+            keepAfterRouteChange: true,
+          });
+          this.router.navigate(['../'], { relativeTo: this.route });
+        },
+        error: (error) => {
+          this.alertService.error('Employee allocations not saved. ' + error, {
+            autoClose: false,
+          });
+        },
+      })
+      .add(() => (this.loading = false));
   }
 
   onAddAllocation() {

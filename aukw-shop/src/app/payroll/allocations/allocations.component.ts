@@ -8,9 +8,10 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { forkJoin, of, switchMap, tap } from 'rxjs';
 import { environment } from '@environments/environment';
+import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import {
   AlertService,
   AllocationsService,
@@ -30,7 +31,7 @@ import {
 
 @Component({
   selector: 'app-allocations',
-  imports: [NgClass, ReactiveFormsModule, RouterLink, RouterOutlet],
+  imports: [NgClass, NgbTooltip, ReactiveFormsModule, RouterLink, RouterOutlet],
   templateUrl: './allocations.component.html',
   styleUrl: './allocations.component.css',
 })
@@ -56,6 +57,7 @@ export class AllocationsComponent implements OnInit {
   private payrunService = inject(PayRunService);
   private grosstonetService = inject(GrossToNetService);
   private location = inject(Location);
+  private router = inject(Router);
 
   /** convenience getter for easy access to form fields */
   get f() {
@@ -64,6 +66,11 @@ export class AllocationsComponent implements OnInit {
   /** convenience getter for easy access to allocations FormArray */
   get allocs() {
     return this.f['allocations'] as FormArray;
+  }
+  get nonAllocatedEmployees() {
+    return this.employees.filter(
+      (e) => !this.employeesWithAllocations.includes(e),
+    );
   }
 
   constructor() {}
@@ -82,7 +89,9 @@ export class AllocationsComponent implements OnInit {
 
     this.loading = true;
 
-    this.allocationsService.allocations$.subscribe(allocs => this.allocations = allocs);
+    this.allocationsService.allocations$.subscribe(
+      (allocs) => (this.allocations = allocs),
+    );
 
     // Start initializing the component by downloading lsits of
     //  i) QBO classes; and
@@ -180,19 +189,39 @@ export class AllocationsComponent implements OnInit {
     );
   }
 
-  onEditEmployee(employee: EmployeeName) {
-    console.log(employee);
-  }
-
   onRemoveEmployee(employee: EmployeeName) {
     if (employee && employee.payrollNumber) {
-      this.employeesWithAllocations = this.employeesWithAllocations.filter(
-        (x) => x.payrollNumber != employee.payrollNumber,
-      );
+      this.allocationsService
+        .deleteEmployeeAllocations(employee.payrollNumber)
+        .pipe(
+          tap(
+            () =>
+              (this.employeesWithAllocations =
+                this.employeesWithAllocations.filter(
+                  (x) => x.payrollNumber != employee.payrollNumber,
+                )),
+          ),
+        )
+        .subscribe({
+          next: () => {
+            this.alertService.success(
+              'Allocations deleted for ' + employee.firstName + '.',
+              {
+                keepAfterRouteChange: true,
+              },
+            );
+          },
+          error: (error) => {
+            this.alertService.error(
+              'Employee allocations not deleted. ' + error,
+              {
+                autoClose: false,
+              },
+            );
+          },
+        });
     }
   }
-
-  onSubmit() {}
 
   summarizeProjects(en: EmployeeName): string {
     var ea: EmployeeAllocations | undefined = this.allocations.find(
@@ -263,5 +292,15 @@ export class AllocationsComponent implements OnInit {
   goBack() {
     this.location.back();
     return false; // don't propagate event
+  }
+
+  editUnallocatedEmployee(employeeName: string) {
+    const employee = this.employees.find((e) => e.name === employeeName);
+
+    if (employee && employee.name) {
+      this.router.navigate([`./edit/${employee.payrollNumber}`], {
+        queryParams: { unallocated: true },
+      });
+    }
   }
 }
