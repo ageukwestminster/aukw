@@ -203,7 +203,7 @@ class Allocation{
         "isShopEmployee"=>$this->isShopEmployee
     ];
     } else {
-      return null;
+      return [];
     }
 
 

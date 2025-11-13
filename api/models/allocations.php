@@ -41,15 +41,18 @@ class Allocations{
    * Return an array of rules
    * @return array Returns an array
    */
-  public function read():array{
-
+  public function read(?int $payrollNumber = null):array{
     $query = "SELECT " .
       " `quickbooksId`, `payrollNumber`, `percentage`, `account`, `class`, `isShopEmployee`
     FROM
-        " . $this->table_name . "
-    ORDER BY quickbooksId";
+        " . $this->table_name .
+      ( $payrollNumber !== null ? " WHERE payrollNumber = :_payrollNumber " : "" ) .
+    " ORDER BY quickbooksId";
 
   $stmt = $this->conn->prepare( $query );
+  if ($payrollNumber !== null) {
+    $stmt->bindParam(":_payrollNumber", $payrollNumber, PDO::PARAM_INT);
+  } 
   $stmt->execute();
 
   $num = $stmt->rowCount();
@@ -98,12 +101,26 @@ class Allocations{
   }
 
   /**
+   * Delete from the database all the Allocations for a given payroll number.
+   * 
+   * @return bool 'true' if database delete succeeded.
+   * 
+   */
+  public function deleteByPayrollNumber(int $payrollNumber):bool{
+      // MySQL stored procedure
+      $query = "CALL delete_allocations_for_employee(:_payrollNumber)";
+      $stmt = $this->conn->prepare( $query );
+      $stmt->bindParam(":_payrollNumber", $payrollNumber, PDO::PARAM_INT);
+      return $stmt->execute();
+  }
+
+  /**
    * Restore the allocations from the amendment table.
    * 
    * @return bool 'true' if database delete succeeded.
    * 
    */
-  public function restore(?int $versionid):bool{
+  public function restore(?int $versionid = null):bool{
       // MySQL stored procedure
       $query = "CALL restore_allocations(:_VersionID)";
       $stmt = $this->conn->prepare( $query );
