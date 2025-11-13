@@ -300,10 +300,5 @@ $router->mount('/allocations', function () use ($router) {
     
 
     $router->get('/(\d+)', 'AllocationsCtl@read_one_payrollnumber');
-    $router->delete('/(\d+)', 'AllocationsCtl@deleteOne');
-
-    $router->get('/restore(/\d+)?', 'AllocationsCtl@restore'); 
-    
-    
-       
+    $router->delete('/(\d+)', 'AllocationsCtl@deleteOne');     
 });

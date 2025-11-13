@@ -122,21 +122,6 @@ class Allocations
     }
 
     /**
-     * Restore the allocations from the amendment table.
-     *
-     * @return bool 'true' if database delete succeeded.
-     *
-     */
-    public function restore(?int $versionid = null): bool
-    {
-        // MySQL stored procedure
-        $query = "CALL restore_allocations(:_VersionID)";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":_VersionID", $versionid, PDO::PARAM_INT);
-        return $stmt->execute();
-    }
-
-    /**
      * Check that each employee has employee allocation percentages summing to 100%
      *
      * @return bool 'true' if sum of employee percentages is always exactly 100%

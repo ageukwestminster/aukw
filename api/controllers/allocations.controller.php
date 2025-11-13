@@ -132,30 +132,6 @@ class AllocationsCtl
     }
 
     /**
-     * Delete from the database all the Allocations
-     * @param int|null $versionID The version ID to restore from the amendments table, or null for latest.
-     * @return void Output is echo'd directly to response
-     *
-     */
-    public static function restore(?int $versionID = null): void
-    {
-        try {
-            if (Allocations::getInstance()->restore($versionID)) {
-                echo json_encode(
-                    [
-                    "message" => "Allocations table has been restored.",
-          ],
-                    JSON_NUMERIC_CHECK,
-                );
-            } else {
-                throw new Exception("Restoring allocations failed for unknown reason.");
-            }
-        } catch (Exception $e) {
-            Error::response("Error restoring allocations.", $e);
-        }
-    }
-
-    /**
      * Add a new set of allocations to the database.
      *
      * @return void Output is echo'd directly to response
