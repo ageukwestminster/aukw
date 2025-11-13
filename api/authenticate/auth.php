@@ -1,13 +1,14 @@
 <?php
- /**
- * Check if the user credentials provided via POST match
- * any of the credentials saved in the database.
- * 
- * If success then respond with user and token data
- * If failure reply with 401 http code and error message 
- * 
- * Called when logging in.
- */
+
+/**
+* Check if the user credentials provided via POST match
+* any of the credentials saved in the database.
+*
+* If success then respond with user and token data
+* If failure reply with 401 http code and error message
+*
+* Called when logging in.
+*/
 
 header("Access-Control-Allow-Credentials: true");
 
@@ -16,7 +17,7 @@ $db = \Core\Database::getInstance()->conn;
 $user = new \Models\User($db);
 $usertoken = new \Models\UserToken($db);
 
-// This is the maximum number of consecutive failed login attempts 
+// This is the maximum number of consecutive failed login attempts
 // before the user is suspended
 $numberPasswordAttempts = \Core\Config::read('password_attempts');
 
@@ -37,7 +38,7 @@ $num = $stmt->rowCount();
 
 // check if more than 0 records found,
 // i.e. does there exist a user with that username?
-if($num>0){
+if ($num > 0) {
 
     // take just the first row
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -51,16 +52,15 @@ if($num>0){
         echo json_encode(
             array("message" => "User is suspended.")
         );
-    }
-    else if (password_verify($pass, $password)){
+    } elseif (password_verify($pass, $password)) {
 
         $user->id = $id;
         $user->username = $username;
         $user->role = $role;
         $user->firstname = $firstname;
         $user->surname = $surname;
-        
-        // Create a new access and refresh JWT pair, with claims of username and isAdmin  
+
+        // Create a new access and refresh JWT pair, with claims of username and isAdmin
         // Suspended is not a claim because you can't get to this point if user is suspended
         $jwt = new \Models\JWTWrapper();
         $user_with_token = $jwt->getUserWithAccessToken($user);
@@ -69,11 +69,10 @@ if($num>0){
         $user->updateFailedAttempts($id, 0, false);
 
         echo json_encode($user_with_token);
-    }
-    else{
+    } else {
         $failedloginattempts++;
 
-        $user->updateFailedAttempts($id, $failedloginattempts, ($failedloginattempts>=$numberPasswordAttempts));
+        $user->updateFailedAttempts($id, $failedloginattempts, ($failedloginattempts >= $numberPasswordAttempts));
 
         http_response_code(401);
         echo json_encode(
@@ -81,8 +80,7 @@ if($num>0){
         );
     }
 
-}
-else{
+} else {
     http_response_code(401);
     echo json_encode(
         array("message" => "Unable to validate that username and password.")

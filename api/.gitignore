@@ -1,4 +1,6 @@
 /vendor/
 /downloads/
 /uploads/
-*.cache
+
+## PHP CS Fixer cache files
+.php-cs-fixer.cache
