@@ -63,12 +63,6 @@ export class UserAddEditComponent implements OnInit {
       this.formMode = UserFormMode.Edit;
     }
 
-    // password not required in edit mode
-    const passwordValidators = [Validators.minLength(6)];
-    if (this.formMode == UserFormMode.Add) {
-      passwordValidators.push(Validators.required);
-    }
-
     const formOptions: AbstractControlOptions = {
       validators: MustMatch('password', 'confirmPassword'),
     };
@@ -88,7 +82,7 @@ export class UserAddEditComponent implements OnInit {
             Validators.minLength(8),
             this.formMode == UserFormMode.Add
               ? Validators.required
-              : Validators.nullValidator,
+              : Validators.nullValidator, // password not required in edit mode
           ],
         ],
         confirmPassword: [
