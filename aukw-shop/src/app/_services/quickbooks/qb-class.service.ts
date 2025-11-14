@@ -17,7 +17,7 @@ export class QBClassService {
   private allocatableClassesSubject = new BehaviorSubject<QBClass[]>([]);
 
   /**
-   * Use this Subject to see a lsit of classes from QBO.
+   * Use this Subject to see a list (array) of classes from QBO.
    */
   allocatableClasses$ = this.allocatableClassesSubject.asObservable();
   allClasses$ = this.classesSubject.asObservable();
