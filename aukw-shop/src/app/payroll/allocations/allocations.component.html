@@ -9,15 +9,15 @@
         type="button"
         class="btn btn-primary btn-lg me-3"
         aria-label="Add New Employee"
-        routerLink="add"
+        routerLink="/allocations/add"
       >
         Clear
       </button>
       <button
         type="button"
         class="btn btn-outline-dark btn-lg"
-        (click)="goBack()"
-        ngbTooltip="Return to previous page"
+        routerLink="/"
+        ngbTooltip="Exit without saving"
         placement="bottom"
       >
         Cancel
@@ -98,7 +98,7 @@
               </td>
             </tr>
           }
-          @if (!allocations || !allocations.length) {
+          @if (!allocations || !allocations.length || loading) {
             <tr></tr>
             <tr>
               <td colspan="3" class="text-center">
@@ -150,6 +150,16 @@
               <tr></tr>
               <tr>
                 <td colspan="3" class="text-center">
+                  <span
+                    class="spinner-border spinner-border-lg align-center"
+                  ></span>
+                </td>
+              </tr>
+            }
+            @if (!allocations || !allocations.length || loading) {
+              <tr></tr>
+              <tr>
+                <td class="text-center">
                   <span
                     class="spinner-border spinner-border-lg align-center"
                   ></span>

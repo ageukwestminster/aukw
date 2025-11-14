@@ -41,9 +41,9 @@ export class EmployeeName {
     this.quickbooksId = (obj && obj.quickbooksId) || null;
     this.name = (obj && obj.name) || null;
     this.payrollNumber = (obj && obj.payrollNumber) || null;
-    this.firstName = (obj && obj.name) || null;
-    this.lastName = (obj && obj.name) || null;
-    this.middleName = (obj && obj.name) || null;
+    this.firstName = (obj && obj.firstName) || null;
+    this.lastName = (obj && obj.lastName) || null;
+    this.middleName = (obj && obj.middleName) || null;
   }
 }
 

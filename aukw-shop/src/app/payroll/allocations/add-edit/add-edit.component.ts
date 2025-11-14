@@ -223,6 +223,39 @@ export class AllocationsAddEditComponent implements OnInit {
 
     var editOrAdd$: Observable<ApiMessage>;
 
+    const employeeAllocations = new EmployeeAllocations({
+      name: new EmployeeName({
+        quickbooksId: this.f['quickbooksId'].value,
+        payrollNumber: this.f['payrollNumber'].value,
+        firstName: this.f['firstName'].value,
+        lastName: this.f['lastName'].value,
+      }),
+      projects: this.convertAllocationsToSimpleArray(),
+    });
+
+    this.allocationsService
+      .saveEmployeeAllocations(employeeAllocations)
+      .pipe(
+        // Reload allocations
+        switchMap(() => this.allocationsService.getAllocations(this.employees)),
+      )
+      .subscribe({
+        next: () => {
+          this.alertService.success('Employee allocations saved.', {
+            keepAfterRouteChange: true,
+          });
+
+          this.router.navigate(['/allocations/add']);
+        },
+        error: (error) => {
+          this.alertService.error('Employee allocations not saved. ' + error, {
+            autoClose: false,
+          });
+        },
+      })
+      .add(() => (this.loading = false));
+  }
+/*
     if (this.formMode == FormMode.Edit) {
       // clear any old allocations for this employee in the db
       editOrAdd$ = this.allocationsService
@@ -279,7 +312,7 @@ export class AllocationsAddEditComponent implements OnInit {
         },
       })
       .add(() => (this.loading = false));
-  }
+  }*/
 
   onAddAllocation() {
     this.addAllocationToArray('', '');
@@ -320,6 +353,22 @@ export class AllocationsAddEditComponent implements OnInit {
         percentage: element.controls['percentage'].value,
         class: element.controls['project'].value,
       });
+    });
+  }
+
+  /**
+   * Convert the allocations FormArray into a simple array of objects
+   * @returns
+   */
+  private convertAllocationsToSimpleArray(): {
+    percentage: number;
+    classID: string;
+  }[] {
+    return this.allocationsFormGroups.map((element) => {
+      return {
+        percentage: Number(element.controls['percentage'].value),
+        classID: String(element.controls['project'].value),
+      };
     });
   }
 }

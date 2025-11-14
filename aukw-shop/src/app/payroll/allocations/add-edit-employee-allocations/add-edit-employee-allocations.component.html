@@ -86,11 +86,7 @@
 
   <div class="col">
     <!-- Allocations array -->
-    @for (
-      allocationFG of allocationsFormGroups;      
-      let i = $index;
-      track i;
-    ) {
+    @for (allocationFG of allocationsFormGroups; let i = $index; track i) {
       <div class="row">
         <div [formGroup]="allocationFG" class="form-row">
           @if (i == 0) {
@@ -201,7 +197,7 @@
       Save Employee
     </button>
   </div>
-  @if (true) {
+  @if (false) {
     <pre>
       <!--Debug Information for Testing -->
       <div>Form Value: {{ form.value | json }}</div>

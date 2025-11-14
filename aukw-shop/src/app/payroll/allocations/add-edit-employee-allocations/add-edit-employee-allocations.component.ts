@@ -293,8 +293,6 @@ export class AddEditEmployeeAllocationsComponent implements OnInit {
 
     this.loading = true;
 
-    var editOrAdd$: Observable<ApiMessage>;
-
     const employeeAllocations = new EmployeeAllocations({
       name: new EmployeeName({
         quickbooksId: this.f['quickbooksId'].value,
@@ -305,10 +303,8 @@ export class AddEditEmployeeAllocationsComponent implements OnInit {
       projects: this.convertAllocationsToSimpleArray(),
     });
 
-    editOrAdd$ =
-      this.allocationsService.saveEmployeeAllocations(employeeAllocations);
-
-    editOrAdd$
+    this.allocationsService
+      .saveEmployeeAllocations(employeeAllocations)
       .pipe(
         // Reload allocations
         switchMap(() => this.allocationsService.getAllocations(this.employees)),

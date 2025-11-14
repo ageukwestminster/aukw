@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { Location, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
 
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { forkJoin, of, switchMap, tap } from 'rxjs';
@@ -12,10 +12,8 @@ import {
   PayRunService,
   QBClassService,
   QBEmployeeService,
-  QBPayrollService,
 } from '@app/_services';
 import {
-  EmployeeAllocation,
   EmployeeAllocations,
   EmployeeName,
   IrisPayslip,
@@ -35,19 +33,18 @@ export class AllocationsComponent implements OnInit {
   submitted: boolean = false;
   employeesWithAllocations: EmployeeName[] = [];
   inPayrun: Map<number, boolean> = new Map<number, boolean>();
+  loading: boolean = false;
 
   private realmID: string = environment.qboCharityRealmID;
   private employerID: string = environment.staffologyEmployerID;
 
+  private router = inject(Router);
   private alertService = inject(AlertService);
   private allocationsService = inject(AllocationsService);
   private qbClassService = inject(QBClassService);
   private qbEmployeeService = inject(QBEmployeeService);
-  private qbPayrollService = inject(QBPayrollService);
   private payrunService = inject(PayRunService);
-  private grosstonetService = inject(GrossToNetService);
-  private location = inject(Location);
-  private router = inject(Router);
+  private grosstonetReportService = inject(GrossToNetService);
 
   get nonAllocatedEmployees() {
     return this.employees.filter(
@@ -58,6 +55,8 @@ export class AllocationsComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
+    this.loading = true;
+
     // If allocations have changed then recalcualte the
     // employeesWithAllocations array
     this.allocationsService.allocations$.subscribe(
@@ -86,7 +85,7 @@ export class AllocationsComponent implements OnInit {
             // Get full details of that last pay run.
             // This will be used to see if some employees can be deleted
             // from the allocations table
-            grossToNet: this.grosstonetService.getAll(
+            grossToNet: this.grosstonetReportService.getAll(
               this.employerID,
               payrun.taxYear,
               payrun.taxMonth,
@@ -111,7 +110,8 @@ export class AllocationsComponent implements OnInit {
         error: (e) => {
           this.alertService.error(e, { autoClose: false });
         },
-      });
+      })
+      .add(() => (this.loading = false));
   }
 
   /**
@@ -255,12 +255,6 @@ export class AllocationsComponent implements OnInit {
         }),
       )
       .subscribe();
-  }
-
-  /** Return to previous page */
-  goBack() {
-    this.location.back();
-    return false; // don't propagate event
   }
 
   editUnallocatedEmployee(employeeName: string) {
