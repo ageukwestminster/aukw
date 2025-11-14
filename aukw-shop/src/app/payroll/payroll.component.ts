@@ -55,8 +55,7 @@ import {
 import { CustomDateParserFormatter, NgbUTCStringAdapter } from '@app/_helpers';
 import { PayslipListComponent } from './payslip-list/list/list.component';
 import { PayslipsSummaryComponent } from './payslip-list/summary/payslips-summary.component';
-import { AddEditOffcanvasComponent } from './new-employee/add-edit-offcanvas.component';
-import { AllocationsAddEditComponent } from './allocations/add-edit/add-edit.component';
+import { NewEmployeeOffcanvasComponent } from './new-employee/new-employee-offcanvas.component';
 
 @Component({
   selector: 'app-payroll',
@@ -255,7 +254,9 @@ export class PayrollComponent implements OnInit {
   }
 
   onEmployeeToAdd(payslip: IrisPayslip) {
-    const offcanvasRef = this.offcanvasService.open(AddEditOffcanvasComponent);
+    const offcanvasRef = this.offcanvasService.open(
+      NewEmployeeOffcanvasComponent,
+    );
 
     // Pass known values to offcanvas component
     offcanvasRef.componentInstance.payrollNumber = payslip.payrollNumber;

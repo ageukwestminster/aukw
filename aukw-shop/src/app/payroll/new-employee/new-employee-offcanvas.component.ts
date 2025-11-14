@@ -2,7 +2,7 @@ import { Component, inject, Input } from '@angular/core';
 import { NgbActiveOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 
 import { EmployeeName } from '@app/_models';
-import { AddEditEmployeeAllocationsComponent } from './add-edit-employee-allocations/add-edit-employee-allocations.component';
+import { AddEditEmployeeAllocationsComponent } from '../allocations/add-edit-employee-allocations/add-edit-employee-allocations.component';
 
 @Component({
   imports: [AddEditEmployeeAllocationsComponent],
@@ -25,7 +25,7 @@ import { AddEditEmployeeAllocationsComponent } from './add-edit-employee-allocat
     </div>`,
   standalone: true,
 })
-export class AddEditOffcanvasComponent {
+export class NewEmployeeOffcanvasComponent {
   activeOffcanvas = inject(NgbActiveOffcanvas);
 
   /** From the Staffology payroll numbers. This will be
