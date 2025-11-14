@@ -16,8 +16,8 @@ export class PayrollApiAdapterService {
    * Adapt Staffology payslips to QuickBooks Online payslips
    * @param payslips$ From Staffology website
    * @param employees Holds name, payrollNumber and quickbooksId for each employee
-   * @param projectAllocations 
-   * @returns 
+   * @param projectAllocations
+   * @returns
    */
   adaptStaffologyToQuickBooks(
     payslips$: Observable<IrisPayslip[]>,
@@ -36,7 +36,7 @@ export class PayrollApiAdapterService {
       }),
 
       // Convert from Observable<T[]> to Observable<T>
-      mergeMap((payslips: IrisPayslip[]) => payslips), 
+      mergeMap((payslips: IrisPayslip[]) => payslips),
 
       // Loop through each payslip
       map((payslip: IrisPayslip) => {

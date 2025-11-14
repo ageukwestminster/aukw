@@ -60,7 +60,7 @@ export class AllocationsService {
     );
   }
 
-    /**
+  /**
    * Delete any allocations for the employee given by the parameter
    * @param payrollNumber The payroll number for the employee
    * @returns Message of success or failure
@@ -73,7 +73,7 @@ export class AllocationsService {
           'DELETE',
           `Delete project allocations from table for payroll number: ${payrollNumber}.`,
           'Allocation',
-          payrollNumber 
+          payrollNumber,
         );
       }),
     );
@@ -134,6 +134,77 @@ export class AllocationsService {
         return of(output);
       }),
       tap((allocations) => this.allocationsSubject.next(allocations)),
+    );
+  }
+
+  saveEmployeeAllocations(
+    employee: EmployeeAllocations,
+  ): Observable<ApiMessage> {
+    if (!employee || !employee.name || !employee.name.payrollNumber) {
+      new Error('Invalid employee allocations data');
+    }
+
+    const isShopEmployee = this.isShopEmployee(employee.projects);
+
+    var editOrAdd$: Observable<ApiMessage>;
+
+    if (!employee.name.quickbooksId || employee.name.quickbooksId === 0) {
+      // Must add employee to QBO first
+      if (isShopEmployee) {
+        editOrAdd$ = this.qbEmployeeService
+          .create(environment.qboEnterprisesRealmID, employee.name)
+          .pipe(
+            // Now add to Charity QBO
+            switchMap(() =>
+              this.qbEmployeeService.create(
+                environment.qboCharityRealmID,
+                employee.name,
+              ),
+            ),
+          );
+      } else {
+        editOrAdd$ = this.qbEmployeeService.create(
+          environment.qboCharityRealmID,
+          employee.name,
+        );
+      }
+
+      return editOrAdd$.pipe(
+        switchMap((message) => {
+          employee.name.quickbooksId = message.id;
+          return this.appendAllocationsToEmployee(employee);
+        }),
+      );
+    } else {
+      // Just append allocations
+      return this.appendAllocationsToEmployee(employee);
+    }
+  }
+
+  private isShopEmployee(
+    projects: { percentage: number; classID: string }[],
+  ): boolean {
+    if (!projects) return false;
+    return projects.some((item) => item.classID === environment.qboShopClass);
+  }
+
+  private appendAllocationsToEmployee(
+    employee: EmployeeAllocations,
+  ): Observable<ApiMessage> {
+    const allocationsToAppend: EmployeeAllocation[] = employee.projects.map(
+      (proj) =>
+        new EmployeeAllocation({
+          quickbooksId: employee.name.quickbooksId,
+          payrollNumber: employee.name.payrollNumber,
+          isShopEmployee: this.isShopEmployee(employee.projects),
+          percentage: proj.percentage,
+          class: proj.classID,
+        }),
+    );
+
+    // First delete existing allocations
+    return this.deleteEmployeeAllocations(employee.name.payrollNumber).pipe(
+      switchMap(() => this.append(allocationsToAppend)),
     );
   }
 }
