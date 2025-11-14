@@ -25,6 +25,7 @@ import {
   tap,
   mergeMap,
   toArray,
+  Observable,
 } from 'rxjs';
 
 @Component({
@@ -73,32 +74,9 @@ export class TakingsListComponent implements OnInit {
   }
 
   refreshList() {
-    this.takingsService
-      .getSummary(environment.HARROWROAD_SHOPID, '')
-      .pipe(
-        tap((response) => (this.takingslist = response)),
-        // switchMap converts Observable<TakingSummary[]> (complex object)
-        // to Observable<number> (daily sales)
-        switchMap((dataArray: TakingsSummary[]) => {
-          const obs = dataArray.map((x) => {
-            return of(x);
-          });
-          return merge(...obs);
-        }),
-        // reduce calculates total sum & count
-        reduce(
-          (prev: { sum: TakingsSummary, count: number }, current) => {
-            return { sum: prev.sum.add(current), count: prev.count + 1 };
-          },
-          { sum: new TakingsSummary(), count: 0 },
-        ),
-        tap(x => this.total = x.sum),
-        // map calculates average
-        map((x) => {
-          return x.sum.daily_net_sales / x.count;
-        }),
-      )
-      .subscribe((average) => (this.average = average));
+    this.updateTotals(
+      this.takingsService.getSummary(environment.HARROWROAD_SHOPID, ''),
+    );
   }
 
   /* remove takings from visible list */
@@ -152,7 +130,7 @@ export class TakingsListComponent implements OnInit {
   }
 
   takingsUpdated(takings: TakingsSummary[]) {
-    this.takingslist = takings;
+    this.updateTotals(of(takings));
   }
 
   takingsFilterUpdated(filter: TakingsFilter) {
@@ -161,5 +139,33 @@ export class TakingsListComponent implements OnInit {
 
   filterIsLoading(value: boolean) {
     this.loading = value;
+  }
+
+  updateTotals(summary$: Observable<TakingsSummary[]>) {
+    summary$
+      .pipe(
+        tap((response) => (this.takingslist = response)),
+        // switchMap converts Observable<TakingSummary[]> (complex object)
+        // to Observable<number> (daily sales)
+        switchMap((dataArray: TakingsSummary[]) => {
+          const obs = dataArray.map((x) => {
+            return of(x);
+          });
+          return merge(...obs);
+        }),
+        // reduce calculates total sum & count
+        reduce(
+          (prev: { sum: TakingsSummary; count: number }, current) => {
+            return { sum: prev.sum.add(current), count: prev.count + 1 };
+          },
+          { sum: new TakingsSummary(), count: 0 },
+        ),
+        tap((x) => (this.total = x.sum)),
+        // map calculates average
+        map((x) => {
+          return x.sum.daily_net_sales / x.count;
+        }),
+      )
+      .subscribe((average) => (this.average = average));
   }
 }
