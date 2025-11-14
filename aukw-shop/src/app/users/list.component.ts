@@ -1,8 +1,9 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { Component, inject, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
 
-import { AuthenticationService, UserService } from '@app/_services';
+import { AuthenticationService } from '@app/_services';
 import { User } from '@app/_models';
 import { UserRowComponent } from './row.component';
 
@@ -12,32 +13,24 @@ import { UserRowComponent } from './row.component';
   standalone: true,
   imports: [RouterLink, UserRowComponent],
 })
-export class UserListComponent implements OnInit {
-  users!: User[];
-  user!: User;
+export class UserListComponent implements OnInit{
+  users: User[] = [];
+  user!: User;  
 
-  constructor(
-    private userService: UserService,
-    private authenticationService: AuthenticationService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private location: Location,
-  ) {
+  private route = inject(ActivatedRoute);
+  private authenticationService = inject(AuthenticationService);
+  private location = inject(Location);
+
+  private data = toSignal(this.route.data);
+
+  constructor() {
     this.user = this.authenticationService.userValue;
   }
 
-  ngOnInit() {
-    this.userService.getAll().subscribe((users) => {
-      this.users = users;
-      // Depending on route, set inital state
-      if (this.router.url.substring(0, 16) === '/users/suspended') {
-        this.users = this.users.filter(
-          (x) =>
-            x.suspended ==
-            (this.route.snapshot.params['suspended'] === 'true' ? true : false),
-        );
-      }
-    });
+  ngOnInit(){
+    if (this.data()){
+      this.users = this.data()!['users'] as User[]||[];
+    }
   }
 
   userWasDeleted(user: User): void {
