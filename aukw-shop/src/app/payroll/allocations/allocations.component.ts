@@ -158,11 +158,18 @@ export class AllocationsComponent implements OnInit {
     );
   }
 
+  /**
+   * Remove all allocations for the specified employee.
+   * The employee themselves are not removed from QBO.
+   * @param employee The employee whose allocations are to be removed
+   */
   onRemoveEmployee(employee: EmployeeName) {
     if (employee && employee.payrollNumber) {
+      // Delete allocations in the database
       this.allocationsService
         .deleteEmployeeAllocations(employee.payrollNumber)
         .pipe(
+          // Update the employeesWithAllocations array
           tap(
             () =>
               (this.employeesWithAllocations =
@@ -191,30 +198,10 @@ export class AllocationsComponent implements OnInit {
         });
     }
   }
-
-  summarizeProjects(en: EmployeeName): string {
-    var ea: EmployeeAllocations | undefined = this.allocations.find(
-      (a) => a.name.payrollNumber === en.payrollNumber,
-    );
-
-    if (!ea || !ea.projects || !ea.projects.length) return '';
-
-    var output: string = '';
-    var count: number = 0;
-
-    ea.projects.forEach((element) => {
-      var cls = this.classes.find((clz) => clz.id === element.classID);
-      if (cls) {
-        output = output + (count ? ', ' : '') + cls.shortName;
-      } else {
-        output = output + (count ? ', ' : '') + 'Unknown Project';
-      }
-      count++;
-    });
-
-    return output;
-  }
-
+  /**
+   * Get a list of project short names for the specified employee
+   * @param en The employee whose projects are to be listed
+   */
   employeeProjects(en: EmployeeName): string[] {
     var ea: EmployeeAllocations | undefined = this.allocations.find(
       (a) => a.name.payrollNumber === en.payrollNumber,
@@ -235,6 +222,10 @@ export class AllocationsComponent implements OnInit {
     });
   }
 
+  /**
+   * Reload the allocations data from the database, then find those employees who
+   * are in QBO but not in the allocations table.
+   */
   reload() {
     this.allocationsService
       .getAllocations(this.employees)
@@ -255,15 +246,5 @@ export class AllocationsComponent implements OnInit {
         }),
       )
       .subscribe();
-  }
-
-  editUnallocatedEmployee(employeeName: string) {
-    const employee = this.employees.find((e) => e.name === employeeName);
-
-    if (employee && employee.name) {
-      this.router.navigate([`./edit/${employee.payrollNumber}`], {
-        queryParams: { unallocated: true },
-      });
-    }
   }
 }

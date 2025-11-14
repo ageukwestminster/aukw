@@ -214,14 +214,16 @@ export class AllocationsAddEditComponent implements OnInit {
     }
   }
 
+  /**
+   * Called when the form is submitted
+   * @returns
+   */
   onSubmit() {
     this.submitted = true;
 
     if (!this.form.valid) return;
 
     this.loading = true;
-
-    var editOrAdd$: Observable<ApiMessage>;
 
     const employeeAllocations = new EmployeeAllocations({
       name: new EmployeeName({
@@ -255,69 +257,17 @@ export class AllocationsAddEditComponent implements OnInit {
       })
       .add(() => (this.loading = false));
   }
-/*
-    if (this.formMode == FormMode.Edit) {
-      // clear any old allocations for this employee in the db
-      editOrAdd$ = this.allocationsService
-        .deleteEmployeeAllocations(this.f['payrollNumber'].value)
-        .pipe(
-          // Store allocations in database
-          switchMap(() => {
-            return this.allocationsService.append(
-              this.convertAllocationsToAllocationArray(),
-            );
-          }),
-        );
-    } else {
-      // Create the new employee in QBO
-      editOrAdd$ = this.qbEmployeeService
-        .create(this.realmID, {
-          givenName: this.f['firstName'].value,
-          familyName: this.f['lastName'].value,
-          employeeNumber: this.f['payrollNumber'].value,
-        })
-        .pipe(
-          // Store allocations in database
-          switchMap((message) => {
-            const quickbooksId = message.id;
-            this.f['quickbooksId'].setValue(quickbooksId);
-            return this.allocationsService.append(
-              this.convertAllocationsToAllocationArray(),
-            );
-          }),
-        );
-    }
 
-    editOrAdd$
-      .pipe(
-        // Reload allocations
-        switchMap(() => {
-          return this.allocationsService.append(
-            this.convertAllocationsToAllocationArray(),
-          );
-        }),
-        switchMap(() => this.allocationsService.getAllocations(this.employees)),
-      )
-      .subscribe({
-        next: () => {
-          this.alertService.success('Employee allocations saved.', {
-            keepAfterRouteChange: true,
-          });
-          this.router.navigate(['/allocations']);
-        },
-        error: (error) => {
-          this.alertService.error('Employee allocations not saved. ' + error, {
-            autoClose: false,
-          });
-        },
-      })
-      .add(() => (this.loading = false));
-  }*/
-
+  /** Add an empty line to the allocations FormArray */
   onAddAllocation() {
     this.addAllocationToArray('', '');
   }
 
+  /**
+   * Add a new FormGroup to the projects FormArray
+   * @param percentage The percentage allocation
+   * @param project The class ID of the project
+   */
   addAllocationToArray(percentage: number | '' = '', project: string = '') {
     this.projects.push(
       this.formBuilder.group({
@@ -327,6 +277,9 @@ export class AllocationsAddEditComponent implements OnInit {
     );
   }
 
+  /*
+   * Remove the FormGroup at the specified index from the projects FormArray
+   */
   onRemoveAllocation(index: number) {
     if (this.projects!.length > 1 && index) {
       this.projects!.removeAt(index);
@@ -341,19 +294,6 @@ export class AllocationsAddEditComponent implements OnInit {
         this.projects.removeAt(0);
       }
     }
-  }
-
-  convertAllocationsToAllocationArray(): EmployeeAllocation[] {
-    return this.allocationsFormGroups.map((element) => {
-      return new EmployeeAllocation({
-        payrollNumber: this.f['payrollNumber'].value,
-        quickbooksId: this.f['quickbooksId'].value,
-        isShopEmployee:
-          element.controls['project'].value === '1400000000000130700',
-        percentage: element.controls['percentage'].value,
-        class: element.controls['project'].value,
-      });
-    });
   }
 
   /**
