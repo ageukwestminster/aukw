@@ -30,6 +30,8 @@
             name="monthSelect"
             class="form-control box-outline"
             (click)="onMonthSelectClicked()"
+            ngbTooltip="'Closed' pay runs only" 
+            placement="bottom"
           >
             @for (payrun of payruns$ | async; track payrun) {
               <option [ngValue]="payrun.taxMonth">
