@@ -13,9 +13,9 @@ import { UserRowComponent } from './row.component';
   standalone: true,
   imports: [RouterLink, UserRowComponent],
 })
-export class UserListComponent implements OnInit{
+export class UserListComponent implements OnInit {
   users: User[] = [];
-  user!: User;  
+  user!: User;
 
   private route = inject(ActivatedRoute);
   private authenticationService = inject(AuthenticationService);
@@ -27,9 +27,9 @@ export class UserListComponent implements OnInit{
     this.user = this.authenticationService.userValue;
   }
 
-  ngOnInit(){
-    if (this.data()){
-      this.users = this.data()!['users'] as User[]||[];
+  ngOnInit() {
+    if (this.data()) {
+      this.users = (this.data()!['users'] as User[]) || [];
     }
   }
 
