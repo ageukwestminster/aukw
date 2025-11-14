@@ -5,8 +5,12 @@ import { UserAddEditComponent } from './add-edit.component';
 import { usersResolver } from './users.resolver';
 
 export const USERS_ROUTES: Routes = [
-  { path: '', component: UserListComponent, resolve: {users: usersResolver}},
+  { path: '', component: UserListComponent, resolve: { users: usersResolver } },
   { path: 'add', component: UserAddEditComponent },
   { path: 'edit/:id', component: UserAddEditComponent },
-  { path: 'suspended/:suspended', component: UserListComponent, resolve: {users: usersResolver} },
+  {
+    path: 'suspended/:suspended',
+    component: UserListComponent,
+    resolve: { users: usersResolver },
+  },
 ];

@@ -8,6 +8,7 @@ import { UserService } from '@app/_services';
 import { User } from '@app/_models';
 import { of, switchMap } from 'rxjs';
 
+/** This resolver funciton  */
 export const usersResolver: ResolveFn<User[]> = (
   route: ActivatedRouteSnapshot,
   state: RouterStateSnapshot,
