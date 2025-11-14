@@ -38,18 +38,33 @@ export class QBEmployeeService {
   /**
    * Create a new QBO employee
    * @param realmID The company ID for the QBO company.
-   * @param params The details of the employee to add
+   * @param employeeName The details of the employee to add
    * @returns A success or failure message. A success message will have the quickbooks id of the new employee.
    */
-  create(realmID: string, params: any): Observable<ApiMessage> {
+  create(realmID: string, employeeName: EmployeeName): Observable<ApiMessage> {
+
+    const body = {
+      givenName: employeeName.firstName,
+      familyName: employeeName.lastName,
+      employeeNumber: employeeName.payrollNumber,
+    };
+
+    // Determine the QuickBooks company name for the audit log
+    var quickbooksName: string;
+    if (realmID === environment.qboCharityRealmID) {
+      quickbooksName = 'Charity';
+    } else {
+      quickbooksName = 'Enterprises';
+    }
+
     return this.http
-      .post<ApiMessage>(`${baseUrl}/${realmID}/employee`, params)
+      .post<ApiMessage>(`${baseUrl}/${realmID}/employee`, body)
       .pipe(
         tap((message: ApiMessage) => {
           this.auditLogService.log(
             this.authenticationService.userValue,
             'INSERT',
-            `Added employee with id=${message.id} to QuickBooks`,
+            `Added employee with id=${message.id} to ${quickbooksName} QuickBooks`,
             'Employee',
             message.id,
           );
