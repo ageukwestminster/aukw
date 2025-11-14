@@ -1,6 +1,5 @@
 ﻿export * from './allocations.validator';
 export * from './app.initializer';
-export * from './array2element.operator';
 export * from './date.adapter';
 export * from './date.formatter';
 export * from './date-range.adapter';

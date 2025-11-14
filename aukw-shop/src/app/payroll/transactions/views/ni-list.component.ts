@@ -1,11 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
-import { map, of, tap, scan, Observable } from 'rxjs';
+import { mergeMap, of, tap, scan, Observable } from 'rxjs';
 
 import { IrisPayslip, LineItemDetail } from '@app/_models';
 import { PayrollIdentifier } from '@app/_interfaces/payroll-identifier';
 import { PayrollTransactionsService, QBPayrollService } from '@app/_services';
-import { fromArrayToElement } from '@app/_helpers';
 import { AllocatedCostsListComponent } from './allocated-costs-list/list.component';
 
 @Component({
@@ -27,9 +26,9 @@ export class NILinesListComponent implements OnInit {
 
     this.payrollTransactionsService.employerni$
       .pipe(
-        tap((lines) => (this.lines = lines)),
+        tap((lines) => this.lines = lines),
         // Go from Observable<T[]> to Observable<T>
-        fromArrayToElement(),
+        mergeMap((lines: LineItemDetail[]) => lines),
 
         // loop through all LineItemDetail's and sum the values to form a
         // "total" LineItemDetail that will be put in class level variable

@@ -1,12 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { tap, scan } from 'rxjs';
+import { mergeMap, tap, scan } from 'rxjs';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 
 import { IrisPayslip } from '@app/_models';
 import { PayrollIdentifier } from '@app/_interfaces/payroll-identifier';
 import { PayrollTransactionsService } from '@app/_services';
-import { fromArrayToElement } from '@app/_helpers';
 
 @Component({
   standalone: true,
@@ -25,7 +24,7 @@ export class EnterprisesJournalsListComponent implements OnInit {
       .pipe(
         tap((lines) => (this.lines = lines)),
         // Go from Observable<PayrollJournalEntry[]> to Observable<PayrollJournalEntry>
-        fromArrayToElement(),
+        mergeMap((payslips: IrisPayslip[]) => payslips),
 
         // loop through all PayrollJournalEntrys and sum the values to form a
         // "total" PayrollJournalEntry that will be put in class level variable

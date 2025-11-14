@@ -1,19 +1,24 @@
 import { Injectable, inject } from '@angular/core';
-import { forkJoin, Observable, of, map, switchMap, tap, toArray } from 'rxjs';
+import { Observable, map, mergeMap, tap, toArray } from 'rxjs';
 
-import { fromArrayToElement } from '@app/_helpers';
 import { EmployeeAllocation, EmployeeName, IrisPayslip } from '@app/_models';
 import { PayrollTransactionsService, QBPayrollService } from '@app/_services';
 
 /**
- *
- *
+ * This service adapts Staffology payroll data to QuickBooks Online payroll data
  */
 @Injectable({ providedIn: 'root' })
 export class PayrollApiAdapterService {
   private qbPayrollService = inject(QBPayrollService);
   private payrollTransactionsService = inject(PayrollTransactionsService);
 
+  /**
+   * Adapt Staffology payslips to QuickBooks Online payslips
+   * @param payslips$ From Staffology website
+   * @param employees Holds name, payrollNumber and quickbooksId for each employee
+   * @param projectAllocations 
+   * @returns 
+   */
   adaptStaffologyToQuickBooks(
     payslips$: Observable<IrisPayslip[]>,
     employees: EmployeeName[],
@@ -30,7 +35,8 @@ export class PayrollApiAdapterService {
         returnObj.payrollDate = payslips[0]?.payrollDate || '';
       }),
 
-      fromArrayToElement(), // Convert from Observable<T[]> to Observable<T>
+      // Convert from Observable<T[]> to Observable<T>
+      mergeMap((payslips: IrisPayslip[]) => payslips), 
 
       // Loop through each payslip
       map((payslip: IrisPayslip) => {

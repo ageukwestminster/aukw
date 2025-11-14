@@ -13,7 +13,6 @@ import {
 import { ApiMessage, TakingsFilter, TakingsSummary, User } from '@app/_models';
 import { TakingsRowComponent } from './row.component';
 import { TakingsFilterComponent } from '../filter/takings-filter.component';
-import { fromArrayToElement } from '@app/_helpers';
 
 import {
   from,
@@ -146,8 +145,8 @@ export class TakingsListComponent implements OnInit {
     summary$
       .pipe(
         tap((response) => (this.takingslist = response)),
-        // switchMap converts Observable<T[]> to Observable<T>
-        fromArrayToElement(),
+        // mergeMap converts Observable<T[]> to Observable<T>
+        mergeMap((dataArray: TakingsSummary[]) => dataArray),
         // reduce calculates total sum & count
         reduce(
           (prev: { sum: TakingsSummary; count: number }, current) => {

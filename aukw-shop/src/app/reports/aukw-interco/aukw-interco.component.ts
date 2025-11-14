@@ -3,11 +3,10 @@ import { CommonModule, Location, NgClass } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgbTooltip, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { QBAccountListEntry } from '@app/_models';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 import { AbstractChartReportComponent } from '../chart-report.component';
-import { fromArrayToElement } from '@app/_helpers';
 import { ModalService, QBReportService } from '@app/_services';
 import { DateRangeEnum } from '@app/_models';
 import { DateRangeChooserComponent, IntercoTradeComponent } from '@app/shared';
@@ -63,7 +62,7 @@ export class AukwIntercoComponent
         tap(() => (this.data = [])), // reset class-level data store
 
         // Convert from Observable<T[]> to Observable<T>
-        fromArrayToElement(),
+        mergeMap((accountEntries: QBAccountListEntry[]) => accountEntries),
 
         map((accountListEntry) => {
           return new QBAccountListEntry(accountListEntry);

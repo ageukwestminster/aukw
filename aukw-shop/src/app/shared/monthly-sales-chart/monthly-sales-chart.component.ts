@@ -1,7 +1,7 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import Highcharts from 'highcharts/es-modules/masters/highcharts.src.js'; // From https://github.com/highcharts/highcharts/issues/14183
 import { ReportService } from '@app/_services';
-import { fromArrayToElement } from '@app/_helpers';
+import { mergeMap } from 'rxjs';
 import { MonthlySalesChartData } from '@app/_models';
 import { environment } from '@environments/environment';
 
@@ -116,7 +116,7 @@ export class MonthlySalesChartComponent implements OnInit {
       )
       .pipe(
         // Convert Observable<MonthlySalesChartData[]> to Observable<MonthlySalesChartData>
-        fromArrayToElement(),
+        mergeMap((salesData: MonthlySalesChartData[]) => salesData),
       )
       .subscribe({
         next: (value: MonthlySalesChartData) => {

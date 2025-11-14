@@ -1,9 +1,8 @@
 import { Component, DestroyRef, inject, OnInit, Output } from '@angular/core';
-import { scan, Subject, takeUntil, tap } from 'rxjs';
+import { mergeMap, scan, Subject, takeUntil, tap } from 'rxjs';
 import { PayslipListComponent } from './list/list.component';
 import { QBPayrollService } from '@app/_services';
 import { IrisPayslip } from '@app/_models';
-import { fromArrayToElement } from '@app/_helpers';
 
 @Component({
   selector: 'payslips',
@@ -41,7 +40,7 @@ export class PayslipsComponent implements OnInit {
         }),
 
         // Go from Observable<IrisPayslip[]> to Observable<IrisPayslip>
-        fromArrayToElement(),
+        mergeMap((dataArray: IrisPayslip[]) => dataArray),
 
         // loop through all payslips and sum the values to form a
         // "total" payslip that will be put in class level variable
