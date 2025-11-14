@@ -25,8 +25,6 @@ import {
 } from '@angular/forms';
 import { Observable, of, switchMap } from 'rxjs';
 import {
-  ApiMessage,
-  EmployeeAllocation,
   EmployeeAllocations,
   EmployeeName,
   FormMode,
@@ -57,9 +55,7 @@ export class AddEditEmployeeAllocationsComponent implements OnInit {
   formOptions: AbstractControlOptions;
 
   private realmID: string = environment.qboCharityRealmID;
-  private realmIDEnterprises: string = environment.qboEnterprisesRealmID;
 
-  private route = inject(ActivatedRoute);
   private router = inject(Router);
   private alertService = inject(AlertService);
   private allocationsService = inject(AllocationsService);
