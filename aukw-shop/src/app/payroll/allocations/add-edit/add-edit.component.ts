@@ -270,7 +270,7 @@ export class AllocationsAddEditComponent implements OnInit {
           this.alertService.success('Employee allocations saved.', {
             keepAfterRouteChange: true,
           });
-          this.router.navigate(['../'], { relativeTo: this.route });
+          this.router.navigate(['/allocations']);
         },
         error: (error) => {
           this.alertService.error('Employee allocations not saved. ' + error, {

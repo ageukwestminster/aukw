@@ -7,23 +7,20 @@ import {
   NavigationError,
 } from '@angular/router';
 
-
 import { EmployeeName } from '@app/_models';
 import { AddEditEmployeeAllocationsComponent } from './add-edit-employee-allocations.component';
 
 @Component({
   imports: [AddEditEmployeeAllocationsComponent],
-  template: ` 
-      <add-edit-employee-allocations
-        [payrollNumber]="payrollNumber"
-        [employeeName]="employeeName"
-        (allocationsSaved)="onAllocationsSaved()"
-      >
-      </add-edit-employee-allocations>`,
+  template: ` <add-edit-employee-allocations
+    [payrollNumber]="payrollNumber"
+    [employeeName]="employeeName"
+    (allocationsSaved)="onAllocationsSaved()"
+  >
+  </add-edit-employee-allocations>`,
   standalone: true,
 })
 export class AddEditAllocationsComponent implements OnInit {
-
   /** From the Staffology payroll numbers. This will be
    * null if the employee has not yet been added to QBO */
   payrollNumber: number | null = null;
@@ -36,15 +33,35 @@ export class AddEditAllocationsComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
   ngOnInit(): void {
-    this.route.queryParamMap.subscribe((params) => {
-      const payrollNumParam = params.get('payrollNumber');
-      this.payrollNumber = payrollNumParam
-        ? parseInt(payrollNumParam, 10)
-        : null;
+    var x = this.route.snapshot;
+    if (x) {
+      var p = x.params;
+      if (p) {
+        var pn = p['id'];
+        if (pn) {
+          this.payrollNumber = Number(pn);
+        }
+      }
+    }
+    //const payrollNumber = Number(this.route.snapshot.params['id']);
+    //this.payrollNumber = isNaN(payrollNumber) ? null : payrollNumber;
+
+    this.route.paramMap.subscribe((params) => {
+      const payrollNumber = Number(params.get('id'));
+      this.payrollNumber = isNaN(payrollNumber) ? null : payrollNumber;
+      console.log(
+        'AddEditAllocationsComponent FROM_ROute payrollNumber:',
+        this.payrollNumber,
+      );
     });
+
+    console.log(
+      'AddEditAllocationsComponent initialized with payrollNumber:',
+      this.payrollNumber,
+    );
   }
 
-  onAllocationsSaved(){
-    this.router.navigate(['../'], { relativeTo: this.route });
+  onAllocationsSaved() {
+    //this.router.navigate(['../'], { relativeTo: this.route });
   }
 }
