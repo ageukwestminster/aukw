@@ -1,7 +1,7 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <div class="card">
     <div class="card-body">
-    <!--<div class="col-sm-5">-->
+      <!--<div class="col-sm-5">-->
       <div class="col mb-2">
         <label for="firstnameInput" class="form-label text-secondary"
           >First Name*
@@ -53,8 +53,8 @@
           </div>
         }
       </div>
-    <!--</div>-->
-    <!--<div class="col-sm-7">-->
+      <!--</div>-->
+      <!--<div class="col-sm-7">-->
       <div class="col-sm-3 mb-3">
         <label for="payrollNumberInput" class="form-label text-secondary"
           >Payroll Number*
@@ -167,29 +167,29 @@
 
                 <div class="col-3 mt-1 mb-2">
                   <!--<div class="col">-->
-                    @if (i == allocationsFormGroups.length - 1) {
-                      <button
-                        type="button"
-                        [disabled]="loading"
-                        class="me-2 text-primary"
-                        (click)="onAddAllocation()"
-                        placement="bottom"
-                        container="body"
-                      >
-                        +
-                      </button>
-                    }
-                    @if (i == allocationsFormGroups.length - 1 && i != 0) {
-                      <button
-                        type="button"
-                        class="close text-danger"
-                        (click)="onRemoveAllocation(i)"
-                        placement="bottom"
-                        container="body"
-                      >
-                        <span>&times;</span>
-                      </button>
-                    }
+                  @if (i == allocationsFormGroups.length - 1) {
+                    <button
+                      type="button"
+                      [disabled]="loading"
+                      class="me-2 text-primary"
+                      (click)="onAddAllocation()"
+                      placement="bottom"
+                      container="body"
+                    >
+                      +
+                    </button>
+                  }
+                  @if (i == allocationsFormGroups.length - 1 && i != 0) {
+                    <button
+                      type="button"
+                      class="close text-danger"
+                      (click)="onRemoveAllocation(i)"
+                      placement="bottom"
+                      container="body"
+                    >
+                      <span>&times;</span>
+                    </button>
+                  }
                   <!--</div>-->
                 </div>
               </div>
@@ -199,24 +199,24 @@
       </div>
       <!-- end of Allocations array -->
 
-  <div class="d-flex justify-content-start">
-    <button
-      type="submit"
-      [disabled]="loading"
-      class="btn btn-primary btn-lg me-3 mb-3"
-      aria-label="Create Transaction in Quickbooks"
-    >
-      Save Employee
-    </button>
-  </div>
-  @if (false) {
-    <pre>
+      <div class="d-flex justify-content-start">
+        <button
+          type="submit"
+          [disabled]="loading"
+          class="btn btn-primary btn-lg me-3 mb-3"
+          aria-label="Create Transaction in Quickbooks"
+        >
+          Save Employee
+        </button>
+      </div>
+      @if (false) {
+        <pre>
       <!--Debug Information for Testing -->
       <div>Form Value: {{ form.value | json }}</div>
       <p>Form Status: {{ form.status | json }}</p>
       <p>Form Submitted: {{ submitted | json }}</p>
     </pre>
-  }
-      </div>
+      }
+    </div>
   </div>
 </form>

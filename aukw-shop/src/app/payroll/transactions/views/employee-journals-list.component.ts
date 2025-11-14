@@ -24,7 +24,7 @@ export class EmployeeJournalsListComponent implements OnInit {
       .pipe(
         tap((lines) => (this.lines = lines)),
         // Go from Observable<PayrollJournalEntry[]> to Observable<PayrollJournalEntry>
-        mergeMap((journals: PayrollJournalEntry[]) => journals), 
+        mergeMap((journals: PayrollJournalEntry[]) => journals),
 
         // loop through all PayrollJournalEntrys and sum the values to form a
         // "total" PayrollJournalEntry that will be put in class level variable

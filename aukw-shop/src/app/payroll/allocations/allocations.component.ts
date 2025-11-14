@@ -60,7 +60,9 @@ export class AllocationsComponent implements OnInit {
   ngOnInit(): void {
     // If allocations have changed then recalcualte the
     // employeesWithAllocations array
-    this.allocationsService.allocations$.subscribe((allocs) => (this.allocations = allocs));
+    this.allocationsService.allocations$.subscribe(
+      (allocs) => (this.allocations = allocs),
+    );
 
     // Start initializing the component by downloading lsits of
     //  i) QBO classes; and

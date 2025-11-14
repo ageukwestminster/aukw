@@ -268,15 +268,17 @@ export class PayrollComponent implements OnInit {
     }
 
     // Reload everything after offcanvas is closed
-    from(offcanvasRef.result).subscribe(
-      { next: () => this.reloadEverything(),
-        error: (error) => {if (error !== 'Cross click') {
+    from(offcanvasRef.result).subscribe({
+      next: () => this.reloadEverything(),
+      error: (error) => {
+        if (error !== 'Cross click') {
           this.alertService.error(error, {
             autoClose: false,
             keepAfterRouteChange: true,
           });
         }
-      }});
+      },
+    });
   }
 
   reloadEverything() {

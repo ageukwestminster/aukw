@@ -26,7 +26,7 @@ export class NILinesListComponent implements OnInit {
 
     this.payrollTransactionsService.employerni$
       .pipe(
-        tap((lines) => this.lines = lines),
+        tap((lines) => (this.lines = lines)),
         // Go from Observable<T[]> to Observable<T>
         mergeMap((lines: LineItemDetail[]) => lines),
 

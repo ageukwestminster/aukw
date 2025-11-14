@@ -190,7 +190,7 @@ export class AddEditEmployeeAllocationsComponent implements OnInit {
     });
   }
 
-  rebuildFormForEditMode() {
+  private rebuildFormForEditMode() {
     this.form = this.formBuilder.group(
       {
         projects: new FormArray([]),
@@ -208,7 +208,8 @@ export class AddEditEmployeeAllocationsComponent implements OnInit {
       this.formOptions,
     );
   }
-  rebuildFormForAddMode(
+
+  private rebuildFormForAddMode(
     quickbooksId: number | null,
     payrollNumber: number | null,
     firstName: string | null,
@@ -233,11 +234,11 @@ export class AddEditEmployeeAllocationsComponent implements OnInit {
   }
 
   /**
-   *
+   * Using the input parameters, patch the form controls
    * @param payrollNumber The payroll ID of the employee as supplied by the payroll software supplier
    * @param unAllocatedEmployee 'true' if the employee is in QBO but has no allocations
    */
-  patchFormUsingInputParams(
+  private patchFormUsingInputParams(
     payrollNumber: number,
     unAllocatedEmployee: boolean,
   ) {
@@ -281,6 +282,10 @@ export class AddEditEmployeeAllocationsComponent implements OnInit {
     }
   }
 
+  /**
+   * Called when the form is submitted
+   * @returns
+   */
   onSubmit() {
     this.submitted = true;
 
@@ -300,9 +305,8 @@ export class AddEditEmployeeAllocationsComponent implements OnInit {
       projects: this.convertAllocationsToSimpleArray(),
     });
 
-    editOrAdd$ = this.allocationsService.saveEmployeeAllocations(
-      employeeAllocations,
-    );
+    editOrAdd$ =
+      this.allocationsService.saveEmployeeAllocations(employeeAllocations);
 
     editOrAdd$
       .pipe(
@@ -324,7 +328,10 @@ export class AddEditEmployeeAllocationsComponent implements OnInit {
                 payrollNumber: this.f['payrollNumber'].value,
                 firstName: this.f['firstName'].value,
                 lastName: this.f['lastName'].value,
-                name: (this.f['firstName'].value??'') + ' ' + (this.f['lastName'].value??''),
+                name:
+                  (this.f['firstName'].value ?? '') +
+                  ' ' +
+                  (this.f['lastName'].value ?? ''),
               }),
               projects: this.convertAllocationsToSimpleArray(),
             }),
@@ -339,11 +346,20 @@ export class AddEditEmployeeAllocationsComponent implements OnInit {
       .add(() => (this.loading = false));
   }
 
+  /** Add an empty line to the allocations FormArray */
   onAddAllocation() {
     this.addAllocationToArray('', '');
   }
 
-  addAllocationToArray(percentage: number | '' = '', project: string = '') {
+  /**
+   * Add a new FormGroup to the projects FormArray
+   * @param percentage The percentage allocation
+   * @param project The class ID of the project
+   */
+  private addAllocationToArray(
+    percentage: number | '' = '',
+    project: string = '',
+  ) {
     this.projects.push(
       this.formBuilder.group({
         percentage: [percentage],
@@ -352,14 +368,19 @@ export class AddEditEmployeeAllocationsComponent implements OnInit {
     );
   }
 
+  /*
+   * Remove the FormGroup at the specified index from the projects FormArray
+   */
   onRemoveAllocation(index: number) {
     if (this.projects!.length > 1 && index) {
       this.projects!.removeAt(index);
     }
   }
 
-  /** Remove all the existing controls (actually FormGroups) from the form.projects FormArray*/
-  clearProjectAllocationsArray() {
+  /**
+   * Remove all the existing controls (actually FormGroups) from the form.projects FormArray
+   */
+  private clearProjectAllocationsArray() {
     const length = this.projects.length;
     if (length) {
       for (let index = 0; index < length; index++) {
@@ -368,12 +389,19 @@ export class AddEditEmployeeAllocationsComponent implements OnInit {
     }
   }
 
-  convertAllocationsToSimpleArray(): { percentage: number; classID: string }[] {
+  /**
+   * Convert the allocations FormArray into a simple array of objects
+   * @returns
+   */
+  private convertAllocationsToSimpleArray(): {
+    percentage: number;
+    classID: string;
+  }[] {
     return this.allocationsFormGroups.map((element) => {
       return {
         percentage: Number(element.controls['percentage'].value),
         classID: String(element.controls['project'].value),
       };
-  });
+    });
   }
 }
