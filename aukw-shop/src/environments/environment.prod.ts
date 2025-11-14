@@ -8,4 +8,5 @@ export const environment = {
   qboEnterprisesIntercompanyAccount: 80, // Enterprises interco account number
   qboCharityIntercompanyAccount: 65, // Charity inter account number
   staffologyEmployerID: 'd3a61669-bcfa-4d9d-8df3-869a6b41053d', // Age UK Westminster Staffology Employer ID
+  qboShopClass: '1400000000000130700', // QuickBooks Class ID for Harrow Road Shop
 };

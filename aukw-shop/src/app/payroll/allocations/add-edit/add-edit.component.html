@@ -1,6 +1,7 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <div class="row">
-    <div class="col-sm-5">
+  <div class="card">
+    <div class="card-body">
+    <!--<div class="col-sm-5">-->
       <div class="col mb-2">
         <label for="firstnameInput" class="form-label text-secondary"
           >First Name*
@@ -52,8 +53,8 @@
           </div>
         }
       </div>
-    </div>
-    <div class="col-sm-7">
+    <!--</div>-->
+    <!--<div class="col-sm-7">-->
       <div class="col-sm-3 mb-3">
         <label for="payrollNumberInput" class="form-label text-secondary"
           >Payroll Number*
@@ -164,8 +165,8 @@
                   }
                 </div>
 
-                <div class="col-2 mt-1">
-                  <div class="col">
+                <div class="col-3 mt-1 mb-2">
+                  <!--<div class="col">-->
                     @if (i == allocationsFormGroups.length - 1) {
                       <button
                         type="button"
@@ -189,7 +190,7 @@
                         <span>&times;</span>
                       </button>
                     }
-                  </div>
+                  <!--</div>-->
                 </div>
               </div>
             </div>
@@ -197,8 +198,7 @@
         }
       </div>
       <!-- end of Allocations array -->
-    </div>
-  </div>
+
   <div class="d-flex justify-content-start">
     <button
       type="submit"
@@ -217,4 +217,6 @@
       <p>Form Submitted: {{ submitted | json }}</p>
     </pre>
   }
+      </div>
+  </div>
 </form>

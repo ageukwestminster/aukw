@@ -7,7 +7,6 @@ import { HomeComponent } from './home';
 import { LoginComponent } from './login';
 import { authGuard } from './_helpers';
 import { Role } from './_models';
-import { AllocationsComponent } from './payroll/allocations/allocations.component';
 
 const usersRoutes = () =>
   import('./users/users.routes').then((x) => x.USERS_ROUTES);
@@ -23,7 +22,7 @@ const allocationsRoutes = () =>
 export const APP_ROUTES: Routes = [
   {
     path: '',
-    loadChildren: allocationsRoutes,
+    component: HomeComponent,
     canActivate: [authGuard],
   },
   {

@@ -55,7 +55,8 @@ import {
 import { CustomDateParserFormatter, NgbUTCStringAdapter } from '@app/_helpers';
 import { PayslipListComponent } from './payslip-list/list/list.component';
 import { PayslipsSummaryComponent } from './payslip-list/summary/payslips-summary.component';
-import { NewEmployeeComponent } from './new-employee/new-employee.component';
+import { AddEditOffcanvasComponent } from './new-employee/add-edit-offcanvas.component';
+import { AllocationsAddEditComponent } from './allocations/add-edit/add-edit.component';
 
 @Component({
   selector: 'app-payroll',
@@ -254,7 +255,7 @@ export class PayrollComponent implements OnInit {
   }
 
   onEmployeeToAdd(payslip: IrisPayslip) {
-    const offcanvasRef = this.offcanvasService.open(NewEmployeeComponent);
+    const offcanvasRef = this.offcanvasService.open(AddEditOffcanvasComponent);
 
     // Pass known values to offcanvas component
     offcanvasRef.componentInstance.payrollNumber = payslip.payrollNumber;
@@ -266,9 +267,16 @@ export class PayrollComponent implements OnInit {
       );
     }
 
-    from(offcanvasRef.result).subscribe(() => {
-      this.reloadEverything();
-    });
+    // Reload everything after offcanvas is closed
+    from(offcanvasRef.result).subscribe(
+      { next: () => this.reloadEverything(),
+        error: (error) => {if (error !== 'Cross click') {
+          this.alertService.error(error, {
+            autoClose: false,
+            keepAfterRouteChange: true,
+          });
+        }
+      }});
   }
 
   reloadEverything() {

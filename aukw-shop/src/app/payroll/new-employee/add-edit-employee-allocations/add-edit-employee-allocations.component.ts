@@ -1,4 +1,11 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { AsyncPipe, JsonPipe, NgClass } from '@angular/common';
 import {
   Router,
@@ -34,15 +41,15 @@ import {
 import { ProjectAllocationsValidater } from '@app/_helpers';
 
 @Component({
+  selector: 'add-edit-employee-allocations',
   imports: [AsyncPipe, JsonPipe, NgClass, ReactiveFormsModule],
-  templateUrl: './add-edit.component.html',
-  styleUrl: './add-edit.component.css',
+  templateUrl: './add-edit-employee-allocations.component.html',
+  styleUrl: './add-edit-employee-allocations.component.css',
 })
-export class AllocationsAddEditComponent implements OnInit {
+export class AddEditEmployeeAllocationsComponent implements OnInit {
   allEmployeeAllocs: EmployeeAllocations[] = [];
   classes: Observable<QBClass[]> = of([]);
   employees: EmployeeName[] = [];
-  payrollNumber!: number;
   form!: FormGroup;
   formMode: FormMode = FormMode.Add;
   submitted: boolean = false;
@@ -50,6 +57,7 @@ export class AllocationsAddEditComponent implements OnInit {
   formOptions: AbstractControlOptions;
 
   private realmID: string = environment.qboCharityRealmID;
+  private realmIDEnterprises: string = environment.qboEnterprisesRealmID;
 
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -58,6 +66,17 @@ export class AllocationsAddEditComponent implements OnInit {
   private formBuilder = inject(FormBuilder);
   private qbClassService = inject(QBClassService);
   private qbEmployeeService = inject(QBEmployeeService);
+
+  /** From the Staffology payroll numbers. This will be
+   * null if the employee has not yet been added to QBO */
+  @Input() payrollNumber: number | null = null;
+  /** This will only be non-null if the employee has already been added
+   * to QuickBooks but not yet assigned allocations.
+   */
+  @Input() employeeName: EmployeeName | null = null;
+
+  @Output() allocationsSaved: EventEmitter<EmployeeAllocations> =
+    new EventEmitter<EmployeeAllocations>();
 
   /** convenience getter for easy access to form fields */
   get f() {
@@ -94,12 +113,13 @@ export class AllocationsAddEditComponent implements OnInit {
       this.formOptions,
     );
 
-    this.classes = this.qbClassService.allocatableClasses$;
+    this.classes = this.qbClassService.getAllocatableClasses(this.realmID);
     this.allocationsService.allocations$.subscribe(
       (allocations) => (this.allEmployeeAllocs = allocations),
     );
 
-    this.qbEmployeeService.employees$
+    this.qbEmployeeService
+      .getAll(this.realmID)
       .pipe(
         switchMap((employees) => {
           this.employees = employees;
@@ -109,16 +129,35 @@ export class AllocationsAddEditComponent implements OnInit {
       .subscribe((allocations) => {
         this.allEmployeeAllocs = allocations;
 
-        const payrollNumber = Number(this.route.snapshot.params['id']);
-        const unAllocatedEmployee = Boolean(
-          this.route.snapshot.queryParams['unallocated'],
-        );
-        if (payrollNumber) {
-          this.formMode = FormMode.Edit;
+        if (this.payrollNumber) {
+          if (this.employeeName && this.employeeName.payrollNumber) {
+            const quickbooksId =
+              this.employees.find(
+                (e) => e.payrollNumber === this.employeeName!.payrollNumber,
+              )?.quickbooksId || null;
+            this.rebuildFormForAddMode(
+              quickbooksId,
+              this.employeeName.payrollNumber,
+              this.employeeName.firstName,
+              this.employeeName.lastName,
+            );
+            this.onAddAllocation();
+          } else {
+            this.formMode = FormMode.Edit;
 
-          this.rebuildFormForEditMode();
+            this.rebuildFormForEditMode();
 
-          this.patchFormUsingRouteParams(payrollNumber, unAllocatedEmployee);
+            const unAllocatedEmployee = this.allEmployeeAllocs.find(
+              (ea) => ea.name.payrollNumber === this.payrollNumber,
+            )
+              ? false
+              : true;
+
+            this.patchFormUsingInputParams(
+              this.payrollNumber,
+              unAllocatedEmployee,
+            );
+          }
         } else {
           // Add one blank Allocation
           if (this.projects && this.projects.length == 0) {
@@ -129,12 +168,17 @@ export class AllocationsAddEditComponent implements OnInit {
 
     this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationEnd) {
-        const payrollNumber = Number(this.route.snapshot.params['id']);
-        const unAllocatedEmployee = Boolean(
-          this.route.snapshot.queryParams['unallocated'],
-        );
-        if (payrollNumber) {
-          this.patchFormUsingRouteParams(payrollNumber, unAllocatedEmployee);
+        if (this.payrollNumber) {
+          const unAllocatedEmployee = this.allEmployeeAllocs.find(
+            (ea) => ea.name.payrollNumber === this.payrollNumber,
+          )
+            ? false
+            : true;
+
+          this.patchFormUsingInputParams(
+            this.payrollNumber,
+            unAllocatedEmployee,
+          );
         }
       }
       if (event instanceof NavigationError) {
@@ -164,13 +208,36 @@ export class AllocationsAddEditComponent implements OnInit {
       this.formOptions,
     );
   }
+  rebuildFormForAddMode(
+    quickbooksId: number | null,
+    payrollNumber: number | null,
+    firstName: string | null,
+    lastName: string,
+  ) {
+    this.form = this.formBuilder.group(
+      {
+        projects: new FormArray([]),
+        quickbooksId: [quickbooksId],
+        payrollNumber: [
+          { value: payrollNumber, disabled: true },
+          Validators.required,
+          Validators.pattern('^\d+$'),
+        ],
+        // If in edit mode then disable the 'name' controls of the form
+        // Can't change Employee's name using this Form, only add New
+        firstName: [{ value: firstName, disabled: true }, Validators.required],
+        lastName: [{ value: lastName, disabled: true }, Validators.required],
+      },
+      this.formOptions,
+    );
+  }
 
   /**
    *
    * @param payrollNumber The payroll ID of the employee as supplied by the payroll software supplier
    * @param unAllocatedEmployee 'true' if the employee is in QBO but has no allocations
    */
-  patchFormUsingRouteParams(
+  patchFormUsingInputParams(
     payrollNumber: number,
     unAllocatedEmployee: boolean,
   ) {
@@ -223,46 +290,23 @@ export class AllocationsAddEditComponent implements OnInit {
 
     var editOrAdd$: Observable<ApiMessage>;
 
-    if (this.formMode == FormMode.Edit) {
-      // clear any old allocations for this employee in the db
-      editOrAdd$ = this.allocationsService
-        .deleteEmployeeAllocations(this.f['payrollNumber'].value)
-        .pipe(
-          // Store allocations in database
-          switchMap(() => {
-            return this.allocationsService.append(
-              this.convertAllocationsToAllocationArray(),
-            );
-          }),
-        );
-    } else {
-      // Create the new employee in QBO
-      editOrAdd$ = this.qbEmployeeService
-        .create(this.realmID, {
-          givenName: this.f['firstName'].value,
-          familyName: this.f['lastName'].value,
-          employeeNumber: this.f['payrollNumber'].value,
-        })
-        .pipe(
-          // Store allocations in database
-          switchMap((message) => {
-            const quickbooksId = message.id;
-            this.f['quickbooksId'].setValue(quickbooksId);
-            return this.allocationsService.append(
-              this.convertAllocationsToAllocationArray(),
-            );
-          }),
-        );
-    }
+    const employeeAllocations = new EmployeeAllocations({
+      name: new EmployeeName({
+        quickbooksId: this.f['quickbooksId'].value,
+        payrollNumber: this.f['payrollNumber'].value,
+        firstName: this.f['firstName'].value,
+        lastName: this.f['lastName'].value,
+      }),
+      projects: this.convertAllocationsToSimpleArray(),
+    });
+
+    editOrAdd$ = this.allocationsService.saveEmployeeAllocations(
+      employeeAllocations,
+    );
 
     editOrAdd$
       .pipe(
         // Reload allocations
-        switchMap(() => {
-          return this.allocationsService.append(
-            this.convertAllocationsToAllocationArray(),
-          );
-        }),
         switchMap(() => this.allocationsService.getAllocations(this.employees)),
       )
       .subscribe({
@@ -270,7 +314,21 @@ export class AllocationsAddEditComponent implements OnInit {
           this.alertService.success('Employee allocations saved.', {
             keepAfterRouteChange: true,
           });
-          this.router.navigate(['../'], { relativeTo: this.route });
+
+          // Inform the parent component that allocations have been saved
+          // This will allow the offcanvas to be closed
+          this.allocationsSaved.emit(
+            new EmployeeAllocations({
+              name: new EmployeeName({
+                quickbooksId: this.f['quickbooksId'].value,
+                payrollNumber: this.f['payrollNumber'].value,
+                firstName: this.f['firstName'].value,
+                lastName: this.f['lastName'].value,
+                name: (this.f['firstName'].value??'') + ' ' + (this.f['lastName'].value??''),
+              }),
+              projects: this.convertAllocationsToSimpleArray(),
+            }),
+          );
         },
         error: (error) => {
           this.alertService.error('Employee allocations not saved. ' + error, {
@@ -310,16 +368,12 @@ export class AllocationsAddEditComponent implements OnInit {
     }
   }
 
-  convertAllocationsToAllocationArray(): EmployeeAllocation[] {
+  convertAllocationsToSimpleArray(): { percentage: number; classID: string }[] {
     return this.allocationsFormGroups.map((element) => {
-      return new EmployeeAllocation({
-        payrollNumber: this.f['payrollNumber'].value,
-        quickbooksId: this.f['quickbooksId'].value,
-        isShopEmployee:
-          element.controls['project'].value === '1400000000000130700',
-        percentage: element.controls['percentage'].value,
-        class: element.controls['project'].value,
-      });
-    });
+      return {
+        percentage: Number(element.controls['percentage'].value),
+        classID: String(element.controls['project'].value),
+      };
+  });
   }
 }
