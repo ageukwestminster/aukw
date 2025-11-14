@@ -1,13 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Location, NgClass } from '@angular/common';
-import {
-  AbstractControlOptions,
-  FormArray,
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { forkJoin, of, switchMap, tap } from 'rxjs';
 import { environment } from '@environments/environment';
@@ -31,16 +24,14 @@ import {
 
 @Component({
   selector: 'app-allocations',
-  imports: [NgClass, NgbTooltip, ReactiveFormsModule, RouterLink, RouterOutlet],
+  imports: [NgClass, NgbTooltip, RouterLink, RouterOutlet],
   templateUrl: './allocations.component.html',
   styleUrl: './allocations.component.css',
 })
 export class AllocationsComponent implements OnInit {
-  form!: FormGroup;
   classes: QBClass[] = [];
   employees: EmployeeName[] = [];
   allocations: EmployeeAllocations[] = [];
-  loading: boolean = false;
   submitted: boolean = false;
   employeesWithAllocations: EmployeeName[] = [];
   inPayrun: Map<number, boolean> = new Map<number, boolean>();
@@ -48,7 +39,6 @@ export class AllocationsComponent implements OnInit {
   private realmID: string = environment.qboCharityRealmID;
   private employerID: string = environment.staffologyEmployerID;
 
-  private formBuilder = inject(FormBuilder);
   private alertService = inject(AlertService);
   private allocationsService = inject(AllocationsService);
   private qbClassService = inject(QBClassService);
@@ -59,14 +49,6 @@ export class AllocationsComponent implements OnInit {
   private location = inject(Location);
   private router = inject(Router);
 
-  /** convenience getter for easy access to form fields */
-  get f() {
-    return this.form.controls;
-  }
-  /** convenience getter for easy access to allocations FormArray */
-  get allocs() {
-    return this.f['allocations'] as FormArray;
-  }
   get nonAllocatedEmployees() {
     return this.employees.filter(
       (e) => !this.employeesWithAllocations.includes(e),
@@ -76,22 +58,9 @@ export class AllocationsComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    const formOptions: AbstractControlOptions = {
-      //validators: [ProjectAllocationsValidater('allocations')],
-    };
-
-    this.form = this.formBuilder.group(
-      {
-        allocs: new FormArray([]),
-      },
-      formOptions,
-    );
-
-    this.loading = true;
-
-    this.allocationsService.allocations$.subscribe(
-      (allocs) => (this.allocations = allocs),
-    );
+    // If allocations have changed then recalcualte the
+    // employeesWithAllocations array
+    this.allocationsService.allocations$.subscribe((allocs) => (this.allocations = allocs));
 
     // Start initializing the component by downloading lsits of
     //  i) QBO classes; and
@@ -139,9 +108,7 @@ export class AllocationsComponent implements OnInit {
         next: (value) => (this.allocations = value),
         error: (e) => {
           this.alertService.error(e, { autoClose: false });
-          this.loading = false;
         },
-        complete: () => (this.loading = false),
       });
   }
 
