@@ -26,7 +26,7 @@ export class AllocationsAddEditComponent
 
   constructor() {
     super();
-    
+
     this.successFn = () => {
       this.router.navigate(['/allocations/add']);
     };
@@ -82,8 +82,6 @@ export class AllocationsAddEditComponent
         });
       }
     });
-
-
   }
 
   /**

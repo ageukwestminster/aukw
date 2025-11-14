@@ -22,12 +22,12 @@ export class LineItemDetail implements PayrollIdentifier {
   class: string;
   /** The name of the class to allocate the cost to */
   className: string;
-  /** 
+  /**
    * Add the values from a specified LineItemDetail to this instance
    * @param IrisPayslip The LineItemDetail to add to this instance.
    * @returns This instance
    */
-  add(obj?: any) : LineItemDetail {
+  add(obj?: any): LineItemDetail {
     this.amount += (obj && obj.amount) || 0;
     return this;
   }

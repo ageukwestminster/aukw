@@ -17,7 +17,9 @@ const takingsRoutes = () =>
 const reportsRoutes = () =>
   import('./reports/reports.routes').then((x) => x.REPORTS_ROUTES);
 const allocationsRoutes = () =>
-  import('./payroll/allocations/allocations.routes').then((x) => x.ALLOCATIONS_ROUTES);
+  import('./payroll/allocations/allocations.routes').then(
+    (x) => x.ALLOCATIONS_ROUTES,
+  );
 
 export const APP_ROUTES: Routes = [
   {

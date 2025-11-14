@@ -24,12 +24,11 @@ export class TCEByClassChartComponent implements OnInit {
       text: 'By Class',
     },
     exporting: {
-      enabled: true
+      enabled: true,
     },
     tooltip: {
       //https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting
-      pointFormat:
-        'Project: £{point.y:,.0f} <b>({point.percentage:.1f}%)</b>',
+      pointFormat: 'Project: £{point.y:,.0f} <b>({point.percentage:.1f}%)</b>',
     },
     accessibility: {
       point: {
@@ -55,7 +54,7 @@ export class TCEByClassChartComponent implements OnInit {
     ],
   };
 
-  @Input() topClasses : [string, string, number, number][] = [];
+  @Input() topClasses: [string, string, number, number][] = [];
 
   constructor() {}
 

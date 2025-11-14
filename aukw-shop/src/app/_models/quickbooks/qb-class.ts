@@ -1,7 +1,7 @@
 import { ValueStringIdPair } from '@app/_models';
 
 /**
- * A QBO class is another name for a Project. It is a label that can be assigned to 
+ * A QBO class is another name for a Project. It is a label that can be assigned to
  * transactions in order to gather income and expenditure under project headings.
  */
 export class QBClass extends ValueStringIdPair {

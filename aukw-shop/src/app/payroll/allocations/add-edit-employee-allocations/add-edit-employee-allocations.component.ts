@@ -139,8 +139,6 @@ export class AddEditEmployeeAllocationsComponent
         });
       }
     });
-
-
   }
 
   private rebuildFormForAddMode(

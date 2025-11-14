@@ -42,7 +42,6 @@ export class QBEmployeeService {
    * @returns A success or failure message. A success message will have the quickbooks id of the new employee.
    */
   create(realmID: string, employeeName: EmployeeName): Observable<ApiMessage> {
-
     const body = {
       givenName: employeeName.firstName,
       familyName: employeeName.lastName,

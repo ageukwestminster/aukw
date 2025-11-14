@@ -28,14 +28,14 @@ export class PayrollJournalEntry implements PayrollIdentifier {
   /**
    * Calculate the sum of total pay spread amonst the LineItemDetail objects
    * in the totalPay array.
-   * @returns 
+   * @returns
    */
   sumOfTotalPay(): number {
     return this.totalPay
       ? this.totalPay.reduce((n, { amount }) => n + amount, 0)
       : 0;
   }
-  /** 
+  /**
    * Add the values from a specified PayrollJournalEntry to this instance
    * @param IrisPayslip The PayrollJournalEntry to add to this instance.
    * @returns This instance

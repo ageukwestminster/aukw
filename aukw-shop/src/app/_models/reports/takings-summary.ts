@@ -19,7 +19,7 @@ export class TakingsSummary {
   isDeleting: boolean = false;
   isUpdating: boolean = false;
 
-  /** 
+  /**
    * Add the values from a specified payslip to this instance
    * @param IrisPayslip The payslip to add to this instance.
    * @returns This instance
