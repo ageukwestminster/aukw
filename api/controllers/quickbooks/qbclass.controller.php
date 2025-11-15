@@ -4,6 +4,7 @@ namespace Controllers\QuickBooks;
 
 use Core\ErrorResponse as Error;
 use Exception;
+use Controllers\QuickBooks\QBEntityCtl;
 
 /**
  * Controller to accomplish QBO Class related tasks.
@@ -57,6 +58,8 @@ class QBClassCtl
               "shortName" => $entity->{'Name'}
             ], array_values($classes));
 
+            QBClassCtl::sortByLowerCaseElement($classes, 'value');
+
             // The class ID is a very long number and can get rounded if JSON_NUMERIC_CHECK is used
             echo json_encode($classes);
 
@@ -64,4 +67,18 @@ class QBClassCtl
             Error::response("Unable to return lsit of QBO Classes.", $e);
         }
     }
+
+    /**
+     * Sort an array by the lower case value of the given element.
+     * @param array &$array The array to sort, passed by reference.
+     * @param string $elementName The name of the array element to sort by.
+     * @return true
+     */
+    private static function sortByLowerCaseElement(array &$array, string $elementName): true
+    {
+        return usort(
+            $array,
+            fn ($a, $b) => strtolower($a[$elementName]) <=> strtolower($b[$elementName])
+        );
+    }    
 }
