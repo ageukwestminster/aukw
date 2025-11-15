@@ -110,7 +110,7 @@ export class AllocationsService {
 
         x.allocations.forEach((element) => {
           const ea = output.find(
-            (ea) => ea.name.payrollNumber === element.payrollNumber,
+            (ea) => ea.name.payrollNumber == element.payrollNumber,
           );
           if (ea) {
             ea.projects.push({
@@ -119,7 +119,7 @@ export class AllocationsService {
             });
           } else {
             const name = x.employees.find(
-              (e) => e.payrollNumber === element.payrollNumber,
+              (e) => e.payrollNumber == element.payrollNumber,
             );
             if (name) {
               const allocations = [

@@ -127,7 +127,7 @@ export class AllocationsComponent implements OnInit {
   ) {
     if (
       !this.employeesWithAllocations.find(
-        (pair) => pair.payrollNumber === employee.payrollNumber,
+        (pair) => pair.payrollNumber == employee.payrollNumber,
       )
     ) {
       this.employeesWithAllocations.push(employee);
@@ -153,7 +153,7 @@ export class AllocationsComponent implements OnInit {
     this.inPayrun.set(
       payrollNumber,
       grossToNetPayslips.some(
-        (payslip) => payslip.payrollNumber === payrollNumber,
+        (payslip) => payslip.payrollNumber == payrollNumber,
       ),
     );
   }
@@ -204,7 +204,7 @@ export class AllocationsComponent implements OnInit {
    */
   employeeProjects(en: EmployeeName): string[] {
     var ea: EmployeeAllocations | undefined = this.allocations.find(
-      (a) => a.name.payrollNumber === en.payrollNumber,
+      (a) => a.name.payrollNumber == en.payrollNumber,
     );
 
     // Projects IS NULL !!
@@ -236,7 +236,7 @@ export class AllocationsComponent implements OnInit {
           allocations.forEach((element) => {
             if (
               !this.employeesWithAllocations.find(
-                (pair) => pair.payrollNumber === element.name.payrollNumber,
+                (pair) => pair.payrollNumber == element.name.payrollNumber,
               )
             ) {
               this.employeesWithAllocations.push(element.name);

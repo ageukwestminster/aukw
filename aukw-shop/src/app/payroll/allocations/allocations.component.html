@@ -146,16 +146,6 @@
                 <td class="text-start">{{ employee.name }}</td>
               </tr>
             }
-            @if (!allocations || !allocations.length) {
-              <tr></tr>
-              <tr>
-                <td colspan="3" class="text-center">
-                  <span
-                    class="spinner-border spinner-border-lg align-center"
-                  ></span>
-                </td>
-              </tr>
-            }
             @if (!allocations || !allocations.length || loading) {
               <tr></tr>
               <tr>

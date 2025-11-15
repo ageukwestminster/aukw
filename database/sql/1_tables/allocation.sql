@@ -35,7 +35,7 @@ CREATE TABLE `allocation` (
   `class` varchar(50) NOT NULL COMMENT 'QBO class ID',
   `isShopEmployee` int(11) NOT NULL COMMENT '1=works in charity shop',
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `allocation`
@@ -98,7 +98,7 @@ INSERT INTO `allocation` (`quickbooksId`, `payrollNumber`, `percentage`, `accoun
 (868, 91, 20, 95, '1400000000001957540', 0, '2024-04-30 23:00:00'),
 (868, 91, 20, 95, '1400000000002025087', 0, '2024-04-30 23:00:00'),
 (868, 91, 20, 95, '1400000000002175091', 0, '2024-04-30 23:00:00'),
-(871, 92, 100, 95, '1400000000002175091', 0, '2024-04-30 23:00:00');
+(871, 92, 100, 95, '1400000000002175091', 0, '2024-04-30 23:00:00'),
 (400000011, 93, 100, 95, '1400000000000130722', 0, '2024-04-30 23:00:00');
 
 --
