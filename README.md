@@ -28,5 +28,4 @@ For support or more information, contact the Age UK Westminster finance team at:
 📧 neil.carthy@ageukwestminster.org.uk
 
 ## Credits
-Project structure and authorization methodology from [Jason watmore](https://jasonwatmore.com/angular-15-auth-boilerplate-sign-up-with-verification-login-and-forgot-password).
-
+Project structure and authorization methodology from [Jason Watmore](https://jasonwatmore.com/angular-15-auth-boilerplate-sign-up-with-verification-login-and-forgot-password).
