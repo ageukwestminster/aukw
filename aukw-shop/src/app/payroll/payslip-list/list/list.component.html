@@ -36,6 +36,7 @@
       <th class="width-10 text-center d-none d-sm-table-cell">
         In QuickBooks?
       </th>
+      <th class="width-5 text-center">Actions</th>
     </tr>
   </thead>
   <tbody>
@@ -183,6 +184,16 @@
             </div>
           </div>
         </td>
+        <td class="">
+          @if (p.employeeMissingFromQBO || p.allocationsMissingFromQBO) {
+            <button
+              (click)="addEmployee(p)"
+              class="btn btn-sm btn-success me-1"
+            >
+              <span>Add Employee</span>
+            </button>
+          }
+        </td>
       </tr>
     }
     @if (total && total.totalPay) {
@@ -204,6 +215,7 @@
               | number: "1.2-2"
           }}
         </td>
+        <td class="d-none d-sm-table-cell"></td>
         <td class="d-none d-sm-table-cell"></td>
         <td class="d-none d-sm-table-cell"></td>
         <td class="d-none d-sm-table-cell"></td>
