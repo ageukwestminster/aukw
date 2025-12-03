@@ -45,6 +45,14 @@ export class PayslipsComponent implements OnInit {
         // loop through all payslips and sum the values to form a
         // "total" payslip that will be put in class level variable
         scan((prev: IrisPayslip, current) => {
+
+          // If we reach a payslip for payrollNumber 7, reset the total
+          // Doing this because the 'prev' variable can hold data from
+          // previous subscriptions (not sure why). PayrollNumber 7 is
+          // the first employee in the payslip list so a new total should start there.
+          if (current.payrollNumber === 7) {
+            prev = new IrisPayslip();
+          }
           return prev.add(current);
         }, new IrisPayslip()),
       )
