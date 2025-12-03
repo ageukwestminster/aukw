@@ -10,7 +10,7 @@ import {
 import { ReactiveFormsModule } from '@angular/forms';
 import { switchMap } from 'rxjs';
 import { EmployeeName, FormMode } from '@app/_models';
-import { AddEditAllocationsParentComponent } from '../add-edit-employee-allocations/parent.component';
+import { AddEditAllocationsParentComponent } from '../../new-employee/add-edit-employee-allocations/parent.component';
 
 @Component({
   imports: [AsyncPipe, JsonPipe, NgClass, ReactiveFormsModule],

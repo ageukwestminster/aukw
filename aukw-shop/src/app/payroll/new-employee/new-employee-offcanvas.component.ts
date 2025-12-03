@@ -2,7 +2,7 @@ import { Component, inject, Input } from '@angular/core';
 import { NgbActiveOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 
 import { EmployeeName } from '@app/_models';
-import { AddEmployeeViaOffCanvasComponent } from '../allocations/add-edit-employee-allocations/add-edit-employee-allocations.component';
+import { AddEmployeeViaOffCanvasComponent } from './add-edit-employee-allocations/add-edit-employee-allocations.component';
 
 @Component({
   imports: [AddEmployeeViaOffCanvasComponent],

@@ -11,7 +11,7 @@ import { Router, Event, NavigationEnd, NavigationError } from '@angular/router';
 import { FormArray, ReactiveFormsModule, Validators } from '@angular/forms';
 import { switchMap } from 'rxjs';
 import { EmployeeAllocations, EmployeeName, FormMode } from '@app/_models';
-import { AddEditAllocationsParentComponent } from '../add-edit-employee-allocations/parent.component';
+import { AddEditAllocationsParentComponent } from './parent.component';
 
 @Component({
   selector: 'add-edit-employee-allocations',
