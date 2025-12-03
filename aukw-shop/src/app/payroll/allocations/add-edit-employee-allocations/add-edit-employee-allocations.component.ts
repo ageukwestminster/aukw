@@ -19,7 +19,7 @@ import { AddEditAllocationsParentComponent } from '../add-edit-employee-allocati
   templateUrl: './add-edit-employee-allocations.component.html',
   styleUrl: './add-edit-employee-allocations.component.css',
 })
-export class AddEditEmployeeAllocationsComponent
+export class AddEmployeeViaOffCanvasComponent
   extends AddEditAllocationsParentComponent
   implements OnInit
 {
@@ -28,6 +28,7 @@ export class AddEditEmployeeAllocationsComponent
   /** From the Staffology payroll numbers. This will be
    * null if the employee has not yet been added to QBO */
   @Input() payrollNumber: number | null = null;
+
   /** This will only be non-null if the employee has already been added
    * to QuickBooks but not yet assigned allocations.
    */
@@ -77,9 +78,6 @@ export class AddEditEmployeeAllocationsComponent
       .subscribe((allocations) => {
         this.allEmployeeAllocs = allocations;
 
-        // Now set up the form
-        // payrollNumber will be null if we are adding a new employee,
-        // who is not yet in QBO or the allocations table
         if (this.payrollNumber) {
           if (this.employeeName && this.employeeName.payrollNumber) {
             const quickbooksId =

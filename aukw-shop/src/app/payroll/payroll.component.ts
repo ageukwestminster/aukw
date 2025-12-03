@@ -266,6 +266,29 @@ export class PayrollComponent implements OnInit {
       offcanvasRef.componentInstance.employeeName = this.employees.find(
         (emp) => emp.payrollNumber === payslip.payrollNumber,
       );
+    } else {
+      // Create employee name from payslip data
+      var firstName = '';
+      var lastName = '';
+      const nameParts = payslip.employeeName.split(' ');
+      if (nameParts.length > 0) {
+        firstName = nameParts[0];
+        if (firstName == 'Ms' || firstName == 'Mr' || firstName == 'Mrs') {
+          // Prefix detected - skip to next part
+          if (nameParts.length > 1) {
+            firstName = nameParts[1];
+            lastName = nameParts.slice(2).join(' ');
+          }
+        } else {
+          lastName = nameParts.slice(1).join(' ');
+        }
+      }
+
+      offcanvasRef.componentInstance.employeeName = {
+        payrollNumber: payslip.payrollNumber,
+        firstName: firstName,
+        lastName: lastName,
+      };
     }
 
     // Reload everything after offcanvas is closed

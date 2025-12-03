@@ -2,10 +2,10 @@ import { Component, inject, Input } from '@angular/core';
 import { NgbActiveOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 
 import { EmployeeName } from '@app/_models';
-import { AddEditEmployeeAllocationsComponent } from '../allocations/add-edit-employee-allocations/add-edit-employee-allocations.component';
+import { AddEmployeeViaOffCanvasComponent } from '../allocations/add-edit-employee-allocations/add-edit-employee-allocations.component';
 
 @Component({
-  imports: [AddEditEmployeeAllocationsComponent],
+  imports: [AddEmployeeViaOffCanvasComponent],
   template: ` <div class="offcanvas-header">
       <h5 class="offcanvas-title">Add New Employee</h5>
       <button
@@ -28,11 +28,8 @@ import { AddEditEmployeeAllocationsComponent } from '../allocations/add-edit-emp
 export class NewEmployeeOffcanvasComponent {
   activeOffcanvas = inject(NgbActiveOffcanvas);
 
-  /** From the Staffology payroll numbers. This will be
-   * null if the employee has not yet been added to QBO */
+  /** The id used in the Staffology payroll reports */
   @Input() payrollNumber: number | null = null;
-  /** This will only be non-null if the employee has already been added
-   * to QuickBooks but not yet assigned allocations.
-   */
-  @Input() employeeName: EmployeeName | null = null; // Maybe not needed????
+  /** Employee name and QuickBooks Id. QuickBooks Id may be null */
+  @Input() employeeName: EmployeeName | null = null;
 }
