@@ -1,6 +1,6 @@
 {
   "name": "aukw-shop",
-  "version": "1.4.12",
+  "version": "1.4.12.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
